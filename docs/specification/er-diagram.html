@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Candidate Portal — ER Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181b23;
+    --border: #2a2d38;
+    --text: #e2e4ea;
+    --muted: #8b8fa3;
+    --accent: #6c8cff;
+    --accent-glow: rgba(108,140,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 28px;
+    background: rgba(15,17,23,0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .header h1 span { color: var(--accent); }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .controls button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .controls button:hover {
+    background: var(--accent-glow);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .diagram-wrap {
+    width: 100vw;
+    height: 100vh;
+    padding-top: 54px;
+    overflow: hidden;
+    cursor: grab;
+  }
+
+  .diagram-wrap.dragging { cursor: grabbing; }
+
+  .diagram-inner {
+    transform-origin: 0 0;
+  }
+
+  .mermaid {
+    padding: 40px;
+  }
+
+  .mermaid svg { max-width: none !important; }
+
+  .hint-box {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 100;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .hint-box kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text);
+    margin: 0 2px;
+  }
+
+  @media (max-width: 720px) {
+    .legend { display: none; }
+    .header h1 { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>&#9671;</span> Candidate Portal — Entity Relationship Diagram</h1>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>Lookup</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6c8cff"></div>Core</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Junction</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div>Candidate</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Admin</div>
+  </div>
+</div>
+
+<div class="diagram-wrap" id="wrap">
+  <div class="diagram-inner" id="inner">
+    <div class="mermaid">
+erDiagram
+
+    departments {
+        SERIAL id PK
+        VARCHAR name
+        VARCHAR slug
+        BOOLEAN is_active
+        SMALLINT sort_order
+        TIMESTAMPTZ created_at
+    }
+
+    locations {
+        SERIAL id PK
+        VARCHAR city
+        VARCHAR country
+        VARCHAR slug
+        BOOLEAN is_active
+        SMALLINT sort_order
+        TIMESTAMPTZ created_at
+    }
+
+    employment_types {
+        SERIAL id PK
+        VARCHAR name
+        VARCHAR slug
+        SMALLINT sort_order
+    }
+
+    experience_levels {
+        SERIAL id PK
+        VARCHAR name
+        VARCHAR slug
+        SMALLINT min_years
+        SMALLINT sort_order
+    }
+
+    skills {
+        SERIAL id PK
+        VARCHAR name
+        TIMESTAMPTZ created_at
+    }
+
+    benefits {
+        SERIAL id PK
+        VARCHAR description
+        SMALLINT sort_order
+    }
+
+    tags {
+        SERIAL id PK
+        VARCHAR name
+        VARCHAR variant
+        SMALLINT sort_order
+    }
+
+    users {
+        UUID id PK
+        VARCHAR email
+        VARCHAR name
+        VARCHAR password_hash
+        VARCHAR role
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+    }
+
+    job_postings {
+        UUID id PK
+        VARCHAR title
+        VARCHAR slug
+        INT department_id FK
+        INT location_id FK
+        INT employment_type_id FK
+        INT experience_level_id FK
+        VARCHAR summary
+        TEXT overview
+        TEXT role_summary
+        TEXT application_info
+        DECIMAL salary_min
+        DECIMAL salary_max
+        CHAR salary_currency
+        BOOLEAN is_salary_visible
+        BOOLEAN is_remote
+        BOOLEAN is_featured
+        VARCHAR status
+        TIMESTAMPTZ posted_at
+        TIMESTAMPTZ expires_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        UUID created_by FK
+        VARCHAR banner_image_url
+        VARCHAR banner_image_alt
+    }
+
+    job_responsibilities {
+        SERIAL id PK
+        UUID job_posting_id FK
+        TEXT description
+        SMALLINT sort_order
+    }
+
+    job_qualifications {
+        SERIAL id PK
+        UUID job_posting_id FK
+        TEXT description
+        VARCHAR type
+        SMALLINT sort_order
+    }
+
+    job_posting_skills {
+        UUID job_posting_id PK
+        INT skill_id PK
+        SMALLINT sort_order
+    }
+
+    job_posting_benefits {
+        UUID job_posting_id PK
+        INT benefit_id PK
+        SMALLINT sort_order
+    }
+
+    job_posting_tags {
+        UUID job_posting_id PK
+        INT tag_id PK
+        SMALLINT sort_order
+    }
+
+    candidates {
+        UUID id PK
+        VARCHAR email
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR password_hash
+        VARCHAR auth_provider
+        VARCHAR auth_provider_id
+        VARCHAR avatar_url
+        VARCHAR phone
+        VARCHAR resume_url
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ last_login_at
+    }
+
+    bookmarks {
+        UUID candidate_id PK
+        UUID job_posting_id PK
+        TIMESTAMPTZ created_at
+    }
+
+    applications {
+        UUID id PK
+        UUID candidate_id FK
+        UUID job_posting_id FK
+        VARCHAR status
+        TEXT cover_letter
+        VARCHAR resume_url
+        TIMESTAMPTZ applied_at
+        TIMESTAMPTZ updated_at
+    }
+
+    departments ||--o{ job_postings : "categorises"
+    locations ||--o{ job_postings : "locates"
+    employment_types ||--o{ job_postings : "classifies"
+    experience_levels ||--o{ job_postings : "levels"
+    users ||--o{ job_postings : "creates"
+
+    job_postings ||--o{ job_responsibilities : "lists"
+    job_postings ||--o{ job_qualifications : "requires"
+
+    job_postings ||--o{ job_posting_skills : "needs"
+    skills ||--o{ job_posting_skills : "applied_to"
+
+    job_postings ||--o{ job_posting_benefits : "offers"
+    benefits ||--o{ job_posting_benefits : "included_in"
+
+    job_postings ||--o{ job_posting_tags : "tagged_with"
+    tags ||--o{ job_posting_tags : "labels"
+
+    job_postings ||--o{ bookmarks : "saved_as"
+    candidates ||--o{ bookmarks : "saves"
+
+    job_postings ||--o{ applications : "receives"
+    candidates ||--o{ applications : "submits"
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button id="zoomIn" title="Zoom in">+</button>
+  <button id="zoomOut" title="Zoom out">&minus;</button>
+  <button id="zoomReset" title="Reset view">&#8634;</button>
+</div>
+
+<div class="hint-box">
+  <kbd>Scroll</kbd> zoom &nbsp;&vert;&nbsp; <kbd>Drag</kbd> pan &nbsp;&vert;&nbsp; <kbd>+</kbd><kbd>&minus;</kbd> buttons
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'dark',
+  er: {
+    useMaxWidth: false,
+    layoutDirection: 'TB',
+    entityPadding: 12,
+    minEntityWidth: 200,
+    minEntityHeight: 30,
+    fontSize: 13
+  },
+  themeVariables: {
+    darkMode: true,
+    background: '#181b23',
+    primaryColor: '#6c8cff',
+    primaryBorderColor: '#4a6ae0',
+    primaryTextColor: '#e2e4ea',
+    lineColor: '#4a5068',
+    textColor: '#e2e4ea',
+    mainBkg: '#1e2130',
+    nodeBkg: '#1e2130',
+    nodeBorder: '#3a3f55',
+    fontSize: '13px'
+  }
+});
+
+(function () {
+  var wrap = document.getElementById('wrap');
+  var inner = document.getElementById('inner');
+
+  var scale = 0.55;
+  var panX = 80;
+  var panY = 60;
+  var isDragging = false;
+  var startX, startY;
+
+  function apply() {
+    inner.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+  }
+  apply();
+
+  wrap.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    var delta = e.deltaY > 0 ? -0.05 : 0.05;
+    scale = Math.min(2, Math.max(0.1, scale + delta));
+    apply();
+  }, { passive: false });
+
+  wrap.addEventListener('mousedown', function (e) {
+    isDragging = true;
+    wrap.classList.add('dragging');
+    startX = e.clientX - panX;
+    startY = e.clientY - panY;
+  });
+
+  window.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    panX = e.clientX - startX;
+    panY = e.clientY - startY;
+    apply();
+  });
+
+  window.addEventListener('mouseup', function () {
+    isDragging = false;
+    wrap.classList.remove('dragging');
+  });
+
+  document.getElementById('zoomIn').addEventListener('click', function () {
+    scale = Math.min(2, scale + 0.1);
+    apply();
+  });
+
+  document.getElementById('zoomOut').addEventListener('click', function () {
+    scale = Math.max(0.1, scale - 0.1);
+    apply();
+  });
+
+  document.getElementById('zoomReset').addEventListener('click', function () {
+    scale = 0.55;
+    panX = 80;
+    panY = 60;
+    apply();
+  });
+})();
+</script>
+</body>
+</html>

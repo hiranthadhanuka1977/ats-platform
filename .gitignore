@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Environment (secrets — never commit)
+.env
+.env.*
+!.env.example
+!.env*.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Next.js (all apps)
+**/.next/
+**/out/
+**/.vercel
+next-env.d.ts
+
+# API / Node builds
+**/dist/
+**/build/
+
+# Tests & coverage
+coverage/
+.nyc_output/
+
+# TypeScript (incremental builds)
+*.tsbuildinfo
+
+# Prisma (local DB files only — keep prisma/migrations committed)
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Caches & tooling
+.turbo
+.cache
+.parcel-cache
+.eslintcache
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editors (optional local overrides)
+.idea/
+*.swp
+*.swo
+*~

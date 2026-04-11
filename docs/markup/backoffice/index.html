@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dashboard — TalentHub Back Office</title>
+  <meta name="description" content="Recruitment health overview for your organization.">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="backoffice.css">
+</head>
+<body class="bo-app">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <div class="bo-shell">
+    <aside class="bo-sidebar" id="boSidebar" aria-label="Main navigation">
+      <div class="bo-sidebar-brand">
+        <span class="bo-sidebar-logo" aria-hidden="true">T</span>
+        <div class="bo-sidebar-product">
+          TalentHub
+          <span>Back Office</span>
+        </div>
+      </div>
+      <nav class="bo-nav" aria-label="Primary">
+        <ul>
+          <li>
+            <a href="index.html" aria-current="page">
+              <svg class="bo-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>
+              </svg>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg class="bo-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+              </svg>
+              Applications
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg class="bo-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Interviews
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg class="bo-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 13V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v5"/><polyline points="7 10 12 13 17 10"/><line x1="12" y1="13" x2="12" y2="22"/>
+              </svg>
+              Jobs
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg class="bo-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              Candidates
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg class="bo-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+              Reports
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg class="bo-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              </svg>
+              Administration
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="bo-sidebar-overlay" id="boOverlay" aria-hidden="true"></div>
+
+    <div class="bo-main-wrap">
+      <header class="bo-topbar" role="banner">
+        <div class="bo-topbar-left">
+          <button type="button" class="bo-sidebar-toggle" id="boSidebarToggle" aria-expanded="false" aria-controls="boSidebar" aria-label="Open navigation menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div role="group" aria-label="Current organization">
+            <span class="bo-org-name">Northwind Talent Co.</span>
+            <span class="bo-org-badge">Enterprise</span>
+          </div>
+        </div>
+
+        <details class="bo-user-menu">
+          <summary>
+            <span class="bo-user-avatar" aria-hidden="true">JL</span>
+            <div class="bo-user-meta">
+              <div class="bo-user-name">Jordan Lee</div>
+              <div class="bo-user-role">Company Admin</div>
+            </div>
+            <svg class="bo-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </summary>
+          <nav class="bo-user-dropdown" aria-label="Account actions">
+            <ul>
+              <li><a href="#">Your profile</a></li>
+              <li><a href="#">Notification settings</a></li>
+              <li class="bo-user-menu-sep" aria-hidden="true"><hr></li>
+              <li><a href="login.html">Sign out</a></li>
+            </ul>
+          </nav>
+        </details>
+      </header>
+
+      <main id="main-content" class="bo-content">
+        <h1 class="bo-page-title">Recruitment Health</h1>
+        <p class="bo-page-sub">Snapshot of hiring velocity, pipeline balance, and signals that need attention — dummy data for markup.</p>
+
+        <div class="bo-dash-grid">
+
+          <section class="bo-card bo-score-card bo-span-5" aria-labelledby="eff-score-title">
+            <h2 id="eff-score-title" class="bo-card-title">Hiring efficiency score</h2>
+            <div class="bo-score-ring" style="--score: 78" role="img" aria-label="Hiring efficiency 78 percent">
+              <div class="bo-score-ring-inner">
+                <span class="bo-score-value">78</span>
+                <span class="bo-score-label">out of 100</span>
+              </div>
+            </div>
+            <p class="bo-score-hint">Based on time-to-fill, offer acceptance, and stage conversion vs. your 90-day baseline.</p>
+          </section>
+
+          <div class="bo-span-7">
+            <div class="bo-stat-row">
+              <div class="bo-stat" role="group" aria-labelledby="stat-val-adverts stat-label-adverts">
+                <div class="bo-stat-value" id="stat-val-adverts">42</div>
+                <div class="bo-stat-label" id="stat-label-adverts">Active adverts</div>
+                <div class="bo-stat-delta bo-stat-delta--up">+3 vs. last week</div>
+              </div>
+              <div class="bo-stat" role="group" aria-labelledby="stat-val-candidates stat-label-candidates">
+                <div class="bo-stat-value" id="stat-val-candidates">1,284</div>
+                <div class="bo-stat-label" id="stat-label-candidates">Total candidates</div>
+                <div class="bo-stat-delta bo-stat-delta--up">+12% vs. last month</div>
+              </div>
+              <div class="bo-stat" role="group" aria-labelledby="stat-val-pending stat-label-pending">
+                <div class="bo-stat-value" id="stat-val-pending">86</div>
+                <div class="bo-stat-label" id="stat-label-pending">Pending applications</div>
+                <div class="bo-stat-delta bo-stat-delta--down">−4% vs. last week</div>
+              </div>
+            </div>
+          </div>
+
+          <section class="bo-card bo-span-6" aria-labelledby="activity-title">
+            <h2 id="activity-title" class="bo-card-title">Recent activity</h2>
+            <ul class="bo-activity-list">
+              <li class="bo-activity-item">
+                <div class="bo-activity-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="bo-activity-body">
+                  <div class="bo-activity-title">New application — Senior Product Designer</div>
+                  <div class="bo-activity-meta">Alex Morgan · 12 minutes ago</div>
+                </div>
+              </li>
+              <li class="bo-activity-item">
+                <div class="bo-activity-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="bo-activity-body">
+                  <div class="bo-activity-title">Interview scheduled — Backend Engineer (Round 2)</div>
+                  <div class="bo-activity-meta">Samira Patel · 1 hour ago</div>
+                </div>
+              </li>
+              <li class="bo-activity-item">
+                <div class="bo-activity-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="bo-activity-body">
+                  <div class="bo-activity-title">Offer accepted — Customer Success Lead</div>
+                  <div class="bo-activity-meta">System · Yesterday</div>
+                </div>
+              </li>
+            </ul>
+          </section>
+
+          <section class="bo-card bo-span-6" aria-labelledby="pipeline-title">
+            <h2 id="pipeline-title" class="bo-card-title">Pipeline health</h2>
+            <p class="bo-page-sub" style="margin: -0.5rem 0 1rem; font-size: var(--text-xs);">Share of open applications by stage (illustrative)</p>
+            <div class="bo-pipeline-stages">
+              <div class="bo-pipeline-row">
+                <span class="bo-pipeline-name">Sourcing</span>
+                <div class="bo-pipeline-bar-wrap" aria-hidden="true"><div class="bo-pipeline-bar" style="width: 32%"></div></div>
+                <span class="bo-pipeline-pct">32%</span>
+              </div>
+              <div class="bo-pipeline-row">
+                <span class="bo-pipeline-name">Screening</span>
+                <div class="bo-pipeline-bar-wrap" aria-hidden="true"><div class="bo-pipeline-bar" style="width: 24%"></div></div>
+                <span class="bo-pipeline-pct">24%</span>
+              </div>
+              <div class="bo-pipeline-row">
+                <span class="bo-pipeline-name">Interviewing</span>
+                <div class="bo-pipeline-bar-wrap" aria-hidden="true"><div class="bo-pipeline-bar" style="width: 18%"></div></div>
+                <span class="bo-pipeline-pct">18%</span>
+              </div>
+              <div class="bo-pipeline-row">
+                <span class="bo-pipeline-name">Offered</span>
+                <div class="bo-pipeline-bar-wrap" aria-hidden="true"><div class="bo-pipeline-bar" style="width: 12%"></div></div>
+                <span class="bo-pipeline-pct">12%</span>
+              </div>
+              <div class="bo-pipeline-row">
+                <span class="bo-pipeline-name">Hired</span>
+                <div class="bo-pipeline-bar-wrap" aria-hidden="true"><div class="bo-pipeline-bar" style="width: 8%"></div></div>
+                <span class="bo-pipeline-pct">8%</span>
+              </div>
+              <div class="bo-pipeline-row">
+                <span class="bo-pipeline-name">Withdrawn</span>
+                <div class="bo-pipeline-bar-wrap" aria-hidden="true"><div class="bo-pipeline-bar" style="width: 6%; background: linear-gradient(90deg, #94a3b8, #cbd5e1);"></div></div>
+                <span class="bo-pipeline-pct">6%</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="bo-card bo-curator bo-span-12" aria-labelledby="curator-title">
+            <h2 id="curator-title" class="bo-curator-heading">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M6 14h12v8H6z"/></svg>
+              Curator insight
+            </h2>
+            <p class="bo-curator-text">
+              <strong>18 candidates</strong> have been in <strong>Interviewing</strong> for over 14 days without a next step. Consider nudging hiring managers or closing stale loops — this pattern often correlates with a drop in offer acceptance later in the quarter.
+            </p>
+            <div class="bo-curator-actions">
+              <a href="#" class="btn btn-primary btn-sm">View stalled interviews</a>
+              <button type="button" class="btn btn-secondary btn-sm">Dismiss</button>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="backoffice.js"></script>
+</body>
+</html>

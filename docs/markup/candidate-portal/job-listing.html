@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Careers — Find Your Next Opportunity</title>
+  <meta name="description" content="Browse open positions and find your perfect role. Join our team and build something meaningful.">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ─── Header ─── -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="job-listing.html" class="logo" aria-label="TalentHub home">
+        <span class="logo-icon" aria-hidden="true">T</span>
+        TalentHub
+      </a>
+
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a href="job-listing.html" aria-current="page">Jobs</a>
+        <a href="#">About Us</a>
+        <a href="#">Culture</a>
+        <a href="#">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="text-resizer" role="group" aria-label="Text size">
+          <button type="button" class="text-resizer-btn" data-resize="decrease" aria-label="Decrease text size">A&minus;</button>
+          <button type="button" class="text-resizer-btn" data-resize="reset" aria-label="Reset text size">A</button>
+          <button type="button" class="text-resizer-btn" data-resize="increase" aria-label="Increase text size">A+</button>
+        </div>
+        <a href="login.html" class="btn btn-ghost btn-sm">Log In</a>
+        <a href="#" class="btn btn-primary btn-sm">Register</a>
+        <button class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── Hero ─── -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="container">
+      <h1 id="hero-heading" class="hero-title">Let’s build the next big thing together</h1>
+      <p class="hero-description">
+        We believe in ideas that matter. Passionate about making software even better.
+      </p>
+
+      <form class="hero-search" role="search" aria-label="Search jobs">
+        <div class="hero-search-inner">
+          <svg class="hero-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="search" id="hero-search-input" class="hero-search-input" placeholder="I'm looking for..." aria-label="Search by job title, keyword, or location">
+          <button type="submit" class="btn btn-primary hero-search-btn">Search</button>
+        </div>
+      </form>
+
+      <div class="hero-pills" role="group" aria-label="Browse by department">
+        <button type="button" class="hero-pill is-active" data-department="">All Departments</button>
+        <button type="button" class="hero-pill" data-department="engineering">Engineering</button>
+        <button type="button" class="hero-pill" data-department="product">Product &amp; Delivery</button>
+        <button type="button" class="hero-pill" data-department="design">Design</button>
+        <button type="button" class="hero-pill" data-department="marketing">Marketing</button>
+        <button type="button" class="hero-pill" data-department="hr">Human Resources</button>
+        <button type="button" class="hero-pill" data-department="data">Data &amp; Analytics</button>
+        <button type="button" class="hero-pill" data-department="finance">Finance</button>
+        <button type="button" class="hero-pill" data-department="operations">Operations</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Main Content ─── -->
+  <main id="main-content">
+    <div class="container content-layout">
+
+      <!-- ─── Filter Overlay (Mobile) ─── -->
+      <div class="filter-overlay" id="filterOverlay" aria-hidden="true"></div>
+
+      <!-- ─── Filter Panel ─── -->
+      <aside class="filter-panel" id="filterPanel" aria-label="Job filters">
+        <button class="filter-drawer-close" id="filterClose" aria-label="Close filters">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+
+        <div class="filter-header">
+          <h2 class="filter-title">Filters</h2>
+          <button class="filter-clear" type="button">Clear all</button>
+        </div>
+
+        <!-- Search -->
+        <div class="filter-group">
+          <label for="filter-search" class="filter-label">Search</label>
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" id="filter-search" class="form-input" placeholder="Job title or keyword">
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="filter-group">
+          <label for="filter-location" class="filter-label">Location</label>
+          <select id="filter-location" class="form-select">
+            <option value="">All Locations</option>
+            <option value="colombo">Colombo, Sri Lanka</option>
+            <option value="london">London, UK</option>
+            <option value="new-york">New York, USA</option>
+            <option value="singapore">Singapore</option>
+          </select>
+        </div>
+
+        <!-- Department -->
+        <div class="filter-group">
+          <label for="filter-department" class="filter-label">Department</label>
+          <select id="filter-department" class="form-select">
+            <option value="">All Departments</option>
+            <option value="engineering">Engineering</option>
+            <option value="product">Product & Delivery</option>
+            <option value="design">Design</option>
+            <option value="marketing">Marketing</option>
+            <option value="hr">Human Resources</option>
+          </select>
+        </div>
+
+        <!-- Employment Type -->
+        <div class="filter-group">
+          <label for="filter-type" class="filter-label">Employment Type</label>
+          <select id="filter-type" class="form-select">
+            <option value="">All Types</option>
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+            <option value="contract">Contract</option>
+            <option value="internship">Internship</option>
+          </select>
+        </div>
+
+        <!-- Experience Level -->
+        <div class="filter-group">
+          <label for="filter-experience" class="filter-label">Experience Level</label>
+          <select id="filter-experience" class="form-select">
+            <option value="">Any Experience</option>
+            <option value="entry">Entry Level</option>
+            <option value="mid">Mid Level (2–5 Years)</option>
+            <option value="senior">Senior (5+ Years)</option>
+            <option value="lead">Lead / Principal</option>
+          </select>
+        </div>
+
+        <!-- Date Posted -->
+        <div class="filter-group">
+          <label for="filter-date" class="filter-label">Date Posted</label>
+          <select id="filter-date" class="form-select">
+            <option value="">Any Time</option>
+            <option value="24h">Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+          </select>
+        </div>
+
+        <!-- Remote Toggle -->
+        <div class="filter-group">
+          <div class="toggle-wrapper">
+            <span class="filter-label filter-label--inline" id="remote-label">Remote Only</span>
+            <button class="toggle" role="switch" aria-checked="false" aria-labelledby="remote-label" id="remoteToggle"></button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ─── Job Listings ─── -->
+      <section class="job-listings" aria-label="Job listings">
+
+        <!-- Toolbar -->
+        <div class="listings-toolbar">
+          <p class="results-count" aria-live="polite"><strong>24</strong> jobs found</p>
+          <div class="toolbar-controls">
+            <button class="btn btn-secondary btn-sm filter-toggle-mobile" id="filterToggle" aria-expanded="false" aria-controls="filterPanel">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
+                <circle cx="6" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="18" r="2" fill="currentColor"/>
+              </svg>
+              Filters
+            </button>
+            <select class="form-select sort-select" aria-label="Sort jobs">
+              <option>Most Recent</option>
+              <option>Most Relevant</option>
+              <option>Title A–Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Job Cards -->
+        <div class="job-cards" role="list">
+
+          <!-- Card 1 -->
+          <article class="job-card job-card--featured" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Senior Business Analyst</a></h3>
+              <span class="featured-ribbon" role="img" aria-label="Featured">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+              </span>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Product &amp; Delivery
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Colombo, Sri Lanka
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                5+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 05 Apr 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              We are looking for a Senior Business Analyst to work closely with stakeholders and delivery teams to define digital solutions.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-accent">On-site</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Senior Business Analyst</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Senior Business Analyst</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Senior Business Analyst" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Senior Business Analyst">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Full Stack Engineer</a></h3>
+              <span class="badge badge-success">New</span>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Engineering
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                London, UK
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                3+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 03 Apr 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Join our engineering team to build scalable web applications using modern frameworks. You'll work end-to-end across the stack.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-warning">Hybrid</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Full Stack Engineer</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Full Stack Engineer</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Full Stack Engineer" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Full Stack Engineer">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">UX Designer</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Design
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Singapore
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                2+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 01 Apr 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              We're looking for a UX Designer to craft intuitive, user-centered experiences across our product suite. You'll lead research and prototyping.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-accent">On-site</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — UX Designer</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — UX Designer</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark UX Designer" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share UX Designer">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Marketing Manager</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Marketing
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                New York, USA
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                4+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 28 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Lead our brand and growth marketing strategy. Drive customer acquisition through digital campaigns, content, and partnerships.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-success">Remote</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Marketing Manager</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Marketing Manager</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Marketing Manager" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Marketing Manager">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">DevOps Engineer</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Engineering
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Colombo, Sri Lanka
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Contract
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                3+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 25 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Design and maintain CI/CD pipelines, cloud infrastructure, and monitoring systems. Collaborate with engineering to ship faster.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-warning">Contract</span>
+                <span class="badge badge-success">Remote</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — DevOps Engineer</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — DevOps Engineer</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark DevOps Engineer" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share DevOps Engineer">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 6 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Data Scientist</a></h3>
+              <span class="badge badge-success">New</span>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Data &amp; Analytics
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                London, UK
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                3+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 24 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Build predictive models and derive actionable insights from large datasets to drive product decisions and business strategy.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-warning">Hybrid</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Data Scientist</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Data Scientist</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Data Scientist" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Data Scientist">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 7 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">HR Business Partner</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Human Resources
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Colombo, Sri Lanka
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                6+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 22 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Partner with leadership to align people strategies with business objectives. Drive talent development, engagement, and organizational change initiatives.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-accent">On-site</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — HR Business Partner</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — HR Business Partner</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark HR Business Partner" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share HR Business Partner">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 8 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Product Manager</a></h3>
+              <span class="badge badge-success">New</span>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Product &amp; Delivery
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Singapore
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                5+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 20 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Own the product roadmap and work with cross-functional teams to define, prioritize, and deliver features that delight our users.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-accent">On-site</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Product Manager</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Product Manager</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Product Manager" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Product Manager">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 9 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">QA Automation Engineer</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Engineering
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Colombo, Sri Lanka
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                2+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 18 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Design and maintain automated test suites for web and API testing. Champion quality practices and help the team ship reliable software.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-warning">Hybrid</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — QA Automation Engineer</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — QA Automation Engineer</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark QA Automation Engineer" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share QA Automation Engineer">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 10 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Finance Analyst</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Finance
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                New York, USA
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                1+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 15 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Support financial planning, budgeting, and variance analysis. Prepare reports for leadership and help optimize cost management across departments.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-accent">On-site</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Finance Analyst</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Finance Analyst</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Finance Analyst" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Finance Analyst">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 11 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Content Strategist</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Marketing
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Singapore
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Part-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                2+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 12 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Develop and execute content strategies across blog, social, and email channels. Craft compelling narratives that strengthen our brand voice.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-warning">Part-time</span>
+                <span class="badge badge-success">Remote</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Content Strategist</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Content Strategist</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Content Strategist" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Content Strategist">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 12 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Cloud Solutions Architect</a></h3>
+              <span class="badge badge-success">New</span>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Engineering
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                London, UK
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                8+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 10 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Design resilient, scalable cloud architectures on AWS and Azure. Lead migration initiatives and establish best practices for infrastructure as code.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-success">Remote</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Cloud Solutions Architect</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Cloud Solutions Architect</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Cloud Solutions Architect" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Cloud Solutions Architect">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 13 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">UI/Visual Designer</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Design
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                New York, USA
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Contract
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                3+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 08 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Create pixel-perfect interfaces and design system components in Figma. Collaborate with engineers to ship polished, accessible user experiences.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-warning">Contract</span>
+                <span class="badge badge-warning">Hybrid</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — UI/Visual Designer</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — UI/Visual Designer</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark UI/Visual Designer" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share UI/Visual Designer">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 14 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Operations Coordinator</a></h3>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Operations
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Colombo, Sri Lanka
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Full-time
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                1+ Years
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 05 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              Coordinate day-to-day office operations, vendor relationships, and internal events. Keep the team running smoothly so everyone can do their best work.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-accent">On-site</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Operations Coordinator</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Operations Coordinator</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Operations Coordinator" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Operations Coordinator">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 15 -->
+          <article class="job-card" role="listitem">
+            <div class="job-card-header">
+              <h3 class="job-card-title"><a href="job-detail.html">Software Engineering Intern</a></h3>
+              <span class="badge badge-success">New</span>
+            </div>
+            <div class="job-card-meta">
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Engineering
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Colombo, Sri Lanka
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Internship
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                No Experience
+              </span>
+              <span class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Posted 01 Mar 2026
+              </span>
+            </div>
+            <p class="job-card-summary">
+              A 6-month paid internship for undergraduates passionate about software development. Work on real projects alongside experienced engineers.
+            </p>
+            <div class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-accent">Internship</span>
+                <span class="badge badge-accent">On-site</span>
+              </div>
+              <div class="job-card-actions">
+                <a href="job-detail.html" class="btn btn-secondary btn-sm">View Details<span class="sr-only"> — Software Engineering Intern</span></a>
+                <a href="#" class="btn btn-primary btn-sm">Apply Now<span class="sr-only"> — Software Engineering Intern</span></a>
+                <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark Software Engineering Intern" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button type="button" class="icon-btn icon-btn--share" aria-label="Share Software Engineering Intern">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Empty State (hidden by default) -->
+        <div class="empty-state" id="emptyState" style="display:none">
+          <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+          <h3 class="empty-state-title">No jobs found</h3>
+          <p class="empty-state-text">Try adjusting your filters or search terms to find what you're looking for.</p>
+          <button class="btn btn-primary" type="button">Clear Filters</button>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="pagination" aria-label="Pagination">
+          <button class="pagination-btn" aria-label="Previous page" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="pagination-btn is-active" aria-label="Page 1" aria-current="page">1</button>
+          <button class="pagination-btn" aria-label="Page 2">2</button>
+          <button class="pagination-btn" aria-label="Page 3">3</button>
+          <button class="pagination-btn" aria-label="Page 4">4</button>
+          <button class="pagination-btn" aria-label="Page 5">5</button>
+          <button class="pagination-btn" aria-label="Next page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </nav>
+
+      </section>
+    </div>
+  </main>
+
+  <!-- ─── Footer ─── -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p>&copy; 2026 TalentHub. All rights reserved.</p>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Accessibility</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

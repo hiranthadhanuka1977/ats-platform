@@ -1,0 +1,84 @@
+---
+description: ATS monorepo — apps, packages, Prisma, where to put code, env, and conventions
+alwaysApply: true
+---
+
+# ats-platform — Cursor rules
+
+npm workspace **`ats-platform`**: `apps/*`, `packages/*`. Human reference: **`docs/PROJECT_STRUCTURE.md`**.
+
+## Monorepo map
+
+| Path | Role |
+|------|------|
+| `apps/candidate-portal` | Next.js — public candidate UI — **port 3000** |
+| `apps/backoffice` | Next.js — staff back office — **port 3001** |
+| `apps/api` | Hono HTTP API — **port 4000** (`PORT`) |
+| `packages/db` | **Only** Prisma schema + migrations + shared client |
+| `packages/ui`, `types`, `utils`, `auth`, `validators`, `config` | Shared libraries (`@ats-platform/*`) |
+| `docs/` | Specs, API dictionary, static markup (`markup/candidate-portal`, `markup/backoffice`) — **not** runtime imports |
+
+Run all apps: **`npm run dev:all`** (repo root).
+
+## Where to put code
+
+### Next.js (`candidate-portal`, `backoffice`)
+
+| Location | Use for |
+|----------|---------|
+| `src/app/` | App Router routes, layouts, `globals.css` |
+| `src/components/` | Reusable presentational UI (shared within that app) |
+| `src/features/` | Vertical slices (jobs, auth, etc.); pages orchestrate features |
+| `src/lib/` | App-only helpers; **`prisma.ts`** re-exports `prisma` from **`@ats-platform/db`** |
+
+- Do **not** add a second Prisma schema inside an app.
+- Shared React primitives go in **`@ats-platform/ui`** when used by both web apps.
+
+### HTTP API (`apps/api`)
+
+| Location | Use for |
+|----------|---------|
+| `src/index.ts` | Bootstrap Hono, global middleware, `serve()` |
+| `src/routes/` | Wiring: `registerRoutes()`, health/demo, mount prefixes |
+| `src/middlewares/` | Cross-cutting (logging, CORS, auth guards) |
+| `src/lib/` | API-local helpers; **`prisma.ts`** re-export from **`@ats-platform/db`** |
+| `src/modules/<domain>/` | Domain routes (Hono sub-app per area: `auth`, `jobs`, `candidates`, `applications`, `interviews`, `users`, `notifications`) |
+
+Register new domain routes in **`src/routes/index.ts`** with `app.route("/prefix", module)`.
+
+### Database & Prisma
+
+- **Single source of truth:** `packages/db/prisma/schema.prisma` and `packages/db/prisma/migrations/`.
+- **Never** copy or duplicate `schema.prisma` under `apps/` or `docs/`.
+- Migrations and `prisma generate` run via **`@ats-platform/db`** from root: `npm run db:migrate`, `npm run db:generate` (also **`postinstall`**).
+- App code imports: `import { prisma } from "@ats-platform/db"` (or via each app’s `src/lib/prisma.ts`).
+- **`db:create`** reads **`DATABASE_URL`** from **repo root `.env`**.
+
+### Shared packages (`packages/*`)
+
+- **`@ats-platform/validators`** — Zod schemas for API and optional Next server code.
+- **`@ats-platform/types`** — DTOs and shared TS types (no DB client here).
+- **`@ats-platform/auth`** — session/JWT/RBAC abstractions (no app-specific UI).
+
+**Dependency direction:** `apps/*` → `packages/*` only. Packages do **not** depend on apps.
+
+## Environment
+
+| File | Purpose |
+|------|---------|
+| Repo root `.env` | `DATABASE_URL` for Prisma CLI and `db:create` |
+| `apps/candidate-portal/.env.local` | Next + `DATABASE_URL` if using Prisma in server code |
+| `apps/backoffice/.env.local` | Same |
+| `apps/api` | `PORT`; `DATABASE_URL` when using Prisma |
+
+## Conventions
+
+- Match existing naming: **`@ats-platform/<name>`** workspace packages.
+- API `tsconfig` uses **`moduleResolution: "bundler"`** — avoid unnecessary `.js` extensions in local TS imports unless policy changes.
+- Specs and REST contracts live under **`docs/specification/`**; keep implementation aligned with **`docs/specification/api/`** and **`API_Dictionary.md`** when changing HTTP behavior.
+- Prefer focused changes; avoid unrelated refactors in the same PR.
+
+## Documentation to cite
+
+- **`docs/PROJECT_STRUCTURE.md`** — full tree, route map, scripts.
+- **`docs/specification/db-schema.md`** — relational model (companion to Prisma schema).

@@ -1,0 +1,25 @@
+{
+  "name": "ats-platform",
+  "private": true,
+  "description": "ATS monorepo: candidate portal, back office, API, shared packages",
+  "workspaces": ["apps/*", "packages/*"],
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "postinstall": "npm run db:generate",
+    "dev": "npm run dev -w @ats-platform/candidate-portal",
+    "dev:candidate": "npm run dev -w @ats-platform/candidate-portal",
+    "dev:backoffice": "npm run dev -w @ats-platform/backoffice",
+    "dev:api": "npm run dev -w @ats-platform/api",
+    "dev:all": "concurrently -n candidate,backoffice,api -c auto \"npm run dev:candidate\" \"npm run dev:backoffice\" \"npm run dev:api\"",
+    "build": "npm run build --workspaces --if-present",
+    "db:create": "npm run db:create -w @ats-platform/db",
+    "db:migrate": "npm run migrate -w @ats-platform/db",
+    "db:deploy": "npm run deploy -w @ats-platform/db",
+    "db:generate": "npm run generate -w @ats-platform/db",
+    "db:studio": "npm run studio -w @ats-platform/db",
+    "db:push": "npm run push -w @ats-platform/db",
+    "db:seed": "npm run seed -w @ats-platform/db"
+  }
+}

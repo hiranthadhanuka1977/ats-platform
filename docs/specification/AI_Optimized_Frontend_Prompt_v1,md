@@ -1,0 +1,225 @@
+# AI-Optimized Front-End Prompt for Candidate Portal
+
+## Overview
+This prompt is designed for AI coding tools such as Cursor, Claude Code, GPT, and Copilot to generate production-quality front-end code for a Candidate Portal.
+
+---
+
+## Instructions
+
+You are a senior front-end engineer and UX engineer.
+
+Your task is to build a production-quality, fully responsive, accessible Candidate Portal UI using:
+
+- HTML (no frameworks)
+- Tailwind CSS
+- Custom CSS (separate files)
+- Vanilla JavaScript (separate file)
+
+---
+
+## Context
+
+This system is part of an ATS (Applicant Tracking System).
+
+Use the file:
+Job_Posting_Templates.md
+
+as the source of truth for:
+- job listing structure
+- job detail structure
+- content hierarchy
+
+Do NOT invent your own structure.
+
+---
+
+## Output Files
+
+Generate the following files:
+
+1. job-listing.html  
+2. job-detail.html  
+3. tokens.css  
+4. styles.css  
+5. main.js  
+
+---
+
+## Architecture Rules
+
+- No inline CSS
+- No inline JS
+- Use semantic HTML5
+- Reusable class patterns
+- Section-based structure
+
+---
+
+## Design System (tokens.css)
+
+### Colors
+- primary, secondary, accent
+- background, surface
+- text, muted, border
+- success, warning, error
+
+### Typography
+- Google Font (curvy, modern)
+- font sizes
+- line height
+
+### Spacing
+- consistent scale
+
+### Radius & Shadows
+- small to large
+
+### Buttons
+- primary and secondary
+
+---
+
+## Design Requirements
+
+- Clean, modern, professional UI
+- Premium SaaS look
+- Strong hierarchy
+- Good spacing
+- Card-based layout
+
+---
+
+## UX Principles (Gestalt)
+
+Apply:
+- proximity
+- similarity
+- hierarchy
+- alignment
+- common region
+- figure-ground
+
+---
+
+## Accessibility (WCAG 2.2)
+
+Include:
+- semantic HTML
+- heading hierarchy
+- keyboard support
+- focus states
+- color contrast
+- ARIA labels
+- accessible forms
+- skip-to-content
+
+---
+
+## Responsiveness
+
+Mobile-first approach
+
+### Mobile
+- filter → drawer
+- stacked layout
+
+### Desktop
+- sidebar filter
+- grid/list jobs
+
+---
+
+## Page 1: Job Listing
+
+### Header
+- logo
+- navigation
+- login/register
+
+### Hero
+- title
+- description
+
+### Layout
+LEFT: filter panel  
+RIGHT: job listings  
+
+### Filters
+- search
+- location
+- department
+- employment type
+- experience
+- date
+- remote toggle
+
+### Job Cards
+- title
+- metadata
+- summary
+- CTA
+
+### States
+- empty state
+- pagination
+
+---
+
+## Page 2: Job Detail
+
+### Sections
+- header
+- job meta
+- overview
+- responsibilities
+- qualifications
+- skills
+- benefits
+
+### CTA
+- Apply Now (prominent)
+
+---
+
+## Code Quality
+
+- clean structure
+- reusable classes
+- no duplication
+- maintainable
+
+---
+
+## JS Usage
+
+Only for:
+- filter toggle
+- interactions
+
+---
+
+## Final Checklist
+
+- responsive
+- accessible
+- token-based styling
+- production ready
+
+---
+
+## Output Format
+
+### job-listing.html
+### job-detail.html
+### tokens.css
+### styles.css
+### main.js
+
+---
+
+## Important
+
+- Follow Job_Posting_Templates.md strictly
+- Keep UI clean and scalable
+- Must look like real SaaS product
