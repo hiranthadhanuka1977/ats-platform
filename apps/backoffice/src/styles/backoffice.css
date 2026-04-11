@@ -403,6 +403,108 @@ button {
   margin-bottom: var(--space-8);
 }
 
+/* Page title row — title left, overflow menu right */
+.bo-page-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.bo-page-header-actions .bo-page-title {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Kebab / “more” menu (e.g. edit job) */
+.bo-page-actions-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.bo-page-actions-menu > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.bo-page-actions-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.bo-page-actions-menu > summary:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+}
+
+.bo-page-actions-menu > summary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.bo-page-actions-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--space-2));
+  min-width: 200px;
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  z-index: 300;
+}
+
+.bo-page-actions-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bo-page-actions-dropdown button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3);
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.bo-page-actions-dropdown button:hover:not(:disabled) {
+  background: var(--color-surface-alt);
+}
+
+.bo-page-actions-dropdown button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.bo-page-actions-dropdown button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.bo-page-actions-dropdown button.bo-page-actions-danger {
+  color: var(--color-error);
+}
+
 /* Dashboard grid */
 .bo-dash-grid {
   display: grid;
@@ -959,13 +1061,212 @@ button {
   margin: 0;
 }
 
-.bo-jobs-title {
-  font-weight: var(--weight-semibold);
+/* Jobs list vs grid view toggle */
+.bo-jobs-view-toggle {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-surface);
+}
+
+.bo-jobs-view-toggle button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.bo-jobs-view-toggle button:hover {
+  background: var(--color-surface-alt);
   color: var(--color-text);
 }
 
-.bo-jobs-slug {
-  margin-top: var(--space-1);
+.bo-jobs-view-toggle button[aria-pressed="true"] {
+  background: var(--color-surface-alt);
+  color: var(--color-primary);
+}
+
+.bo-jobs-view-toggle button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.bo-jobs-view-toggle button + button {
+  border-left: 1px solid var(--color-border);
+}
+
+/* Jobs grid cards — flat layout, minimal chrome */
+.bo-jobs-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.bo-jobs-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  transition:
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.bo-jobs-card:hover,
+.bo-jobs-card:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus), var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bo-jobs-card {
+    transition:
+      box-shadow var(--transition-fast),
+      border-color var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  .bo-jobs-card:hover,
+  .bo-jobs-card:focus-within {
+    transform: none;
+  }
+}
+
+.bo-jobs-card-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  gap: var(--space-2);
+}
+
+.bo-jobs-card-head {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.bo-jobs-card-title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  color: var(--color-primary-hover);
+  line-height: 1.4;
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.bo-jobs-card-title:hover,
+.bo-jobs-card-title:focus-visible {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.bo-jobs-card-head .bo-job-status {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.bo-jobs-card-summary {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  min-height: calc(2 * 1.5 * 1em);
+}
+
+.bo-jobs-card-meta {
+  margin: 0;
+  padding-top: var(--space-1);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+.bo-jobs-card-meta-sep {
+  color: var(--color-border);
+}
+
+.bo-jobs-card-dates-line {
+  margin: 0;
+  margin-top: auto;
+  padding-top: var(--space-2);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+
+.bo-jobs-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.bo-jobs-card-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  min-height: 0;
+}
+
+.bo-jobs-card-footer .bo-jobs-flag {
+  margin-right: 0;
+}
+
+.bo-jobs-title {
+  font-weight: var(--weight-regular);
+  color: var(--color-primary-hover);
+  text-decoration: none;
+}
+
+.bo-jobs-title:hover,
+.bo-jobs-title:focus-visible {
+  color: var(--color-primary);
+  text-decoration: underline;
 }
 
 .bo-jobs-flag {
@@ -1124,6 +1425,19 @@ button {
 
 .bo-job-chip-remove:hover {
   color: var(--color-error);
+}
+
+/* Standalone job preview tab (no app shell) */
+.bo-job-preview-standalone {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.bo-job-preview-standalone-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  width: 100%;
 }
 
 /* Create job — review step (candidate-style preview, backoffice tokens) */
@@ -1724,18 +2038,26 @@ body.bo-nav-open .bo-sidebar-overlay {
 }
 
 .bo-label--inline {
+  display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text);
+  cursor: pointer;
+  max-width: 100%;
 }
 
 .bo-label--inline input[type="checkbox"] {
   width: 1rem;
   height: 1rem;
+  min-width: 1rem;
+  min-height: 1rem;
+  margin: 0;
+  flex-shrink: 0;
   accent-color: var(--color-primary);
+  vertical-align: middle;
 }
 
 .bo-input {
@@ -1785,6 +2107,37 @@ body.bo-nav-open .bo-sidebar-overlay {
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.bo-jobs-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  flex-wrap: nowrap;
+}
+
+.bo-jobs-preview-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  line-height: 0;
+}
+
+.bo-jobs-preview-link:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-primary);
+}
+
+.bo-jobs-preview-link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 .bo-admin-table-actions {

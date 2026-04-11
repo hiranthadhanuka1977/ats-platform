@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { IconLayoutGrid, IconLayoutList, IconPreview } from "@/components/backoffice/nav-icons";
 import { clearJobPostingCreateDraft } from "@/lib/job-posting-create-draft";
 
 type Lookup = { id: number; name: string; slug: string };
@@ -59,6 +60,8 @@ function countActiveFilters(a: {
   return n;
 }
 
+const JOBS_VIEW_STORAGE_KEY = "bo-jobs-view-mode";
+
 function FilterDotsIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -99,12 +102,23 @@ export function JobsPageClient() {
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
 
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+
   const [filterOpen, setFilterOpen] = useState(false);
   const filterWrapRef = useRef<HTMLDivElement>(null);
   const filterFlyoverId = useId();
   const filterHeadingId = useId();
 
   const activeFilterCount = countActiveFilters(applied);
+
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(JOBS_VIEW_STORAGE_KEY);
+      if (v === "grid" || v === "list") setViewMode(v);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -251,6 +265,15 @@ export function JobsPageClient() {
     setApplied((prev) => ({ ...prev, page: Math.max(1, Math.min(p, meta.totalPages)) }));
   }
 
+  function setViewModePersist(mode: "list" | "grid") {
+    setViewMode(mode);
+    try {
+      localStorage.setItem(JOBS_VIEW_STORAGE_KEY, mode);
+    } catch {
+      /* ignore */
+    }
+  }
+
   return (
     <>
       <header className="bo-jobs-header">
@@ -295,6 +318,26 @@ export function JobsPageClient() {
                   : `${meta.totalCount} result${meta.totalCount === 1 ? "" : "s"} · page ${meta.page} of ${meta.totalPages}`}
               </p>
             )}
+            <div className="bo-jobs-view-toggle" role="group" aria-label="View mode">
+              <button
+                type="button"
+                aria-pressed={viewMode === "list"}
+                aria-label="List view"
+                title="List view"
+                onClick={() => setViewModePersist("list")}
+              >
+                <IconLayoutList />
+              </button>
+              <button
+                type="button"
+                aria-pressed={viewMode === "grid"}
+                aria-label="Grid view"
+                title="Grid view"
+                onClick={() => setViewModePersist("grid")}
+              >
+                <IconLayoutGrid />
+              </button>
+            </div>
             <div className="bo-jobs-filter-wrap" ref={filterWrapRef}>
               <button
                 type="button"
@@ -490,57 +533,128 @@ export function JobsPageClient() {
           <p className="bo-admin-muted">No job postings match your filters. Try adjusting filters or create a new posting.</p>
         ) : (
           <>
-            <div className="bo-admin-table-scroll">
-              <table className="bo-admin-table bo-jobs-table">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Status</th>
-                    <th>Department</th>
-                    <th>Location</th>
-                    <th>Type</th>
-                    <th>Experience</th>
-                    <th>Posted</th>
-                    <th>Updated</th>
-                    <th>Flags</th>
-                    <th className="bo-admin-table-actions">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((j) => (
-                    <tr key={j.id}>
-                      <td>
-                        <span className="bo-jobs-title">{j.title}</span>
-                        <div className="bo-jobs-slug">
-                          <code className="bo-admin-code">{j.slug}</code>
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`bo-job-status bo-job-status--${j.status}`}>{j.status}</span>
-                      </td>
-                      <td>{j.department.name}</td>
-                      <td>
-                        {j.location.city}, {j.location.country}
-                      </td>
-                      <td>{j.employmentType.name}</td>
-                      <td>{j.experienceLevel.name}</td>
-                      <td>{formatShortDate(j.postedAt)}</td>
-                      <td>{formatShortDate(j.updatedAt)}</td>
-                      <td>
-                        {j.isFeatured && <span className="bo-jobs-flag">Featured</span>}
-                        {j.isRemote && <span className="bo-jobs-flag">Remote</span>}
-                        {!j.isFeatured && !j.isRemote && "—"}
-                      </td>
-                      <td className="bo-admin-table-actions">
-                        <Link href={`/jobs/${j.id}/edit`} className="btn btn-secondary btn-sm">
-                          Edit
-                        </Link>
-                      </td>
+            {viewMode === "list" ? (
+              <div className="bo-admin-table-scroll">
+                <table className="bo-admin-table bo-jobs-table">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Status</th>
+                      <th>Department</th>
+                      <th>Location</th>
+                      <th>Type</th>
+                      <th>Posted</th>
+                      <th>Updated</th>
+                      <th>Flags</th>
+                      <th className="bo-admin-table-actions">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {items.map((j) => (
+                      <tr key={j.id}>
+                        <td>
+                          <Link href={`/jobs/${j.id}/edit`} className="bo-jobs-title">
+                            {j.title}
+                          </Link>
+                        </td>
+                        <td>
+                          <span className={`bo-job-status bo-job-status--${j.status}`}>{j.status}</span>
+                        </td>
+                        <td>{j.department.name}</td>
+                        <td>
+                          {j.location.city}, {j.location.country}
+                        </td>
+                        <td>{j.employmentType.name}</td>
+                        <td>{formatShortDate(j.postedAt)}</td>
+                        <td>{formatShortDate(j.updatedAt)}</td>
+                        <td>
+                          {j.isFeatured && <span className="bo-jobs-flag">Featured</span>}
+                          {j.isRemote && <span className="bo-jobs-flag">Remote</span>}
+                          {!j.isFeatured && !j.isRemote && "—"}
+                        </td>
+                        <td className="bo-admin-table-actions bo-jobs-actions-cell">
+                          <Link
+                            href={`/jobs/${j.id}/preview`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bo-jobs-preview-link"
+                            title="Preview in new tab"
+                            aria-label={`Preview ${j.title} in new tab`}
+                          >
+                            <IconPreview />
+                          </Link>
+                          <Link href={`/jobs/${j.id}/edit`} className="btn btn-secondary btn-sm">
+                            Edit
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <ul className="bo-jobs-grid" aria-labelledby="jobs-list-heading">
+                {items.map((j) => (
+                  <li key={j.id} className="bo-jobs-card">
+                    <div className="bo-jobs-card-inner">
+                      <div className="bo-jobs-card-head">
+                        <Link href={`/jobs/${j.id}/edit`} className="bo-jobs-card-title">
+                          {j.title}
+                        </Link>
+                        <span className={`bo-job-status bo-job-status--${j.status}`}>{j.status}</span>
+                      </div>
+                      <p className="bo-jobs-card-summary">{j.summary.trim() || "—"}</p>
+                      <p className="bo-jobs-card-meta">
+                        {j.department.name}
+                        <span className="bo-jobs-card-meta-sep" aria-hidden>
+                          {" "}
+                          ·{" "}
+                        </span>
+                        {j.location.city}, {j.location.country}
+                        <span className="bo-jobs-card-meta-sep" aria-hidden>
+                          {" "}
+                          ·{" "}
+                        </span>
+                        {j.employmentType.name}
+                      </p>
+                      <p className="bo-jobs-card-dates-line">
+                        {j.postedAt ? (
+                          <>
+                            Posted {formatShortDate(j.postedAt)}
+                            <span className="bo-jobs-card-meta-sep" aria-hidden>
+                              {" "}
+                              ·{" "}
+                            </span>
+                          </>
+                        ) : null}
+                        Updated {formatShortDate(j.updatedAt)}
+                      </p>
+                      <div className="bo-jobs-card-footer">
+                        <div className="bo-jobs-card-flags">
+                          {j.isFeatured && <span className="bo-jobs-flag">Featured</span>}
+                          {j.isRemote && <span className="bo-jobs-flag">Remote</span>}
+                        </div>
+                        <div className="bo-jobs-actions-cell">
+                          <Link
+                            href={`/jobs/${j.id}/preview`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bo-jobs-preview-link"
+                            title="Preview in new tab"
+                            aria-label={`Preview ${j.title} in new tab`}
+                          >
+                            <IconPreview />
+                          </Link>
+                          <Link href={`/jobs/${j.id}/edit`} className="btn btn-secondary btn-sm">
+                            Edit
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
 
             {meta.totalPages > 1 && (
               <nav className="bo-jobs-pagination" aria-label="Pagination">

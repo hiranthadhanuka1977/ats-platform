@@ -24,6 +24,10 @@ export const MAINTENANCE_SECTIONS = {
     title: "Tags",
     apiPath: "/api/admin/tags",
   },
+  benefits: {
+    title: "Benefits",
+    apiPath: "/api/admin/benefits",
+  },
 } as const;
 
 export type MaintenanceSectionId = keyof typeof MAINTENANCE_SECTIONS;

@@ -5,7 +5,7 @@ const STATUSES: JobPostingStatus[] = ["draft", "published", "closed", "archived"
 
 function toDecimal(v: unknown): Prisma.Decimal | null {
   if (v === null || v === undefined || v === "") return null;
-  const s = typeof v === "number" ? String(v) : String(v).trim();
+  const s = typeof v === "number" ? String(v) : String(v).trim().replace(/,/g, "");
   if (!s) return null;
   try {
     return new Prisma.Decimal(s);

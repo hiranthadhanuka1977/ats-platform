@@ -86,7 +86,7 @@ const SKILLS = [
   'SQL',
 ];
 
-/** @see db-schema.md §1.6 — job posting PDP / perks */
+/** @see db-schema.md §1.6 — job posting PDP / perks (description is the stable key for idempotent seed) */
 const BENEFITS = [
   { description: 'Health insurance', sortOrder: 1 },
   { description: 'Dental & vision', sortOrder: 2 },
@@ -96,6 +96,12 @@ const BENEFITS = [
   { description: 'Paid time off', sortOrder: 6 },
   { description: 'Parental leave', sortOrder: 7 },
   { description: 'Employee stock options', sortOrder: 8 },
+  { description: 'Retirement / pension plan', sortOrder: 9 },
+  { description: 'Life & disability insurance', sortOrder: 10 },
+  { description: 'Wellness & gym stipend', sortOrder: 11 },
+  { description: 'Home office allowance', sortOrder: 12 },
+  { description: 'Mental health support (EAP)', sortOrder: 13 },
+  { description: 'Team events & social budget', sortOrder: 14 },
 ];
 
 /** @see db-schema.md §1.7 — variant maps to badge classes */

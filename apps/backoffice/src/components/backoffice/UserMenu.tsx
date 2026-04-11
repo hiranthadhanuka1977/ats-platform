@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useRef } from "react";
+import { useCloseDetailsOnOutsideAndEscape } from "@/hooks/useCloseDetailsOnOutsideAndEscape";
 import { IconChevronDown } from "./nav-icons";
 
 type UserMenuProps = {
@@ -8,8 +12,11 @@ type UserMenuProps = {
 };
 
 export function UserMenu({ userName, userRole, avatarInitials }: UserMenuProps) {
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  useCloseDetailsOnOutsideAndEscape(detailsRef);
+
   return (
-    <details className="bo-user-menu">
+    <details ref={detailsRef} className="bo-user-menu">
       <summary>
         <span className="bo-user-avatar" aria-hidden>
           {avatarInitials}

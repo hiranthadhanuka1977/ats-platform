@@ -145,3 +145,42 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     return NextResponse.json(errBody, { status });
   }
 }
+
+export async function DELETE(_request: NextRequest, ctx: Params) {
+  const auth = await requireStaffSession();
+  if (auth instanceof NextResponse) return auth;
+
+  const id = (await ctx.params).id;
+  if (!id || !/^[0-9a-f-]{36}$/i.test(id)) {
+    return NextResponse.json({ error: { code: "VALIDATION_ERROR" } }, { status: 400 });
+  }
+
+  try {
+    const existing = await prisma.jobPosting.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: { code: "NOT_FOUND" } }, { status: 404 });
+    }
+
+    const appCount = await prisma.application.count({ where: { jobPostingId: id } });
+    if (appCount > 0) {
+      return NextResponse.json(
+        {
+          error: {
+            code: "CONFLICT",
+            message: `This job has ${appCount} application(s). It cannot be deleted while applications exist.`,
+          },
+        },
+        { status: 409 }
+      );
+    }
+
+    await prisma.jobPosting.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    const { status, body } = prismaErrorResponse(err);
+    return NextResponse.json(body, { status });
+  }
+}

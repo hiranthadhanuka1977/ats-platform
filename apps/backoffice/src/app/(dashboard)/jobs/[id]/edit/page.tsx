@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JobEditActionsMenu } from "@/components/jobs/JobEditActionsMenu";
 import { JobPostingForm } from "@/components/jobs/JobPostingForm";
 import { JOB_POSTING_FULL_INCLUDE } from "@/lib/job-posting-queries";
 import { serializeJobPostingFull } from "@/lib/job-posting-serialize";
@@ -34,7 +35,10 @@ export default async function EditJobPostingPage({ params }: Props) {
       <p className="bo-jobs-back">
         <Link href="/jobs">← Back to jobs</Link>
       </p>
-      <h1 className="bo-page-title">Edit job posting</h1>
+      <div className="bo-page-header-actions">
+        <h1 className="bo-page-title">Edit job posting</h1>
+        <JobEditActionsMenu jobId={id} jobTitle={row.title} />
+      </div>
       <p className="bo-page-sub">
         Update listing fields and full PDP content. Saving replaces responsibilities, qualifications, and junction
         rows for skills, benefits, and tags with the selections below.

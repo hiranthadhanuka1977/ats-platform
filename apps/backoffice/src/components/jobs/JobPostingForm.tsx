@@ -10,6 +10,11 @@ import {
   saveJobPostingCreateDraft,
 } from "@/lib/job-posting-create-draft";
 import type { SerializedJobPosting } from "@/lib/job-posting-serialize";
+import {
+  formatSalaryDigitsWithCommas,
+  salaryInputToDigits,
+  salaryValueToDigits,
+} from "@/lib/salary-input";
 
 type Lookup = { id: number; name: string; slug: string };
 type LocationLookup = { id: number; city: string; country: string; slug: string };
@@ -173,8 +178,8 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
     setOverview(d.overview);
     setRoleSummary(d.roleSummary);
     setApplicationInfo(d.applicationInfo);
-    setSalaryMin(d.salaryMin);
-    setSalaryMax(d.salaryMax);
+    setSalaryMin(salaryValueToDigits(d.salaryMin));
+    setSalaryMax(salaryValueToDigits(d.salaryMax));
     setSalaryCurrency(d.salaryCurrency);
     setIsSalaryVisible(d.isSalaryVisible);
     setBannerImageUrl(d.bannerImageUrl);
@@ -202,8 +207,8 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
     setOverview(j.overview ?? "");
     setRoleSummary(j.roleSummary ?? "");
     setApplicationInfo(j.applicationInfo ?? "");
-    setSalaryMin(j.salaryMin ?? "");
-    setSalaryMax(j.salaryMax ?? "");
+    setSalaryMin(salaryValueToDigits(j.salaryMin));
+    setSalaryMax(salaryValueToDigits(j.salaryMax));
     setSalaryCurrency(j.salaryCurrency ?? "");
     setIsSalaryVisible(j.isSalaryVisible);
     setBannerImageUrl(j.bannerImageUrl ?? "");
@@ -715,9 +720,11 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
             <input
               id="job-salary-min"
               className="bo-input"
-              value={salaryMin}
-              onChange={(e) => setSalaryMin(e.target.value)}
-              inputMode="decimal"
+              value={formatSalaryDigitsWithCommas(salaryMin)}
+              onChange={(e) => setSalaryMin(salaryInputToDigits(e.target.value))}
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="e.g. 80,000"
             />
           </div>
           <div className="bo-field">
@@ -727,9 +734,11 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
             <input
               id="job-salary-max"
               className="bo-input"
-              value={salaryMax}
-              onChange={(e) => setSalaryMax(e.target.value)}
-              inputMode="decimal"
+              value={formatSalaryDigitsWithCommas(salaryMax)}
+              onChange={(e) => setSalaryMax(salaryInputToDigits(e.target.value))}
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="e.g. 120,000"
             />
           </div>
           <div className="bo-field">

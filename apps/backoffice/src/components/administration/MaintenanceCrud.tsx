@@ -16,6 +16,7 @@ const ADD_LABEL: Record<MaintenanceSectionId, string> = {
   "experience-levels": "Add experience level",
   skills: "Add skill",
   tags: "Add tag",
+  benefits: "Add benefit",
 };
 
 async function parseError(res: Response): Promise<string> {
@@ -41,6 +42,8 @@ function getDefaultForm(section: MaintenanceSectionId): Record<string, unknown> 
       return { name: "" };
     case "tags":
       return { name: "", variant: "primary", sortOrder: 0 };
+    case "benefits":
+      return { description: "", sortOrder: 0 };
     default:
       return {};
   }
@@ -82,6 +85,11 @@ function rowToForm(section: MaintenanceSectionId, row: Row): Record<string, unkn
       return {
         name: String(row.name ?? ""),
         variant: String(row.variant ?? "primary"),
+        sortOrder: Number(row.sortOrder ?? 0),
+      };
+    case "benefits":
+      return {
+        description: String(row.description ?? ""),
         sortOrder: Number(row.sortOrder ?? 0),
       };
     default:
@@ -127,6 +135,11 @@ function formToPayload(section: MaintenanceSectionId, form: Record<string, unkno
         variant: String(form.variant ?? "primary"),
         sortOrder: Math.trunc(Number(form.sortOrder) || 0),
       };
+    case "benefits":
+      return {
+        description: String(form.description ?? "").trim(),
+        sortOrder: Math.trunc(Number(form.sortOrder) || 0),
+      };
     default:
       return {};
   }
@@ -144,6 +157,8 @@ function rowLabel(section: MaintenanceSectionId, row: Row): string {
     case "skills":
     case "tags":
       return String(row.name ?? "").trim() || `Record #${row.id}`;
+    case "benefits":
+      return String(row.description ?? "").trim() || `Record #${row.id}`;
     default:
       return `Record #${row.id}`;
   }
@@ -499,6 +514,25 @@ function MaintenanceForm({
           {input("sortOrder", "Sort order", String(form.sortOrder ?? ""), "number")}
         </div>
       );
+    case "benefits":
+      return (
+        <div className="bo-admin-form-grid">
+          <div className="bo-field" style={{ gridColumn: "1 / -1" }}>
+            <label className="bo-label" htmlFor="benefit-description">
+              Description
+            </label>
+            <textarea
+              id="benefit-description"
+              className="bo-input"
+              rows={3}
+              maxLength={255}
+              value={String(form.description ?? "")}
+              onChange={(e) => setField("description", e.target.value)}
+            />
+          </div>
+          {input("sortOrder", "Sort order", String(form.sortOrder ?? ""), "number")}
+        </div>
+      );
     default:
       return null;
   }
@@ -568,6 +602,12 @@ function MaintenanceTable({
                 <th>Sort</th>
               </>
             )}
+            {section === "benefits" && (
+              <>
+                <th>Description</th>
+                <th>Sort</th>
+              </>
+            )}
             <th className="bo-admin-table-actions">Actions</th>
           </tr>
         </thead>
@@ -627,6 +667,12 @@ function MaintenanceTable({
                     <td>
                       <span className="bo-admin-pill">{String(row.variant ?? "")}</span>
                     </td>
+                    <td>{String(row.sortOrder ?? "")}</td>
+                  </>
+                )}
+                {section === "benefits" && (
+                  <>
+                    <td>{String(row.description ?? "")}</td>
                     <td>{String(row.sortOrder ?? "")}</td>
                   </>
                 )}
