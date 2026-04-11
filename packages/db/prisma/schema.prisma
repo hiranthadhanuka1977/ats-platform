@@ -84,10 +84,11 @@ model Location {
 }
 
 model EmploymentType {
-  id        Int    @id @default(autoincrement())
-  name      String @unique @db.VarChar(50)
-  slug      String @unique @db.VarChar(50)
-  sortOrder Int    @default(0) @map("sort_order") @db.SmallInt
+  id        Int     @id @default(autoincrement())
+  name      String  @unique @db.VarChar(50)
+  slug      String  @unique @db.VarChar(50)
+  isActive  Boolean @default(true) @map("is_active")
+  sortOrder Int     @default(0) @map("sort_order") @db.SmallInt
 
   jobPostings JobPosting[]
 
@@ -95,11 +96,12 @@ model EmploymentType {
 }
 
 model ExperienceLevel {
-  id        Int    @id @default(autoincrement())
-  name      String @unique @db.VarChar(50)
-  slug      String @unique @db.VarChar(50)
-  minYears  Int    @default(0) @map("min_years") @db.SmallInt
-  sortOrder Int    @default(0) @map("sort_order") @db.SmallInt
+  id        Int     @id @default(autoincrement())
+  name      String  @unique @db.VarChar(50)
+  slug      String  @unique @db.VarChar(50)
+  minYears  Int     @default(0) @map("min_years") @db.SmallInt
+  isActive  Boolean @default(true) @map("is_active")
+  sortOrder Int     @default(0) @map("sort_order") @db.SmallInt
 
   jobPostings JobPosting[]
 
@@ -109,6 +111,7 @@ model ExperienceLevel {
 model Skill {
   id        Int      @id @default(autoincrement())
   name      String   @unique @db.VarChar(100)
+  isActive  Boolean  @default(true) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   jobPostingSkills JobPostingSkill[]
@@ -117,9 +120,10 @@ model Skill {
 }
 
 model Benefit {
-  id          Int    @id @default(autoincrement())
-  description String @db.VarChar(255)
-  sortOrder   Int    @default(0) @map("sort_order") @db.SmallInt
+  id          Int     @id @default(autoincrement())
+  description String  @db.VarChar(255)
+  isActive    Boolean @default(true) @map("is_active")
+  sortOrder   Int     @default(0) @map("sort_order") @db.SmallInt
 
   jobPostingBenefits JobPostingBenefit[]
 
@@ -127,10 +131,11 @@ model Benefit {
 }
 
 model Tag {
-  id        Int    @id @default(autoincrement())
-  name      String @unique @db.VarChar(50)
-  variant   String @default("primary") @db.VarChar(20)
-  sortOrder Int    @default(0) @map("sort_order") @db.SmallInt
+  id        Int     @id @default(autoincrement())
+  name      String  @unique @db.VarChar(50)
+  variant   String  @default("primary") @db.VarChar(20)
+  isActive  Boolean @default(true) @map("is_active")
+  sortOrder Int     @default(0) @map("sort_order") @db.SmallInt
 
   jobPostingTags JobPostingTag[]
 

@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import { withAdminJsonResponse } from "@/lib/admin-api-route";
 import { requireStaffSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorResponse } from "@/lib/prisma-errors";
 
 export async function GET() {
-  const auth = await requireStaffSession();
-  if (auth instanceof NextResponse) return auth;
-  const rows = await prisma.skill.findMany({
-    orderBy: { name: "asc" },
+  return withAdminJsonResponse(async () => {
+    const auth = await requireStaffSession();
+    if (auth instanceof NextResponse) return auth;
+    const rows = await prisma.skill.findMany({
+      orderBy: { name: "asc" },
+      include: { _count: { select: { jobPostingSkills: true } } },
+    });
+    return NextResponse.json(
+      rows.map(({ _count, ...r }) => ({ ...r, jobPostingCount: _count.jobPostingSkills }))
+    );
   });
-  return NextResponse.json(rows);
 }
 
 export async function POST(request: NextRequest) {
@@ -26,9 +32,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: { code: "VALIDATION_ERROR", message: "Name is required." } }, { status: 400 });
   }
 
+  const isActive = typeof body.isActive === "boolean" ? body.isActive : true;
+
   try {
     const row = await prisma.skill.create({
-      data: { name },
+      data: { name, isActive },
     });
     return NextResponse.json(row, { status: 201 });
   } catch (err) {

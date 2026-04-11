@@ -35,15 +35,15 @@ function getDefaultForm(section: MaintenanceSectionId): Record<string, unknown> 
     case "locations":
       return { city: "", country: "", slug: "", isActive: true, sortOrder: 0 };
     case "employment-types":
-      return { name: "", slug: "", sortOrder: 0 };
+      return { name: "", slug: "", sortOrder: 0, isActive: true };
     case "experience-levels":
-      return { name: "", slug: "", minYears: 0, sortOrder: 0 };
+      return { name: "", slug: "", minYears: 0, sortOrder: 0, isActive: true };
     case "skills":
-      return { name: "" };
+      return { name: "", isActive: true };
     case "tags":
-      return { name: "", variant: "primary", sortOrder: 0 };
+      return { name: "", variant: "primary", sortOrder: 0, isActive: true };
     case "benefits":
-      return { description: "", sortOrder: 0 };
+      return { description: "", sortOrder: 0, isActive: true };
     default:
       return {};
   }
@@ -71,6 +71,7 @@ function rowToForm(section: MaintenanceSectionId, row: Row): Record<string, unkn
         name: String(row.name ?? ""),
         slug: String(row.slug ?? ""),
         sortOrder: Number(row.sortOrder ?? 0),
+        isActive: rowIsActive(row),
       };
     case "experience-levels":
       return {
@@ -78,19 +79,22 @@ function rowToForm(section: MaintenanceSectionId, row: Row): Record<string, unkn
         slug: String(row.slug ?? ""),
         minYears: Number(row.minYears ?? 0),
         sortOrder: Number(row.sortOrder ?? 0),
+        isActive: rowIsActive(row),
       };
     case "skills":
-      return { name: String(row.name ?? "") };
+      return { name: String(row.name ?? ""), isActive: rowIsActive(row) };
     case "tags":
       return {
         name: String(row.name ?? ""),
         variant: String(row.variant ?? "primary"),
         sortOrder: Number(row.sortOrder ?? 0),
+        isActive: rowIsActive(row),
       };
     case "benefits":
       return {
         description: String(row.description ?? ""),
         sortOrder: Number(row.sortOrder ?? 0),
+        isActive: rowIsActive(row),
       };
     default:
       return {};
@@ -119,6 +123,7 @@ function formToPayload(section: MaintenanceSectionId, form: Record<string, unkno
         name: String(form.name ?? "").trim(),
         slug: String(form.slug ?? "").trim(),
         sortOrder: Math.trunc(Number(form.sortOrder) || 0),
+        isActive: Boolean(form.isActive),
       };
     case "experience-levels":
       return {
@@ -126,23 +131,35 @@ function formToPayload(section: MaintenanceSectionId, form: Record<string, unkno
         slug: String(form.slug ?? "").trim(),
         minYears: Math.max(0, Math.trunc(Number(form.minYears) || 0)),
         sortOrder: Math.trunc(Number(form.sortOrder) || 0),
+        isActive: Boolean(form.isActive),
       };
     case "skills":
-      return { name: String(form.name ?? "").trim() };
+      return { name: String(form.name ?? "").trim(), isActive: Boolean(form.isActive) };
     case "tags":
       return {
         name: String(form.name ?? "").trim(),
         variant: String(form.variant ?? "primary"),
         sortOrder: Math.trunc(Number(form.sortOrder) || 0),
+        isActive: Boolean(form.isActive),
       };
     case "benefits":
       return {
         description: String(form.description ?? "").trim(),
         sortOrder: Math.trunc(Number(form.sortOrder) || 0),
+        isActive: Boolean(form.isActive),
       };
     default:
       return {};
   }
+}
+
+function rowJobPostingCount(row: Row): number {
+  const n = row.jobPostingCount;
+  return typeof n === "number" && Number.isFinite(n) ? n : 0;
+}
+
+function rowIsActive(row: Row): boolean {
+  return row.isActive !== false;
 }
 
 function rowLabel(section: MaintenanceSectionId, row: Row): string {
@@ -181,8 +198,13 @@ export function MaintenanceCrud({
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<Record<string, unknown>>({});
   const [saving, setSaving] = useState(false);
-  const [pendingDelete, setPendingDelete] = useState<{ id: number; label: string } | null>(null);
-  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
+  type RowActionKind = "delete" | "archive" | "restore";
+  const [pendingRowAction, setPendingRowAction] = useState<{
+    kind: RowActionKind;
+    id: number;
+    label: string;
+  } | null>(null);
+  const [rowActionSubmitting, setRowActionSubmitting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -207,15 +229,15 @@ export function MaintenanceCrud({
     setMode("idle");
     setEditingId(null);
     setForm({});
-    setPendingDelete(null);
+    setPendingRowAction(null);
   }, [section]);
 
   useEffect(() => {
-    if (!pendingDelete) return;
+    if (!pendingRowAction) return;
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.preventDefault();
-        if (!deleteSubmitting) setPendingDelete(null);
+        if (!rowActionSubmitting) setPendingRowAction(null);
       }
     }
     window.addEventListener("keydown", onKeyDown);
@@ -225,7 +247,7 @@ export function MaintenanceCrud({
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
     };
-  }, [pendingDelete, deleteSubmitting]);
+  }, [pendingRowAction, rowActionSubmitting]);
 
   function setField(key: string, value: unknown) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -280,30 +302,52 @@ export function MaintenanceCrud({
 
   function requestDelete(row: Row) {
     const id = Number(row.id);
-    setPendingDelete({ id, label: rowLabel(section, row) });
+    setPendingRowAction({ kind: "delete", id, label: rowLabel(section, row) });
     setError(null);
   }
 
-  function cancelDelete() {
-    if (deleteSubmitting) return;
-    setPendingDelete(null);
+  function requestArchive(row: Row) {
+    const id = Number(row.id);
+    setPendingRowAction({ kind: "archive", id, label: rowLabel(section, row) });
+    setError(null);
   }
 
-  async function confirmDelete() {
-    if (pendingDelete == null) return;
-    const { id } = pendingDelete;
-    setDeleteSubmitting(true);
+  function requestRestore(row: Row) {
+    const id = Number(row.id);
+    setPendingRowAction({ kind: "restore", id, label: rowLabel(section, row) });
+    setError(null);
+  }
+
+  function cancelRowAction() {
+    if (rowActionSubmitting) return;
+    setPendingRowAction(null);
+  }
+
+  async function confirmRowAction() {
+    if (pendingRowAction == null) return;
+    const { kind, id } = pendingRowAction;
+    setRowActionSubmitting(true);
     setError(null);
     try {
-      const res = await fetch(`${cfg.apiPath}/${id}`, { method: "DELETE", credentials: "include" });
-      if (!res.ok && res.status !== 204) throw new Error(await parseError(res));
-      setPendingDelete(null);
+      if (kind === "delete") {
+        const res = await fetch(`${cfg.apiPath}/${id}`, { method: "DELETE", credentials: "include" });
+        if (!res.ok && res.status !== 204) throw new Error(await parseError(res));
+      } else {
+        const res = await fetch(`${cfg.apiPath}/${id}`, {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isActive: kind === "restore" }),
+        });
+        if (!res.ok) throw new Error(await parseError(res));
+      }
+      setPendingRowAction(null);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Delete failed");
-      setPendingDelete(null);
+      setError(e instanceof Error ? e.message : "Request failed");
+      setPendingRowAction(null);
     } finally {
-      setDeleteSubmitting(false);
+      setRowActionSubmitting(false);
     }
   }
 
@@ -311,37 +355,72 @@ export function MaintenanceCrud({
 
   return (
     <>
-      {pendingDelete && (
-        <div className="bo-modal-backdrop" role="presentation" onClick={cancelDelete}>
+      {pendingRowAction && (
+        <div className="bo-modal-backdrop" role="presentation" onClick={cancelRowAction}>
           <div
             className="bo-modal"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="bo-delete-dialog-title"
+            aria-labelledby="bo-row-action-dialog-title"
             tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 id="bo-delete-dialog-title" className="bo-modal-title">
-              Delete this record?
+            <h2 id="bo-row-action-dialog-title" className="bo-modal-title">
+              {pendingRowAction.kind === "delete" && "Delete this record?"}
+              {pendingRowAction.kind === "archive" && "Archive this record?"}
+              {pendingRowAction.kind === "restore" && "Restore this record?"}
             </h2>
-            <p className="bo-modal-warning" role="alert">
-              <strong>Warning:</strong> This action cannot be undone. If this value is still used by job postings or
-              other records, deletion may be blocked.
-            </p>
+            {pendingRowAction.kind === "delete" ? (
+              <p className="bo-modal-warning" role="alert">
+                <strong>Warning:</strong> This action cannot be undone. Deletion is only allowed when no job postings
+                reference this value.
+              </p>
+            ) : pendingRowAction.kind === "archive" ? (
+              <p className="bo-modal-body">
+                This value is used on job postings. It will be hidden from new job forms but existing postings keep
+                their data.
+              </p>
+            ) : (
+              <p className="bo-modal-body">This record will be active again and available when creating or editing job postings.</p>
+            )}
             <p className="bo-modal-body">
-              Are you sure you want to delete <strong>{pendingDelete.label}</strong>?
+              {pendingRowAction.kind === "delete" && (
+                <>
+                  Are you sure you want to delete <strong>{pendingRowAction.label}</strong>?
+                </>
+              )}
+              {pendingRowAction.kind === "archive" && (
+                <>
+                  Archive <strong>{pendingRowAction.label}</strong>?
+                </>
+              )}
+              {pendingRowAction.kind === "restore" && (
+                <>
+                  Restore <strong>{pendingRowAction.label}</strong>?
+                </>
+              )}
             </p>
             <div className="bo-modal-actions">
-              <button type="button" className="btn btn-secondary btn-sm" onClick={cancelDelete} disabled={deleteSubmitting}>
-                No
+              <button type="button" className="btn btn-secondary btn-sm" onClick={cancelRowAction} disabled={rowActionSubmitting}>
+                Cancel
               </button>
               <button
                 type="button"
-                className="btn btn-danger btn-sm"
-                onClick={() => void confirmDelete()}
-                disabled={deleteSubmitting}
+                className={
+                  pendingRowAction.kind === "delete" ? "btn btn-danger btn-sm" : "btn btn-primary btn-sm"
+                }
+                onClick={() => void confirmRowAction()}
+                disabled={rowActionSubmitting}
               >
-                {deleteSubmitting ? "Deleting…" : "Yes"}
+                {rowActionSubmitting
+                  ? pendingRowAction.kind === "delete"
+                    ? "Deleting…"
+                    : "Saving…"
+                  : pendingRowAction.kind === "delete"
+                    ? "Delete"
+                    : pendingRowAction.kind === "archive"
+                      ? "Archive"
+                      : "Restore"}
               </button>
             </div>
           </div>
@@ -392,7 +471,14 @@ export function MaintenanceCrud({
         {loading ? (
           <p className="bo-admin-muted">Loading…</p>
         ) : (
-          <MaintenanceTable section={section} rows={rows} onEdit={openEdit} onDelete={requestDelete} />
+          <MaintenanceTable
+            section={section}
+            rows={rows}
+            onEdit={openEdit}
+            onDelete={requestDelete}
+            onArchive={requestArchive}
+            onRestore={requestRestore}
+          />
         )}
       </div>
     </>
@@ -474,6 +560,16 @@ function MaintenanceForm({
           {input("name", "Name", String(form.name ?? ""))}
           {input("slug", "Slug (optional)", String(form.slug ?? ""))}
           {input("sortOrder", "Sort order", String(form.sortOrder ?? ""), "number")}
+          <div className="bo-field">
+            <label className="bo-label bo-label--inline">
+              <input
+                type="checkbox"
+                checked={Boolean(form.isActive)}
+                onChange={(e) => setField("isActive", e.target.checked)}
+              />
+              Active
+            </label>
+          </div>
         </div>
       );
     case "experience-levels":
@@ -483,12 +579,32 @@ function MaintenanceForm({
           {input("slug", "Slug (optional)", String(form.slug ?? ""))}
           {input("minYears", "Minimum years", String(form.minYears ?? ""), "number")}
           {input("sortOrder", "Sort order", String(form.sortOrder ?? ""), "number")}
+          <div className="bo-field">
+            <label className="bo-label bo-label--inline">
+              <input
+                type="checkbox"
+                checked={Boolean(form.isActive)}
+                onChange={(e) => setField("isActive", e.target.checked)}
+              />
+              Active
+            </label>
+          </div>
         </div>
       );
     case "skills":
       return (
         <div className="bo-admin-form-grid">
           {input("name", "Name", String(form.name ?? ""))}
+          <div className="bo-field">
+            <label className="bo-label bo-label--inline">
+              <input
+                type="checkbox"
+                checked={Boolean(form.isActive)}
+                onChange={(e) => setField("isActive", e.target.checked)}
+              />
+              Active
+            </label>
+          </div>
         </div>
       );
     case "tags":
@@ -512,6 +628,16 @@ function MaintenanceForm({
             </select>
           </div>
           {input("sortOrder", "Sort order", String(form.sortOrder ?? ""), "number")}
+          <div className="bo-field">
+            <label className="bo-label bo-label--inline">
+              <input
+                type="checkbox"
+                checked={Boolean(form.isActive)}
+                onChange={(e) => setField("isActive", e.target.checked)}
+              />
+              Active
+            </label>
+          </div>
         </div>
       );
     case "benefits":
@@ -531,6 +657,16 @@ function MaintenanceForm({
             />
           </div>
           {input("sortOrder", "Sort order", String(form.sortOrder ?? ""), "number")}
+          <div className="bo-field">
+            <label className="bo-label bo-label--inline">
+              <input
+                type="checkbox"
+                checked={Boolean(form.isActive)}
+                onChange={(e) => setField("isActive", e.target.checked)}
+              />
+              Active
+            </label>
+          </div>
         </div>
       );
     default:
@@ -543,15 +679,45 @@ function MaintenanceTable({
   rows,
   onEdit,
   onDelete,
+  onArchive,
+  onRestore,
 }: {
   section: MaintenanceSectionId;
   rows: Row[];
   onEdit: (row: Row) => void;
   onDelete: (row: Row) => void;
+  onArchive: (row: Row) => void;
+  onRestore: (row: Row) => void;
 }) {
   if (rows.length === 0) {
     return <p className="bo-admin-muted">No records yet. Add one to get started.</p>;
   }
+
+  function DestructiveOrArchiveButton({ row }: { row: Row }) {
+    const count = rowJobPostingCount(row);
+    const active = rowIsActive(row);
+    if (count > 0 && active) {
+      return (
+        <button type="button" className="btn btn-secondary btn-sm" onClick={() => onArchive(row)}>
+          Archive
+        </button>
+      );
+    }
+    if (count > 0 && !active) {
+      return (
+        <button type="button" className="btn btn-secondary btn-sm" onClick={() => onRestore(row)}>
+          Restore
+        </button>
+      );
+    }
+    return (
+      <button type="button" className="btn btn-secondary btn-sm" onClick={() => onDelete(row)}>
+        Delete
+      </button>
+    );
+  }
+
+  const inUseCell = (row: Row) => <td>{rowJobPostingCount(row) > 0 ? "Yes" : "No"}</td>;
 
   return (
     <div className="bo-admin-table-scroll">
@@ -564,6 +730,7 @@ function MaintenanceTable({
                 <th>Slug</th>
                 <th>Active</th>
                 <th>Sort</th>
+                <th>In use</th>
               </>
             )}
             {section === "locations" && (
@@ -573,6 +740,7 @@ function MaintenanceTable({
                 <th>Slug</th>
                 <th>Active</th>
                 <th>Sort</th>
+                <th>In use</th>
               </>
             )}
             {section === "employment-types" && (
@@ -580,6 +748,8 @@ function MaintenanceTable({
                 <th>Name</th>
                 <th>Slug</th>
                 <th>Sort</th>
+                <th>Active</th>
+                <th>In use</th>
               </>
             )}
             {section === "experience-levels" && (
@@ -588,11 +758,15 @@ function MaintenanceTable({
                 <th>Slug</th>
                 <th>Min years</th>
                 <th>Sort</th>
+                <th>Active</th>
+                <th>In use</th>
               </>
             )}
             {section === "skills" && (
               <>
                 <th>Name</th>
+                <th>Active</th>
+                <th>In use</th>
               </>
             )}
             {section === "tags" && (
@@ -600,12 +774,16 @@ function MaintenanceTable({
                 <th>Name</th>
                 <th>Variant</th>
                 <th>Sort</th>
+                <th>Active</th>
+                <th>In use</th>
               </>
             )}
             {section === "benefits" && (
               <>
                 <th>Description</th>
                 <th>Sort</th>
+                <th>Active</th>
+                <th>In use</th>
               </>
             )}
             <th className="bo-admin-table-actions">Actions</th>
@@ -624,6 +802,7 @@ function MaintenanceTable({
                     </td>
                     <td>{row.isActive ? "Yes" : "No"}</td>
                     <td>{String(row.sortOrder ?? "")}</td>
+                    {inUseCell(row)}
                   </>
                 )}
                 {section === "locations" && (
@@ -635,6 +814,7 @@ function MaintenanceTable({
                     </td>
                     <td>{row.isActive ? "Yes" : "No"}</td>
                     <td>{String(row.sortOrder ?? "")}</td>
+                    {inUseCell(row)}
                   </>
                 )}
                 {section === "employment-types" && (
@@ -644,6 +824,8 @@ function MaintenanceTable({
                       <code className="bo-admin-code">{String(row.slug ?? "")}</code>
                     </td>
                     <td>{String(row.sortOrder ?? "")}</td>
+                    <td>{rowIsActive(row) ? "Yes" : "No"}</td>
+                    {inUseCell(row)}
                   </>
                 )}
                 {section === "experience-levels" && (
@@ -654,11 +836,15 @@ function MaintenanceTable({
                     </td>
                     <td>{String(row.minYears ?? "")}</td>
                     <td>{String(row.sortOrder ?? "")}</td>
+                    <td>{rowIsActive(row) ? "Yes" : "No"}</td>
+                    {inUseCell(row)}
                   </>
                 )}
                 {section === "skills" && (
                   <>
                     <td>{String(row.name ?? "")}</td>
+                    <td>{rowIsActive(row) ? "Yes" : "No"}</td>
+                    {inUseCell(row)}
                   </>
                 )}
                 {section === "tags" && (
@@ -668,21 +854,23 @@ function MaintenanceTable({
                       <span className="bo-admin-pill">{String(row.variant ?? "")}</span>
                     </td>
                     <td>{String(row.sortOrder ?? "")}</td>
+                    <td>{rowIsActive(row) ? "Yes" : "No"}</td>
+                    {inUseCell(row)}
                   </>
                 )}
                 {section === "benefits" && (
                   <>
                     <td>{String(row.description ?? "")}</td>
                     <td>{String(row.sortOrder ?? "")}</td>
+                    <td>{rowIsActive(row) ? "Yes" : "No"}</td>
+                    {inUseCell(row)}
                   </>
                 )}
                 <td className="bo-admin-table-actions">
                   <button type="button" className="btn btn-secondary btn-sm" onClick={() => onEdit(row)}>
                     Edit
                   </button>{" "}
-                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => onDelete(row)}>
-                    Delete
-                  </button>
+                  <DestructiveOrArchiveButton row={row} />
                 </td>
               </tr>
             );

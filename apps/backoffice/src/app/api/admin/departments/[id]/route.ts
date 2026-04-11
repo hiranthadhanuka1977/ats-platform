@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireStaffSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { countJobPostingRefs, lookupInUseResponse } from "@/lib/admin-lookup-job-refs";
 import { prismaErrorResponse } from "@/lib/prisma-errors";
 import { slugify } from "@/lib/slugify";
 
@@ -57,6 +58,7 @@ export async function DELETE(_request: NextRequest, ctx: Params) {
     return NextResponse.json({ error: { code: "VALIDATION_ERROR" } }, { status: 400 });
   }
   try {
+    if ((await countJobPostingRefs("departments", id)) > 0) return lookupInUseResponse();
     await prisma.department.delete({ where: { id } });
     return new NextResponse(null, { status: 204 });
   } catch (err) {

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useMobileNav } from "@/hooks/useMobileNav";
 import type { HeaderUserDisplay } from "./header-user-display";
 import { Sidebar } from "./Sidebar";
+import { StaffSessionActivity } from "./StaffSessionActivity";
 import { TopBar } from "./TopBar";
 
 type BackOfficeShellProps = {
@@ -18,6 +19,7 @@ export function BackOfficeShell({ children, userDisplay }: BackOfficeShellProps)
 
   return (
     <div className="bo-app">
+      <StaffSessionActivity />
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>

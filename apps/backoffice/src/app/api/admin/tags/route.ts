@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { withAdminJsonResponse } from "@/lib/admin-api-route";
 import { requireStaffSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorResponse } from "@/lib/prisma-errors";
@@ -6,12 +7,17 @@ import { prismaErrorResponse } from "@/lib/prisma-errors";
 const TAG_VARIANTS = new Set(["primary", "accent", "success", "warning"]);
 
 export async function GET() {
-  const auth = await requireStaffSession();
-  if (auth instanceof NextResponse) return auth;
-  const rows = await prisma.tag.findMany({
-    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+  return withAdminJsonResponse(async () => {
+    const auth = await requireStaffSession();
+    if (auth instanceof NextResponse) return auth;
+    const rows = await prisma.tag.findMany({
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      include: { _count: { select: { jobPostingTags: true } } },
+    });
+    return NextResponse.json(
+      rows.map(({ _count, ...r }) => ({ ...r, jobPostingCount: _count.jobPostingTags }))
+    );
   });
-  return NextResponse.json(rows);
 }
 
 export async function POST(request: NextRequest) {
@@ -30,10 +36,11 @@ export async function POST(request: NextRequest) {
   const variantRaw = typeof body.variant === "string" ? body.variant.trim() : "primary";
   const variant = TAG_VARIANTS.has(variantRaw) ? variantRaw : "primary";
   const sortOrder = typeof body.sortOrder === "number" && Number.isFinite(body.sortOrder) ? Math.trunc(body.sortOrder) : 0;
+  const isActive = typeof body.isActive === "boolean" ? body.isActive : true;
 
   try {
     const row = await prisma.tag.create({
-      data: { name, variant, sortOrder },
+      data: { name, variant, sortOrder, isActive },
     });
     return NextResponse.json(row, { status: 201 });
   } catch (err) {

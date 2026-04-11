@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireStaffSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { countJobPostingRefs, lookupInUseResponse } from "@/lib/admin-lookup-job-refs";
 import { prismaErrorResponse } from "@/lib/prisma-errors";
 
 const MAX_DESC = 255;
@@ -21,7 +22,7 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     return NextResponse.json({ error: { code: "INVALID_JSON" } }, { status: 400 });
   }
 
-  const data: { description?: string; sortOrder?: number } = {};
+  const data: { description?: string; sortOrder?: number; isActive?: boolean } = {};
   if (typeof body.description === "string") {
     const d = body.description.trim();
     if (!d) {
@@ -41,6 +42,7 @@ export async function PATCH(request: NextRequest, ctx: Params) {
   if (typeof body.sortOrder === "number" && Number.isFinite(body.sortOrder)) {
     data.sortOrder = Math.trunc(body.sortOrder);
   }
+  if (typeof body.isActive === "boolean") data.isActive = body.isActive;
 
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: { code: "VALIDATION_ERROR", message: "No fields to update." } }, { status: 400 });
@@ -63,6 +65,7 @@ export async function DELETE(_request: NextRequest, ctx: Params) {
     return NextResponse.json({ error: { code: "VALIDATION_ERROR" } }, { status: 400 });
   }
   try {
+    if ((await countJobPostingRefs("benefits", id)) > 0) return lookupInUseResponse();
     await prisma.benefit.delete({ where: { id } });
     return new NextResponse(null, { status: 204 });
   } catch (err) {

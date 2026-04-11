@@ -9,12 +9,12 @@
   },
   "scripts": {
     "db:create": "node scripts/create-database.js",
-    "generate": "prisma generate",
-    "migrate": "prisma migrate dev",
-    "deploy": "prisma migrate deploy",
-    "studio": "prisma studio",
-    "push": "prisma db push",
-    "seed": "prisma db seed"
+    "generate": "node scripts/run-prisma.cjs generate",
+    "migrate": "node scripts/run-prisma.cjs migrate dev",
+    "deploy": "node scripts/run-prisma.cjs migrate deploy",
+    "studio": "node scripts/run-prisma.cjs studio",
+    "push": "node scripts/run-prisma.cjs db push",
+    "seed": "node scripts/run-prisma.cjs db seed"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

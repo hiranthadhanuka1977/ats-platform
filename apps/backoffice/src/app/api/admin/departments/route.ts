@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { withAdminJsonResponse } from "@/lib/admin-api-route";
 import { requireStaffSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 import { prismaErrorResponse } from "@/lib/prisma-errors";
 import { slugify } from "@/lib/slugify";
 
 export async function GET() {
-  const auth = await requireStaffSession();
-  if (auth instanceof NextResponse) return auth;
-  const rows = await prisma.department.findMany({
-    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+  return withAdminJsonResponse(async () => {
+    const auth = await requireStaffSession();
+    if (auth instanceof NextResponse) return auth;
+    const rows = await prisma.department.findMany({
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      include: { _count: { select: { jobPostings: true } } },
+    });
+    return NextResponse.json(
+      rows.map(({ _count, ...r }) => ({ ...r, jobPostingCount: _count.jobPostings }))
+    );
   });
-  return NextResponse.json(rows);
 }
 
 export async function POST(request: NextRequest) {
