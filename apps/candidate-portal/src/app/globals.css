@@ -1,26 +1,28 @@
-@import "tailwindcss";
+@import "../styles/candidate-tokens.css";
+@import "../styles/candidate-portal.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.detail-preline {
+  white-space: pre-wrap;
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.image-banner--placeholder {
+  min-height: 160px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-surface-alt));
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (min-width: 480px) {
+  .image-banner--placeholder {
+    border-radius: var(--radius-xl);
+    min-height: 200px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (min-width: 768px) {
+  .image-banner--placeholder {
+    min-height: 240px;
+  }
 }

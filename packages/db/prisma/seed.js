@@ -20,6 +20,9 @@ const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
+/** Slug prefix for idempotent re-seed (delete + recreate). */
+const SEED_JOB_SLUG_PREFIX = 'seed-dhanuka-';
+
 const SEED_STAFF_USER = {
   email: 'dhanuka@ideahub.lk',
   password: 'abc123',
@@ -110,6 +113,198 @@ const TAGS = [
   { name: 'Hybrid', variant: 'warning', sortOrder: 1 },
   { name: 'Remote', variant: 'success', sortOrder: 2 },
 ];
+
+/** Pool of titles; 30 unique picks after shuffle. */
+const JOB_TITLE_POOL = [
+  'Senior Software Engineer',
+  'Full Stack Developer',
+  'Frontend Engineer',
+  'Backend Engineer',
+  'DevOps Engineer',
+  'Product Manager',
+  'Product Designer',
+  'UX Researcher',
+  'Data Analyst',
+  'Data Scientist',
+  'Machine Learning Engineer',
+  'QA Automation Engineer',
+  'Technical Writer',
+  'Engineering Manager',
+  'Solutions Architect',
+  'Business Analyst',
+  'Marketing Manager',
+  'Content Strategist',
+  'HR Business Partner',
+  'Finance Analyst',
+  'Operations Coordinator',
+  'Customer Success Manager',
+  'Sales Engineer',
+  'Security Engineer',
+  'Mobile Developer',
+  'Scrum Master',
+  'Product Owner',
+  'Visual Designer',
+  'Growth Marketer',
+  'IT Support Specialist',
+  'Cloud Solutions Architect',
+  'Site Reliability Engineer',
+];
+
+function shuffleInPlace(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomStatuses() {
+  const r = Math.random();
+  if (r < 0.72) return 'published';
+  if (r < 0.86) return 'draft';
+  if (r < 0.96) return 'closed';
+  return 'archived';
+}
+
+async function seedJobPostings() {
+  const email = SEED_STAFF_USER.email.trim().toLowerCase();
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    throw new Error(`Seed user ${email} not found — run seedStaffUser first`);
+  }
+
+  const deleted = await prisma.jobPosting.deleteMany({
+    where: {
+      createdById: user.id,
+      slug: { startsWith: SEED_JOB_SLUG_PREFIX },
+    },
+  });
+  if (deleted.count > 0) {
+    console.log('Removed previous seed job postings:', deleted.count);
+  }
+
+  const departments = await prisma.department.findMany({ where: { isActive: true } });
+  const locations = await prisma.location.findMany({ where: { isActive: true } });
+  const employmentTypes = await prisma.employmentType.findMany();
+  const experienceLevels = await prisma.experienceLevel.findMany();
+  const skills = await prisma.skill.findMany();
+  const benefits = await prisma.benefit.findMany();
+  const tags = await prisma.tag.findMany();
+
+  if (
+    departments.length === 0 ||
+    locations.length === 0 ||
+    employmentTypes.length === 0 ||
+    experienceLevels.length === 0
+  ) {
+    throw new Error('Lookups must be seeded before job postings');
+  }
+
+  const tagByName = Object.fromEntries(tags.map((t) => [t.name, t]));
+  const titles = shuffleInPlace([...JOB_TITLE_POOL]).slice(0, 30);
+
+  const RESP_TEMPLATES = [
+    'Collaborate with cross-functional teams to deliver high-quality outcomes.',
+    'Own discovery through delivery for assigned initiatives.',
+    'Participate in code reviews, design discussions, and incident response as needed.',
+    'Communicate progress and risks clearly to stakeholders.',
+    'Improve team practices, documentation, and tooling.',
+  ];
+
+  const REQ_QUAL = [
+    'Strong communication and collaboration skills.',
+    'Relevant degree or equivalent practical experience.',
+    'Comfortable working in Agile delivery cycles.',
+  ];
+
+  const PREF_QUAL = [
+    'Experience in a fast-paced product environment.',
+    'Familiarity with modern cloud and CI/CD practices.',
+  ];
+
+  for (let i = 0; i < 30; i++) {
+    const title = titles[i];
+    const slug = `${SEED_JOB_SLUG_PREFIX}${String(i + 1).padStart(3, '0')}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`.slice(0, 220);
+    const dept = pick(departments);
+    const loc = pick(locations);
+    const emp = pick(employmentTypes);
+    const exp = pick(experienceLevels);
+    const status = randomStatuses();
+    const daysAgo = Math.floor(Math.random() * 100);
+    const postedAt =
+      status === 'published' || status === 'closed' || status === 'archived'
+        ? new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000)
+        : null;
+
+    const isRemoteRoll = Math.random();
+    const isRemote = isRemoteRoll > 0.55;
+    const workplaceTagName = isRemote ? 'Remote' : isRemoteRoll > 0.25 ? 'Hybrid' : 'On-site';
+    const tagRow = tagByName[workplaceTagName];
+
+    const summary = `${title} — ${dept.name} team in ${loc.city}. ${emp.name} role; ${exp.name}. Join us to build products customers love.`.slice(0, 500);
+
+    const skillPick = shuffleInPlace(skills.slice()).slice(0, Math.min(3 + Math.floor(Math.random() * 4), skills.length));
+    const benefitPick = shuffleInPlace(benefits.slice()).slice(0, Math.min(3 + Math.floor(Math.random() * 3), benefits.length));
+
+    const responsibilities = shuffleInPlace([...RESP_TEMPLATES]).slice(0, 3 + Math.floor(Math.random() * 3));
+
+    await prisma.jobPosting.create({
+      data: {
+        title,
+        slug,
+        departmentId: dept.id,
+        locationId: loc.id,
+        employmentTypeId: emp.id,
+        experienceLevelId: exp.id,
+        summary,
+        overview: `We are hiring a ${title} to strengthen our ${dept.name} function. You will partner with peers across the org, ship iteratively, and help raise the bar for quality and customer focus.\n\nThis is a ${emp.name} opportunity based in ${loc.city}, ${loc.country}.`,
+        roleSummary: `Day to day you will contribute to roadmap execution, collaborate with stakeholders, and help the team hit measurable goals. We value ownership, clarity, and continuous improvement.`,
+        applicationInfo: 'Apply with your CV and a short note on why this role fits you. We review applications on a rolling basis.',
+        isRemote,
+        isFeatured: Math.random() > 0.88,
+        status,
+        postedAt,
+        expiresAt: Math.random() > 0.65 ? new Date(Date.now() + (30 + Math.floor(Math.random() * 120)) * 24 * 60 * 60 * 1000) : null,
+        createdById: user.id,
+        responsibilities: {
+          create: responsibilities.map((description, sortOrder) => ({ description, sortOrder })),
+        },
+        qualifications: {
+          create: [
+            { description: pick(REQ_QUAL), type: 'required', sortOrder: 0 },
+            { description: pick(REQ_QUAL), type: 'required', sortOrder: 1 },
+            { description: pick(PREF_QUAL), type: 'preferred', sortOrder: 2 },
+          ],
+        },
+        jobPostingSkills: {
+          create: skillPick.map((s, sortOrder) => ({
+            skillId: s.id,
+            sortOrder,
+          })),
+        },
+        jobPostingBenefits: {
+          create: benefitPick.map((b, sortOrder) => ({
+            benefitId: b.id,
+            sortOrder,
+          })),
+        },
+        ...(tagRow
+          ? {
+              jobPostingTags: {
+                create: [{ tagId: tagRow.id, sortOrder: 0 }],
+              },
+            }
+          : {}),
+      },
+    });
+  }
+
+  console.log('Seeded job postings: 30 (creator:', email + ')');
+}
 
 async function seedLookups() {
   for (const row of DEPARTMENTS) {
@@ -258,6 +453,7 @@ async function seedStaffUser() {
 async function main() {
   await seedLookups();
   await seedStaffUser();
+  await seedJobPostings();
 }
 
 main()
