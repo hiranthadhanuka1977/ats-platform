@@ -601,7 +601,6 @@ export function JobsPageClient() {
                         <Link href={`/jobs/${j.id}/edit`} className="bo-jobs-card-title">
                           {j.title}
                         </Link>
-                        <span className={`bo-job-status bo-job-status--${j.status}`}>{j.status}</span>
                       </div>
                       <p className="bo-jobs-card-summary">{j.summary.trim() || "—"}</p>
                       <p className="bo-jobs-card-meta">
@@ -630,9 +629,12 @@ export function JobsPageClient() {
                         Updated {formatShortDate(j.updatedAt)}
                       </p>
                       <div className="bo-jobs-card-footer">
-                        <div className="bo-jobs-card-flags">
-                          {j.isFeatured && <span className="bo-jobs-flag">Featured</span>}
-                          {j.isRemote && <span className="bo-jobs-flag">Remote</span>}
+                        <div className="bo-jobs-card-footer-start">
+                          <span className={`bo-job-status bo-job-status--${j.status}`}>{j.status}</span>
+                          <div className="bo-jobs-card-flags">
+                            {j.isFeatured && <span className="bo-jobs-flag">Featured</span>}
+                            {j.isRemote && <span className="bo-jobs-flag">Remote</span>}
+                          </div>
                         </div>
                         <div className="bo-jobs-actions-cell">
                           <Link

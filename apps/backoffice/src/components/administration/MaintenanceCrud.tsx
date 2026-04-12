@@ -729,8 +729,8 @@ function MaintenanceTable({
                 <th>Name</th>
                 <th>Slug</th>
                 <th>Active</th>
-                <th>Sort</th>
                 <th>In use</th>
+                <th>Sort</th>
               </>
             )}
             {section === "locations" && (
@@ -739,17 +739,17 @@ function MaintenanceTable({
                 <th>Country</th>
                 <th>Slug</th>
                 <th>Active</th>
-                <th>Sort</th>
                 <th>In use</th>
+                <th>Sort</th>
               </>
             )}
             {section === "employment-types" && (
               <>
                 <th>Name</th>
                 <th>Slug</th>
-                <th>Sort</th>
                 <th>Active</th>
                 <th>In use</th>
+                <th>Sort</th>
               </>
             )}
             {section === "experience-levels" && (
@@ -757,9 +757,9 @@ function MaintenanceTable({
                 <th>Name</th>
                 <th>Slug</th>
                 <th>Min years</th>
-                <th>Sort</th>
                 <th>Active</th>
                 <th>In use</th>
+                <th>Sort</th>
               </>
             )}
             {section === "skills" && (
@@ -773,17 +773,17 @@ function MaintenanceTable({
               <>
                 <th>Name</th>
                 <th>Variant</th>
-                <th>Sort</th>
                 <th>Active</th>
                 <th>In use</th>
+                <th>Sort</th>
               </>
             )}
             {section === "benefits" && (
               <>
                 <th>Description</th>
-                <th>Sort</th>
                 <th>Active</th>
                 <th>In use</th>
+                <th>Sort</th>
               </>
             )}
             <th className="bo-admin-table-actions">Actions</th>
@@ -801,8 +801,8 @@ function MaintenanceTable({
                       <code className="bo-admin-code">{String(row.slug ?? "")}</code>
                     </td>
                     <td>{row.isActive ? "Yes" : "No"}</td>
-                    <td>{String(row.sortOrder ?? "")}</td>
                     {inUseCell(row)}
+                    <td>{String(row.sortOrder ?? "")}</td>
                   </>
                 )}
                 {section === "locations" && (
@@ -813,8 +813,8 @@ function MaintenanceTable({
                       <code className="bo-admin-code">{String(row.slug ?? "")}</code>
                     </td>
                     <td>{row.isActive ? "Yes" : "No"}</td>
-                    <td>{String(row.sortOrder ?? "")}</td>
                     {inUseCell(row)}
+                    <td>{String(row.sortOrder ?? "")}</td>
                   </>
                 )}
                 {section === "employment-types" && (
@@ -823,9 +823,9 @@ function MaintenanceTable({
                     <td>
                       <code className="bo-admin-code">{String(row.slug ?? "")}</code>
                     </td>
-                    <td>{String(row.sortOrder ?? "")}</td>
                     <td>{rowIsActive(row) ? "Yes" : "No"}</td>
                     {inUseCell(row)}
+                    <td>{String(row.sortOrder ?? "")}</td>
                   </>
                 )}
                 {section === "experience-levels" && (
@@ -835,9 +835,9 @@ function MaintenanceTable({
                       <code className="bo-admin-code">{String(row.slug ?? "")}</code>
                     </td>
                     <td>{String(row.minYears ?? "")}</td>
-                    <td>{String(row.sortOrder ?? "")}</td>
                     <td>{rowIsActive(row) ? "Yes" : "No"}</td>
                     {inUseCell(row)}
+                    <td>{String(row.sortOrder ?? "")}</td>
                   </>
                 )}
                 {section === "skills" && (
@@ -853,17 +853,17 @@ function MaintenanceTable({
                     <td>
                       <span className="bo-admin-pill">{String(row.variant ?? "")}</span>
                     </td>
-                    <td>{String(row.sortOrder ?? "")}</td>
                     <td>{rowIsActive(row) ? "Yes" : "No"}</td>
                     {inUseCell(row)}
+                    <td>{String(row.sortOrder ?? "")}</td>
                   </>
                 )}
                 {section === "benefits" && (
                   <>
                     <td>{String(row.description ?? "")}</td>
-                    <td>{String(row.sortOrder ?? "")}</td>
                     <td>{rowIsActive(row) ? "Yes" : "No"}</td>
                     {inUseCell(row)}
+                    <td>{String(row.sortOrder ?? "")}</td>
                   </>
                 )}
                 <td className="bo-admin-table-actions">

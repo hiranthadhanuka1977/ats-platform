@@ -1166,11 +1166,8 @@ button {
 }
 
 .bo-jobs-card-head {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
+  display: block;
+  min-width: 0;
 }
 
 .bo-jobs-card-title {
@@ -1194,9 +1191,13 @@ button {
   text-decoration: underline;
 }
 
-.bo-jobs-card-head .bo-job-status {
-  flex-shrink: 0;
-  margin-top: 1px;
+.bo-jobs-card-footer-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  flex: 1;
 }
 
 .bo-jobs-card-summary {
@@ -1280,13 +1281,14 @@ button {
   border: 1px solid var(--color-border);
 }
 
+/* Job status pills (list, grid, job flow previews) */
 .bo-job-status {
   display: inline-block;
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
   text-transform: capitalize;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: 5px;
   border: 1px solid var(--color-border);
 }
 
