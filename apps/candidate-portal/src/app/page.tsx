@@ -34,11 +34,22 @@ export default async function HomePage({
     <>
       <SkipLink />
       <SiteHeader />
-      <JobListingHero filters={filters} base={base} departments={options.departments} />
+      <JobListingHero filters={filters} />
       <main id="main-content">
         <JobListingShell
           filterForm={<JobFilterForm filters={filters} options={options} />}
         >
+          <aside className="job-listing-marketing-banner" aria-label="Featured career support">
+            <div className="job-listing-marketing-banner__copy">
+              <p className="job-listing-marketing-banner__title">Stand out with a stronger profile</p>
+              <p className="job-listing-marketing-banner__text">
+                Upload your resume once and get matched with relevant openings faster.
+              </p>
+            </div>
+            <Link href="/login" className="job-listing-marketing-banner__cta">
+              Upload resume
+            </Link>
+          </aside>
           <JobListToolbar total={total} base={base} sort={filters.sort ?? "recent"} />
           {jobs.length === 0 ? (
             <div className="empty-state">
@@ -56,8 +67,8 @@ export default async function HomePage({
           ) : (
             <>
               <div className="job-cards" role="list">
-                {jobs.map((j) => (
-                  <JobCard key={j.id} job={j} />
+                {jobs.map((j, idx) => (
+                  <JobCard key={j.id} job={j} isFirst={idx === 0} />
                 ))}
               </div>
               <JobPagination page={page} totalPages={totalPages} base={base} />

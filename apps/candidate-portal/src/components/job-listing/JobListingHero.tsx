@@ -1,19 +1,11 @@
-import Link from "next/link";
-
-import type { Department } from "@prisma/client";
-
-import { listingUrl } from "@/lib/listing-url";
-import type { ListingSearchRecord } from "@/lib/listing-url";
 import type { JobListFilters } from "@/lib/jobs";
 import { filtersToSearchRecord } from "@/lib/search-params";
 
 type Props = {
   filters: JobListFilters;
-  base: ListingSearchRecord;
-  departments: Department[];
 };
 
-export function JobListingHero({ filters, base, departments }: Props) {
+export function JobListingHero({ filters }: Props) {
   const q = filters.q ?? "";
   const hidden = filtersToSearchRecord(filters);
   delete hidden.q;
@@ -52,21 +44,6 @@ export function JobListingHero({ filters, base, departments }: Props) {
             </button>
           </div>
         </form>
-
-        <div className="hero-pills" role="group" aria-label="Browse by department">
-          <Link href={listingUrl(base, { department: null, page: null })} className={`hero-pill${!filters.department ? " is-active" : ""}`}>
-            All Departments
-          </Link>
-          {departments.map((d) => (
-            <Link
-              key={d.id}
-              href={listingUrl(base, { department: d.slug, page: null })}
-              className={`hero-pill${filters.department === d.slug ? " is-active" : ""}`}
-            >
-              {d.name}
-            </Link>
-          ))}
-        </div>
       </div>
     </section>
   );
