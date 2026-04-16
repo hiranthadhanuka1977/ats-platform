@@ -117,6 +117,7 @@ const jobDetailInclude = {
   jobPostingSkills: { orderBy: { sortOrder: "asc" as const }, include: { skill: true } },
   jobPostingBenefits: { orderBy: { sortOrder: "asc" as const }, include: { benefit: true } },
   jobPostingTags: { include: { tag: true } },
+  _count: { select: { applications: true, bookmarks: true } },
 } satisfies Prisma.JobPostingInclude;
 
 export type JobDetail = Prisma.JobPostingGetPayload<{ include: typeof jobDetailInclude }>;

@@ -2,24 +2,24 @@
 
 :root {
   /* ─── Colors ─── */
-  --color-primary:        #2563eb;
-  --color-primary-hover:  #1d4ed8;
-  --color-primary-light:  #dbeafe;
-  --color-secondary:      #0f172a;
-  --color-secondary-hover:#1e293b;
-  --color-accent:         #6366f1;
-  --color-accent-light:   #e0e7ff;
+  --color-primary:        #0f4c4f;
+  --color-primary-hover:  #0c3e41;
+  --color-primary-light:  #dff0ef;
+  --color-secondary:      #102a2c;
+  --color-secondary-hover:#0f3f42;
+  --color-accent:         #0f766e;
+  --color-accent-light:   #ccfbf1;
 
-  --color-bg:             #f8fafc;
+  --color-bg:             #f3f4f6;
   --color-surface:        #ffffff;
   --color-surface-alt:    #f1f5f9;
 
-  --color-text:           #0f172a;
-  --color-text-secondary: #475569;
+  --color-text:           #111827;
+  --color-text-secondary: #4b5563;
   --color-muted:          #6b7280;
-  --color-border:         #e2e8f0;
-  --color-border-hover:   #cbd5e1;
-  --color-border-input:   #94a3b8;
+  --color-border:         #e5e7eb;
+  --color-border-hover:   #d1d5db;
+  --color-border-input:   #9ca3af;
 
   --color-success:        #16a34a;
   --color-success-light:  #dcfce7;
@@ -79,7 +79,7 @@
   --shadow-md:  0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
   --shadow-lg:  0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
   --shadow-xl:  0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  --shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  --shadow-focus: 0 0 0 3px rgba(15, 76, 79, 0.24);
 
   /* ─── Transitions ─── */
   --transition-fast:   150ms ease;

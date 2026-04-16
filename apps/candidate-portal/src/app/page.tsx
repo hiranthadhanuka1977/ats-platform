@@ -34,10 +34,10 @@ export default async function HomePage({
     <>
       <SkipLink />
       <SiteHeader />
-      <JobListingHero filters={filters} />
+      <JobListingHero filters={filters} options={options} />
       <main id="main-content">
         <JobListingShell
-          filterForm={<JobFilterForm filters={filters} options={options} />}
+          filterForm={<JobFilterForm />}
         >
           <aside className="job-listing-marketing-banner" aria-label="Featured career support">
             <div className="job-listing-marketing-banner__copy">
@@ -67,8 +67,8 @@ export default async function HomePage({
           ) : (
             <>
               <div className="job-cards" role="list">
-                {jobs.map((j, idx) => (
-                  <JobCard key={j.id} job={j} isFirst={idx === 0} />
+                {jobs.map((j) => (
+                  <JobCard key={j.id} job={j} />
                 ))}
               </div>
               <JobPagination page={page} totalPages={totalPages} base={base} />

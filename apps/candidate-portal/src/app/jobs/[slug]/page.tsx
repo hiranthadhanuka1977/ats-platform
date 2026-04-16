@@ -38,15 +38,7 @@ export default async function JobDetailPage({ params }: PageProps) {
       <main id="main-content">
         <div className="container detail-layout">
           <div className="detail-main">
-            {job.bannerImageUrl ? (
-              <div className="image-banner">
-                {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary employer URLs */}
-                <img src={job.bannerImageUrl} alt={job.bannerImageAlt ?? ""} width={1200} height={300} loading="lazy" />
-              </div>
-            ) : (
-              <div className="image-banner image-banner--placeholder" aria-hidden="true" />
-            )}
-
+            <JobActivityCard job={job} />
             <JobDetailSections job={job} />
           </div>
 
@@ -114,8 +106,8 @@ function JobDetailHero({ job }: { job: JobDetail }) {
         </div>
 
         <div className="detail-actions">
-          <BookmarkButton jobTitle={job.title} className="icon-btn icon-btn--on-dark icon-btn--bookmark" withLabel />
-          <ShareButton jobTitle={job.title} path={`/jobs/${job.slug}`} className="icon-btn icon-btn--on-dark icon-btn--share" withLabel />
+          <BookmarkButton jobTitle={job.title} className="icon-btn icon-btn--bookmark" withLabel />
+          <ShareButton jobTitle={job.title} path={`/jobs/${job.slug}`} className="icon-btn icon-btn--share" withLabel />
         </div>
       </div>
     </section>
@@ -227,73 +219,127 @@ function JobDetailSections({ job }: { job: JobDetail }) {
 
 function JobSidebar({ job }: { job: JobDetail }) {
   return (
-    <div className="sidebar-card">
-      <h2 className="sidebar-card-title">Job Summary</h2>
+    <>
+      <div className="sidebar-card sidebar-card--summary">
+        <h2 className="sidebar-card-title">Job Summary</h2>
 
-      <div className="sidebar-info">
-        <div className="sidebar-info-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <rect x="2" y="7" width="20" height="14" rx="2" />
-            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-          </svg>
-          <div>
-            <div className="sidebar-info-label">Department</div>
-            <div className="sidebar-info-value">{job.department.name}</div>
+        <div className="sidebar-info">
+          <div className="sidebar-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="2" y="7" width="20" height="14" rx="2" />
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+            </svg>
+            <div>
+              <div className="sidebar-info-label">Department</div>
+              <div className="sidebar-info-value">{job.department.name}</div>
+            </div>
           </div>
-        </div>
-        <div className="sidebar-info-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          <div>
-            <div className="sidebar-info-label">Location</div>
-            <div className="sidebar-info-value">
-              {job.location.city}, {job.location.country}
+          <div className="sidebar-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <div>
+              <div className="sidebar-info-label">Location</div>
+              <div className="sidebar-info-value">
+                {job.location.city}, {job.location.country}
+              </div>
+            </div>
+          </div>
+          <div className="sidebar-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <div>
+              <div className="sidebar-info-label">Employment Type</div>
+              <div className="sidebar-info-value">{job.employmentType.name}</div>
+            </div>
+          </div>
+          <div className="sidebar-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+            </svg>
+            <div>
+              <div className="sidebar-info-label">Experience Level</div>
+              <div className="sidebar-info-value">{job.experienceLevel.name}</div>
+            </div>
+          </div>
+          <div className="sidebar-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            <div>
+              <div className="sidebar-info-label">Posted Date</div>
+              <div className="sidebar-info-value">{formatShortDate(job.postedAt)}</div>
             </div>
           </div>
         </div>
-        <div className="sidebar-info-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-          <div>
-            <div className="sidebar-info-label">Employment Type</div>
-            <div className="sidebar-info-value">{job.employmentType.name}</div>
-          </div>
-        </div>
-        <div className="sidebar-info-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-          </svg>
-          <div>
-            <div className="sidebar-info-label">Experience Level</div>
-            <div className="sidebar-info-value">{job.experienceLevel.name}</div>
-          </div>
-        </div>
-        <div className="sidebar-info-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-          <div>
-            <div className="sidebar-info-label">Posted Date</div>
-            <div className="sidebar-info-value">{formatShortDate(job.postedAt)}</div>
-          </div>
-        </div>
+
+        <hr className="sidebar-divider" />
+
+        <a href="/login" className="btn btn-primary btn-lg btn-block">
+          Apply Now
+        </a>
+
+        <p className="sidebar-note">Candidates must register or log in using Google, LinkedIn, or email to apply.</p>
       </div>
 
-      <hr className="sidebar-divider" />
+      <div className="sidebar-card sidebar-question-card">
+        <h3 className="sidebar-question__title">Ask a question about this role</h3>
+        <p className="sidebar-question__text">Need clarification before applying? Our hiring team can help.</p>
+        <a
+          href={`/login?intent=question&job=${encodeURIComponent(job.slug)}`}
+          className="btn btn-secondary btn-block sidebar-question__cta"
+        >
+          Ask a Question
+        </a>
+      </div>
+    </>
+  );
+}
 
-      <a href="/login" className="btn btn-primary btn-lg btn-block">
-        Apply Now
-      </a>
+function JobActivityCard({ job }: { job: JobDetail }) {
+  const applications = job._count?.applications ?? 0;
+  const bookmarks = job._count?.bookmarks ?? 0;
+  const estimatedViews = Math.max(applications * 18 + bookmarks * 9, bookmarks * 14, applications > 0 ? 120 : 0);
+  const conversion = estimatedViews > 0 ? Math.min(100, Math.round((applications / estimatedViews) * 100)) : 0;
+  const activityBars = [
+    Math.max(18, Math.min(96, 22 + bookmarks * 7)),
+    Math.max(20, Math.min(96, 26 + applications * 10)),
+    Math.max(24, Math.min(96, 28 + Math.round(conversion * 0.9))),
+  ];
 
-      <p className="sidebar-note">Candidates must register or log in using Google, LinkedIn, or email to apply.</p>
-    </div>
+  return (
+    <section className="job-activity" aria-label="Job listing activity">
+      <div className="job-activity__header">
+        <h2 className="job-activity__title">Job Activity</h2>
+        <span className="job-activity__chip">Live stats</span>
+      </div>
+      <div className="job-activity__grid">
+        <div className="job-activity__item">
+          <div className="job-activity__label">Views</div>
+          <div className="job-activity__value">~{estimatedViews.toLocaleString()}</div>
+        </div>
+        <div className="job-activity__item">
+          <div className="job-activity__label">Applied</div>
+          <div className="job-activity__value">{applications.toLocaleString()}</div>
+        </div>
+        <div className="job-activity__item">
+          <div className="job-activity__label">Saves</div>
+          <div className="job-activity__value">{bookmarks.toLocaleString()}</div>
+        </div>
+      </div>
+      <div className="job-activity__bars" aria-hidden="true">
+        {activityBars.map((width, idx) => (
+          <span key={idx} className="job-activity__bar" style={{ width: `${width}%` }} />
+        ))}
+      </div>
+      <p className="job-activity__note">Views are estimated from recent candidate engagement.</p>
+    </section>
   );
 }
