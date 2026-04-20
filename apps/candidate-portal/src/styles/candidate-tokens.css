@@ -1,25 +1,25 @@
 /* Font families supplied by next/font in layout (variables --font-display, --font-body). */
 
 :root {
-  /* ─── Colors ─── */
-  --color-primary:        #0f4c4f;
-  --color-primary-hover:  #0c3e41;
-  --color-primary-light:  #dff0ef;
-  --color-secondary:      #102a2c;
-  --color-secondary-hover:#0f3f42;
+  /* ─── Colors — white base, dark green as accent only ─── */
+  --color-primary:        #0d3d3f;
+  --color-primary-hover:  #0a3032;
+  --color-primary-light:  #e8f5f4;
+  --color-secondary:      #1c292a;
+  --color-secondary-hover:#152021;
   --color-accent:         #0f766e;
-  --color-accent-light:   #ccfbf1;
+  --color-accent-light:   #ecfdf7;
 
-  --color-bg:             #f3f4f6;
+  --color-bg:             #f5f7f6;
   --color-surface:        #ffffff;
-  --color-surface-alt:    #f1f5f9;
+  --color-surface-alt:    #f1f4f3;
 
-  --color-text:           #111827;
-  --color-text-secondary: #4b5563;
-  --color-muted:          #6b7280;
-  --color-border:         #e5e7eb;
-  --color-border-hover:   #d1d5db;
-  --color-border-input:   #9ca3af;
+  --color-text:           #1c1917;
+  --color-text-secondary: #57534e;
+  --color-muted:          #78716c;
+  --color-border:         #e7e5e4;
+  --color-border-hover:   #d6d3d1;
+  --color-border-input:   #a8a29e;
 
   --color-success:        #16a34a;
   --color-success-light:  #dcfce7;
@@ -28,7 +28,7 @@
   --color-error:          #dc2626;
   --color-error-light:    #fee2e2;
   --color-featured:       #92400e;
-  --color-featured-light: #fefef8;
+  --color-featured-light: #fffbeb;
 
   /* ─── Typography (font stacks from next/font on <html>) ─── */
 
@@ -65,21 +65,21 @@
   --space-20: 5rem;
   --space-24: 6rem;
 
-  /* ─── Border Radius ─── */
-  --radius-sm:   0.125rem;
-  --radius-md:   0.25rem;
-  --radius-lg:   0.375rem;
-  --radius-xl:   0.5rem;
-  --radius-2xl:  0.625rem;
-  --radius-full: 0.75rem;
+  /* ─── Border radius — unified 5px ─── */
+  --radius-sm:   5px;
+  --radius-md:   5px;
+  --radius-lg:   5px;
+  --radius-xl:   5px;
+  --radius-2xl:  5px;
+  --radius-full: 5px;
 
-  /* ─── Shadows ─── */
-  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md:  0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg:  0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-  --shadow-xl:  0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  --shadow-focus: 0 0 0 3px rgba(15, 76, 79, 0.24);
+  /* ─── Shadows — light lift, hint of green in tint ─── */
+  --shadow-xs:  0 1px 2px rgba(13, 61, 63, 0.04);
+  --shadow-sm:  0 1px 3px rgba(13, 61, 63, 0.05), 0 1px 2px rgba(13, 61, 63, 0.04);
+  --shadow-md:  0 4px 12px rgba(13, 61, 63, 0.06);
+  --shadow-lg:  0 8px 24px rgba(13, 61, 63, 0.07);
+  --shadow-xl:  0 12px 32px rgba(13, 61, 63, 0.08);
+  --shadow-focus: 0 0 0 3px rgba(13, 61, 63, 0.2);
 
   /* ─── Transitions ─── */
   --transition-fast:   150ms ease;
@@ -90,4 +90,5 @@
   --container-max:   1280px;
   --sidebar-width:   300px;
   --header-height:   72px;
+  --hero-main-gap:   0px;
 }
