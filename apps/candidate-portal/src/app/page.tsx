@@ -41,7 +41,7 @@ export default async function HomePage({
         >
           <aside className="job-listing-marketing-banner" aria-label="Featured career support">
             <div className="job-listing-marketing-banner__copy">
-              <p className="job-listing-marketing-banner__title">Stand out with a stronger profile</p>
+              <h2 className="job-listing-marketing-banner__title">Stand out with a stronger profile</h2>
               <p className="job-listing-marketing-banner__text">
                 Upload your resume once and get matched with relevant openings faster.
               </p>

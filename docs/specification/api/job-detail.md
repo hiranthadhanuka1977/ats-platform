@@ -2,6 +2,8 @@
 
 **Doc version:** 1.1 (aligned with [`JobPosting`](../../../packages/db/prisma/schema.prisma), [`Application`](../../../packages/db/prisma/schema.prisma), [`ApplicationStatus`](../../../packages/db/prisma/schema.prisma), [`QualificationType`](../../../packages/db/prisma/schema.prisma), [`db-schema.md`](../db-schema.md) §2, §3, banner fields)
 
+> Implementation status (22 Apr 2026): job detail/bookmark/apply routes described here are not yet implemented in `apps/api/src/modules/jobs` and related modules. Current backend has a stub `GET /api/v1/jobs`.
+
 Endpoints for **one job by slug or ID**, **full content** (overview, responsibilities, qualifications, skills, benefits), **banner** metadata (`banner_image_url`, `banner_image_alt`), **bookmark**, **share** (client-side URL only — no API required), and **apply**.
 
 ---

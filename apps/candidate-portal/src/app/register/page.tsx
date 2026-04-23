@@ -1,33 +1,33 @@
 import Link from "next/link";
 
-import { LoginForm } from "@/components/auth/LoginForm";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SkipLink } from "@/components/SkipLink";
+import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const metadata = {
-  title: "Log In | TalentHub",
-  description: "Log in to continue your job applications on TalentHub.",
+  title: "Register | TalentHub",
+  description: "Create your TalentHub account to apply for jobs and track your applications.",
 };
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <>
       <SkipLink />
       <SiteHeader />
       <main id="main-content" className="auth-page">
         <div className="auth-wrapper">
-          <section className="auth-card" aria-labelledby="login-heading">
+          <section className="auth-card" aria-labelledby="register-heading">
             <div className="auth-brand" aria-hidden="true">
               <span className="logo-icon logo-icon--lg">T</span>
             </div>
 
-            <h1 id="login-heading" className="auth-heading">
-              Welcome back
+            <h1 id="register-heading" className="auth-heading">
+              Create your account
             </h1>
-            <p className="auth-subheading">Sign in to continue your applications and job alerts.</p>
+            <p className="auth-subheading">Register to save jobs, apply faster, and manage your applications.</p>
 
-            <div className="auth-oauth" aria-label="Sign in with a provider">
+            <div className="auth-oauth" aria-label="Register with a provider">
               <button type="button" className="btn-oauth" aria-label="Continue with Google">
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -53,12 +53,12 @@ export default function LoginPage() {
               or
             </div>
 
-            <LoginForm />
+            <RegisterForm />
 
             <p className="auth-footer-text">
-              New to TalentHub?{" "}
-              <Link href="/register" className="auth-footer-link">
-                Create an account
+              Already have an account?{" "}
+              <Link href="/login" className="auth-footer-link">
+                Log in
               </Link>
             </p>
           </section>

@@ -6,7 +6,6 @@ import { interviewsModule } from "../modules/interviews";
 import { jobsModule } from "../modules/jobs";
 import { notificationsModule } from "../modules/notifications";
 import { usersModule } from "../modules/users";
-import { demoRoutes } from "./demo";
 import { healthRoutes } from "./health";
 
 /**
@@ -15,7 +14,6 @@ import { healthRoutes } from "./health";
  */
 export function registerRoutes(app: Hono) {
   app.route("/health", healthRoutes);
-  app.route("/demo", demoRoutes);
 
   const v1 = new Hono();
   v1.route("/auth", authModule);

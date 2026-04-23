@@ -1,25 +1,25 @@
 /* Font families supplied by next/font in layout (variables --font-display, --font-body). */
 
 :root {
-  /* ─── Colors — white base, dark green as accent only ─── */
-  --color-primary:        #0d3d3f;
-  --color-primary-hover:  #0a3032;
-  --color-primary-light:  #e8f5f4;
-  --color-secondary:      #1c292a;
-  --color-secondary-hover:#152021;
-  --color-accent:         #0f766e;
-  --color-accent-light:   #ecfdf7;
+  /* ─── Colors — single blue theme ─── */
+  --color-primary:        #2563eb;
+  --color-primary-hover:  #1d4ed8;
+  --color-primary-light:  #dbeafe;
+  --color-secondary:      #0f172a;
+  --color-secondary-hover:#020617;
+  --color-accent:         #3b82f6;
+  --color-accent-light:   #eff6ff;
 
-  --color-bg:             #f5f7f6;
+  --color-bg:             #f8fafc;
   --color-surface:        #ffffff;
-  --color-surface-alt:    #f1f4f3;
+  --color-surface-alt:    #f1f5f9;
 
-  --color-text:           #1c1917;
-  --color-text-secondary: #57534e;
-  --color-muted:          #78716c;
-  --color-border:         #e7e5e4;
-  --color-border-hover:   #d6d3d1;
-  --color-border-input:   #a8a29e;
+  --color-text:           #0f172a;
+  --color-text-secondary: #334155;
+  --color-muted:          #475569;
+  --color-border:         #cbd5e1;
+  --color-border-hover:   #94a3b8;
+  --color-border-input:   #64748b;
 
   --color-success:        #16a34a;
   --color-success-light:  #dcfce7;
@@ -31,7 +31,6 @@
   --color-featured-light: #fffbeb;
 
   /* ─── Typography (font stacks from next/font on <html>) ─── */
-
   --text-xs:    0.75rem;
   --text-sm:    0.875rem;
   --text-base:  1rem;
@@ -73,13 +72,13 @@
   --radius-2xl:  5px;
   --radius-full: 5px;
 
-  /* ─── Shadows — light lift, hint of green in tint ─── */
-  --shadow-xs:  0 1px 2px rgba(13, 61, 63, 0.04);
-  --shadow-sm:  0 1px 3px rgba(13, 61, 63, 0.05), 0 1px 2px rgba(13, 61, 63, 0.04);
-  --shadow-md:  0 4px 12px rgba(13, 61, 63, 0.06);
-  --shadow-lg:  0 8px 24px rgba(13, 61, 63, 0.07);
-  --shadow-xl:  0 12px 32px rgba(13, 61, 63, 0.08);
-  --shadow-focus: 0 0 0 3px rgba(13, 61, 63, 0.2);
+  /* ─── Shadows ─── */
+  --shadow-xs:  0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm:  0 2px 8px rgba(15, 23, 42, 0.08);
+  --shadow-md:  0 6px 16px rgba(15, 23, 42, 0.1);
+  --shadow-lg:  0 12px 28px rgba(15, 23, 42, 0.16);
+  --shadow-xl:  0 18px 40px rgba(15, 23, 42, 0.2);
+  --shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.24);
 
   /* ─── Transitions ─── */
   --transition-fast:   150ms ease;

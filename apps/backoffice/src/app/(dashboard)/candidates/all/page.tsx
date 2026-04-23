@@ -1,27 +1,26 @@
 import type { Metadata } from "next";
-import { fetchCandidateTableRows } from "@/components/candidates/CandidatesAllContent";
+import { CandidatesAllContent, fetchCandidateTableRows } from "@/components/candidates/CandidatesAllContent";
 import { CandidatesHeader } from "@/components/candidates/CandidatesHeader";
-import { CandidatesSummaryContent } from "@/components/candidates/CandidatesSummaryContent";
 
 export const metadata: Metadata = {
-  title: "Candidates",
-  description: "Candidate dashboard and management overview.",
+  title: "All Candidates",
+  description: "Browse all candidate records in the backoffice portal.",
 };
 
-export default async function CandidatesPage() {
+export default async function AllCandidatesPage() {
   const candidates = await fetchCandidateTableRows();
 
   return (
     <main id="main-content" className="bo-content">
       <CandidatesHeader
-        activeTab="summary"
+        activeTab="all"
         searchCandidates={candidates.map((candidate) => ({
           id: candidate.id,
           name: candidate.name,
           email: candidate.email,
         }))}
       />
-      <CandidatesSummaryContent />
+      <CandidatesAllContent candidates={candidates} />
     </main>
   );
 }

@@ -1,22 +1,23 @@
 # API — Authenticating users
 
-**Doc version:** 1.1 (aligned with [`schema.prisma`](../../../packages/db/prisma/schema.prisma) `User`, `Candidate`, [`db-schema.md`](../db-schema.md) §4–§5)
+**Doc version:** 1.2  
+**Last updated:** 22 April 2026  
+**Implementation source:** `apps/api/src/modules/auth/index.ts`
 
-Endpoints for **establishing**, **refreshing**, and **ending** authenticated sessions. These apply to **candidates** (portal) and optionally **internal users** (admin/recruiter) if you use the same auth service with different `aud`/`role` claims.
+This document reflects the currently implemented auth routes.
 
 ---
 
-## API dictionary
+## Implemented endpoints
 
-### Issue access + refresh tokens (login)
+### Login
 
 | Key | Value |
 |-----|--------|
-| **Operation** | Authenticate with email and password |
 | **Method** | `POST` |
 | **Path** | `/api/v1/auth/login` |
 | **Auth** | None |
-| **Description** | Validates credentials and returns short-lived **access token** (JWT) and **refresh token** (opaque string or JWT). Implementation may split **candidate** vs **staff** login with separate paths (`/auth/candidate/login` vs `/auth/staff/login`) if policies differ. |
+| **Notes** | Supports `audience: "candidate"` (default) and `audience: "staff"` |
 
 **Request body**
 
@@ -28,11 +29,14 @@ Endpoints for **establishing**, **refreshing**, and **ending** authenticated ses
 }
 ```
 
-| Field | Type | Required | Notes |
-|-------|------|----------|--------|
-| `email` | string | Yes | Normalised to lowercase server-side |
-| `password` | string | Yes | Plain text over TLS only |
-| `audience` | string | No | e.g. `candidate` \| `staff` — default `candidate` for portal |
+**Candidate login behavior**
+
+- Uses `candidate_accounts.email_normalized` lookup.
+- Rejects `pending_verification` with `EMAIL_NOT_VERIFIED`.
+- Rejects `disabled` with `ACCOUNT_DISABLED`.
+- Rejects locked accounts (`locked_until > now`) with `ACCOUNT_LOCKED`.
+- Failed attempts increment `failed_login_attempts`; account locks for 15 minutes after 5 failed attempts.
+- On success, resets lock counters and updates `last_login_at`.
 
 **Response `200 OK`**
 
@@ -42,7 +46,7 @@ Endpoints for **establishing**, **refreshing**, and **ending** authenticated ses
     "accessToken": "<jwt>",
     "expiresIn": 900,
     "tokenType": "Bearer",
-    "refreshToken": "<opaque>",
+    "refreshToken": "<jwt>",
     "user": {
       "id": "uuid",
       "email": "jane@example.com",
@@ -52,91 +56,27 @@ Endpoints for **establishing**, **refreshing**, and **ending** authenticated ses
 }
 ```
 
-| Field | Description |
-|-------|-------------|
-| `expiresIn` | Access token lifetime in **seconds** |
-| `user.type` | `candidate` \| `staff` (maps to `candidates` vs `users` tables) |
-
 **Errors**
 
-| Code | HTTP | When |
-|------|------|------|
-| `INVALID_CREDENTIALS` | 401 | Wrong email/password |
-| `ACCOUNT_DISABLED` | 403 | `candidates.is_active` or `users.is_active` is `false` |
-| `RATE_LIMITED` | 429 | Too many attempts |
+| Code | HTTP |
+|------|------|
+| `VALIDATION_ERROR` | 400 |
+| `INVALID_CREDENTIALS` | 401 |
+| `EMAIL_NOT_VERIFIED` | 403 |
+| `ACCOUNT_DISABLED` | 403 |
+| `ACCOUNT_LOCKED` | 403 |
 
 ---
 
-### Refresh access token
+### Current principal (`/auth/me`)
 
 | Key | Value |
 |-----|--------|
-| **Operation** | Obtain a new access token without re-entering password |
-| **Method** | `POST` |
-| **Path** | `/api/v1/auth/refresh` |
-| **Auth** | Refresh token (body or cookie — see below) |
-
-**Request (body variant)**
-
-```json
-{
-  "refreshToken": "<opaque>"
-}
-```
-
-**Request (cookie variant)**  
-`Cookie: refresh_token=<opaque>` — no body.
-
-**Response `200 OK`**
-
-```json
-{
-  "data": {
-    "accessToken": "<jwt>",
-    "expiresIn": 900,
-    "tokenType": "Bearer"
-  }
-}
-```
-
-**Errors**
-
-| Code | HTTP | When |
-|------|------|------|
-| `INVALID_REFRESH_TOKEN` | 401 | Revoked or expired |
-| `SESSION_EXPIRED` | 401 | Refresh rotation invalidated old token |
-
----
-
-### Logout (invalidate refresh)
-
-| Key | Value |
-|-----|--------|
-| **Operation** | End session server-side |
-| **Method** | `POST` |
-| **Path** | `/api/v1/auth/logout` |
-| **Auth** | Optional refresh token or access token (implementation choice) |
-
-**Response `204 No Content`** — success with no body.
-
-**Errors**
-
-| Code | HTTP | When |
-|------|------|------|
-| `UNAUTHORIZED` | 401 | If you require a valid token to logout |
-
----
-
-### Current principal (“who am I”)
-
-| Key | Value |
-|-----|--------|
-| **Operation** | Return the authenticated user profile |
 | **Method** | `GET` |
 | **Path** | `/api/v1/auth/me` |
 | **Auth** | `Authorization: Bearer <access_token>` |
 
-**Response `200 OK` (candidate)**
+**Candidate response `200 OK`**
 
 ```json
 {
@@ -146,12 +86,12 @@ Endpoints for **establishing**, **refreshing**, and **ending** authenticated ses
     "email": "jane@example.com",
     "firstName": "Jane",
     "lastName": "Doe",
-    "avatarUrl": "https://…"
+    "avatarUrl": null
   }
 }
 ```
 
-**Response `200 OK` (staff)**
+**Staff response `200 OK`**
 
 ```json
 {
@@ -165,29 +105,29 @@ Endpoints for **establishing**, **refreshing**, and **ending** authenticated ses
 }
 ```
 
-`role` is the `UserRole` enum from [`schema.prisma`](../../../packages/db/prisma/schema.prisma): `admin` \| `recruiter` \| `hiring_manager` (same strings in API and DB; see [db-schema.md §5.1](../db-schema.md) for DDL vs native enum).
-
 **Errors**
 
-| Code | HTTP | When |
-|------|------|------|
-| `UNAUTHORIZED` | 401 | Missing/invalid/expired access token |
+| Code | HTTP |
+|------|------|
+| `UNAUTHORIZED` | 401 |
 
 ---
 
-## JWT access token claims (recommended)
+### Logout
 
-Include at minimum:
+| Key | Value |
+|-----|--------|
+| **Method** | `POST` |
+| **Path** | `/api/v1/auth/logout` |
+| **Auth** | None required by current implementation |
+| **Response** | `204 No Content` |
 
-| Claim | Purpose |
-|-------|---------|
-| `sub` | User UUID (`candidates.id` or `users.id`) |
-| `typ` | `candidate` \| `staff` |
-| `email` | For display / audit |
-| `exp` | Expiry |
-| `iat` | Issued-at |
+---
 
-For staff, include `role` or resolve server-side from DB on each request for stricter RBAC.
+## Not currently implemented in `authModule`
+
+- `POST /api/v1/auth/refresh`
+- OAuth routes (`/auth/oauth/*`)
 
 ---
 
@@ -195,14 +135,5 @@ For staff, include `role` or resolve server-side from DB on each request for str
 
 | Concept | Table |
 |---------|--------|
-| Candidate identity | `candidates` |
+| Candidate identity | `candidate_accounts` + `candidate_profiles` |
 | Staff identity | `users` |
-| Refresh session | Store server-side or signed cookie; not in Prisma schema by default — add `sessions` / `refresh_tokens` table if you persist |
-
----
-
-## Related
-
-- [README.md](README.md) — *Schema alignment (Prisma & db-schema.md)*, enum tables, JWT conventions  
-- [registration-sign-in.md](registration-sign-in.md) — account creation and OAuth token exchange  
-- [job-listing.md](job-listing.md) — public + optional authenticated listing

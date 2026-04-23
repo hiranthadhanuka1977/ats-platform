@@ -1,7 +1,7 @@
 # API Documentation — Candidate Portal (ATS)
 
-**Version:** 1.1  
-**Date:** 08 April 2026  
+**Version:** 1.2  
+**Date:** 22 April 2026  
 **Base path:** `/api/v1`  
 **Format:** JSON over HTTPS  
 **Auth:** Bearer access token (JWT) for protected routes; public routes for published job data.
@@ -15,7 +15,7 @@ This folder describes REST-style APIs that back the candidate-portal markup (`do
 | File | Scope |
 |------|--------|
 | [authentication.md](authentication.md) | Sessions, tokens, logout — **authenticating** callers |
-| [registration-sign-in.md](registration-sign-in.md) | Registration, email/password sign-in, OAuth, password recovery |
+| [registration-sign-in.md](registration-sign-in.md) | Registration, OTP verification/resend, email/password sign-in, password recovery |
 | [job-listing.md](job-listing.md) | Job listing page — search, filters, sort, pagination, lookups |
 | [job-detail.md](job-detail.md) | Job detail page — single job, apply, bookmarks |
 
@@ -108,27 +108,21 @@ DDL-only note: hand-written SQL in [db-schema.md §5](../db-schema.md) uses `VAR
 
 | Domain | Method | Path | Summary |
 |--------|--------|------|---------|
-| Auth | POST | `/auth/login` | Email/password login (candidates or staff — separate clients) |
-| Auth | POST | `/auth/refresh` | Issue new access token from refresh token |
-| Auth | POST | `/auth/logout` | Invalidate refresh session |
-| Auth | GET | `/auth/me` | Current principal (candidate or internal user) |
-| Account | POST | `/candidates/register` | Register candidate account |
-| Account | POST | `/candidates/forgot-password` | Request password reset email |
-| Account | POST | `/candidates/reset-password` | Complete reset with token |
-| OAuth | GET | `/auth/oauth/{provider}/start` | Redirect to Google / LinkedIn |
-| OAuth | GET | `/auth/oauth/{provider}/callback` | OAuth callback — issues tokens |
-| Jobs | GET | `/jobs` | List published jobs (filters, sort, page) |
-| Jobs | GET | `/jobs/{slug}` | Job detail by slug |
-| Lookups | GET | `/lookups/locations` | Locations for filter dropdown |
-| Lookups | GET | `/lookups/departments` | Departments for filters / hero pills |
-| Lookups | GET | `/lookups/employment-types` | Employment types |
-| Lookups | GET | `/lookups/experience-levels` | Experience levels |
-| Candidate | GET | `/me/bookmarks` | List bookmarked job IDs or summaries |
-| Candidate | PUT | `/me/bookmarks/{jobId}` | Add bookmark |
-| Candidate | DELETE | `/me/bookmarks/{jobId}` | Remove bookmark |
-| Apply | POST | `/jobs/{jobId}/applications` | Submit application (authenticated candidate) |
+| Auth | POST | `/auth/login` | Email/password login for `candidate` and `staff` audiences |
+| Auth | GET | `/auth/me` | Current principal (candidate or staff) |
+| Auth | POST | `/auth/logout` | Logout (returns `204`) |
+| Account | POST | `/candidates/register` | Register candidate and issue verification OTP |
+| Account | POST | `/candidates/resend-otp` | Resend verification OTP with cooldown/rate limits |
+| Account | POST | `/candidates/verify-email` | Verify account using 6-digit OTP |
+| Account | POST | `/candidates/forgot-password` | Request password reset |
+| Account | POST | `/candidates/reset-password` | Complete password reset |
+| Jobs | GET | `/jobs` | Stub endpoint (`{ module: "jobs", message: "stub — implement job routes" }`) |
+| Applications | GET | `/applications` | Stub endpoint |
+| Interviews | GET | `/interviews` | Stub endpoint |
+| Users | GET | `/users` | Stub endpoint |
+| Notifications | GET | `/notifications` | Stub endpoint |
 
-Staff/admin APIs (posting CRUD) are out of scope for this candidate-facing dictionary unless you add a separate `admin-api.md` later.
+`/health` exists outside `/api/v1` and returns health probe data.
 
 ---
 

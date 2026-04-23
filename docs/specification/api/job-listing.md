@@ -2,6 +2,8 @@
 
 **Doc version:** 1.1 (aligned with [`JobPosting`](../../../packages/db/prisma/schema.prisma), [`JobPostingStatus`](../../../packages/db/prisma/schema.prisma), [`db-schema.md`](../db-schema.md) §2.1, §5, GIN index)
 
+> Implementation status (22 Apr 2026): only `GET /api/v1/jobs` exists and currently returns a stub payload from `apps/api/src/modules/jobs/index.ts`. The endpoints below are target contracts, not fully implemented yet.
+
 Endpoints that power **search**, **filters**, **sort**, **pagination**, **results count**, **hero department pills**, and **lookup data** for dropdowns. Matches `docs/markup/candidate-portal/job-listing.html` and `db-schema.md` filters.
 
 **Published jobs only:** server-side filter `JobPostingStatus.published` (Prisma enum / `status` column) **and** `expires_at IS NULL OR expires_at > now()`. Do not return `draft`, `closed`, or `archived` on public `GET /jobs`.

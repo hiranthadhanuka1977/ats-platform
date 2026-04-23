@@ -430,6 +430,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
               id="job-title"
               className={`bo-input${fieldErrors.title ? " bo-input-error" : ""}`}
               value={title}
+              autoFocus
               onChange={(e) => {
                 setTitle(e.target.value);
                 clearCoreError("title");

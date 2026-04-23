@@ -1,43 +1,68 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-
-const TEXT_SIZES = [87.5, 100, 112.5, 125, 137.5];
-const DEFAULT_INDEX = 1;
-
-function readStoredTextSizeIndex(): number {
-  if (typeof window === "undefined") return DEFAULT_INDEX;
-  try {
-    const raw = sessionStorage.getItem("cp-text-size-index");
-    if (raw == null) return DEFAULT_INDEX;
-    const i = parseInt(raw, 10);
-    if (!Number.isNaN(i) && i >= 0 && i < TEXT_SIZES.length) return i;
-  } catch {
-    /* ignore */
-  }
-  return DEFAULT_INDEX;
-}
+import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { clearCandidateSession, loadCandidateSession } from "@/lib/auth-storage";
 
 export function SiteHeader() {
-  const [sizeIndex, setSizeIndex] = useState(readStoredTextSizeIndex);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [candidateEmail, setCandidateEmail] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    document.documentElement.style.fontSize = `${TEXT_SIZES[sizeIndex]}%`;
-    try {
-      sessionStorage.setItem("cp-text-size-index", String(sizeIndex));
-    } catch {
-      /* ignore */
-    }
-  }, [sizeIndex]);
-
-  const resize = useCallback((action: "decrease" | "reset" | "increase") => {
-    setSizeIndex((i) => {
-      if (action === "reset") return DEFAULT_INDEX;
-      if (action === "increase") return Math.min(i + 1, TEXT_SIZES.length - 1);
-      return Math.max(i - 1, 0);
-    });
+    const session = loadCandidateSession();
+    setCandidateEmail(session?.user?.email ?? null);
   }, []);
+
+  useEffect(() => {
+    const onStorage = () => {
+      const session = loadCandidateSession();
+      setCandidateEmail(session?.user?.email ?? null);
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onClickOutside = (event: MouseEvent) => {
+      if (!profileMenuRef.current) return;
+      if (!profileMenuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const onEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener("mousedown", onClickOutside);
+    window.addEventListener("keydown", onEsc);
+    return () => {
+      window.removeEventListener("mousedown", onClickOutside);
+      window.removeEventListener("keydown", onEsc);
+    };
+  }, [menuOpen]);
+
+  const profileInitials = useMemo(() => {
+    if (!candidateEmail) return "U";
+    const [left] = candidateEmail.split("@");
+    const cleaned = left.replace(/[^a-zA-Z0-9]/g, "");
+    return cleaned.slice(0, 2).toUpperCase() || "U";
+  }, [candidateEmail]);
+
+  const isLoginPage = pathname === "/login";
+  const isRegisterPage = pathname === "/register";
+
+  function onLogout() {
+    clearCandidateSession();
+    setCandidateEmail(null);
+    setMenuOpen(false);
+    router.push("/login");
+  }
 
   return (
     <header className="site-header" role="banner">
@@ -50,38 +75,45 @@ export function SiteHeader() {
         </Link>
 
         <div className="header-actions">
-          <div className="text-resizer" role="group" aria-label="Text size">
-            <button
-              type="button"
-              className={`text-resizer-btn${sizeIndex < DEFAULT_INDEX ? " is-active" : ""}`}
-              aria-label="Decrease text size"
-              onClick={() => resize("decrease")}
-            >
-              A−
-            </button>
-            <button
-              type="button"
-              className={`text-resizer-btn${sizeIndex === DEFAULT_INDEX ? " is-active" : ""}`}
-              aria-label="Reset text size"
-              onClick={() => resize("reset")}
-            >
-              A
-            </button>
-            <button
-              type="button"
-              className={`text-resizer-btn${sizeIndex > DEFAULT_INDEX ? " is-active" : ""}`}
-              aria-label="Increase text size"
-              onClick={() => resize("increase")}
-            >
-              A+
-            </button>
-          </div>
-          <a href="/login" className="btn btn-ghost btn-sm">
-            Log In
-          </a>
-          <a href="/register" className="btn btn-primary btn-sm">
-            Register
-          </a>
+          {candidateEmail ? (
+            <div className="profile-menu" ref={profileMenuRef}>
+              <button
+                type="button"
+                className="profile-trigger"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((prev) => !prev)}
+              >
+                <span className="profile-avatar" aria-hidden="true">
+                  {profileInitials}
+                </span>
+              </button>
+              {menuOpen ? (
+                <div className="profile-flyout" role="menu" aria-label="Candidate menu">
+                  <p className="profile-email">{candidateEmail}</p>
+                  <Link href="/dashboard" className="profile-action" role="menuitem" onClick={() => setMenuOpen(false)}>
+                    Dashboard
+                  </Link>
+                  <button type="button" className="profile-action" role="menuitem" onClick={onLogout}>
+                    Log Out
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <>
+              {!isLoginPage ? (
+                <Link href="/login" className="btn btn-ghost btn-sm">
+                  Log In
+                </Link>
+              ) : null}
+              {!isRegisterPage ? (
+                <Link href="/register" className="btn btn-primary btn-sm">
+                  Register
+                </Link>
+              ) : null}
+            </>
+          )}
         </div>
       </div>
     </header>
