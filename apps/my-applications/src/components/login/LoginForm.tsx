@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useId, useState } from "react";
+import { saveCandidateSession } from "@/lib/auth-storage";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1";
 
@@ -20,8 +21,9 @@ export function LoginForm() {
     setError(null);
     const form = e.currentTarget;
     const fd = new FormData(form);
-    const email = String(fd.get("email") ?? "").trim();
+    const email = String(fd.get("email") ?? "").trim().toLowerCase();
     const password = String(fd.get("password") ?? "");
+    const remember = fd.get("remember") === "1";
 
     if (!email || !password) {
       setError("Enter your email and password.");
@@ -30,49 +32,49 @@ export function LoginForm() {
 
     setPending(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, audience: "staff" }),
+        body: JSON.stringify({
+          email,
+          password,
+          audience: "candidate",
+        }),
       });
-      const text = await res.text();
-      let json: {
-        data?: { accessToken?: string; refreshToken?: string; expiresIn?: number };
-        error?: { code?: string; message?: string };
-      } = {};
-      try {
-        json = text ? (JSON.parse(text) as typeof json) : {};
-      } catch {
-        setError("Invalid response from server. Try again.");
-        return;
-      }
 
-      if (!res.ok) {
-        const code = json.error?.code;
-        const msg = json.error?.message;
-        if (code === "INVALID_CREDENTIALS") {
-          setError("Incorrect email or password.");
-        } else if (code === "ACCOUNT_DISABLED") {
-          setError("Your staff account is disabled.");
-        } else {
-          setError(msg ?? "Sign in failed. Try again.");
+      const payload = (await response.json().catch(() => ({}))) as {
+        data?: {
+          accessToken: string;
+          refreshToken: string;
+          expiresIn: number;
+          user: { id: string; email: string; type: "candidate" };
+        };
+        error?: { code?: string; message?: string };
+      };
+
+      if (!response.ok || !payload.data) {
+        switch (payload.error?.code) {
+          case "INVALID_CREDENTIALS":
+            setError("Incorrect email or password.");
+            break;
+          case "EMAIL_NOT_VERIFIED":
+            setError("Please verify your email before signing in.");
+            break;
+          case "ACCOUNT_LOCKED":
+            setError("Your account is temporarily locked. Please try again later.");
+            break;
+          case "ACCOUNT_DISABLED":
+            setError("Your account is disabled. Contact support.");
+            break;
+          default:
+            setError(payload.error?.message ?? "Sign in failed. Try again.");
+            break;
         }
         return;
       }
 
-      const accessToken = json.data?.accessToken;
-      const refreshToken = json.data?.refreshToken;
-      const expiresIn = Number(json.data?.expiresIn ?? 0);
-      if (!accessToken || !refreshToken || !Number.isFinite(expiresIn) || expiresIn <= 0) {
-        setError("Invalid response from server. Try again.");
-        return;
-      }
-
-      // Keep middleware-compatible cookies on backoffice origin.
-      document.cookie = `bo_access=${encodeURIComponent(accessToken)}; Path=/; SameSite=Lax; Max-Age=${expiresIn}`;
-      document.cookie = `bo_refresh=${encodeURIComponent(refreshToken)}; Path=/; SameSite=Lax; Max-Age=${60 * 60 * 24 * 7}`;
-
-      router.push("/");
+      saveCandidateSession(payload.data, remember);
+      router.push("/dashboard");
       router.refresh();
     } catch {
       setError("Network error. Check your connection and try again.");
@@ -86,7 +88,7 @@ export function LoginForm() {
       <h2 id="bo-login-heading" className="bo-login-heading">
         Sign in
       </h2>
-      <p className="bo-login-sub">Use your work email or continue with SSO.</p>
+      <p className="bo-login-sub">Use your email account to continue.</p>
 
       {error ? (
         <p className="bo-login-error" role="alert">
@@ -94,12 +96,7 @@ export function LoginForm() {
         </p>
       ) : null}
 
-      <form
-        className="auth-form"
-        onSubmit={handleSubmit}
-        noValidate
-        aria-labelledby="bo-login-heading"
-      >
+      <form className="auth-form" onSubmit={handleSubmit} noValidate aria-labelledby="bo-login-heading">
         <div className="form-group">
           <label htmlFor={emailId} className="form-label">
             Email address
@@ -123,10 +120,9 @@ export function LoginForm() {
               id={emailId}
               name="email"
               className="form-input form-input--icon"
-              placeholder="you@company.com"
+              placeholder="you@example.com"
               autoComplete="email"
               required
-              aria-required
               disabled={pending}
             />
           </div>
@@ -137,8 +133,8 @@ export function LoginForm() {
             <label htmlFor={passwordId} className="form-label">
               Password
             </label>
-            <Link href="#" className="form-link">
-              Forgot password?
+            <Link href="/register" className="form-link">
+              Need an account?
             </Link>
           </div>
           <div className="form-input-icon-wrap">
@@ -163,7 +159,6 @@ export function LoginForm() {
               placeholder="Enter your password"
               autoComplete="current-password"
               required
-              aria-required
               disabled={pending}
             />
             <button
@@ -188,7 +183,7 @@ export function LoginForm() {
         </div>
 
         <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={pending}>
-          {pending ? "Signing in…" : "Sign in"}
+          {pending ? "Signing in..." : "Sign in"}
         </button>
       </form>
 
@@ -207,9 +202,7 @@ export function LoginForm() {
         </button>
       </div>
 
-      <p className="bo-login-footer">
-        Protected by your organization’s access policy. Need help? Contact IT support.
-      </p>
+      <p className="bo-login-footer">Need help? Contact TalentHub support.</p>
     </main>
   );
 }

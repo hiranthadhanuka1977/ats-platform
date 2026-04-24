@@ -6,7 +6,12 @@
 **Format:** JSON over HTTPS  
 **Auth:** Bearer access token (JWT) for protected routes; public routes for published job data.
 
-This folder describes REST-style APIs that back the candidate-portal markup (`docs/markup/candidate-portal/`: `job-listing.html`, `job-detail.html`, `login.html`) and align with [`schema.prisma`](../../../packages/db/prisma/schema.prisma) and [`db-schema.md`](../db-schema.md) (including **§5.1** hand-written DDL vs Prisma).
+This folder describes REST-style APIs that back:
+
+- public jobs browsing (`apps/candidate-portal`, `docs/markup/candidate-portal/job-listing.html`, `job-detail.html`)
+- candidate account workflows (`apps/my-applications`)
+
+and align with [`schema.prisma`](../../../packages/db/prisma/schema.prisma) and [`db-schema.md`](../db-schema.md).
 
 ---
 
@@ -17,7 +22,7 @@ This folder describes REST-style APIs that back the candidate-portal markup (`do
 | [authentication.md](authentication.md) | Sessions, tokens, logout — **authenticating** callers |
 | [registration-sign-in.md](registration-sign-in.md) | Registration, OTP verification/resend, email/password sign-in, password recovery |
 | [job-listing.md](job-listing.md) | Job listing page — search, filters, sort, pagination, lookups |
-| [job-detail.md](job-detail.md) | Job detail page — single job, apply, bookmarks |
+| [job-detail.md](job-detail.md) | Job detail target contract — single job, apply, bookmarks (implementation in progress) |
 
 ---
 
@@ -116,7 +121,7 @@ DDL-only note: hand-written SQL in [db-schema.md §5](../db-schema.md) uses `VAR
 | Account | POST | `/candidates/verify-email` | Verify account using 6-digit OTP |
 | Account | POST | `/candidates/forgot-password` | Request password reset |
 | Account | POST | `/candidates/reset-password` | Complete password reset |
-| Backoffice Candidates | PATCH | `/api/backoffice/candidates/{id}/status` | Update candidate account status (`pending_verification`, `active`, `locked`, `disabled`) |
+| Backoffice Candidates | PATCH | `/api/backoffice/candidates/{id}/status` | Backoffice Next.js route (app-local), not mounted under `apps/api` `/api/v1` |
 | Jobs | GET | `/jobs` | Stub endpoint (`{ module: "jobs", message: "stub — implement job routes" }`) |
 | Applications | GET | `/applications` | Stub endpoint |
 | Interviews | GET | `/interviews` | Stub endpoint |

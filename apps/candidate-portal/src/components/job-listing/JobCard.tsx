@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { BookmarkButton } from "@/components/job-listing/BookmarkButton";
 import { formatShortDate } from "@/lib/format";
 import { getWorkplaceBadge } from "@/lib/job-badges";
 import type { JobListItem } from "@/lib/jobs";
@@ -63,7 +62,6 @@ export function JobCard({ job }: Props) {
       </div>
 
       <div className="job-card-footer">
-        <BookmarkButton jobTitle={job.title} className="job-card-save icon-btn icon-btn--bookmark" />
         <Link href={detailPath} className="btn btn-primary job-card-actions__view">
           View Details<span className="sr-only"> — {job.title}</span>
         </Link>

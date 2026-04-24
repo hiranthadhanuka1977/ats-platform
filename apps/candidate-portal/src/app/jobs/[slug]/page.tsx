@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { BookmarkButton } from "@/components/job-listing/BookmarkButton";
 import { ShareButton } from "@/components/job-listing/ShareButton";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -12,6 +11,7 @@ import type { JobDetail } from "@/lib/jobs";
 import { getPublishedJobBySlug } from "@/lib/jobs";
 
 type PageProps = { params: Promise<{ slug: string }> };
+const MY_APPLICATIONS_BASE_URL = process.env.NEXT_PUBLIC_MY_APPLICATIONS_BASE_URL ?? "http://localhost:3002";
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
@@ -106,7 +106,6 @@ function JobDetailHero({ job }: { job: JobDetail }) {
         </div>
 
         <div className="detail-actions">
-          <BookmarkButton jobTitle={job.title} className="icon-btn icon-btn--bookmark" withLabel />
           <ShareButton jobTitle={job.title} path={`/jobs/${job.slug}`} className="icon-btn icon-btn--share" withLabel />
         </div>
       </div>
@@ -282,18 +281,18 @@ function JobSidebar({ job }: { job: JobDetail }) {
 
         <hr className="sidebar-divider" />
 
-        <a href="/login" className="btn btn-primary btn-lg btn-block">
-          Apply Now
+        <a href={`${MY_APPLICATIONS_BASE_URL}/login`} className="btn btn-primary btn-lg btn-block">
+          Continue in My Applications
         </a>
 
-        <p className="sidebar-note">Candidates must register or log in using Google, LinkedIn, or email to apply.</p>
+        <p className="sidebar-note">Candidates apply and manage profiles in the My Applications portal.</p>
       </div>
 
       <div className="sidebar-card sidebar-question-card">
         <h3 className="sidebar-question__title">Ask a question about this role</h3>
         <p className="sidebar-question__text">Need clarification before applying? Our hiring team can help.</p>
         <a
-          href={`/login?intent=question&job=${encodeURIComponent(job.slug)}`}
+          href={`${MY_APPLICATIONS_BASE_URL}/login?intent=question&job=${encodeURIComponent(job.slug)}`}
           className="btn btn-secondary btn-block sidebar-question__cta"
         >
           Ask a Question

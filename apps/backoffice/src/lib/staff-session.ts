@@ -2,6 +2,8 @@ import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { getJwtSecretBytes } from "@/lib/jwt-secret";
 
+const API_BASE = process.env.INTERNAL_API_URL ?? "http://127.0.0.1:4000";
+
 export type StaffSession = {
   /** JWT `sub` — matches `users.id` (UUID). */
   userId: string;
@@ -37,7 +39,33 @@ export async function getStaffSession(): Promise<StaffSession | null> {
 
     return { userId, email, name, role };
   } catch {
-    return null;
+    // Fallback for tokens issued by apps/api when local JWT secret differs.
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) return null;
+      const payload = (await response.json()) as {
+        data?: {
+          id?: string;
+          type?: string;
+          email?: string;
+          name?: string;
+          role?: string;
+        };
+      };
+      if (payload.data?.type !== "staff") return null;
+      const userId = payload.data?.id?.trim() ?? "";
+      if (!userId) return null;
+      const email = payload.data?.email?.trim() ?? "";
+      const role = payload.data?.role?.trim() ?? "";
+      const nameFromApi = payload.data?.name?.trim() ?? "";
+      const fallbackName = email.split("@")[0] || "User";
+      const name = nameFromApi || fallbackName;
+      return { userId, email, name, role };
+    } catch {
+      return null;
+    }
   }
 }
 

@@ -209,7 +209,7 @@ Use `POST /api/v1/auth/login` with `audience: "candidate"` (see [authentication.
 
 ---
 
-## UI mapping (`apps/candidate-portal`)
+## UI mapping (`apps/my-applications`)
 
 | UI control | API |
 |------------|-----|

@@ -610,8 +610,8 @@ Internal admin users who create and manage postings.
 | Column | Type | Constraints | Example |
 |--------|------|-------------|---------|
 | `id` | `UUID` | PK, DEFAULT gen_random_uuid() | |
-| `email` | `VARCHAR(255)` | NOT NULL, UNIQUE | admin@talenthub.com |
-| `name` | `VARCHAR(200)` | NOT NULL | Admin User |
+| `email` | `VARCHAR(255)` | NOT NULL, UNIQUE | dhanuka@ideahub.lk |
+| `name` | `VARCHAR(200)` | NOT NULL | Dhanuka De Silva |
 | `password_hash` | `VARCHAR(255)` | NOT NULL | |
 | `role` | `VARCHAR(30)` (DDL) / `UserRole` enum ([`schema.prisma`](../../packages/db/prisma/schema.prisma)) | NOT NULL, DEFAULT `recruiter` | admin |
 | `is_active` | `BOOLEAN` | DEFAULT TRUE | |

@@ -4,6 +4,8 @@
 **Last Updated:** 06 April 2026  
 **Status:** Implemented
 
+> Note (22 Apr 2026): This prompt is a static frontend reference for the original candidate portal markup workflow. Current runtime apps are split: `apps/candidate-portal` (public jobs) and `apps/my-applications` (candidate auth/dashboard).
+
 ## Overview
 This prompt is designed for AI coding tools such as Cursor, Claude Code, GPT, and Copilot to generate production-quality front-end code for a Candidate Portal.
 

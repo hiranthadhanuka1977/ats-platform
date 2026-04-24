@@ -1,24 +1,11 @@
-import { CandidateDashboardClient } from "@/components/dashboard/CandidateDashboardClient";
-import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SkipLink } from "@/components/SkipLink";
+import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Candidate Dashboard | TalentHub",
-  description: "Manage your applications and profile in your TalentHub dashboard.",
+  title: "Dashboard moved | TalentHub",
+  description: "Candidate dashboard is available in the My Applications portal.",
 };
 
 export default function DashboardPage() {
-  return (
-    <>
-      <SkipLink />
-      <SiteHeader />
-      <main id="main-content" className="dashboard-page">
-        <div className="container dashboard-wrapper">
-          <CandidateDashboardClient />
-        </div>
-      </main>
-      <SiteFooter />
-    </>
-  );
+  const base = process.env.NEXT_PUBLIC_MY_APPLICATIONS_BASE_URL ?? "http://localhost:3002";
+  redirect(`${base}/dashboard`);
 }

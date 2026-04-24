@@ -433,8 +433,7 @@ export function RegisterForm() {
             });
           }}
         />
-        <span className="form-checkbox-mark" aria-hidden="true" />
-        I agree to the Terms of Service and Privacy Policy
+        <span className="form-checkbox-mark" aria-hidden="true" />I agree to the Terms of Service and Privacy Policy
       </label>
       {fieldErrors.terms ? <p className="form-error">{fieldErrors.terms}</p> : null}
 

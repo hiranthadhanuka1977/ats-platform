@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { useCloseDetailsOnOutsideAndEscape } from "@/hooks/useCloseDetailsOnOutsideAndEscape";
 import { IconChevronDown } from "./nav-icons";
@@ -12,6 +13,7 @@ type UserMenuProps = {
 };
 
 export function UserMenu({ userName, userRole, avatarInitials }: UserMenuProps) {
+  const router = useRouter();
   const detailsRef = useRef<HTMLDetailsElement>(null);
   useCloseDetailsOnOutsideAndEscape(detailsRef);
 
@@ -39,7 +41,15 @@ export function UserMenu({ userName, userRole, avatarInitials }: UserMenuProps) 
             <hr />
           </li>
           <li>
-            <form action="/api/auth/logout" method="post">
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                document.cookie = "bo_access=; Path=/; Max-Age=0; SameSite=Lax";
+                document.cookie = "bo_refresh=; Path=/; Max-Age=0; SameSite=Lax";
+                router.push("/login");
+                router.refresh();
+              }}
+            >
               <button type="submit" className="bo-user-dropdown-signout">
                 Sign out
               </button>

@@ -84,7 +84,7 @@ Design for future modules:
 
 ```
 Developer Machine
- ├── Frontend
+ ├── Frontend (candidate-portal + my-applications + backoffice)
  ├── Backend
  ├── PostgreSQL
  ├── File Storage
@@ -141,7 +141,7 @@ Example:
 APP_ENV=local
 DATABASE_URL=postgresql://user:pass@localhost:5432/ats_db
 UPLOAD_ROOT=./storage
-CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:3002
 OTP_DELIVERY_MODE=dummy
 SMTP_HOST=
 SMTP_PORT=
@@ -183,6 +183,10 @@ Rules:
 3. Run migrations
 4. Seed data
 5. Start app
+
+### Seed accounts (current defaults)
+- Staff user (`users` table): `dhanuka@ideahub.lk` / `Think100%`
+- Candidate user passwords are managed through candidate account flows (`/api/v1/candidates/*`) or explicit DB seed/update scripts in local development.
 
 ### Daily Flow
 - Pull code

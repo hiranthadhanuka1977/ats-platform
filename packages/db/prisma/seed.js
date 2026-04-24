@@ -25,7 +25,7 @@ const SEED_JOB_SLUG_PREFIX = 'seed-dhanuka-';
 
 const SEED_STAFF_USER = {
   email: 'dhanuka@ideahub.lk',
-  password: 'abc123',
+  password: 'Think100%',
   name: 'Dhanuka De Silva',
   role: 'admin',
 };

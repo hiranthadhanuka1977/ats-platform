@@ -4,6 +4,8 @@
 **Last Updated:** 06 April 2026  
 **Status:** Implemented
 
+> Note (22 Apr 2026): Runtime implementation is now split across two apps — `apps/candidate-portal` (public jobs browsing) and `apps/my-applications` (candidate login/register/dashboard/application management). This document remains a UI template reference; auth/apply actions should route to the My Applications app.
+
 ## Overview
 This document defines the standard templates and structure for displaying job postings in the ATS system. It includes:
 
@@ -65,7 +67,7 @@ Provide a concise overview of available jobs to help candidates quickly scan and
 - **Share button** — triggers Web Share API or copies link to clipboard
 - **Entire card is clickable** — clicking any non-interactive area navigates to job detail
 - **View Details link** — explicit link to detail page (with `sr-only` job title for accessibility)
-- **Apply Now link** — explicit link to application (with `sr-only` job title for accessibility)
+- **Continue in My Applications link** — explicit handoff CTA to candidate account portal (with `sr-only` job title context if needed)
 
 ---
 
@@ -92,7 +94,7 @@ We are looking for a Senior Business Analyst to work closely with stakeholders a
 - Show only essential information (title, meta, summary, tags, CTAs)
 - Limit summary to 200–250 characters
 - Use colour-coded badges for quick identification (e.g., Full-time, Remote, New)
-- Always include clear CTAs (View Details + Apply Now)
+- Always include clear CTAs (View Details + handoff to My Applications)
 - Featured jobs display a star ribbon and may be sorted to the top
 - Include bookmark and share actions on every card
 - Cards should be fully clickable (mouse) while preserving keyboard access to individual links
@@ -102,7 +104,7 @@ We are looking for a Senior Business Analyst to work closely with stakeholders a
 # 2. Job Details Template (Full View)
 
 ## Purpose
-Provide complete information about the job role and allow candidates to apply.
+Provide complete information about the job role and route candidates to the account portal to apply/manage applications.
 
 ---
 
@@ -165,7 +167,7 @@ Source: `job_postings.banner_image_url`
 - ✓ Benefit 2
 
 #### Application Information
-Candidates must register or log in using Google, LinkedIn, or email to apply.
+Candidates must continue to the My Applications portal to register/log in and submit or track applications.
 
 **Sidebar (sticky on desktop):**
 
@@ -221,7 +223,7 @@ The candidate will work closely with business and technical teams to deliver ent
 
 ---
 
-[🔖 Bookmark]  [↗ Share]  [Apply Now]
+[↗ Share]  [Continue in My Applications]
 
 ---
 

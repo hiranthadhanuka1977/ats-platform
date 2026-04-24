@@ -13,7 +13,7 @@ config({ path: path.resolve(__dirname, "../../.env") });
 
 const app = new Hono();
 
-const allowedOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:3000,http://localhost:3001")
+const allowedOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:3000,http://localhost:3001,http://localhost:3002")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);

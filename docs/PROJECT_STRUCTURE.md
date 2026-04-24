@@ -32,9 +32,14 @@ From the **repository root**:
 npm run dev:all
 ```
 
-This uses **`concurrently`** to start **candidate portal** (port **3000**), **backoffice** (port **3001**), and **API** (port **4000**) in the **same terminal**, with prefixes `candidate`, `backoffice`, and `api` on each log line.
+This uses **`concurrently`** to start **candidate portal** (port **3000**), **my-applications** (port **3002**), **backoffice** (port **3001**), and **API** (port **4000**) in the same terminal.
 
-If you prefer **separate terminals**, run `npm run dev`, `npm run dev:backoffice`, and `npm run dev:api` in three windows.
+If you prefer separate terminals, run:
+
+- `npm run dev:candidate`
+- `npm run dev:my-applications`
+- `npm run dev:backoffice`
+- `npm run dev:api`
 
 ---
 
@@ -43,8 +48,10 @@ If you prefer **separate terminals**, run `npm run dev`, `npm run dev:backoffice
 ```
 ats-platform/                         # repo root — npm workspaces
 ├── apps/
-│   ├── candidate-portal/             # Next.js — public candidate UI (port 3000)
+│   ├── candidate-portal/             # Next.js — public jobs listing/detail UI (port 3000)
 │   │   └── src/                      # app/, components/, features/, lib/
+│   ├── my-applications/              # Next.js — candidate auth & application dashboard (port 3002)
+│   │   └── src/
 │   ├── backoffice/                   # Next.js — internal staff UI (port 3001)
 │   │   └── src/                      # app/, components/, features/, lib/
 │   └── api/                          # Hono — HTTP API (port 4000 default)
@@ -90,11 +97,14 @@ ats-platform/                         # repo root — npm workspaces
 
 | Directory | npm name | Purpose | Dev port |
 |-----------|----------|---------|----------|
-| `apps/candidate-portal/` | `@ats-platform/candidate-portal` | Public careers / candidate experience | **3000** (Next default) |
+| `apps/candidate-portal/` | `@ats-platform/candidate-portal` | Public jobs browsing experience | **3000** (Next default) |
+| `apps/my-applications/` | `@ats-platform/my-applications` | Candidate authentication and self-service portal | **3002** (`next dev -p 3002`) |
 | `apps/backoffice/` | `@ats-platform/backoffice` | Internal ATS / company back office | **3001** (`next dev -p 3001`) |
 | `apps/api/` | `@ats-platform/api` | HTTP API for web clients and integrations | **4000** (`PORT` env) |
 
-### Next.js apps (`candidate-portal`, `backoffice`)
+Backoffice login is staff-only (`users` table). `my-applications` login is candidate-only (`candidate_accounts`).
+
+### Next.js apps (`candidate-portal`, `my-applications`, `backoffice`)
 
 Both use the **App Router** under `src/app/`. Shared folder conventions:
 
@@ -190,7 +200,7 @@ import { prisma } from "@ats-platform/db";
 | Path | Contents |
 |------|----------|
 | **`docs/specification/`** | `db-schema.md`, REST specs under **`api/`**, **`API_Dictionary.md`**, ER diagram, templates, prompts. |
-| **`docs/markup/candidate-portal/`** | Static HTML/CSS/JS prototypes for the candidate UI. |
+| **`docs/markup/candidate-portal/`** | Static HTML/CSS/JS prototypes for public jobs UI and legacy candidate auth flows. |
 | **`docs/markup/backoffice/`** | Static markup for the back office (add files as you go). |
 | **`docs/reports/`** | Compliance / audit notes. |
 
@@ -203,7 +213,8 @@ The **canonical Prisma schema** is **`packages/db/prisma/schema.prisma`**, not u
 | Location | Typical use |
 |----------|-------------|
 | **Repo root `.env`** | **`DATABASE_URL`** for Prisma CLI (`npm run db:*`) and **`db:create`**. Gitignored. |
-| **`apps/candidate-portal/.env.local`** | Next.js secrets; include **`DATABASE_URL`** if server code uses Prisma. |
+| **`apps/candidate-portal/.env.local`** | Public jobs app env (e.g., `NEXT_PUBLIC_MY_APPLICATIONS_BASE_URL`). |
+| **`apps/my-applications/.env.local`** | Candidate account portal env (auth/dashboard handoff, API URL, etc.). |
 | **`apps/backoffice/.env.local`** | Same for back office. |
 | **`apps/api`** | **`PORT`** (optional, default **4000**); **`DATABASE_URL`** when using Prisma in the API. |
 
@@ -219,9 +230,10 @@ Run from the **repository root**:
 |--------|--------|
 | `npm run dev` | **Candidate portal** dev server (port **3000**) |
 | `npm run dev:candidate` | Same |
+| `npm run dev:my-applications` | **My Applications** portal dev server (port **3002**) |
 | `npm run dev:backoffice` | **Back office** dev server (port **3001**) |
 | `npm run dev:api` | **API** (`tsx watch`) |
-| `npm run dev:all` | **All three** in one terminal ([`concurrently`](https://www.npmjs.com/package/concurrently)) — **3000**, **3001**, **4000** |
+| `npm run dev:all` | **All four** in one terminal ([`concurrently`](https://www.npmjs.com/package/concurrently)) — **3000**, **3002**, **3001**, **4000** |
 | `npm run build` | `build` in all workspaces that define it |
 | `npm run db:create` | Create PostgreSQL database (from root `.env`) |
 | `npm run db:migrate` | `prisma migrate dev` in `@ats-platform/db` |

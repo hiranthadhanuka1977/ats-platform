@@ -17,7 +17,7 @@ This document reflects the currently implemented auth routes.
 | **Method** | `POST` |
 | **Path** | `/api/v1/auth/login` |
 | **Auth** | None |
-| **Notes** | Supports `audience: "candidate"` (default) and `audience: "staff"` |
+| **Notes** | Supports `audience: "candidate"` (default) and `audience: "staff"`. `apps/my-applications` must use `candidate`; `apps/backoffice` must use `staff`. |
 
 **Request body**
 
@@ -37,6 +37,12 @@ This document reflects the currently implemented auth routes.
 - Rejects locked accounts (`locked_until > now`) with `ACCOUNT_LOCKED`.
 - Failed attempts increment `failed_login_attempts`; account locks for 15 minutes after 5 failed attempts.
 - On success, resets lock counters and updates `last_login_at`.
+
+**Staff login behavior**
+
+- Uses `users.email` lookup.
+- Requires `users.is_active = true`.
+- On success, returns staff claims (`type`, `name`, `role`) in the token payload.
 
 **Response `200 OK`**
 
@@ -98,12 +104,14 @@ This document reflects the currently implemented auth routes.
   "data": {
     "id": "uuid",
     "type": "staff",
-    "email": "admin@talenthub.com",
-    "name": "Admin User",
-    "role": "recruiter"
+    "email": "dhanuka@ideahub.lk",
+    "name": "Dhanuka De Silva",
+    "role": "admin"
   }
 }
 ```
+
+> Backoffice note: backoffice session checks first attempt local JWT verification and then fall back to `GET /api/v1/auth/me` when local verification fails (for example, secret mismatch during local development). This keeps staff sessions valid as long as the central API validates the token.
 
 **Errors**
 
