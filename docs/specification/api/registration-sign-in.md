@@ -32,7 +32,7 @@ Endpoints for candidate registration, OTP verification, resend OTP, and password
 
 | Field | Type | Required | Notes |
 |-------|------|----------|--------|
-| `email` | string | Yes | **Normalise to lowercase** before persist; uniqueness matches `candidates.email` (see [db-schema.md](../db-schema.md) §5.1 for `LOWER(email)` vs Prisma `@@unique`). |
+| `email` | string | Yes | Normalized to lowercase and persisted as both `email` and `emailNormalized` (`candidate_accounts.email_normalized`) for case-insensitive login/lookup. |
 | `password` | string | Yes | Enforce policy (length, complexity) server-side |
 | `firstName` | string | No | Stored in `candidate_profiles.first_name` |
 | `lastName` | string | No | Stored in `candidate_profiles.last_name` |

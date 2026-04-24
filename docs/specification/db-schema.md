@@ -1,9 +1,11 @@
 # Database Schema — Candidate Portal
 
-**Version:** 1.6  
-**Date:** 08 April 2026  
+**Version:** 1.7  
+**Date:** 22 April 2026  
 **Derived From:** `docs/markup/candidate-portal/job-listing.html`, `job-detail.html`, `Job_Posting_Templates.md`  
 **Database:** PostgreSQL (compatible with MySQL / SQL Server with minor adjustments)
+
+**v1.7:** Updated candidate domain to the split-account model used in code: `candidate_accounts`, `candidate_profiles`, `candidate_auth_providers`, `candidate_sessions`, `candidate_verification_tokens`, and `candidate_password_reset_tokens`.
 
 **v1.6:** Aligned [`schema.prisma`](../../packages/db/prisma/schema.prisma) with §5 (index naming / partial indexes) and added §5.1 DDL vs Prisma notes.
 
@@ -34,15 +36,15 @@ employment_types ─┘         │
                             ├──▶ job_posting_skills ──▶ skills
                             ├──▶ job_posting_benefits ──▶ benefits
                             ├──▶ job_posting_tags ──▶ tags
-                            ├──▶ applications ◀── candidates
-                            └──▶ bookmarks ◀── candidates
+                            ├──▶ applications ◀── candidate_accounts
+                            └──▶ bookmarks ◀── candidate_accounts
 ```
 
 *Job detail poster:* `job_postings.banner_image_url` and `banner_image_alt` power the horizontal image banner above “Job Overview” (see `job-detail.html` `.image-banner`).
 
 ### ER Diagram (Mermaid)
 
-The following diagram matches the interactive [`er-diagram.html`](er-diagram.html) (same entities, attributes, and cardinality labels).
+The following diagram is a high-level reference. For candidate-domain naming, treat §3 and [`schema.prisma`](../../packages/db/prisma/schema.prisma) as the source of truth (`candidate_accounts` split model).
 
 ```mermaid
 erDiagram
@@ -468,61 +470,118 @@ Many-to-many: postings ↔ visual badge tags.
 
 ## 3. Candidate & Interaction Tables
 
-### 3.1 `candidates`
+### 3.1 `candidate_accounts`
 
-Registered candidates who can apply and bookmark.
+Core candidate identity and login state.
 
-| Column | Type | Constraints | Example |
-|--------|------|-------------|---------|
-| `id` | `UUID` | PK, DEFAULT gen_random_uuid() | |
-| `email` | `VARCHAR(255)` | NOT NULL, UNIQUE | jane@example.com |
-| `first_name` | `VARCHAR(100)` | NULL | Jane |
-| `last_name` | `VARCHAR(100)` | NULL | Doe |
-| `password_hash` | `VARCHAR(255)` | NULL | (bcrypt hash) |
-| `auth_provider` | `VARCHAR(20)` | NULL | google |
-| `auth_provider_id` | `VARCHAR(255)` | NULL | (OAuth sub) |
-| `avatar_url` | `VARCHAR(500)` | NULL | |
-| `phone` | `VARCHAR(30)` | NULL | |
-| `resume_url` | `VARCHAR(500)` | NULL | |
-| `is_active` | `BOOLEAN` | DEFAULT TRUE | true |
-| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() | |
-| `updated_at` | `TIMESTAMPTZ` | DEFAULT NOW() | |
-| `last_login_at` | `TIMESTAMPTZ` | NULL | |
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | `UUID` | PK, DEFAULT `gen_random_uuid()` |
+| `email` | `VARCHAR(255)` | NOT NULL |
+| `email_normalized` | `VARCHAR(255)` | NOT NULL, UNIQUE |
+| `password_hash` | `VARCHAR(255)` | NULL |
+| `status` | `CandidateAccountStatus` | DEFAULT `pending_verification` |
+| `email_verified_at` | `TIMESTAMPTZ` | NULL |
+| `last_login_at` | `TIMESTAMPTZ` | NULL |
+| `failed_login_attempts` | `INTEGER` | DEFAULT 0 |
+| `locked_until` | `TIMESTAMPTZ` | NULL |
+| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
+| `updated_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
 
-`auth_provider` values: `email`, `google`, `linkedin`
+`status` values: `pending_verification`, `active`, `locked`, `disabled`.
 
-**Indexes:**
+### 3.2 `candidate_profiles`
 
-```sql
-CREATE UNIQUE INDEX idx_candidates_email ON candidates (LOWER(email));
-CREATE INDEX idx_candidates_provider     ON candidates (auth_provider, auth_provider_id)
-  WHERE auth_provider IS NOT NULL;
-```
+Candidate profile data separated from auth identity (1:1 with `candidate_accounts`).
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `candidate_account_id` | `UUID` | PK, FK → `candidate_accounts.id`, ON DELETE CASCADE |
+| `first_name` | `VARCHAR(100)` | NULL |
+| `last_name` | `VARCHAR(100)` | NULL |
+| `avatar_url` | `VARCHAR(500)` | NULL |
+| `phone` | `VARCHAR(30)` | NULL |
+| `resume_url` | `VARCHAR(500)` | NULL |
+| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
+| `updated_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
+
+### 3.3 `candidate_auth_providers`
+
+OAuth provider links (Google/LinkedIn) per candidate account.
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | `UUID` | PK, DEFAULT `gen_random_uuid()` |
+| `candidate_account_id` | `UUID` | FK → `candidate_accounts.id`, ON DELETE CASCADE |
+| `provider` | `CandidateAuthProviderType` | NOT NULL |
+| `provider_user_id` | `VARCHAR(255)` | NOT NULL |
+| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
+
+### 3.4 `candidate_sessions`
+
+Refresh-session persistence for candidates.
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | `UUID` | PK, DEFAULT `gen_random_uuid()` |
+| `candidate_account_id` | `UUID` | FK → `candidate_accounts.id`, ON DELETE CASCADE |
+| `refresh_token_hash` | `VARCHAR(255)` | NOT NULL |
+| `user_agent` | `VARCHAR(512)` | NULL |
+| `ip_address` | `VARCHAR(64)` | NULL |
+| `expires_at` | `TIMESTAMPTZ` | NOT NULL |
+| `revoked_at` | `TIMESTAMPTZ` | NULL |
+| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
+
+### 3.5 `candidate_verification_tokens`
+
+One-time verification tokens (OTP hashes).
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | `UUID` | PK, DEFAULT `gen_random_uuid()` |
+| `candidate_account_id` | `UUID` | FK → `candidate_accounts.id`, ON DELETE CASCADE |
+| `token_hash` | `VARCHAR(255)` | NOT NULL |
+| `expires_at` | `TIMESTAMPTZ` | NOT NULL |
+| `used_at` | `TIMESTAMPTZ` | NULL |
+| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
+
+### 3.6 `candidate_password_reset_tokens`
+
+Password reset tokens (stored hashed).
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | `UUID` | PK, DEFAULT `gen_random_uuid()` |
+| `candidate_account_id` | `UUID` | FK → `candidate_accounts.id`, ON DELETE CASCADE |
+| `token_hash` | `VARCHAR(255)` | NOT NULL |
+| `expires_at` | `TIMESTAMPTZ` | NOT NULL |
+| `used_at` | `TIMESTAMPTZ` | NULL |
+| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
 
 ---
 
-### 3.2 `bookmarks`
+### 3.7 `bookmarks`
 
 Candidate-saved jobs (bookmark/favourite feature).
 
 | Column | Type | Constraints |
 |--------|------|-------------|
-| `candidate_id` | `UUID` | FK → candidates.id, ON DELETE CASCADE |
+| `candidate_account_id` | `UUID` | FK → candidate_accounts.id, ON DELETE CASCADE |
 | `job_posting_id` | `UUID` | FK → job_postings.id, ON DELETE CASCADE |
 | `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
 
-**PK:** (`candidate_id`, `job_posting_id`)
+**PK:** (`candidate_account_id`, `job_posting_id`)
 
 ---
 
-### 3.3 `applications`
+### 3.8 `applications`
 
 Job applications submitted by candidates.
 
 | Column | Type | Constraints | Example |
 |--------|------|-------------|---------|
 | `id` | `UUID` | PK, DEFAULT gen_random_uuid() | |
-| `candidate_id` | `UUID` | FK → candidates.id, NOT NULL | |
+| `candidate_account_id` | `UUID` | FK → candidate_accounts.id, NOT NULL | |
 | `job_posting_id` | `UUID` | FK → job_postings.id, NOT NULL | |
 | `status` | `VARCHAR(30)` (DDL) / `ApplicationStatus` enum (Prisma) | DEFAULT `submitted` | submitted |
 | `cover_letter` | `TEXT` | NULL | |
@@ -535,7 +594,7 @@ Job applications submitted by candidates.
 **Indexes:**
 
 ```sql
-CREATE UNIQUE INDEX idx_applications_unique ON applications (candidate_id, job_posting_id);
+CREATE UNIQUE INDEX idx_applications_unique ON applications (candidate_account_id, job_posting_id);
 CREATE INDEX idx_applications_status        ON applications (status);
 CREATE INDEX idx_applications_job           ON applications (job_posting_id, applied_at DESC);
 ```
@@ -776,7 +835,7 @@ CREATE INDEX idx_applications_job           ON applications (job_posting_id, app
 
 ### 5.1 Hand-written DDL vs [`schema.prisma`](../../packages/db/prisma/schema.prisma)
 
-The SQL above is the **canonical relational model** for PostgreSQL. [`schema.prisma`](../../packages/db/prisma/schema.prisma) matches **tables, columns, FKs, composite keys, and most indexes**, with these deliberate differences:
+For current implementation, [`schema.prisma`](../../packages/db/prisma/schema.prisma) is the **canonical source of truth**. The SQL above is a reference draft and may use older candidate naming (`candidates`).
 
 | Topic | §5 DDL | `schema.prisma` |
 |-------|--------|-----------------|
@@ -916,7 +975,7 @@ Render rule: if `banner_image_url` IS NULL, do not output the `.image-banner` se
 
 | Decision | Rationale |
 |----------|-----------|
-| UUID for `job_postings`, `candidates`, `applications` | Safe for distributed systems, non-guessable in URLs |
+| UUID for `job_postings`, `candidate_accounts`, `applications` | Safe for distributed systems, non-guessable in URLs |
 | SERIAL for lookup tables | Small cardinality, efficient joins and indexing |
 | Separate `job_responsibilities` / `job_qualifications` tables | Ordered lists that vary per posting; avoids JSON blobs |
 | Junction tables for skills, benefits, tags | Normalised many-to-many; enables filtering and reuse |
@@ -926,7 +985,7 @@ Render rule: if `banner_image_url` IS NULL, do not output the `.image-banner` se
 | `is_featured` flag | Drives homepage/listing featured badge |
 | `posted_at` vs `created_at` | Decouples publication date from record creation (drafts) |
 | Full-text index (GIN) | Powers the hero search and filter keyword search |
-| `auth_provider` on candidates | Supports Google, LinkedIn, email login (per application info) |
+| Separate candidate auth/provider tables | Supports email login, account lock/verification, and OAuth links without overloading profile rows |
 | `banner_image_url` + `banner_image_alt` on postings | Maps to the job detail poster strip (`.image-banner`); alt supports WCAG-compliant non-decorative imagery |
 | `users.role` | Phase-1 RBAC; DDL uses `VARCHAR(30)`; Prisma uses `UserRole` enum — see §5.1 |
 
@@ -943,10 +1002,10 @@ The SQL DDL in §5 is **Prisma-ready**: [`schema.prisma`](../../packages/db/pris
 | Topic | SQL / doc (`db-schema.md`) | Prisma (`schema.prisma`) |
 |--------|----------------------------|---------------------------|
 | **Enums** | `CHECK` on `status`, `type`, `role`, application `status` | Native Prisma `enum` types (`JobPostingStatus`, `QualificationType`, `ApplicationStatus`, `UserRole`) — migrate creates PostgreSQL enums |
-| **`candidates.email` uniqueness** | `UNIQUE INDEX` on `LOWER(email)` | `@@unique([email])` — case-sensitive; add a [raw migration](https://www.prisma.io/docs/orm/prisma-migrate/workflows/customizing-migrations) for case-insensitive uniqueness if required |
+| **Candidate email uniqueness** | `candidate_accounts.email_normalized` unique | Prisma uses `@@unique([emailNormalized])` with normalized lowercase email |
 | **Salary rule** | `CHECK (salary_min <= salary_max)` | Enforce in app or add raw SQL in a migration |
 | **GIN full-text index** | `idx_postings_fulltext` | Not expressible in `schema.prisma`; add via `prisma migrate` SQL or `prisma db execute` |
-| **Partial indexes** | `WHERE is_remote`, `WHERE is_featured`, `idx_candidates_provider` | Prisma emits **full** B-tree indexes (no `WHERE`); see §5.1. Same **logical** columns; different physical index definitions unless you add raw SQL. |
+| **Partial indexes** | `WHERE is_remote`, `WHERE is_featured` | Prisma emits **full** B-tree indexes (no `WHERE`); see §5.1. Same logical columns; different physical index definitions unless you add raw SQL. |
 
 ### Commands (from repo root)
 

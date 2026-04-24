@@ -117,16 +117,18 @@ Developer Machine
 ## 6. Project Structure
 
 ```
-/ats-project
-  /frontend
-  /backend
-  /database
-    /migrations
-    /seeds
-  /storage
+/markup_v1
+  /apps
+    /candidate-portal
+    /backoffice
+    /api
+  /packages
+    /db
+      /prisma
+        /migrations
+        /seed.js
   /docs
   .env
-  .env.example
 ```
 
 ---
@@ -139,6 +141,13 @@ Example:
 APP_ENV=local
 DATABASE_URL=postgresql://user:pass@localhost:5432/ats_db
 UPLOAD_ROOT=./storage
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+OTP_DELIVERY_MODE=dummy
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
 ```
 
 Rules:

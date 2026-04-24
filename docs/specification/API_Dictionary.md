@@ -20,6 +20,7 @@ This is the **entry point** for HTTP API documentation. It now reflects the curr
 |------|----------------|
 | **Auth** | `/api/v1/auth/*` |
 | **Candidate Account** | `/api/v1/candidates/*` (register, verify OTP, resend OTP, forgot/reset password) |
+| **Backoffice Candidate Admin** | `/api/backoffice/candidates/{id}/status` (status update) |
 | **Stub domains** | `/api/v1/jobs`, `/api/v1/applications`, `/api/v1/interviews`, `/api/v1/users`, `/api/v1/notifications` |
 | **Health probe** | `/health` (outside `/api/v1`) |
 

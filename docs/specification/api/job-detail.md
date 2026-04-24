@@ -1,6 +1,6 @@
 # API — Job detail page
 
-**Doc version:** 1.1 (aligned with [`JobPosting`](../../../packages/db/prisma/schema.prisma), [`Application`](../../../packages/db/prisma/schema.prisma), [`ApplicationStatus`](../../../packages/db/prisma/schema.prisma), [`QualificationType`](../../../packages/db/prisma/schema.prisma), [`db-schema.md`](../db-schema.md) §2, §3, banner fields)
+**Doc version:** 1.2 (aligned with [`JobPosting`](../../../packages/db/prisma/schema.prisma), [`Application`](../../../packages/db/prisma/schema.prisma), [`ApplicationStatus`](../../../packages/db/prisma/schema.prisma), [`QualificationType`](../../../packages/db/prisma/schema.prisma), [`db-schema.md`](../db-schema.md) §2, §3, banner fields)
 
 > Implementation status (22 Apr 2026): job detail/bookmark/apply routes described here are not yet implemented in `apps/api/src/modules/jobs` and related modules. Current backend has a stub `GET /api/v1/jobs`.
 

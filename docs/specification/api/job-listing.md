@@ -1,6 +1,6 @@
 # API — Job listing page
 
-**Doc version:** 1.1 (aligned with [`JobPosting`](../../../packages/db/prisma/schema.prisma), [`JobPostingStatus`](../../../packages/db/prisma/schema.prisma), [`db-schema.md`](../db-schema.md) §2.1, §5, GIN index)
+**Doc version:** 1.2 (aligned with [`JobPosting`](../../../packages/db/prisma/schema.prisma), [`JobPostingStatus`](../../../packages/db/prisma/schema.prisma), [`db-schema.md`](../db-schema.md) §2.1, §5, GIN index)
 
 > Implementation status (22 Apr 2026): only `GET /api/v1/jobs` exists and currently returns a stub payload from `apps/api/src/modules/jobs/index.ts`. The endpoints below are target contracts, not fully implemented yet.
 

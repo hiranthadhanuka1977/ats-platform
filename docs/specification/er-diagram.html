@@ -102,7 +102,7 @@
   .diagram-wrap {
     width: 100vw;
     height: 100vh;
-    padding-top: 54px;
+    padding-top: 82px;
     overflow: hidden;
     cursor: grab;
   }
@@ -161,6 +161,9 @@
     <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div>Candidate</div>
     <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Admin</div>
   </div>
+</div>
+<div style="position:fixed;top:54px;left:0;right:0;z-index:90;padding:6px 28px;background:rgba(15,17,23,0.75);border-bottom:1px solid #2a2d38;color:#8b8fa3;font-size:12px;">
+  Candidate identity is implemented as split tables (`candidate_accounts` + related auth/profile tables). Refer to `packages/db/prisma/schema.prisma` for source of truth.
 </div>
 
 <div class="diagram-wrap" id="wrap">

@@ -73,7 +73,7 @@ This folder describes REST-style APIs that back the candidate-portal markup (`do
 
 ### Identifiers
 
-- **UUIDs** for `job_postings`, `candidates`, `applications`, `users` (matches schema).
+- **UUIDs** for `job_postings`, `candidate_accounts`, `applications`, `users` (matches schema).
 - **Slugs** for SEO-friendly job URLs (`senior-business-analyst`).
 
 ### Versioning
@@ -88,7 +88,7 @@ Prefix all routes with `/api/v1`. Breaking changes require `/api/v2`.
 | **Enums** | String values in JSON match Prisma enums (same names as PostgreSQL enums after migrate). See table below. |
 | **Public jobs** | List and public detail endpoints return only rows with `JobPostingStatus` = `published` and not past `expires_at`. Do not expose drafts via public routes. |
 | **Staff `role`** | `/auth/me` for staff returns `role` as one of: `admin`, `recruiter`, `hiring_manager` (`UserRole`). |
-| **Candidate email** | Register/login should normalise email to **lowercase**. Uniqueness follows [`candidates`](../db-schema.md): Prisma `@@unique([email])` is case-sensitive; [§5 DDL](../db-schema.md) uses `LOWER(email)` — implement the stricter rule in API or migration (see §5.1). |
+| **Candidate email** | Register/login should normalize email to **lowercase** and use `candidate_accounts.email_normalized` for lookups. |
 | **Search (`q`)** | Keyword search should use the same fields as the GIN full-text index when present (`title`, `summary`, `overview`) — see `idx_postings_fulltext` in [db-schema.md §2.1](../db-schema.md). |
 
 **Prisma enum → API string values (same token names)**
@@ -116,6 +116,7 @@ DDL-only note: hand-written SQL in [db-schema.md §5](../db-schema.md) uses `VAR
 | Account | POST | `/candidates/verify-email` | Verify account using 6-digit OTP |
 | Account | POST | `/candidates/forgot-password` | Request password reset |
 | Account | POST | `/candidates/reset-password` | Complete password reset |
+| Backoffice Candidates | PATCH | `/api/backoffice/candidates/{id}/status` | Update candidate account status (`pending_verification`, `active`, `locked`, `disabled`) |
 | Jobs | GET | `/jobs` | Stub endpoint (`{ module: "jobs", message: "stub — implement job routes" }`) |
 | Applications | GET | `/applications` | Stub endpoint |
 | Interviews | GET | `/interviews` | Stub endpoint |
@@ -129,7 +130,7 @@ DDL-only note: hand-written SQL in [db-schema.md §5](../db-schema.md) uses `VAR
 ## Security notes
 
 - Store **refresh tokens** in httpOnly, Secure, SameSite cookies when using browser clients; or secure mobile storage for native apps.
-- **Rate-limit** login, register, forgot-password, and OAuth endpoints.
+- **Rate-limit** login, register, resend-otp, verify-email, and forgot-password endpoints.
 - **Never** return `password_hash` in any response.
 
 ---
