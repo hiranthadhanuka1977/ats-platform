@@ -1,0 +1,22 @@
+/**
+ * My Applications — control focus aligned with backoffice
+ * (apps/backoffice: .bo-input, apps/backoffice/src/styles/login.css .form-input).
+ * Loaded after candidate-portal.css so we override its inset ring on :focus-visible.
+ */
+
+.form-input:focus,
+.form-input:focus-visible,
+.form-select:focus,
+.form-select:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+  background-color: var(--color-surface);
+}
+
+.form-input--error:focus,
+.form-input--error:focus-visible {
+  outline: none !important;
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-error) 25%, transparent) !important;
+}

@@ -66,6 +66,11 @@ enum CandidateAuthProviderType {
   linkedin
 }
 
+enum CandidateCvParseStatus {
+  draft
+  confirmed
+}
+
 // ─── Lookup tables ───
 
 model Department {
@@ -306,6 +311,9 @@ model CandidateAccount {
   passwordResetTokens CandidatePasswordResetToken[]
   bookmarks           Bookmark[]
   applications        Application[]
+  cvParses            CandidateCvParse[]
+  cvEducation         CandidateCvEducation[]
+  cvExperience        CandidateCvExperience[]
 
   @@unique([email])
   @@unique([emailNormalized], map: "candidate_accounts_email_normalized_key")
@@ -320,12 +328,62 @@ model CandidateProfile {
   avatarUrl          String?  @map("avatar_url") @db.VarChar(500)
   phone              String?  @db.VarChar(30)
   resumeUrl          String?  @map("resume_url") @db.VarChar(500)
+  location           String?  @db.VarChar(200)
+  currentTitle       String?  @map("current_title") @db.VarChar(200)
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
 
   @@map("candidate_profiles")
+}
+
+model CandidateCvParse {
+  id                 String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateAccountId String                 @map("candidate_account_id") @db.Uuid
+  originalFilename   String                 @map("original_filename") @db.VarChar(500)
+  storedPath         String                 @map("stored_path") @db.VarChar(1000)
+  mimeType           String                 @map("mime_type") @db.VarChar(100)
+  extractedText      String?                @map("extracted_text") @db.Text
+  parsedJson         Json?                  @map("parsed_json")
+  status               CandidateCvParseStatus @default(draft)
+  createdAt          DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
+
+  @@index([candidateAccountId], map: "idx_candidate_cv_parses_account")
+  @@map("candidate_cv_parses")
+}
+
+model CandidateCvEducation {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateAccountId String   @map("candidate_account_id") @db.Uuid
+  qualification      String   @db.VarChar(400)
+  institution        String   @db.VarChar(400)
+  startDate          String?  @map("start_date") @db.VarChar(80)
+  endDate            String?  @map("end_date") @db.VarChar(80)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
+
+  @@index([candidateAccountId], map: "idx_candidate_cv_education_account")
+  @@map("candidate_cv_educations")
+}
+
+model CandidateCvExperience {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateAccountId String   @map("candidate_account_id") @db.Uuid
+  company            String   @db.VarChar(300)
+  role               String   @db.VarChar(300)
+  startDate          String?  @map("start_date") @db.VarChar(80)
+  endDate            String?  @map("end_date") @db.VarChar(80)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
+
+  @@index([candidateAccountId], map: "idx_candidate_cv_experience_account")
+  @@map("candidate_cv_experiences")
 }
 
 model CandidateAuthProvider {

@@ -9,9 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "@ats-platform/db": "*",
     "@ats-platform/ui": "*",
+    "jose": "^6.2.3",
+    "mammoth": "^1.12.0",
     "next": "16.2.3",
+    "pdf-parse": "^2.4.5",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },

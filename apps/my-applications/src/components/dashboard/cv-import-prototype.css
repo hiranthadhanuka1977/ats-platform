@@ -1,0 +1,125 @@
+.myapps-cv-drop {
+  border: 2px dashed var(--color-border, #cbd5e1);
+  border-radius: var(--radius-xl, 12px);
+  background: var(--color-surface-alt, #f8fafc);
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  margin-top: var(--space-4, 1rem);
+}
+
+.myapps-cv-file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.myapps-cv-drop-inner {
+  pointer-events: none;
+  text-align: center;
+  padding: var(--space-6, 1.5rem);
+  color: var(--color-text-secondary, #64748b);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+.myapps-cv-drop-hint {
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.myapps-cv-section-title {
+  font-family: var(--font-display, inherit);
+  font-size: var(--text-lg, 1.125rem);
+  margin: var(--space-6, 1.5rem) 0 var(--space-3, 0.75rem);
+  color: var(--color-secondary, #0f172a);
+}
+
+.myapps-cv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4, 1rem);
+}
+
+@media (max-width: 767px) {
+  .myapps-cv-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.myapps-cv-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--weight-medium, 500);
+  color: var(--color-text-secondary, #64748b);
+}
+
+.myapps-cv-field-span2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 767px) {
+  .myapps-cv-field-span2 {
+    grid-column: span 1;
+  }
+}
+
+.myapps-cv-input {
+  font: inherit;
+  font-family: var(--font-body, inherit);
+  font-size: var(--text-sm, 0.875rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border: 1px solid var(--color-border-input, #94a3b8);
+  border-radius: var(--radius-md, 0.375rem);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #0f172a);
+  transition: border-color var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease);
+}
+
+.myapps-cv-input:focus,
+.myapps-cv-input:focus-visible {
+  outline: none;
+  border-color: var(--color-primary, #2563eb);
+  box-shadow: var(--shadow-focus, 0 0 0 3px rgba(37, 99, 235, 0.25));
+}
+
+.myapps-cv-drop:focus-within {
+  border-color: var(--color-primary, #2563eb);
+  box-shadow: var(--shadow-focus, 0 0 0 3px rgba(37, 99, 235, 0.25));
+}
+
+.myapps-cv-file-input:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus, 0 0 0 3px rgba(37, 99, 235, 0.25));
+  border-radius: var(--radius-md, 0.375rem);
+}
+
+.myapps-cv-row-block {
+  margin-bottom: var(--space-4, 1rem);
+  padding-bottom: var(--space-4, 1rem);
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+}
+
+.myapps-cv-remove {
+  margin-top: var(--space-2, 0.5rem);
+}
+
+.myapps-cv-add {
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.myapps-cv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3, 0.75rem);
+  margin-top: var(--space-6, 1.5rem);
+}
+
+.myapps-cv-done {
+  margin-top: var(--space-4, 1rem);
+}

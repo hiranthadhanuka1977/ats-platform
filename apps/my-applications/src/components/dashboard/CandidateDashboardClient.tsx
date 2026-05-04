@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadCandidateSession } from "@/lib/auth-storage";
+import { CvImportPrototype } from "@/components/dashboard/CvImportPrototype";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1";
 
@@ -19,6 +20,7 @@ export function CandidateDashboardClient() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<CandidateProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
     const session = loadCandidateSession();
@@ -26,6 +28,7 @@ export function CandidateDashboardClient() {
       router.replace("/login");
       return;
     }
+    setAccessToken(session.accessToken);
 
     const run = async () => {
       try {
@@ -57,30 +60,36 @@ export function CandidateDashboardClient() {
   }, [profile]);
 
   if (loading) {
-    return <p className="dashboard-muted">Loading your dashboard...</p>;
+    return <p className="bo-page-sub">Loading your dashboard…</p>;
   }
   if (error) {
-    return <p className="form-error">{error}</p>;
+    return <p className="bo-login-error" role="alert">{error}</p>;
   }
   if (!profile) {
     return null;
   }
 
   return (
-    <section className="dashboard-card" aria-labelledby="dashboard-title">
-      <h1 id="dashboard-title" className="dashboard-title">
+    <section aria-labelledby="dashboard-title">
+      <h1 id="dashboard-title" className="bo-page-title">
         Welcome, {displayName}
       </h1>
-      <p className="dashboard-muted">You are logged in as {profile.email}.</p>
+      <p className="bo-page-sub">You are signed in as {profile.email}.</p>
 
-      <div className="dashboard-grid">
-        <article className="dashboard-panel">
-          <h2 className="dashboard-panel-title">Applications</h2>
-          <p className="dashboard-muted">Track submitted jobs, interview steps, and status updates.</p>
+      {accessToken ? <CvImportPrototype accessToken={accessToken} /> : null}
+
+      <div className="bo-dash-grid">
+        <article className="bo-card bo-span-6">
+          <h2 className="bo-card-title">Applications</h2>
+          <p className="bo-page-sub" style={{ marginBottom: 0 }}>
+            Track submitted jobs, interview steps, and status updates.
+          </p>
         </article>
-        <article className="dashboard-panel">
-          <h2 className="dashboard-panel-title">Saved Jobs</h2>
-          <p className="dashboard-muted">Review your bookmarked roles and apply when ready.</p>
+        <article className="bo-card bo-span-6">
+          <h2 className="bo-card-title">Saved jobs</h2>
+          <p className="bo-page-sub" style={{ marginBottom: 0 }}>
+            Review bookmarked roles from the job portal and apply when you are ready.
+          </p>
         </article>
       </div>
     </section>
