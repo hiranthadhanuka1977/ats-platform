@@ -127,9 +127,9 @@ Both use the **App Router** under `src/app/`. Shared folder conventions:
 src/
 ├── index.ts              # Hono app, middleware, registerRoutes(), serve()
 ├── routes/
-│   ├── index.ts          # registerRoutes(app) — mounts health, demo, all modules
+│   ├── index.ts          # registerRoutes(app) — mounts health + `/api/v1` modules
 │   ├── health.ts         # liveness payload
-│   └── demo.ts           # example: pagination query validation
+│   └── demo.ts           # optional Zod pagination example (not mounted unless wired in index)
 ├── middlewares/
 │   ├── index.ts
 │   └── logger.ts         # requestLogger
@@ -147,21 +147,24 @@ src/
 
 Each **`modules/<name>/index.ts`** exports a **`Hono`** instance. **`routes/index.ts`** mounts them with **`app.route("/<prefix>", module)`**. Add services, handlers, and tests inside each module as you build features.
 
-#### Route map (stubs)
+#### Route map
 
-Mounted paths follow **`routes/index.ts`**. Inner routers use `GET /` on the sub-app unless you add nested paths.
+Mounted paths follow **`routes/index.ts`**. The **`/api/v1`** prefix wraps domain modules.
 
 | HTTP | Path | Source |
 |------|------|--------|
 | `GET` | `/health` | `routes/health.ts` (JSON: ok, service, ts) |
-| `GET` | `/demo/pagination` | `routes/demo.ts` (query: `page`, `pageSize` via Zod) |
-| `POST` | `/api/v1/auth/login`, `GET` `/api/v1/auth/me`, … | `modules/auth` |
-| `GET` | `/jobs/` | `modules/jobs` |
-| `GET` | `/candidates/` | `modules/candidates` |
-| `GET` | `/applications/` | `modules/applications` |
-| `GET` | `/interviews/` | `modules/interviews` |
-| `GET` | `/users/` | `modules/users` |
-| `GET` | `/notifications/` | `modules/notifications` |
+| `POST` | `/api/v1/auth/login` | `modules/auth` |
+| `GET` | `/api/v1/auth/me` | `modules/auth` |
+| `POST` | `/api/v1/auth/logout` | `modules/auth` |
+| `POST` | `/api/v1/candidates/register`, `/resend-otp`, `/verify-email`, `/forgot-password`, `/reset-password` | `modules/candidates` |
+| `GET` | `/api/v1/jobs/` | `modules/jobs` (stub) |
+| `GET` | `/api/v1/applications/` | `modules/applications` (stub) |
+| `GET` | `/api/v1/interviews/` | `modules/interviews` (stub) |
+| `GET` | `/api/v1/users/` | `modules/users` (stub) |
+| `GET` | `/api/v1/notifications/` | `modules/notifications` (stub) |
+
+**Next.js route handlers** (not this server): `apps/my-applications` exposes **`/api/my-applications/*`** (CV and screenshot import); `apps/backoffice` exposes **`/api/auth/*`**, **`/api/backoffice/*`**, **`/api/admin/*`**. See **`docs/specification/api/README.md`**.
 
 **TypeScript:** `apps/api/tsconfig.json` uses **`moduleResolution: "bundler"`** so local imports do not require explicit `.js` extensions for `tsc`.
 

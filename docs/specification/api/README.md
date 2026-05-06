@@ -1,17 +1,18 @@
 # API Documentation — Candidate Portal (ATS)
 
-**Version:** 1.2  
-**Date:** 22 April 2026  
-**Base path:** `/api/v1`  
-**Format:** JSON over HTTPS  
+**Version:** 1.3  
+**Date:** 6 May 2026  
+**Base path (central API):** `/api/v1`  
+**Format:** JSON over HTTPS (central API and typical Next.js JSON handlers)  
 **Auth:** Bearer access token (JWT) for protected routes; public routes for published job data.
 
 This folder describes REST-style APIs that back:
 
 - public jobs browsing (`apps/candidate-portal`, `docs/markup/candidate-portal/job-listing.html`, `job-detail.html`)
-- candidate account workflows (`apps/my-applications`)
+- candidate account workflows and dashboard APIs (`apps/my-applications` — see [my-applications-routes.md](my-applications-routes.md))
+- staff back office (`apps/backoffice` — app-local route summary below)
 
-and align with [`schema.prisma`](../../../packages/db/prisma/schema.prisma) and [`db-schema.md`](../db-schema.md).
+Everything aligns with [`schema.prisma`](../../../packages/db/prisma/schema.prisma) and [`db-schema.md`](../db-schema.md) where data is persisted.
 
 ---
 
@@ -23,6 +24,7 @@ and align with [`schema.prisma`](../../../packages/db/prisma/schema.prisma) and 
 | [registration-sign-in.md](registration-sign-in.md) | Registration, OTP verification/resend, email/password sign-in, password recovery |
 | [job-listing.md](job-listing.md) | Job listing page — search, filters, sort, pagination, lookups |
 | [job-detail.md](job-detail.md) | Job detail target contract — single job, apply, bookmarks (implementation in progress) |
+| [my-applications-routes.md](my-applications-routes.md) | Candidate app Next.js routes: CV import + screenshot-based profile import |
 
 ---
 
@@ -111,6 +113,8 @@ DDL-only note: hand-written SQL in [db-schema.md §5](../db-schema.md) uses `VAR
 
 ## Master API dictionary (quick index)
 
+### Central service (`apps/api` — prefix `/api/v1`)
+
 | Domain | Method | Path | Summary |
 |--------|--------|------|---------|
 | Auth | POST | `/auth/login` | Email/password login for `candidate` and `staff` audiences |
@@ -121,14 +125,39 @@ DDL-only note: hand-written SQL in [db-schema.md §5](../db-schema.md) uses `VAR
 | Account | POST | `/candidates/verify-email` | Verify account using 6-digit OTP |
 | Account | POST | `/candidates/forgot-password` | Request password reset |
 | Account | POST | `/candidates/reset-password` | Complete password reset |
-| Backoffice Candidates | PATCH | `/api/backoffice/candidates/{id}/status` | Backoffice Next.js route (app-local), not mounted under `apps/api` `/api/v1` |
 | Jobs | GET | `/jobs` | Stub endpoint (`{ module: "jobs", message: "stub — implement job routes" }`) |
 | Applications | GET | `/applications` | Stub endpoint |
 | Interviews | GET | `/interviews` | Stub endpoint |
 | Users | GET | `/users` | Stub endpoint |
 | Notifications | GET | `/notifications` | Stub endpoint |
 
-`/health` exists outside `/api/v1` and returns health probe data.
+`/health` on the same server is **outside** `/api/v1` and returns a JSON liveness payload.
+
+### Candidate app — Next.js (`apps/my-applications`, origin e.g. `http://localhost:3002`)
+
+Bearer JWT (candidate). Details: [my-applications-routes.md](my-applications-routes.md).
+
+| Method | Path | Summary |
+|--------|------|---------|
+| POST | `/api/my-applications/cv/upload` | Upload PDF/Word; returns `parseId` |
+| POST | `/api/my-applications/cv/parse` | Text extraction + structured parse |
+| POST | `/api/my-applications/cv/save` | Save parsed CV to profile |
+| GET | `/api/my-applications/cv/download` | Download original file (`?id=`) |
+| POST | `/api/my-applications/screenshot/extract` | Image + section → structured rows (requires `OPENAI_API_KEY`) |
+| POST | `/api/my-applications/screenshot/save` | Save full payload from screenshot flow |
+
+### Backoffice — Next.js (`apps/backoffice`, origin e.g. `http://localhost:3001`)
+
+Staff session cookies via **`/api/auth/login`** (and refresh/logout). Domain routes are app-local, not the central `/api/v1` tree.
+
+| Area | Typical paths | Summary |
+|------|----------------|---------|
+| Auth | `POST /api/auth/login`, `POST /api/auth/logout`, `POST /api/auth/refresh` | Staff authentication |
+| Jobs | `GET/POST /api/backoffice/jobs`, `GET/PATCH/DELETE /api/backoffice/jobs/{id}`, `POST /api/backoffice/jobs/{id}/publish`, `GET /api/backoffice/jobs/form-options` | Job posting CRUD and publish |
+| Candidates | `PATCH /api/backoffice/candidates/{id}/status` | Application/candidate status updates |
+| Admin lookups | `/api/admin/departments`, `/api/admin/locations`, `/api/admin/skills`, `/api/admin/tags`, `/api/admin/benefits`, `/api/admin/experience-levels`, `/api/admin/employment-types` (collection + `/{id}`) | Reference data for job builder |
+
+Implementations live under `apps/backoffice/src/app/api/`.
 
 ---
 

@@ -123,3 +123,49 @@
 .myapps-cv-done {
   margin-top: var(--space-4, 1rem);
 }
+
+.myapps-linkedin-note {
+  margin: var(--space-2, 0.5rem) 0 var(--space-4, 1rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-md, 0.375rem);
+  background: var(--color-surface-alt, #f8fafc);
+  color: var(--color-text-secondary, #64748b);
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.myapps-screenshot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4, 1rem);
+  margin: var(--space-4, 1rem) 0 var(--space-2, 0.5rem);
+}
+
+@media (max-width: 767px) {
+  .myapps-screenshot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.myapps-screenshot-block {
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-lg, 8px);
+  padding: var(--space-4, 1rem);
+}
+
+.myapps-screenshot-sub {
+  margin-top: 0;
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.myapps-screenshot-drop {
+  border: 2px dashed var(--color-border, #cbd5e1);
+  border-radius: var(--radius-md, 0.375rem);
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  color: var(--color-text-secondary, #64748b);
+  text-align: center;
+  padding: var(--space-3, 0.75rem);
+}

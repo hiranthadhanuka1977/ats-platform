@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadCandidateSession } from "@/lib/auth-storage";
 import { CvImportPrototype } from "@/components/dashboard/CvImportPrototype";
+import { ProfileScreenshotImportPrototype } from "@/components/dashboard/ProfileScreenshotImportPrototype";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1";
 
@@ -76,6 +77,9 @@ export function CandidateDashboardClient() {
       </h1>
       <p className="bo-page-sub">You are signed in as {profile.email}.</p>
 
+      {accessToken ? (
+        <ProfileScreenshotImportPrototype accessToken={accessToken} defaultEmail={profile.email} defaultFullName={displayName} />
+      ) : null}
       {accessToken ? <CvImportPrototype accessToken={accessToken} /> : null}
 
       <div className="bo-dash-grid">
