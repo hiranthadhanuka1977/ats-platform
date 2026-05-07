@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { normalizeParsedPayload, type ParsedCvPayload } from "@/types/cv-parse";
 import { getBearerToken, verifyCandidateAccessToken } from "@/lib/verify-candidate-token";
+import { getServerEnv } from "@/lib/server-env";
 
 export const runtime = "nodejs";
 
@@ -56,7 +57,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: { code: "UNAUTHORIZED", message: "Invalid or expired token." } }, { status: 401 });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  const apiKey = getServerEnv("OPENAI_API_KEY");
   if (!apiKey) {
     return NextResponse.json(
       { error: { code: "CONFIG_ERROR", message: "OPENAI_API_KEY is required for screenshot extraction." } },
@@ -101,7 +102,7 @@ export async function POST(request: Request) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: process.env.OPENAI_CV_MODEL ?? "gpt-4o-mini",
+      model: getServerEnv("OPENAI_CV_MODEL") || "gpt-4o-mini",
       temperature: 0.1,
       response_format: { type: "json_object" },
       messages: [
