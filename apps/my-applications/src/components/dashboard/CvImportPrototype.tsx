@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import type { ParsedCvEducation, ParsedCvExperience, ParsedCvPayload } from "@/types/cv-parse";
 import { emptyParsedCvPayload } from "@/types/cv-parse";
+import { loadCandidateSession } from "@/lib/auth-storage";
 import "./cv-import-prototype.css";
 
 type Step = "drop" | "working" | "review" | "saving" | "done";
@@ -24,7 +25,8 @@ export function CvImportPrototype({ accessToken }: CvImportPrototypeProps) {
       setStep("working");
       setFileLabel(file.name);
 
-      const auth = { Authorization: `Bearer ${accessToken}` };
+      const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
+      const auth = { Authorization: `Bearer ${liveToken}` };
 
       const fd = new FormData();
       fd.set("file", file);
@@ -92,9 +94,10 @@ export function CvImportPrototype({ accessToken }: CvImportPrototypeProps) {
     if (!parseId) return;
     setError(null);
     setStep("saving");
+    const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
     const res = await fetch("/api/my-applications/cv/save", {
       method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${liveToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({ parseId, payload }),
     });
     const json = (await res.json().catch(() => ({}))) as { error?: { message?: string } };

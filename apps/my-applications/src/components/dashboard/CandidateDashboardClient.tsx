@@ -20,6 +20,7 @@ type ProfileProgress = {
   basicProfileComplete: boolean;
   hasExperience: boolean;
   hasEducation: boolean;
+  hasCv: boolean;
   completeProfileDone: boolean;
 };
 
@@ -77,9 +78,10 @@ export function CandidateDashboardClient() {
 
   const progressState = useMemo(() => {
     const profileComplete = Boolean(profileProgress?.completeProfileDone);
+    const hasCv = Boolean(profileProgress?.hasCv);
     const steps = [
       { label: "Completing Profile", complete: profileComplete, actionHref: "/my-profile", actionLabel: "Complete profile" },
-      { label: "Upload CV", complete: false, actionHref: "/my-profile", actionLabel: "Upload CV" },
+      { label: hasCv ? "My CVs" : "Upload CV", complete: hasCv, actionHref: "/cv-upload", actionLabel: hasCv ? "Manage CVs" : "Upload CV" },
       { label: "Adding Cover Letter", complete: false, actionHref: "/dashboard", actionLabel: "Add cover letter" },
       {
         label: "Start Applying",

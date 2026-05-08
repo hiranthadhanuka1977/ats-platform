@@ -1,6 +1,6 @@
-import path from "node:path";
 import { readFile } from "node:fs/promises";
 import { NextResponse } from "next/server";
+import { resolveStoredPath } from "@/lib/cv-storage";
 import { prisma } from "@/lib/prisma";
 import { getBearerToken, verifyCandidateAccessToken } from "@/lib/verify-candidate-token";
 
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: { code: "NOT_FOUND", message: "File not found." } }, { status: 404 });
   }
 
-  const absPath = path.join(/*turbopackIgnore: true*/ process.cwd(), row.storedPath.replace(/\//g, path.sep));
+  const absPath = resolveStoredPath(row.storedPath);
   const buf = await readFile(absPath);
 
   const headers = new Headers();

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import { getCvStorageRoot, toStoredPath } from "@/lib/cv-storage";
 import { prisma } from "@/lib/prisma";
 import { getBearerToken, verifyCandidateAccessToken } from "@/lib/verify-candidate-token";
 
@@ -82,12 +83,13 @@ export async function POST(request: Request) {
   }
 
   const id = randomUUID();
-  const relDir = path.join("uploads", "cv", user.candidateAccountId);
-  const absDir = path.join(/*turbopackIgnore: true*/ process.cwd(), relDir);
+  const relDir = path.join(user.candidateAccountId);
+  const storageRoot = getCvStorageRoot();
+  const absDir = path.join(storageRoot, relDir);
   await mkdir(absDir, { recursive: true });
   const storedName = `${id}${ext}`;
   const relPath = path.join(relDir, storedName);
-  const absPath = path.join(/*turbopackIgnore: true*/ process.cwd(), relPath);
+  const absPath = path.join(storageRoot, relPath);
 
   const buf = Buffer.from(await file.arrayBuffer());
   await writeFile(absPath, buf);
@@ -97,11 +99,28 @@ export async function POST(request: Request) {
       id,
       candidateAccountId: user.candidateAccountId,
       originalFilename: file.name.slice(0, 500),
-      storedPath: relPath.replace(/\\/g, "/"),
+      storedPath: toStoredPath(user.candidateAccountId, storedName),
       mimeType: mime.slice(0, 100),
       status: "draft",
     },
   });
+
+  const existingDefault = await prisma.candidateProfile.findUnique({
+    where: { candidateAccountId: user.candidateAccountId },
+    select: { resumeUrl: true },
+  });
+  if (!existingDefault?.resumeUrl) {
+    await prisma.candidateProfile.upsert({
+      where: { candidateAccountId: user.candidateAccountId },
+      create: {
+        candidateAccountId: user.candidateAccountId,
+        resumeUrl: `/api/my-applications/cv/download?id=${encodeURIComponent(row.id)}`,
+      },
+      update: {
+        resumeUrl: `/api/my-applications/cv/download?id=${encodeURIComponent(row.id)}`,
+      },
+    });
+  }
 
   return NextResponse.json({
     data: {

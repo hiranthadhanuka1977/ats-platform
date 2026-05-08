@@ -40,8 +40,8 @@ export async function signAccessToken(claims: AccessClaims): Promise<string> {
   return jwt;
 }
 
-export async function signRefreshToken(sub: string): Promise<string> {
-  return new SignJWT({ tokenUse: "refresh" })
+export async function signRefreshToken(sub: string, typ: "staff" | "candidate"): Promise<string> {
+  return new SignJWT({ tokenUse: "refresh", typ })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(sub)
     .setIssuedAt()
@@ -51,6 +51,14 @@ export async function signRefreshToken(sub: string): Promise<string> {
 
 export async function verifyAccessToken(token: string) {
   const { payload } = await jwtVerify(token, getSecret());
+  return payload;
+}
+
+export async function verifyRefreshToken(token: string) {
+  const { payload } = await jwtVerify(token, getSecret());
+  if (payload.tokenUse !== "refresh") {
+    throw new Error("INVALID_REFRESH_TOKEN");
+  }
   return payload;
 }
 

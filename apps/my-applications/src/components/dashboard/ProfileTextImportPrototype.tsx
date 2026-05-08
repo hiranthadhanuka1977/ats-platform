@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ParsedCvPayload } from "@/types/cv-parse";
 import { emptyParsedCvPayload } from "@/types/cv-parse";
+import { loadCandidateSession } from "@/lib/auth-storage";
+import { COUNTRIES } from "@/lib/countries";
+import { INTERNATIONAL_DIAL_CODES } from "@/lib/international-dial-codes";
 import "./cv-import-prototype.css";
 
 type Step = "idle" | "extracting-experience" | "extracting-education" | "saving" | "done";
@@ -13,6 +16,14 @@ type Props = {
   defaultFullName: string;
 };
 
+function splitPhone(raw: string): { code: string; number: string } {
+  const trimmed = raw.trim();
+  if (!trimmed) return { code: "+65", number: "" };
+  const m = /^\s*(\+\d{1,4}(?:-\d{1,4})?)\s*(.*)$/.exec(trimmed);
+  if (!m) return { code: "+65", number: trimmed };
+  return { code: m[1], number: m[2].trim() };
+}
+
 export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultFullName }: Props) {
   const initialPayload = useMemo(() => {
     const base = emptyParsedCvPayload();
@@ -22,6 +33,9 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
   }, [defaultEmail, defaultFullName]);
 
   const [payload, setPayload] = useState<ParsedCvPayload>(initialPayload);
+  const initialPhone = splitPhone(initialPayload.candidate.phone);
+  const [phoneCode, setPhoneCode] = useState(initialPhone.code);
+  const [phoneNumber, setPhoneNumber] = useState(initialPhone.number);
   const [experienceText, setExperienceText] = useState("");
   const [educationText, setEducationText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,9 +43,46 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
   const [educationError, setEducationError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("idle");
+  const [loadingView, setLoadingView] = useState(true);
+  const [readOnlyView, setReadOnlyView] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    void (async () => {
+      const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
+      try {
+        const response = await fetch("/api/my-applications/profile/view", {
+          headers: { Authorization: `Bearer ${liveToken}` },
+        });
+        const payloadResponse = (await response.json().catch(() => ({}))) as {
+          data?: { payload?: ParsedCvPayload; readOnly?: boolean };
+        };
+        if (response.ok && payloadResponse.data?.payload) {
+          const loaded = payloadResponse.data.payload;
+          setPayload(loaded);
+          const parsedPhone = splitPhone(loaded.candidate.phone || "");
+          setPhoneCode(parsedPhone.code);
+          setPhoneNumber(parsedPhone.number);
+          setReadOnlyView(Boolean(payloadResponse.data.readOnly));
+        }
+      } catch {
+        // keep default editable payload
+      } finally {
+        setLoadingView(false);
+      }
+    })();
+  }, [accessToken]);
 
   function updateCandidate<K extends keyof ParsedCvPayload["candidate"]>(key: K, value: string) {
     setPayload((p) => ({ ...p, candidate: { ...p.candidate, [key]: value } }));
+  }
+
+  function updatePhone(nextCode: string, nextNumber: string) {
+    const normalizedNumber = nextNumber.replace(/\s+/g, " ").trim();
+    const combined = normalizedNumber ? `${nextCode} ${normalizedNumber}` : "";
+    setPhoneCode(nextCode);
+    setPhoneNumber(nextNumber);
+    updateCandidate("phone", combined);
   }
 
   function addExperienceRow() {
@@ -73,9 +124,10 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     setNote(null);
     setStep("extracting-experience");
 
+    const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
     const res = await fetch("/api/my-applications/text/extract", {
       method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${liveToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({ experienceText, educationText: "" }),
     });
     const json = (await res.json().catch(() => ({}))) as {
@@ -115,9 +167,10 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     setNote(null);
     setStep("extracting-education");
 
+    const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
     const res = await fetch("/api/my-applications/text/extract", {
       method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${liveToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({ experienceText: "", educationText }),
     });
     const json = (await res.json().catch(() => ({}))) as {
@@ -152,9 +205,10 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     setEducationError(null);
     setStep("saving");
 
+    const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
     const res = await fetch("/api/my-applications/screenshot/save", {
       method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${liveToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({ payload }),
     });
     const json = (await res.json().catch(() => ({}))) as { error?: { message?: string } };
@@ -163,10 +217,14 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
       setStep("idle");
       return;
     }
+    setReadOnlyView(true);
+    setEditMode(false);
+    setNote("Profile saved.");
     setStep("done");
   }
 
   function reset() {
+    if (readOnlyView && !editMode) return;
     setError(null);
     setExperienceError(null);
     setEducationError(null);
@@ -175,16 +233,26 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     setExperienceText("");
     setEducationText("");
     setPayload(initialPayload);
+    setPhoneCode(initialPhone.code);
+    setPhoneNumber(initialPhone.number);
+  }
+
+  if (loadingView) {
+    return <p className="bo-page-sub">Loading profile...</p>;
   }
 
   return (
     <section className="bo-card bo-span-12" aria-labelledby="text-import-title">
-      <h2 id="text-import-title" className="bo-card-title">
-        Build profile from LinkedIn text (prototype)
-      </h2>
-      <p className="bo-page-sub" style={{ marginTop: 0 }}>
-        Paste text from your LinkedIn <strong>Experience</strong> and <strong>Education</strong> sections, then apply it to prefill your profile rows.
-      </p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+        <h2 id="text-import-title" className="bo-card-title" style={{ marginBottom: 0 }}>
+          My Profile
+        </h2>
+        {readOnlyView && !editMode ? (
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => setEditMode(true)}>
+            Update profile
+          </button>
+        ) : null}
+      </div>
 
       {error ? (
         <p className="bo-login-error" role="alert">
@@ -196,7 +264,18 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
           {note}
         </p>
       ) : null}
+      {readOnlyView ? (
+        <p className="myapps-linkedin-note" role="status">
+          Profile is completed and locked.
+        </p>
+      ) : null}
+      {readOnlyView && editMode ? (
+        <p className="myapps-linkedin-note" role="status">
+          Edit mode is enabled. Save to lock the profile again.
+        </p>
+      ) : null}
 
+      <fieldset disabled={(!editMode && readOnlyView) || step === "saving"} style={{ border: 0, padding: 0, margin: 0 }}>
       <h3 className="myapps-cv-section-title">Profile review</h3>
       <div className="myapps-cv-grid">
         <label className="myapps-cv-field">
@@ -209,11 +288,33 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
         </label>
         <label className="myapps-cv-field">
           Phone
-          <input className="myapps-cv-input" value={payload.candidate.phone} onChange={(e) => updateCandidate("phone", e.target.value)} />
+          <div className="myapps-phone-row">
+            <select className="myapps-cv-input" value={phoneCode} onChange={(e) => updatePhone(e.target.value, phoneNumber)}>
+              {INTERNATIONAL_DIAL_CODES.map((option, index) => (
+                <option key={`${option.value}-${index}`} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <input
+              className="myapps-cv-input"
+              inputMode="tel"
+              placeholder="Phone number"
+              value={phoneNumber}
+              onChange={(e) => updatePhone(phoneCode, e.target.value)}
+            />
+          </div>
         </label>
         <label className="myapps-cv-field">
-          Location
-          <input className="myapps-cv-input" value={payload.candidate.location} onChange={(e) => updateCandidate("location", e.target.value)} />
+          Country
+          <select className="myapps-cv-input" value={payload.candidate.location} onChange={(e) => updateCandidate("location", e.target.value)}>
+            <option value="">Select country</option>
+            {COUNTRIES.map((country) => (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="myapps-cv-field myapps-cv-field-span2">
           Current title
@@ -435,16 +536,24 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
         </div>
       ))}
 
+      {(!readOnlyView || editMode) ? (
       <div className="myapps-cv-actions">
         <button type="button" className="btn btn-secondary" disabled={step === "saving"} onClick={reset}>
           Reset
         </button>
+        {readOnlyView && editMode ? (
+          <button type="button" className="btn btn-secondary" disabled={step === "saving"} onClick={() => setEditMode(false)}>
+            Cancel
+          </button>
+        ) : null}
         <button type="button" className="btn btn-primary" disabled={step === "saving"} onClick={() => void onSave()}>
           {step === "saving" ? "Saving..." : "Confirm & save profile"}
         </button>
       </div>
+      ) : null}
+      </fieldset>
 
-      {step === "done" ? (
+      {step === "done" && (!readOnlyView || editMode) ? (
         <div className="myapps-cv-done">
           <p className="bo-page-sub" style={{ marginBottom: "var(--space-4)" }}>
             Saved. Profile, experience, and education were updated from pasted LinkedIn text.

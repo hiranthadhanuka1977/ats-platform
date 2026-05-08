@@ -149,6 +149,18 @@
   box-shadow: var(--shadow-focus, 0 0 0 3px rgba(37, 99, 235, 0.25));
 }
 
+.myapps-phone-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+  gap: var(--space-2, 0.5rem);
+}
+
+@media (max-width: 767px) {
+  .myapps-phone-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .myapps-cv-drop:focus-within {
   border-color: var(--color-primary, #2563eb);
   box-shadow: var(--shadow-focus, 0 0 0 3px rgba(37, 99, 235, 0.25));
@@ -183,6 +195,66 @@
 
 .myapps-cv-done {
   margin-top: var(--space-4, 1rem);
+}
+
+.myapps-cv-list-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  background: var(--color-surface, #fff);
+}
+
+.myapps-cv-list-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.myapps-cv-menu-wrap {
+  position: relative;
+}
+
+.myapps-cv-menu-trigger {
+  min-width: 2rem;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+}
+
+.myapps-cv-menu-popover {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 15;
+  min-width: 130px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.12);
+  padding: 0.25rem;
+}
+
+.myapps-cv-menu-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  border-radius: 6px;
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  color: #991b1b;
+  cursor: pointer;
+}
+
+.myapps-cv-menu-item:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.myapps-cv-menu-item:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
 }
 
 .myapps-linkedin-note {

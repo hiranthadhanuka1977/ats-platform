@@ -1,7 +1,7 @@
-import path from "node:path";
 import { NextResponse } from "next/server";
 import { extractTextFromCvFile } from "@/lib/cv-extract-text";
 import { parseCvText } from "@/lib/cv-parse-from-text";
+import { resolveStoredPath } from "@/lib/cv-storage";
 import { prisma } from "@/lib/prisma";
 import { getBearerToken, verifyCandidateAccessToken } from "@/lib/verify-candidate-token";
 
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: { code: "NOT_FOUND", message: "CV upload not found." } }, { status: 404 });
   }
 
-  const absPath = path.join(/*turbopackIgnore: true*/ process.cwd(), row.storedPath.replace(/\//g, path.sep));
+  const absPath = resolveStoredPath(row.storedPath);
 
   let extracted: string;
   try {

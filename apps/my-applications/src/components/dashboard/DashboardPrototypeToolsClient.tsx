@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadCandidateSession } from "@/lib/auth-storage";
-import { CvImportPrototype } from "@/components/dashboard/CvImportPrototype";
 import { ProfileTextImportPrototype } from "@/components/dashboard/ProfileTextImportPrototype";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1";
@@ -67,12 +66,11 @@ export function DashboardPrototypeToolsClient() {
       <h1 id="my-profile-title" className="bo-page-title">
         My Profile
       </h1>
-      <p className="bo-page-sub">Complete your profile details, LinkedIn text parsing, and CV upload here, {displayName}.</p>
+      <p className="bo-page-sub">Complete your profile details using LinkedIn text parsing here, {displayName}.</p>
 
       {accessToken ? (
         <ProfileTextImportPrototype accessToken={accessToken} defaultEmail={profile.email} defaultFullName={displayName} />
       ) : null}
-      {accessToken ? <CvImportPrototype accessToken={accessToken} /> : null}
     </section>
   );
 }

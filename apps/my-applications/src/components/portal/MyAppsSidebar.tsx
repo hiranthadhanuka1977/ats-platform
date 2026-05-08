@@ -16,6 +16,7 @@ const jobsPortalBase = process.env.NEXT_PUBLIC_CANDIDATE_PORTAL_BASE_URL ?? "htt
 const items: MyAppsNavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: <IconDashboard />, matchPrefix: "/dashboard" },
   { href: "/my-profile", label: "My Profile", icon: <IconUser />, matchPrefix: "/my-profile" },
+  { href: "/cv-upload", label: "Upload CV", icon: <IconUser />, matchPrefix: "/cv-upload" },
   {
     href: `${jobsPortalBase.replace(/\/$/, "")}/`,
     label: "Job search",

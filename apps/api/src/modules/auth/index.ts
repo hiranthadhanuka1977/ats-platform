@@ -5,6 +5,7 @@ import {
   signAccessToken,
   signRefreshToken,
   verifyAccessToken,
+  verifyRefreshToken,
 } from "../../lib/jwt";
 import { prisma } from "../../lib/prisma";
 
@@ -45,7 +46,7 @@ authModule.post("/login", async (c) => {
       role: user.role,
       name: user.name,
     });
-    const refreshToken = await signRefreshToken(user.id);
+    const refreshToken = await signRefreshToken(user.id, "staff");
     return c.json({
       data: {
         accessToken,
@@ -117,7 +118,7 @@ authModule.post("/login", async (c) => {
     typ: "candidate",
     email: candidate.email,
   });
-  const refreshToken = await signRefreshToken(candidate.id);
+  const refreshToken = await signRefreshToken(candidate.id, "candidate");
   return c.json({
     data: {
       accessToken,
@@ -194,4 +195,113 @@ authModule.get("/me", async (c) => {
 
 authModule.post("/logout", async () => {
   return new Response(null, { status: 204 });
+});
+
+authModule.post("/refresh", async (c) => {
+  let body: { refreshToken?: string };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: { code: "VALIDATION_ERROR" } }, 400);
+  }
+
+  const refreshToken = typeof body.refreshToken === "string" ? body.refreshToken.trim() : "";
+  if (!refreshToken) {
+    return c.json({ error: { code: "VALIDATION_ERROR" } }, 400);
+  }
+
+  let payload: Awaited<ReturnType<typeof verifyRefreshToken>>;
+  try {
+    payload = await verifyRefreshToken(refreshToken);
+  } catch {
+    return c.json({ error: { code: "UNAUTHORIZED" } }, 401);
+  }
+
+  const sub = payload.sub as string;
+  const tokenTyp = payload.typ as string | undefined;
+
+  if (tokenTyp === "staff") {
+    const user = await prisma.user.findUnique({ where: { id: sub } });
+    if (!user || !user.isActive) return c.json({ error: { code: "UNAUTHORIZED" } }, 401);
+    const accessToken = await signAccessToken({
+      sub: user.id,
+      typ: "staff",
+      email: user.email,
+      role: user.role,
+      name: user.name,
+    });
+    const nextRefreshToken = await signRefreshToken(user.id, "staff");
+    return c.json({
+      data: {
+        accessToken,
+        expiresIn: ACCESS_TTL_SEC,
+        tokenType: "Bearer",
+        refreshToken: nextRefreshToken,
+        user: { id: user.id, email: user.email, type: "staff" },
+      },
+    });
+  }
+
+  if (tokenTyp === "candidate") {
+    const candidate = await prisma.candidateAccount.findUnique({ where: { id: sub } });
+    if (!candidate || candidate.status === "disabled") return c.json({ error: { code: "UNAUTHORIZED" } }, 401);
+    const accessToken = await signAccessToken({
+      sub: candidate.id,
+      typ: "candidate",
+      email: candidate.email,
+    });
+    const nextRefreshToken = await signRefreshToken(candidate.id, "candidate");
+    return c.json({
+      data: {
+        accessToken,
+        expiresIn: ACCESS_TTL_SEC,
+        tokenType: "Bearer",
+        refreshToken: nextRefreshToken,
+        user: { id: candidate.id, email: candidate.email, type: "candidate" },
+      },
+    });
+  }
+
+  // Backward compatibility: old refresh tokens without typ.
+  const candidate = await prisma.candidateAccount.findUnique({ where: { id: sub } });
+  if (candidate && candidate.status !== "disabled") {
+    const accessToken = await signAccessToken({
+      sub: candidate.id,
+      typ: "candidate",
+      email: candidate.email,
+    });
+    const nextRefreshToken = await signRefreshToken(candidate.id, "candidate");
+    return c.json({
+      data: {
+        accessToken,
+        expiresIn: ACCESS_TTL_SEC,
+        tokenType: "Bearer",
+        refreshToken: nextRefreshToken,
+        user: { id: candidate.id, email: candidate.email, type: "candidate" },
+      },
+    });
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: sub } });
+  if (user && user.isActive) {
+    const accessToken = await signAccessToken({
+      sub: user.id,
+      typ: "staff",
+      email: user.email,
+      role: user.role,
+      name: user.name,
+    });
+    const nextRefreshToken = await signRefreshToken(user.id, "staff");
+    return c.json({
+      data: {
+        accessToken,
+        expiresIn: ACCESS_TTL_SEC,
+        tokenType: "Bearer",
+        refreshToken: nextRefreshToken,
+        user: { id: user.id, email: user.email, type: "staff" },
+      },
+    });
+  }
+
+  return c.json({ error: { code: "UNAUTHORIZED" } }, 401);
 });
