@@ -16,6 +16,7 @@ const items: MyAppsNavItem[] = [
   { href: "/my-applications", label: "My Applications", icon: <IconApplications />, matchPrefix: "/my-applications" },
   { href: "/my-profile", label: "My Profile", icon: <IconUser />, matchPrefix: "/my-profile" },
   { href: "/cv-upload", label: "Upload CV", icon: <IconApplications />, matchPrefix: "/cv-upload" },
+  { href: "/cover-letters", label: "Cover Letters", icon: <IconApplications />, matchPrefix: "/cover-letters" },
   {
     href: "/job-search",
     label: "Job search",
@@ -23,7 +24,6 @@ const items: MyAppsNavItem[] = [
     /* /job-search and /jobs/... detail */
     matchPrefix: "/job",
   },
-  { href: "#", label: "Profile", icon: <IconUser />, matchPrefix: "__never__" },
 ];
 
 type MyAppsSidebarProps = {

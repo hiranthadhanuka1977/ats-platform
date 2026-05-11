@@ -11,6 +11,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "@ats-platform/db": "*",
+    "@ats-platform/types": "*",
     "@ats-platform/ui": "*",
     "jose": "^6.2.3",
     "mammoth": "^1.12.0",

@@ -40,6 +40,7 @@ CREATE TABLE "employment_types" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(50) NOT NULL,
     "slug" VARCHAR(50) NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "sort_order" SMALLINT NOT NULL DEFAULT 0,
 
     CONSTRAINT "employment_types_pkey" PRIMARY KEY ("id")
@@ -51,6 +52,7 @@ CREATE TABLE "experience_levels" (
     "name" VARCHAR(50) NOT NULL,
     "slug" VARCHAR(50) NOT NULL,
     "min_years" SMALLINT NOT NULL DEFAULT 0,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "sort_order" SMALLINT NOT NULL DEFAULT 0,
 
     CONSTRAINT "experience_levels_pkey" PRIMARY KEY ("id")
@@ -60,6 +62,7 @@ CREATE TABLE "experience_levels" (
 CREATE TABLE "skills" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(100) NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "skills_pkey" PRIMARY KEY ("id")
@@ -69,6 +72,7 @@ CREATE TABLE "skills" (
 CREATE TABLE "benefits" (
     "id" SERIAL NOT NULL,
     "description" VARCHAR(255) NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "sort_order" SMALLINT NOT NULL DEFAULT 0,
 
     CONSTRAINT "benefits_pkey" PRIMARY KEY ("id")
@@ -79,6 +83,7 @@ CREATE TABLE "tags" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(50) NOT NULL,
     "variant" VARCHAR(20) NOT NULL DEFAULT 'primary',
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "sort_order" SMALLINT NOT NULL DEFAULT 0,
 
     CONSTRAINT "tags_pkey" PRIMARY KEY ("id")

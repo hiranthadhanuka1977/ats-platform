@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { loadCandidateSession } from "@/lib/auth-storage";
 import "./cv-import-prototype.css";
 
@@ -26,6 +28,8 @@ function getCvTypeMeta(mimeType: string): { label: string; icon: string } {
 }
 
 export function CvUploadPageClient() {
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const [state, setState] = useState<UploadState>("idle");
   const [error, setError] = useState<string | null>(null);
   const [uploadedName, setUploadedName] = useState<string | null>(null);
@@ -386,6 +390,14 @@ export function CvUploadPageClient() {
           </div>
         ) : null}
       </div>
+
+      {returnTo && cvs.length > 0 ? (
+        <div style={{ marginTop: "0.9rem" }}>
+          <Link href={returnTo} className="btn btn-primary">
+            Continue application
+          </Link>
+        </div>
+      ) : null}
 
       {previewOpen ? (
         <div className="myapps-cv-modal-backdrop" role="dialog" aria-modal="true" aria-label="CV preview">

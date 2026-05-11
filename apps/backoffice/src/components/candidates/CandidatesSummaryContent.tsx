@@ -29,7 +29,7 @@ export async function CandidatesSummaryContent() {
   weekStart.setDate(now.getDate() - diffToMonday);
   weekStart.setHours(0, 0, 0, 0);
 
-  const [totalRegistered, activeCandidates, newThisWeek, withApplications, shortlisted, rejected, hired] = await Promise.all([
+  const [totalRegistered, activeCandidates, newThisWeek, withApplications, shortlisted, rejected, hiredRows] = await Promise.all([
     prisma.candidateAccount.count(),
     prisma.candidateAccount.count({
       where: { status: "active" },
@@ -46,10 +46,18 @@ export async function CandidatesSummaryContent() {
     prisma.candidateAccount.count({
       where: { applications: { some: { status: "rejected" } } },
     }),
-    prisma.candidateAccount.count({
-      where: { applications: { some: { status: "offered" } } },
-    }),
+    prisma.$queryRaw<Array<{ total: bigint }>>`
+      SELECT COUNT(*)::bigint AS total
+      FROM candidate_accounts ca
+      WHERE EXISTS (
+        SELECT 1
+        FROM applications a
+        WHERE a.candidate_account_id = ca.id
+          AND a.status = 'hired'::"ApplicationStatus"
+      )
+    `,
   ]);
+  const hired = hiredRows[0]?.total != null ? Number(hiredRows[0].total) : 0;
 
   const withoutApplications = Math.max(totalRegistered - withApplications, 0);
   const activeRate = totalRegistered > 0 ? (activeCandidates / totalRegistered) * 100 : 0;

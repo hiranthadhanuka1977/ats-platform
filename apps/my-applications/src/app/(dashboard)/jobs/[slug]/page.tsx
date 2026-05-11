@@ -97,7 +97,7 @@ export default async function MyAppsJobDetailPage({ params }: PageProps) {
           <DetailRow label="Saves" value={String(job._count?.bookmarks ?? 0)} />
 
           <div style={{ marginTop: "1rem", display: "grid", gap: "0.5rem" }}>
-            <Link href={`/dashboard?intent=apply&job=${encodeURIComponent(job.slug)}`} className="btn btn-primary">
+            <Link href={`/jobs/${job.slug}/apply`} className="btn btn-primary">
               Apply
             </Link>
           </div>

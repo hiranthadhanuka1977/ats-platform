@@ -43,9 +43,17 @@ enum ApplicationStatus {
   under_review
   shortlisted
   interview
+  interview_scheduled
+  interview_completed
   offered
+  hired
   rejected
   withdrawn
+}
+
+enum CandidateCoverLetterMode {
+  file
+  text
 }
 
 enum UserRole {
@@ -314,6 +322,7 @@ model CandidateAccount {
   cvParses            CandidateCvParse[]
   cvEducation         CandidateCvEducation[]
   cvExperience        CandidateCvExperience[]
+  coverLetters        CandidateCoverLetter[]
 
   @@unique([email])
   @@unique([emailNormalized], map: "candidate_accounts_email_normalized_key")
@@ -463,6 +472,15 @@ model Application {
   status             ApplicationStatus @default(submitted)
   coverLetter        String?           @map("cover_letter") @db.Text
   resumeUrl          String?           @map("resume_url") @db.VarChar(500)
+  experienceYears       Int?       @map("experience_years")
+  experienceMonths      Int?       @map("experience_months")
+  hasDomainExperience   Boolean?   @map("has_domain_experience")
+  noticePeriods         String?    @map("notice_periods") @db.Text
+  salaryExpectationAnnual Decimal? @map("salary_expectation_annual") @db.Decimal(12, 2)
+  willingToRelocate     Boolean?   @map("willing_to_relocate")
+  isLegallyAuthorizedToWork Boolean? @map("is_legally_authorized_to_work")
+  workModePreference    String?    @map("work_mode_preference") @db.VarChar(50)
+  shortMotivation       String?    @map("short_motivation") @db.Text
   appliedAt          DateTime          @default(now()) @map("applied_at") @db.Timestamptz(6)
   updatedAt          DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -473,4 +491,19 @@ model Application {
   @@index([status], map: "idx_applications_status")
   @@index([jobPostingId, appliedAt(sort: Desc)], map: "idx_applications_job")
   @@map("applications")
+}
+
+model CandidateCoverLetter {
+  id                 String                  @id @db.Uuid
+  candidateAccountId String                  @map("candidate_account_id") @db.Uuid
+  mode               CandidateCoverLetterMode
+  body               String?                 @db.Text
+  fileUrl            String?                 @map("file_url") @db.VarChar(500)
+  fileName           String?                 @map("file_name") @db.VarChar(255)
+  createdAt          DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
+
+  @@index([candidateAccountId, createdAt(sort: Desc)], map: "idx_candidate_cover_letters_candidate_created")
+  @@map("candidate_cover_letters")
 }

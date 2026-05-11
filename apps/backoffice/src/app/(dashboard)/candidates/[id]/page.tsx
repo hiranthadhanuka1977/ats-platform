@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getApplicationStatusMeta } from "@ats-platform/types";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = {
@@ -11,13 +12,6 @@ export const metadata: Metadata = {
   title: "Candidate Details",
   description: "View candidate profile and application history.",
 };
-
-function titleCaseStatus(value: string) {
-  return value
-    .split("_")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
 
 export default async function CandidateDetailsPage({ params }: PageProps) {
   const { id } = await params;
@@ -88,7 +82,7 @@ export default async function CandidateDetailsPage({ params }: PageProps) {
             </div>
             <div>
               <dt>Status</dt>
-              <dd>{titleCaseStatus(candidate.status)}</dd>
+              <dd>{candidate.status.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ")}</dd>
             </div>
             <div>
               <dt>Phone</dt>
@@ -220,7 +214,9 @@ export default async function CandidateDetailsPage({ params }: PageProps) {
                   {candidate.applications.map((application) => (
                     <tr key={application.id}>
                       <td>{application.jobPosting.title}</td>
-                      <td>{titleCaseStatus(application.status)}</td>
+                      <td title={getApplicationStatusMeta(application.status).description}>
+                        {getApplicationStatusMeta(application.status).label}
+                      </td>
                       <td>{new Date(application.appliedAt).toLocaleString()}</td>
                       <td>{new Date(application.updatedAt).toLocaleString()}</td>
                     </tr>

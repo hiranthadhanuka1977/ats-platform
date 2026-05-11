@@ -5,7 +5,18 @@ type CandidateTableRow = {
   id: string;
   name: string;
   email: string;
-  status: "Active" | "Shortlisted" | "New" | "Rejected" | "Hired" | "Locked" | "Disabled";
+  status:
+    | "Active"
+    | "Under Review"
+    | "Shortlisted"
+    | "Interview Scheduled"
+    | "Interview Completed"
+    | "Offered"
+    | "New"
+    | "Rejected"
+    | "Hired"
+    | "Locked"
+    | "Disabled";
   latestApplication: string;
   location: string;
   phone: string;
@@ -18,9 +29,13 @@ function deriveStatus(params: {
   if (params.accountStatus === "disabled") return "Disabled";
   if (params.accountStatus === "locked") return "Locked";
   if (params.accountStatus === "pending_verification") return "New";
+  if (params.latestApplicationStatus === "under_review") return "Under Review";
   if (params.latestApplicationStatus === "shortlisted") return "Shortlisted";
+  if (params.latestApplicationStatus === "interview_scheduled") return "Interview Scheduled";
+  if (params.latestApplicationStatus === "interview_completed") return "Interview Completed";
+  if (params.latestApplicationStatus === "offered") return "Offered";
+  if (params.latestApplicationStatus === "hired") return "Hired";
   if (params.latestApplicationStatus === "rejected") return "Rejected";
-  if (params.latestApplicationStatus === "offered") return "Hired";
   return "Active";
 }
 
