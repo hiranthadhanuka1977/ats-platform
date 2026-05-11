@@ -12,6 +12,19 @@ type CvRow = {
   createdAt: string;
 };
 
+function getCvTypeMeta(mimeType: string): { label: string; icon: string } {
+  if (mimeType === "application/pdf") {
+    return { label: "PDF Document", icon: "📕" };
+  }
+  if (
+    mimeType === "application/msword" ||
+    mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    return { label: "Word Document", icon: "📘" };
+  }
+  return { label: "Document", icon: "📄" };
+}
+
 export function CvUploadPageClient() {
   const [state, setState] = useState<UploadState>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +33,13 @@ export function CvUploadPageClient() {
   const [defaultCvId, setDefaultCvId] = useState<string | null>(null);
   const [loadingList, setLoadingList] = useState(true);
   const [menuOpenCvId, setMenuOpenCvId] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewName, setPreviewName] = useState<string>("");
+  const [previewMime, setPreviewMime] = useState<string>("");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [confirmDeleteCv, setConfirmDeleteCv] = useState<CvRow | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const loadList = useCallback(async () => {
     const session = loadCandidateSession();
@@ -62,6 +82,7 @@ export function CvUploadPageClient() {
     }
 
     setError(null);
+    setSuccessMessage(null);
     setUploadedName(null);
     setState("uploading");
 
@@ -88,6 +109,7 @@ export function CvUploadPageClient() {
       }
 
       setUploadedName(payload.data.originalFilename);
+      setSuccessMessage(`Uploaded CV: ${payload.data.originalFilename}`);
       setState("done");
       await loadList();
     } catch {
@@ -128,6 +150,48 @@ export function CvUploadPageClient() {
     }
   }, [defaultCvId]);
 
+  const openPreview = useCallback(async (cv: CvRow) => {
+    const session = loadCandidateSession();
+    if (!session?.accessToken) {
+      setError("Session expired. Please sign in again.");
+      return;
+    }
+    setError(null);
+    setPreviewLoading(true);
+    setPreviewName(cv.originalFilename);
+    setPreviewMime(cv.mimeType);
+    setPreviewOpen(true);
+    try {
+      const response = await fetch(`/api/my-applications/cv/download?id=${encodeURIComponent(cv.id)}`, {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => ({}))) as { error?: { message?: string } };
+        setError(payload.error?.message ?? "Could not load CV preview.");
+        setPreviewLoading(false);
+        return;
+      }
+      const blob = await response.blob();
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      const objectUrl = URL.createObjectURL(blob);
+      setPreviewUrl(objectUrl);
+    } catch {
+      setError("Network error while loading CV preview.");
+    } finally {
+      setPreviewLoading(false);
+    }
+  }, [previewUrl]);
+
+  const closePreview = useCallback(() => {
+    setPreviewOpen(false);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+  }, [previewUrl]);
+
   const deleteCv = useCallback(
     async (cvId: string) => {
       const session = loadCandidateSession();
@@ -141,11 +205,11 @@ export function CvUploadPageClient() {
         setError("Default CV cannot be deleted. Choose another default first.");
         return;
       }
-      const ok = window.confirm(`Delete CV "${target.originalFilename}"? This will remove it from storage permanently.`);
-      if (!ok) return;
 
       setError(null);
+      setSuccessMessage(null);
       setMenuOpenCvId(null);
+      setConfirmDeleteCv(null);
       try {
         const response = await fetch("/api/my-applications/cv/delete", {
           method: "POST",
@@ -163,6 +227,7 @@ export function CvUploadPageClient() {
           setError(payload.error?.message ?? "Could not delete CV.");
           return;
         }
+        setSuccessMessage(`Deleted CV: ${target.originalFilename}`);
         await loadList();
       } catch {
         setError("Network error while deleting CV.");
@@ -202,6 +267,11 @@ export function CvUploadPageClient() {
       {error ? (
         <p className="bo-login-error" role="alert">
           {error}
+        </p>
+      ) : null}
+      {successMessage ? (
+        <p className={successMessage.startsWith("Deleted CV:") ? "bo-login-error" : "myapps-linkedin-note"} role="status">
+          {successMessage}
         </p>
       ) : null}
 
@@ -254,8 +324,11 @@ export function CvUploadPageClient() {
           <div style={{ display: "grid", gap: "0.5rem" }}>
             {cvs.map((cv) => (
               <article key={cv.id} className="myapps-cv-list-row">
+                {(() => {
+                  const typeMeta = getCvTypeMeta(cv.mimeType);
+                  return (
                 <div className="myapps-cv-list-main">
-                  <label className="myapps-cv-field" style={{ margin: 0 }}>
+                  <div className="myapps-cv-field" style={{ margin: 0 }}>
                     <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                       <input
                         type="radio"
@@ -263,14 +336,27 @@ export function CvUploadPageClient() {
                         checked={defaultCvId === cv.id}
                         onChange={() => void setAsDefault(cv.id)}
                       />
-                      <strong>{cv.originalFilename}</strong>
+                      <button
+                        type="button"
+                        className="myapps-cv-filename-btn"
+                        onClick={() => void setAsDefault(cv.id)}
+                      >
+                        <strong>{cv.originalFilename}</strong>
+                      </button>
                     </span>
                     <span className="bo-page-sub" style={{ marginTop: "0.25rem", marginBottom: 0 }}>
-                      {new Date(cv.createdAt).toLocaleString()} • {cv.mimeType}
+                      <span aria-hidden>{typeMeta.icon}</span> {typeMeta.label} • {new Date(cv.createdAt).toLocaleString()}
                       {defaultCvId === cv.id ? " • Default CV" : ""}
                     </span>
-                  </label>
+                    <div className="myapps-cv-actions" style={{ marginTop: "0.5rem" }}>
+                      <button type="button" className="btn btn-secondary btn-sm" onClick={() => void openPreview(cv)}>
+                        View
+                      </button>
+                    </div>
+                  </div>
                 </div>
+                  );
+                })()}
                 <div className="myapps-cv-menu-wrap">
                   <button
                     type="button"
@@ -288,7 +374,7 @@ export function CvUploadPageClient() {
                         role="menuitem"
                         disabled={defaultCvId === cv.id}
                         title={defaultCvId === cv.id ? "Default CV cannot be deleted" : "Delete CV"}
-                        onClick={() => void deleteCv(cv.id)}
+                        onClick={() => setConfirmDeleteCv(cv)}
                       >
                         Delete
                       </button>
@@ -300,6 +386,62 @@ export function CvUploadPageClient() {
           </div>
         ) : null}
       </div>
+
+      {previewOpen ? (
+        <div className="myapps-cv-modal-backdrop" role="dialog" aria-modal="true" aria-label="CV preview">
+          <div className="myapps-cv-modal">
+            <div className="myapps-cv-modal-head">
+              <h3 className="bo-card-title" style={{ marginBottom: 0 }}>
+                {previewName || "CV preview"}
+              </h3>
+              <button type="button" className="btn btn-secondary btn-sm" onClick={closePreview}>
+                Close
+              </button>
+            </div>
+            <div className="myapps-cv-modal-body">
+              {previewLoading ? <p className="bo-page-sub">Loading preview...</p> : null}
+              {!previewLoading && previewUrl ? (
+                previewMime === "application/pdf" ? (
+                  <iframe title="CV preview" src={previewUrl} className="myapps-cv-preview-frame" />
+                ) : (
+                  <div>
+                    <p className="bo-page-sub">
+                      Preview for Word files depends on browser support. Use download if preview does not render.
+                    </p>
+                    <iframe title="CV preview" src={previewUrl} className="myapps-cv-preview-frame" />
+                  </div>
+                )
+              ) : null}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {confirmDeleteCv ? (
+        <div className="myapps-cv-modal-backdrop" role="dialog" aria-modal="true" aria-label="Delete CV confirmation">
+          <div className="myapps-cv-modal myapps-cv-confirm-modal">
+            <div className="myapps-cv-modal-head">
+              <h3 className="bo-card-title" style={{ marginBottom: 0 }}>
+                Delete CV
+              </h3>
+            </div>
+            <div className="myapps-cv-modal-body">
+              <p className="bo-page-sub" style={{ marginTop: 0 }}>
+                Are you sure you want to delete <strong>{confirmDeleteCv.originalFilename}</strong>?
+              </p>
+              <p className="bo-page-sub">This removes the CV from the system and file storage permanently.</p>
+              <div className="myapps-cv-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setConfirmDeleteCv(null)}>
+                  Cancel
+                </button>
+                <button type="button" className="btn btn-primary" onClick={() => void deleteCv(confirmDeleteCv.id)}>
+                  Delete CV
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

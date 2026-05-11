@@ -80,12 +80,14 @@ export function DashboardRouteLayout({ children }: DashboardRouteLayoutProps) {
         return;
       }
       const now = Date.now();
-      if (now - current.lastActivityAt > IDLE_TIMEOUT_MS) {
+      const lastActivityAt = current.lastActivityAt ?? now;
+      if (now - lastActivityAt > IDLE_TIMEOUT_MS) {
         clearCandidateSession();
         router.replace("/login");
         return;
       }
-      if (now - current.issuedAt < REFRESH_AFTER_MS) {
+      const issuedAt = current.issuedAt;
+      if (issuedAt != null && now - issuedAt < REFRESH_AFTER_MS) {
         return;
       }
       void (async () => {

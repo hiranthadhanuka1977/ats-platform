@@ -6,8 +6,6 @@ import Link from "next/link";
 import { loadCandidateSession } from "@/lib/auth-storage";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1";
-const JOBS_PORTAL_BASE_URL = process.env.NEXT_PUBLIC_CANDIDATE_PORTAL_BASE_URL ?? "http://localhost:3000";
-
 type CandidateProfile = {
   id: string;
   type: "candidate";
@@ -86,9 +84,9 @@ export function CandidateDashboardClient() {
       {
         label: "Start Applying",
         complete: false,
-        actionHref: `${JOBS_PORTAL_BASE_URL.replace(/\/$/, "")}/`,
+        actionHref: "/job-search",
         actionLabel: "Browse jobs",
-        external: true,
+        external: false,
       },
     ];
     const completed = steps.filter((s) => s.complete).length;
@@ -125,9 +123,12 @@ export function CandidateDashboardClient() {
           </p>
         </div>
         <div className="myapps-steps-grid">
-          {progressState.steps.map((step) => (
+          {progressState.steps.map((step, index) => (
             <article key={step.label} className={`myapps-step-card ${step.complete ? "is-complete" : "is-pending"}`}>
               <div className="myapps-step-top">
+                <span className={`myapps-step-index ${step.complete ? "done" : "todo"}`} aria-hidden>
+                  {index + 1}
+                </span>
                 <span className={`myapps-step-badge ${step.complete ? "done" : "todo"}`}>{step.complete ? "Done" : "To-do"}</span>
               </div>
               <h3 className="bo-card-title myapps-step-title">

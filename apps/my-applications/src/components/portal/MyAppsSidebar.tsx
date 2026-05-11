@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { IconDashboard, IconJobs, IconUser } from "./nav-icons";
+import { IconApplications, IconDashboard, IconJobs, IconUser } from "./nav-icons";
 
 export type MyAppsNavItem = {
   href: string;
@@ -11,17 +11,17 @@ export type MyAppsNavItem = {
   external?: boolean;
 };
 
-const jobsPortalBase = process.env.NEXT_PUBLIC_CANDIDATE_PORTAL_BASE_URL ?? "http://localhost:3000";
-
 const items: MyAppsNavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: <IconDashboard />, matchPrefix: "/dashboard" },
+  { href: "/my-applications", label: "My Applications", icon: <IconApplications />, matchPrefix: "/my-applications" },
   { href: "/my-profile", label: "My Profile", icon: <IconUser />, matchPrefix: "/my-profile" },
-  { href: "/cv-upload", label: "Upload CV", icon: <IconUser />, matchPrefix: "/cv-upload" },
+  { href: "/cv-upload", label: "Upload CV", icon: <IconApplications />, matchPrefix: "/cv-upload" },
   {
-    href: `${jobsPortalBase.replace(/\/$/, "")}/`,
+    href: "/job-search",
     label: "Job search",
     icon: <IconJobs />,
-    external: true,
+    /* /job-search and /jobs/... detail */
+    matchPrefix: "/job",
   },
   { href: "#", label: "Profile", icon: <IconUser />, matchPrefix: "__never__" },
 ];

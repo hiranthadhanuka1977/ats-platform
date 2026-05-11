@@ -21,11 +21,18 @@ function titleCaseStatus(value: string) {
 
 export default async function CandidateDetailsPage({ params }: PageProps) {
   const { id } = await params;
+  const myApplicationsBaseUrl = process.env.NEXT_PUBLIC_MY_APPLICATIONS_BASE_URL ?? "http://localhost:3002";
 
   const candidate = await prisma.candidateAccount.findUnique({
     where: { id },
     include: {
       profile: true,
+      cvEducation: {
+        orderBy: { createdAt: "desc" },
+      },
+      cvExperience: {
+        orderBy: { createdAt: "desc" },
+      },
       applications: {
         orderBy: { appliedAt: "desc" },
         include: {
@@ -47,6 +54,11 @@ export default async function CandidateDetailsPage({ params }: PageProps) {
   }
 
   const fullName = `${candidate.profile?.firstName ?? ""} ${candidate.profile?.lastName ?? ""}`.trim() || "Unnamed Candidate";
+  const defaultResumeUrl = candidate.profile?.resumeUrl
+    ? candidate.profile.resumeUrl.startsWith("http")
+      ? candidate.profile.resumeUrl
+      : `${myApplicationsBaseUrl.replace(/\/$/, "")}${candidate.profile.resumeUrl}`
+    : null;
 
   return (
     <main id="main-content" className="bo-content">
@@ -90,6 +102,18 @@ export default async function CandidateDetailsPage({ params }: PageProps) {
               <dt>Last Login</dt>
               <dd>{candidate.lastLoginAt ? new Date(candidate.lastLoginAt).toLocaleString() : "—"}</dd>
             </div>
+            <div>
+              <dt>Default CV</dt>
+              <dd>
+                {defaultResumeUrl ? (
+                  <a href={defaultResumeUrl} target="_blank" rel="noopener noreferrer">
+                    View Default CV
+                  </a>
+                ) : (
+                  "—"
+                )}
+              </dd>
+            </div>
           </dl>
         </section>
 
@@ -111,6 +135,68 @@ export default async function CandidateDetailsPage({ params }: PageProps) {
               <p className="bo-candidate-insight-value">{candidate.authProviders.length}</p>
             </article>
           </div>
+        </section>
+
+        <section className="bo-card bo-span-6" aria-labelledby="candidate-experience-history">
+          <h2 id="candidate-experience-history" className="bo-card-title">
+            Experience
+          </h2>
+          {candidate.cvExperience.length === 0 ? (
+            <p className="bo-admin-muted">No experience records found.</p>
+          ) : (
+            <div>
+              {candidate.cvExperience.map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    padding: "0.5rem 0",
+                    borderBottom: "1px solid color-mix(in srgb, var(--color-border, #e2e8f0) 55%, white)",
+                  }}
+                >
+                  <p className="bo-candidate-insight-value" style={{ fontSize: "1rem", marginBottom: "0.25rem" }}>
+                    {item.role || "—"}
+                  </p>
+                  <p className="bo-candidate-insight-label" style={{ marginBottom: "0.25rem" }}>
+                    {item.company || "—"}
+                  </p>
+                  <p className="bo-admin-muted" style={{ marginBottom: 0 }}>
+                    {item.startDate || "—"} - {item.endDate || "Present"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="bo-card bo-span-6" aria-labelledby="candidate-education-history">
+          <h2 id="candidate-education-history" className="bo-card-title">
+            Education
+          </h2>
+          {candidate.cvEducation.length === 0 ? (
+            <p className="bo-admin-muted">No education records found.</p>
+          ) : (
+            <div>
+              {candidate.cvEducation.map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    padding: "0.5rem 0",
+                    borderBottom: "1px solid color-mix(in srgb, var(--color-border, #e2e8f0) 55%, white)",
+                  }}
+                >
+                  <p className="bo-candidate-insight-value" style={{ fontSize: "1rem", marginBottom: "0.25rem" }}>
+                    {item.qualification || "—"}
+                  </p>
+                  <p className="bo-candidate-insight-label" style={{ marginBottom: "0.25rem" }}>
+                    {item.institution || "—"}
+                  </p>
+                  <p className="bo-admin-muted" style={{ marginBottom: 0 }}>
+                    {item.startDate || "—"} - {item.endDate || "—"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="bo-card bo-span-12" aria-labelledby="candidate-application-history">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ParsedCvPayload } from "@/types/cv-parse";
 import { emptyParsedCvPayload } from "@/types/cv-parse";
 import { loadCandidateSession } from "@/lib/auth-storage";
@@ -46,6 +46,7 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
   const [loadingView, setLoadingView] = useState(true);
   const [readOnlyView, setReadOnlyView] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const fullNameInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -72,6 +73,12 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
       }
     })();
   }, [accessToken]);
+
+  useEffect(() => {
+    if (readOnlyView && editMode) {
+      fullNameInputRef.current?.focus();
+    }
+  }, [readOnlyView, editMode]);
 
   function updateCandidate<K extends keyof ParsedCvPayload["candidate"]>(key: K, value: string) {
     setPayload((p) => ({ ...p, candidate: { ...p.candidate, [key]: value } }));
@@ -280,7 +287,12 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
       <div className="myapps-cv-grid">
         <label className="myapps-cv-field">
           Full name
-          <input className="myapps-cv-input" value={payload.candidate.fullName} onChange={(e) => updateCandidate("fullName", e.target.value)} />
+          <input
+            ref={fullNameInputRef}
+            className="myapps-cv-input"
+            value={payload.candidate.fullName}
+            onChange={(e) => updateCandidate("fullName", e.target.value)}
+          />
         </label>
         <label className="myapps-cv-field">
           Email
