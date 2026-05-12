@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { PipelineApplicationCard } from "@/components/applications/PipelineApplicationCard";
 import type { ApplicationStatusValue } from "@ats-platform/types";
 import { getApplicationStatusMeta } from "@ats-platform/types";
 
@@ -58,22 +59,89 @@ function normalizeForPipeline(status: string): ApplicationStatusValue {
   return known ?? "submitted";
 }
 
+/** Monday 00:00:00.000 UTC for the UTC week containing `date`. */
+function startOfUtcWeekMonday(date: Date): Date {
+  const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  const day = d.getUTCDay();
+  const diffFromMonday = day === 0 ? -6 : 1 - day;
+  d.setUTCDate(d.getUTCDate() + diffFromMonday);
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+}
+
+function addUtcDays(date: Date, days: number): Date {
+  const d = new Date(date.getTime());
+  d.setUTCDate(d.getUTCDate() + days);
+  return d;
+}
+
+function formatUtcWeekLabel(weekStartMonday: Date): string {
+  const weekEndSunday = addUtcDays(weekStartMonday, 6);
+  const sameMonthYear =
+    weekStartMonday.getUTCFullYear() === weekEndSunday.getUTCFullYear() &&
+    weekStartMonday.getUTCMonth() === weekEndSunday.getUTCMonth();
+  const monthYear = new Intl.DateTimeFormat("en-GB", {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(weekEndSunday);
+  if (sameMonthYear) {
+    return `${weekStartMonday.getUTCDate()}–${weekEndSunday.getUTCDate()} ${monthYear}`;
+  }
+  const left = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(weekStartMonday);
+  const right = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(weekEndSunday);
+  return `${left} – ${right}`;
+}
+
+function groupByPipelineStatus(list: ApplicationListItem[]) {
+  const byStatus = new Map<ApplicationStatusValue, ApplicationListItem[]>();
+  for (const status of PIPELINE_STATUSES) byStatus.set(status, []);
+  for (const item of list) {
+    const normalized = normalizeForPipeline(item.status);
+    byStatus.get(normalized)?.push(item);
+  }
+  return byStatus;
+}
+
 export function ApplicationsPageClient({ initialApplications }: Props) {
   const [activeTab, setActiveTab] = useState<"table" | "pipeline">("table");
   const [items, setItems] = useState<ApplicationListItem[]>(initialApplications);
+  const [pipelineWeekOffset, setPipelineWeekOffset] = useState(0);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const grouped = useMemo(() => {
-    const byStatus = new Map<ApplicationStatusValue, ApplicationListItem[]>();
-    for (const status of PIPELINE_STATUSES) byStatus.set(status, []);
-    for (const item of items) {
-      const normalized = normalizeForPipeline(item.status);
-      byStatus.get(normalized)?.push(item);
-    }
-    return byStatus;
-  }, [items]);
+  const { pipelineWeekStart, pipelineWeekEndExclusive, pipelineWeekLabel } = useMemo(() => {
+    const anchor = addUtcDays(startOfUtcWeekMonday(new Date()), pipelineWeekOffset * 7);
+    const endExclusive = addUtcDays(anchor, 7);
+    return {
+      pipelineWeekStart: anchor,
+      pipelineWeekEndExclusive: endExclusive,
+      pipelineWeekLabel: formatUtcWeekLabel(anchor),
+    };
+  }, [pipelineWeekOffset]);
+
+  const pipelineWeekItems = useMemo(() => {
+    const startMs = pipelineWeekStart.getTime();
+    const endMs = pipelineWeekEndExclusive.getTime();
+    return items.filter((item) => {
+      const t = new Date(item.appliedAt).getTime();
+      if (Number.isNaN(t)) return false;
+      return t >= startMs && t < endMs;
+    });
+  }, [items, pipelineWeekStart, pipelineWeekEndExclusive]);
+
+  const pipelineGrouped = useMemo(() => groupByPipelineStatus(pipelineWeekItems), [pipelineWeekItems]);
 
   const groupedByCandidate = useMemo(() => {
     const map = new Map<
@@ -193,7 +261,10 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
                           {index === 0 ? (
                             <>
                               <td rowSpan={group.applications.length} style={{ verticalAlign: "top" }}>
-                                <Link href={`/candidates/${group.candidate.id}`} className="bo-candidate-name-link">
+                                <Link
+                                  href={`/candidates/${group.candidate.id}?from=applications`}
+                                  className="bo-candidate-name-link"
+                                >
                                   {group.candidate.name}
                                 </Link>
                                 {group.applications.length > 1 ? (
@@ -207,7 +278,11 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
                               </td>
                             </>
                           ) : null}
-                          <td>{application.job.title}</td>
+                          <td>
+                            <Link href={`/applications/${application.id}`} className="bo-candidate-name-link">
+                              {application.job.title}
+                            </Link>
+                          </td>
                           <td title={statusMeta.description}>{statusMeta.label}</td>
                           <td>{formatDateTime(application.appliedAt)}</td>
                           <td>{formatDateTime(application.updatedAt)}</td>
@@ -225,11 +300,73 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
           <h2 id="applications-pipeline-title" className="bo-card-title">
             Applications Pipeline
           </h2>
-          <p className="bo-page-sub">Drag a card to another status column to update it.</p>
+          <p className="bo-page-sub">
+            Showing applications by the week they were submitted (UTC, Monday–Sunday). Click a card for full
+            application details. Drag a card to another status column to update it.
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginBottom: "0.85rem",
+            }}
+          >
+            <button
+              type="button"
+              className="bo-candidate-tab"
+              style={{ cursor: "pointer" }}
+              onClick={() => setPipelineWeekOffset((o) => o - 1)}
+              aria-label="Previous week"
+            >
+              ← Previous week
+            </button>
+            <button
+              type="button"
+              className="bo-candidate-tab"
+              disabled={pipelineWeekOffset >= 0}
+              title={
+                pipelineWeekOffset >= 0 ? "Future weeks are not available" : "Go to the following week"
+              }
+              style={{
+                cursor: pipelineWeekOffset >= 0 ? "not-allowed" : "pointer",
+                opacity: pipelineWeekOffset >= 0 ? 0.45 : 1,
+              }}
+              onClick={() => setPipelineWeekOffset((o) => Math.min(0, o + 1))}
+              aria-label="Next week"
+            >
+              Next week →
+            </button>
+            {pipelineWeekOffset !== 0 ? (
+              <button
+                type="button"
+                className="bo-candidate-tab is-active"
+                style={{ cursor: "pointer" }}
+                onClick={() => setPipelineWeekOffset(0)}
+              >
+                This week
+              </button>
+            ) : null}
+            <p
+              className="bo-page-sub"
+              style={{ margin: 0, marginLeft: "auto", fontWeight: 600 }}
+              aria-live="polite"
+            >
+              Week: {pipelineWeekLabel}
+            </p>
+          </div>
+
+          {pipelineWeekItems.length === 0 ? (
+            <p className="bo-admin-muted" style={{ marginBottom: "0.75rem" }}>
+              No applications with an applied date in this week.
+            </p>
+          ) : null}
 
           <div style={{ display: "flex", gap: "0.75rem", overflowX: "auto", paddingBottom: "0.25rem" }}>
             {PIPELINE_STATUSES.map((status) => {
-              const columnItems = grouped.get(status) ?? [];
+              const columnItems = pipelineGrouped.get(status) ?? [];
               const meta = getApplicationStatusMeta(status);
               return (
                 <div
@@ -260,31 +397,17 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
 
                   <div style={{ display: "grid", gap: "0.5rem" }}>
                     {columnItems.map((item) => (
-                      <article
+                      <PipelineApplicationCard
                         key={item.id}
-                        draggable={updatingId !== item.id}
-                        onDragStart={(event) => {
-                          event.dataTransfer.setData("text/plain", item.id);
-                          setDraggingId(item.id);
+                        item={item}
+                        disabled={updatingId === item.id}
+                        draggingId={draggingId}
+                        onDragStart={(applicationId, event) => {
+                          event.dataTransfer.setData("text/plain", applicationId);
+                          setDraggingId(applicationId);
                         }}
                         onDragEnd={() => setDraggingId(null)}
-                        style={{
-                          border: "1px solid var(--color-border)",
-                          borderRadius: "8px",
-                          padding: "0.55rem 0.6rem",
-                          background: "#fff",
-                          opacity: draggingId === item.id ? 0.55 : 1,
-                          cursor: updatingId === item.id ? "progress" : "grab",
-                        }}
-                      >
-                        <p style={{ margin: 0, fontWeight: 600 }}>{item.job.title}</p>
-                        <p className="bo-page-sub" style={{ margin: "0.25rem 0 0" }}>
-                          {item.candidate.name}
-                        </p>
-                        <p className="bo-page-sub" style={{ margin: "0.15rem 0 0" }}>
-                          Applied {formatDateTime(item.appliedAt)}
-                        </p>
-                      </article>
+                      />
                     ))}
                     {columnItems.length === 0 ? (
                       <p className="bo-admin-muted" style={{ margin: "0.2rem 0" }}>

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 type PageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string }>;
 };
 
 export const metadata: Metadata = {
@@ -13,8 +14,12 @@ export const metadata: Metadata = {
   description: "View candidate profile and application history.",
 };
 
-export default async function CandidateDetailsPage({ params }: PageProps) {
+export default async function CandidateDetailsPage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { from } = await searchParams;
+  const backFromApplications = from === "applications";
+  const backHref = backFromApplications ? "/applications" : "/candidates/all";
+  const backLabel = backFromApplications ? "Back to applications" : "Back to candidates";
   const myApplicationsBaseUrl = process.env.NEXT_PUBLIC_MY_APPLICATIONS_BASE_URL ?? "http://localhost:3002";
 
   const candidate = await prisma.candidateAccount.findUnique({
@@ -57,7 +62,7 @@ export default async function CandidateDetailsPage({ params }: PageProps) {
   return (
     <main id="main-content" className="bo-content">
       <p className="bo-jobs-back">
-        <Link href="/candidates/all">← Back to candidates</Link>
+        <Link href={backHref}>{`← ${backLabel}`}</Link>
       </p>
       <div className="bo-page-header-actions">
         <div>
