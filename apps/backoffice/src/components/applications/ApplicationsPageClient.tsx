@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { PipelineApplicationCard } from "@/components/applications/PipelineApplicationCard";
+import { usePipelineRelevanceScores } from "@/hooks/usePipelineRelevanceScores";
 import type { ApplicationStatusValue } from "@ats-platform/types";
 import { getApplicationStatusMeta } from "@ats-platform/types";
 
@@ -11,6 +12,7 @@ type ApplicationListItem = {
   status: string;
   appliedAt: string;
   updatedAt: string;
+  relevance?: { score: number; breakdownText: string | null } | null;
   candidate: {
     id: string;
     name: string;
@@ -120,6 +122,38 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pipelineFullscreen, setPipelineFullscreen] = useState(false);
+  const [relevanceRefreshIds, setRelevanceRefreshIds] = useState<string[]>([]);
+  const pipelineBoardRef = useRef<HTMLElement>(null);
+  const pipelineFlyoverLayerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setPipelineFullscreen(document.fullscreenElement === pipelineBoardRef.current);
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== "pipeline" && document.fullscreenElement === pipelineBoardRef.current) {
+      void document.exitFullscreen().catch(() => undefined);
+    }
+  }, [activeTab]);
+
+  const togglePipelineFullscreen = useCallback(async () => {
+    const el = pipelineBoardRef.current;
+    if (!el) return;
+    try {
+      if (document.fullscreenElement === el) {
+        await document.exitFullscreen();
+      } else {
+        await el.requestFullscreen();
+      }
+    } catch {
+      /* browser blocked or unsupported */
+    }
+  }, []);
 
   const { pipelineWeekStart, pipelineWeekEndExclusive, pipelineWeekLabel } = useMemo(() => {
     const anchor = addUtcDays(startOfUtcWeekMonday(new Date()), pipelineWeekOffset * 7);
@@ -142,6 +176,18 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
   }, [items, pipelineWeekStart, pipelineWeekEndExclusive]);
 
   const pipelineGrouped = useMemo(() => groupByPipelineStatus(pipelineWeekItems), [pipelineWeekItems]);
+
+  const { scores: relevanceById, scoringUnavailableMessage } = usePipelineRelevanceScores(
+    activeTab === "pipeline",
+    pipelineWeekItems,
+    relevanceRefreshIds,
+  );
+
+  const requestRelevanceRefresh = useCallback((applicationId: string) => {
+    setRelevanceRefreshIds((current) =>
+      current.includes(applicationId) ? current : [...current, applicationId],
+    );
+  }, []);
 
   const groupedByCandidate = useMemo(() => {
     const map = new Map<
@@ -296,14 +342,40 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
           )}
         </section>
       ) : (
-        <section className="bo-card bo-span-12" aria-labelledby="applications-pipeline-title">
-          <h2 id="applications-pipeline-title" className="bo-card-title">
-            Applications Pipeline
-          </h2>
+        <section
+          ref={pipelineBoardRef}
+          className="bo-card bo-span-12 bo-pipeline-board"
+          aria-labelledby="applications-pipeline-title"
+        >
+          <div className="bo-pipeline-board-header">
+            <h2 id="applications-pipeline-title" className="bo-card-title">
+              Applications Pipeline
+            </h2>
+            <button
+              type="button"
+              className="bo-candidate-tab"
+              style={{ cursor: "pointer", flexShrink: 0 }}
+              onClick={() => void togglePipelineFullscreen()}
+              aria-pressed={pipelineFullscreen}
+              aria-label={pipelineFullscreen ? "Exit full screen pipeline" : "Full screen pipeline"}
+            >
+              {pipelineFullscreen ? "Exit full screen" : "Full screen"}
+            </button>
+          </div>
+          <div className="bo-pipeline-board-body">
           <p className="bo-page-sub">
-            Showing applications by the week they were submitted (UTC, Monday–Sunday). Click a card for full
-            application details. Drag a card to another status column to update it.
+            Showing applications by the week they were submitted (UTC, Monday–Sunday). Each card shows an AI
+            relevance score (0–100%) for the submitted CV vs the job (saved until job, CV, or answers change).
+            Hover the ring for criteria; use Recalculate to score again on demand. Click a card for full application
+            details.
+            Drag a card to another status column to update it.
           </p>
+
+          {scoringUnavailableMessage ? (
+            <div className="bo-admin-alert" role="status" style={{ marginBottom: "0.75rem" }}>
+              {scoringUnavailableMessage}
+            </div>
+          ) : null}
 
           <div
             style={{
@@ -364,13 +436,17 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
             </p>
           ) : null}
 
-          <div style={{ display: "flex", gap: "0.75rem", overflowX: "auto", paddingBottom: "0.25rem" }}>
+          <div
+            className="bo-pipeline-columns"
+            style={{ display: "flex", gap: "0.75rem", overflowX: "auto", paddingBottom: "0.25rem" }}
+          >
             {PIPELINE_STATUSES.map((status) => {
               const columnItems = pipelineGrouped.get(status) ?? [];
               const meta = getApplicationStatusMeta(status);
               return (
                 <div
                   key={status}
+                  className="bo-pipeline-column"
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => {
                     event.preventDefault();
@@ -395,13 +471,16 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
                     </p>
                   </div>
 
-                  <div style={{ display: "grid", gap: "0.5rem" }}>
+                  <div className="bo-pipeline-column-cards" style={{ display: "grid", gap: "0.5rem" }}>
                     {columnItems.map((item) => (
                       <PipelineApplicationCard
                         key={item.id}
                         item={item}
                         disabled={updatingId === item.id}
                         draggingId={draggingId}
+                        relevance={relevanceById[item.id]}
+                        flyoverLayerRef={pipelineFlyoverLayerRef}
+                        onRefreshRelevance={requestRelevanceRefresh}
                         onDragStart={(applicationId, event) => {
                           event.dataTransfer.setData("text/plain", applicationId);
                           setDraggingId(applicationId);
@@ -419,6 +498,8 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
               );
             })}
           </div>
+          </div>
+          <div ref={pipelineFlyoverLayerRef} className="bo-pipeline-flyover-layer" aria-hidden />
         </section>
       )}
     </>

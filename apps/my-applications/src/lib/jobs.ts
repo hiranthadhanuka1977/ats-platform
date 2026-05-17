@@ -17,6 +17,7 @@ export type JobListFilters = {
 };
 
 const jobListInclude = {
+  company: true,
   department: true,
   location: true,
   employmentType: true,
@@ -108,6 +109,7 @@ export async function listPublishedJobs(filters: JobListFilters) {
 }
 
 const jobDetailInclude = {
+  company: true,
   department: true,
   location: true,
   employmentType: true,

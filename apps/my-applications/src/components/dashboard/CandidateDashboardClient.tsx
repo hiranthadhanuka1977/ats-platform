@@ -4,6 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loadCandidateSession } from "@/lib/auth-storage";
+import {
+  DashboardApplicationActivity,
+  type DashboardApplicationActivityItem,
+} from "@/components/dashboard/DashboardApplicationActivity";
+import { DashboardJourneySteps, type JourneyStep } from "@/components/dashboard/DashboardJourneySteps";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1";
 type CandidateProfile = {
@@ -19,6 +24,7 @@ type ProfileProgress = {
   hasExperience: boolean;
   hasEducation: boolean;
   hasCv: boolean;
+  hasCoverLetter: boolean;
   completeProfileDone: boolean;
 };
 
@@ -27,6 +33,9 @@ export function CandidateDashboardClient() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<CandidateProfile | null>(null);
   const [profileProgress, setProfileProgress] = useState<ProfileProgress | null>(null);
+  const [recentApplicationActivity, setRecentApplicationActivity] = useState<
+    DashboardApplicationActivityItem[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     const session = loadCandidateSession();
@@ -58,6 +67,21 @@ export function CandidateDashboardClient() {
         if (progressResponse.ok && progressPayload.data) {
           setProfileProgress(progressPayload.data);
         }
+
+        const applicationsResponse = await fetch(
+          "/api/my-applications/applications/list?limit=4&sortBy=updatedAt",
+          {
+            headers: {
+              Authorization: `Bearer ${session.accessToken}`,
+            },
+          },
+        );
+        const applicationsPayload = (await applicationsResponse.json().catch(() => ({}))) as {
+          data?: DashboardApplicationActivityItem[];
+        };
+        if (applicationsResponse.ok && applicationsPayload.data) {
+          setRecentApplicationActivity(applicationsPayload.data);
+        }
       } catch {
         setError("Unable to load your dashboard right now.");
       } finally {
@@ -77,16 +101,35 @@ export function CandidateDashboardClient() {
   const progressState = useMemo(() => {
     const profileComplete = Boolean(profileProgress?.completeProfileDone);
     const hasCv = Boolean(profileProgress?.hasCv);
-    const steps = [
-      { label: "Completing Profile", complete: profileComplete, actionHref: "/my-profile", actionLabel: "Complete profile" },
-      { label: hasCv ? "My CVs" : "Upload CV", complete: hasCv, actionHref: "/cv-upload", actionLabel: hasCv ? "Manage CVs" : "Upload CV" },
-      { label: "Adding Cover Letter", complete: false, actionHref: "/dashboard", actionLabel: "Add cover letter" },
+    const hasCoverLetter = Boolean(profileProgress?.hasCoverLetter);
+    const steps: JourneyStep[] = [
       {
-        label: "Start Applying",
+        label: "Complete your profile",
+        description: "Add your details, experience, and education.",
+        complete: profileComplete,
+        actionHref: "/my-profile",
+        actionLabel: profileComplete ? "View profile" : "Complete profile",
+      },
+      {
+        label: hasCv ? "CV on file" : "Upload your CV",
+        description: "Upload at least one résumé to apply faster.",
+        complete: hasCv,
+        actionHref: "/cv-upload",
+        actionLabel: hasCv ? "Manage CVs" : "Upload CV",
+      },
+      {
+        label: hasCoverLetter ? "Cover letters ready" : "Add a cover letter",
+        description: "Save templates you can reuse when applying.",
+        complete: hasCoverLetter,
+        actionHref: "/cover-letters",
+        actionLabel: hasCoverLetter ? "Manage letters" : "Add cover letter",
+      },
+      {
+        label: "Start applying",
+        description: "Browse open roles and submit your first application.",
         complete: false,
         actionHref: "/job-search",
         actionLabel: "Browse jobs",
-        external: false,
       },
     ];
     const completed = steps.filter((s) => s.complete).length;
@@ -109,54 +152,38 @@ export function CandidateDashboardClient() {
         Welcome, {displayName}
       </h1>
       <p className="bo-page-sub">You are signed in as {profile.email}.</p>
-      <article className="bo-card bo-span-12">
-        <h2 className="bo-card-title">Your application journey</h2>
-        <p className="bo-page-sub myapps-journey-path">
-          Complete Profile → Upload CV → Add Cover Letter → Browse Jobs → Apply
-        </p>
-        <div className="myapps-progress-wrap" aria-label="Onboarding progress">
-          <div className="myapps-progress-bar-bg">
-            <div className="myapps-progress-bar-fill" style={{ width: `${progressState.percentage}%` }} />
+      <article className="bo-card bo-span-12 myapps-journey-card">
+        <header className="myapps-journey-card-head">
+          <div>
+            <h2 className="bo-card-title">Your application journey</h2>
+            <p className="bo-page-sub myapps-journey-card-intro">
+              Finish each step below to get application-ready.
+            </p>
           </div>
-          <p className="bo-page-sub myapps-progress-copy">
-            {progressState.completed} of {progressState.steps.length} completed ({progressState.percentage}%)
-          </p>
-        </div>
-        <div className="myapps-steps-grid">
-          {progressState.steps.map((step, index) => (
-            <article key={step.label} className={`myapps-step-card ${step.complete ? "is-complete" : "is-pending"}`}>
-              <div className="myapps-step-top">
-                <span className={`myapps-step-index ${step.complete ? "done" : "todo"}`} aria-hidden>
-                  {index + 1}
-                </span>
-                <span className={`myapps-step-badge ${step.complete ? "done" : "todo"}`}>{step.complete ? "Done" : "To-do"}</span>
-              </div>
-              <h3 className="bo-card-title myapps-step-title">
-                {step.label}
-              </h3>
-              <p className="bo-page-sub myapps-step-status">
-                {step.complete ? "Completed" : "Pending"}
-              </p>
-              {step.external ? (
-                <a className="btn btn-secondary btn-sm myapps-step-btn" href={step.actionHref} target="_blank" rel="noopener noreferrer">
-                  {step.actionLabel}
-                </a>
-              ) : (
-                <Link className="btn btn-secondary btn-sm myapps-step-btn" href={step.actionHref}>
-                  {step.actionLabel}
-                </Link>
-              )}
-            </article>
-          ))}
-        </div>
+        </header>
+        <DashboardJourneySteps
+          steps={progressState.steps}
+          completedCount={progressState.completed}
+          percentage={progressState.percentage}
+        />
       </article>
 
       <div className="bo-dash-grid" style={{ marginTop: "1rem" }}>
         <article className="bo-card bo-span-6">
-          <h2 className="bo-card-title">Applications</h2>
-          <p className="bo-page-sub" style={{ marginBottom: 0 }}>
-            Track submitted jobs, interview steps, and status updates.
+          <div className="myapps-dashboard-card-head">
+            <h2 className="bo-card-title" style={{ marginBottom: 0 }}>
+              Applications
+            </h2>
+            {recentApplicationActivity.length > 0 ? (
+              <Link href="/my-applications" className="myapps-dashboard-card-link">
+                View all
+              </Link>
+            ) : null}
+          </div>
+          <p className="bo-page-sub myapps-dashboard-card-intro">
+            Latest updates from your submitted applications.
           </p>
+          <DashboardApplicationActivity items={recentApplicationActivity} />
         </article>
         <article className="bo-card bo-span-6">
           <h2 className="bo-card-title">Saved jobs</h2>

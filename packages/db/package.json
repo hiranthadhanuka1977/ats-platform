@@ -17,6 +17,7 @@
     "seed": "node scripts/run-prisma.cjs db seed"
   },
   "dependencies": {
+    "@ats-platform/utils": "*",
     "@prisma/client": "^6.19.3",
     "pg": "^8.20.0"
   },

@@ -1,4 +1,5 @@
 import type { SerializedJobPosting } from "@/lib/job-posting-serialize";
+import { formatSalaryRangeLine } from "@/lib/salary-input";
 
 function isLikelyImageUrl(s: string | null): boolean {
   const t = (s ?? "").trim();
@@ -63,14 +64,13 @@ type Props = {
  * Read-only candidate-style job detail with sticky Job summary sidebar. Used on standalone `/jobs/[id]/preview` — no app chrome.
  */
 export function JobPostingSavedPreview({ job }: Props) {
+  const company = job.company;
+  const companyName = company.name;
   const dept = job.department.name;
   const locLabel = `${job.location.city}, ${job.location.country}`;
   const emp = job.employmentType.name;
   const exp = job.experienceLevel.name;
-  const salaryLine =
-    job.salaryMin?.trim() || job.salaryMax?.trim()
-      ? `${job.salaryMin || "—"} – ${job.salaryMax || "—"} ${job.salaryCurrency?.trim() || ""}`.trim()
-      : null;
+  const salaryLine = formatSalaryRangeLine(job.salaryMin, job.salaryMax, job.salaryCurrency, job.salaryPeriod);
   const responsibilities = job.responsibilities;
   const reqQuals = job.qualifications.filter((q) => q.type === "required" && q.description.trim());
   const prefQuals = job.qualifications.filter((q) => q.type === "preferred" && q.description.trim());
@@ -91,6 +91,30 @@ export function JobPostingSavedPreview({ job }: Props) {
         <p className="bo-job-preview-summary">{job.summary || "—"}</p>
 
         <div className="bo-job-preview-meta">
+          {company.logoUrl?.trim() ? (
+            <span className="bo-job-preview-meta-item bo-job-preview-company-brand">
+              <img
+                src={company.logoUrl.trim()}
+                alt=""
+                className="bo-job-preview-company-logo"
+                width={28}
+                height={28}
+                loading="lazy"
+              />
+              {company.websiteUrl?.trim() ? (
+                <a href={company.websiteUrl.trim()} target="_blank" rel="noopener noreferrer">
+                  {companyName}
+                </a>
+              ) : (
+                companyName
+              )}
+            </span>
+          ) : (
+            <span className="bo-job-preview-meta-item">
+              <IconBriefcase className="bo-job-preview-meta-icon" />
+              {companyName}
+            </span>
+          )}
           <span className="bo-job-preview-meta-item">
             <IconBriefcase className="bo-job-preview-meta-icon" />
             {dept}
@@ -273,6 +297,10 @@ export function JobPostingSavedPreview({ job }: Props) {
                 <dd>
                   {job.slug.trim() ? <code className="bo-admin-code">{job.slug.trim()}</code> : <em>Generated from title</em>}
                 </dd>
+              </div>
+              <div>
+                <dt>Company</dt>
+                <dd>{companyName}</dd>
               </div>
               <div>
                 <dt>Department</dt>

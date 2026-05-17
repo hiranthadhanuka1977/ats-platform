@@ -1,4 +1,5 @@
-import type { JobPostingStatus, QualificationType } from "@prisma/client";
+import type { JobPostingStatus, QualificationType, SalaryPeriod } from "@prisma/client";
+import { normalizeSalaryPeriod } from "@ats-platform/types";
 import { Prisma } from "@prisma/client";
 
 const STATUSES: JobPostingStatus[] = ["draft", "published", "closed", "archived"];
@@ -43,6 +44,7 @@ export type ParsedJobPdpScalars = {
   salaryMin: Prisma.Decimal | null;
   salaryMax: Prisma.Decimal | null;
   salaryCurrency: string | null;
+  salaryPeriod: SalaryPeriod;
   isSalaryVisible: boolean;
   isRemote: boolean;
   isFeatured: boolean;
@@ -103,6 +105,7 @@ export function parseJobPostingPdpFromBody(body: Record<string, unknown>): {
     salaryMin: toDecimal(body.salaryMin),
     salaryMax: toDecimal(body.salaryMax),
     salaryCurrency: cur && cur.length <= 3 ? cur.toUpperCase().slice(0, 3) : null,
+    salaryPeriod: normalizeSalaryPeriod(body.salaryPeriod),
     isSalaryVisible: typeof body.isSalaryVisible === "boolean" ? body.isSalaryVisible : false,
     isRemote: typeof body.isRemote === "boolean" ? body.isRemote : false,
     isFeatured: typeof body.isFeatured === "boolean" ? body.isFeatured : false,
@@ -118,6 +121,7 @@ export function parseJobPostingCoreFromBody(body: Record<string, unknown>): {
   title?: string;
   slug?: string;
   summary?: string;
+  companyId?: number;
   departmentId?: number;
   locationId?: number;
   employmentTypeId?: number;
@@ -135,10 +139,12 @@ export function parseJobPostingCoreFromBody(body: Record<string, unknown>): {
     const n = typeof v === "number" ? v : Number.parseInt(String(v), 10);
     return Number.isFinite(n) ? n : undefined;
   };
+  const c = num("companyId");
   const d = num("departmentId");
   const l = num("locationId");
   const e = num("employmentTypeId");
   const x = num("experienceLevelId");
+  if (c !== undefined) out.companyId = c;
   if (d !== undefined) out.departmentId = d;
   if (l !== undefined) out.locationId = l;
   if (e !== undefined) out.employmentTypeId = e;

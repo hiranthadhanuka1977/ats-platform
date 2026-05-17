@@ -20,26 +20,47 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: { code: "UNAUTHORIZED", message: "Invalid or expired token." } }, { status: 401 });
   }
 
-  const [account, profile, educationRows, experienceRows] = await Promise.all([
-    prisma.candidateAccount.findUnique({
-      where: { id: user.candidateAccountId },
-      select: { email: true },
-    }),
-    prisma.candidateProfile.findUnique({
-      where: { candidateAccountId: user.candidateAccountId },
-      select: { firstName: true, lastName: true, phone: true, location: true, currentTitle: true },
-    }),
-    prisma.candidateCvEducation.findMany({
-      where: { candidateAccountId: user.candidateAccountId },
-      orderBy: { createdAt: "desc" },
-      select: { qualification: true, institution: true, startDate: true, endDate: true },
-    }),
-    prisma.candidateCvExperience.findMany({
-      where: { candidateAccountId: user.candidateAccountId },
-      orderBy: { createdAt: "desc" },
-      select: { company: true, role: true, startDate: true, endDate: true },
-    }),
-  ]);
+  const [account, profile, educationRows, experienceRows, applications, bookmarkCount, authProviderCount] =
+    await Promise.all([
+      prisma.candidateAccount.findUnique({
+        where: { id: user.candidateAccountId },
+        select: { email: true, status: true, createdAt: true, lastLoginAt: true },
+      }),
+      prisma.candidateProfile.findUnique({
+        where: { candidateAccountId: user.candidateAccountId },
+        select: {
+          firstName: true,
+          lastName: true,
+          phone: true,
+          location: true,
+          currentTitle: true,
+          resumeUrl: true,
+        },
+      }),
+      prisma.candidateCvEducation.findMany({
+        where: { candidateAccountId: user.candidateAccountId },
+        orderBy: { createdAt: "desc" },
+        select: { qualification: true, institution: true, startDate: true, endDate: true },
+      }),
+      prisma.candidateCvExperience.findMany({
+        where: { candidateAccountId: user.candidateAccountId },
+        orderBy: { createdAt: "desc" },
+        select: { company: true, role: true, startDate: true, endDate: true },
+      }),
+      prisma.application.findMany({
+        where: { candidateAccountId: user.candidateAccountId },
+        orderBy: { appliedAt: "desc" },
+        select: {
+          id: true,
+          status: true,
+          appliedAt: true,
+          updatedAt: true,
+          jobPosting: { select: { slug: true, title: true } },
+        },
+      }),
+      prisma.bookmark.count({ where: { candidateAccountId: user.candidateAccountId } }),
+      prisma.candidateAuthProvider.count({ where: { candidateAccountId: user.candidateAccountId } }),
+    ]);
 
   const payload: ParsedCvPayload = emptyParsedCvPayload();
   payload.candidate.fullName = `${profile?.firstName ?? ""} ${profile?.lastName ?? ""}`.trim();
@@ -69,10 +90,37 @@ export async function GET(request: Request) {
     isNonEmpty(profile?.currentTitle);
   const completeProfileDone = basicProfileComplete && experienceRows.length > 0 && educationRows.length > 0;
 
+  const formatAccountStatus = (status: string) =>
+    status
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+
   return NextResponse.json({
     data: {
       payload,
       readOnly: completeProfileDone,
+      account: {
+        status: account ? formatAccountStatus(account.status) : "—",
+        createdAt: account?.createdAt.toISOString() ?? null,
+        lastLoginAt: account?.lastLoginAt?.toISOString() ?? null,
+        resumeUrl: profile?.resumeUrl ?? null,
+      },
+      insights: {
+        applicationCount: applications.length,
+        bookmarkCount,
+        authProviderCount,
+      },
+      applications: applications.map((application) => ({
+        id: application.id,
+        status: application.status,
+        appliedAt: application.appliedAt.toISOString(),
+        updatedAt: application.updatedAt.toISOString(),
+        job: {
+          slug: application.jobPosting.slug,
+          title: application.jobPosting.title,
+        },
+      })),
     },
   });
 }

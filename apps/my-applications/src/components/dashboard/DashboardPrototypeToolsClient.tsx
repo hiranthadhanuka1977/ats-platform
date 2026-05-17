@@ -61,16 +61,7 @@ export function DashboardPrototypeToolsClient() {
   if (error) return <p className="bo-login-error" role="alert">{error}</p>;
   if (!profile) return null;
 
-  return (
-    <section aria-labelledby="my-profile-title">
-      <h1 id="my-profile-title" className="bo-page-title">
-        My Profile
-      </h1>
-      <p className="bo-page-sub">Complete your profile details using LinkedIn text parsing here, {displayName}.</p>
-
-      {accessToken ? (
-        <ProfileTextImportPrototype accessToken={accessToken} defaultEmail={profile.email} defaultFullName={displayName} />
-      ) : null}
-    </section>
-  );
+  return accessToken ? (
+    <ProfileTextImportPrototype accessToken={accessToken} defaultEmail={profile.email} defaultFullName={displayName} />
+  ) : null;
 }

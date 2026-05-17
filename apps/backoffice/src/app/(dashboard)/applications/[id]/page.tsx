@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getApplicationStatusMeta } from "@ats-platform/types";
+import { ApplicationRelevanceSection } from "@/components/applications/ApplicationRelevanceSection";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string; candidateId?: string }>;
 };
 
 function parseCoverLetterId(coverLetter: string | null): string | null {
@@ -59,8 +61,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return { title: `Application — ${row.jobPosting.title}` };
 }
 
-export default async function ApplicationDetailsPage({ params }: PageProps) {
+export default async function ApplicationDetailsPage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { from, candidateId } = await searchParams;
   if (!id || !/^[0-9a-f-]{36}$/i.test(id)) {
     notFound();
   }
@@ -83,6 +86,7 @@ export default async function ApplicationDetailsPage({ params }: PageProps) {
         select: {
           id: true,
           title: true,
+          company: { select: { id: true, name: true } },
         },
       },
     },
@@ -147,10 +151,15 @@ export default async function ApplicationDetailsPage({ params }: PageProps) {
   const showCoverLetterTextSection =
     (coverLetterRow?.mode === "text" && Boolean(coverLetterRow.body?.trim())) || Boolean(legacyCoverLetterText);
 
+  const backFromCandidate =
+    from === "candidates" && candidateId === application.candidateAccountId;
+  const backHref = backFromCandidate ? `/candidates/${application.candidateAccountId}` : "/applications";
+  const backLabel = backFromCandidate ? "Back to candidate" : "Back to applications";
+
   return (
     <main id="main-content" className="bo-content">
       <p className="bo-jobs-back">
-        <Link href="/applications">← Back to applications</Link>
+        <Link href={backHref}>{`← ${backLabel}`}</Link>
       </p>
       <div className="bo-page-header-actions">
         <div>
@@ -163,11 +172,22 @@ export default async function ApplicationDetailsPage({ params }: PageProps) {
       </div>
 
       <div className="bo-dash-grid">
+        <ApplicationRelevanceSection
+          applicationId={application.id}
+          initialScore={application.relevanceScore}
+          initialBreakdownText={application.relevanceBreakdown}
+          initialScoredAt={application.relevanceScoredAt?.toISOString() ?? null}
+        />
+
         <section className="bo-card bo-span-6" aria-labelledby="application-job-title">
           <h2 id="application-job-title" className="bo-card-title">
             Job and timeline
           </h2>
           <dl className="bo-candidate-detail-list">
+            <div>
+              <dt>Company</dt>
+              <dd>{application.jobPosting.company.name}</dd>
+            </div>
             <div>
               <dt>Job</dt>
               <dd>

@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: { code: "UNAUTHORIZED", message: "Invalid or expired token." } }, { status: 401 });
   }
 
-  const [account, profile, experienceCount, educationCount, cvCount] = await Promise.all([
+  const [account, profile, experienceCount, educationCount, cvCount, coverLetterCount] = await Promise.all([
     prisma.candidateAccount.findUnique({
       where: { id: user.candidateAccountId },
       select: { email: true },
@@ -34,6 +34,9 @@ export async function GET(request: Request) {
       where: { candidateAccountId: user.candidateAccountId },
     }),
     prisma.candidateCvParse.count({
+      where: { candidateAccountId: user.candidateAccountId },
+    }),
+    prisma.candidateCoverLetter.count({
       where: { candidateAccountId: user.candidateAccountId },
     }),
   ]);
@@ -54,6 +57,7 @@ export async function GET(request: Request) {
       hasExperience: experienceCount > 0,
       hasEducation: educationCount > 0,
       hasCv: cvCount > 0,
+      hasCoverLetter: coverLetterCount > 0,
       completeProfileDone,
       experienceCount,
       educationCount,

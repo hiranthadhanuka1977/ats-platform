@@ -218,7 +218,14 @@ export default async function CandidateDetailsPage({ params, searchParams }: Pag
                 <tbody>
                   {candidate.applications.map((application) => (
                     <tr key={application.id}>
-                      <td>{application.jobPosting.title}</td>
+                      <td>
+                        <Link
+                          href={`/applications/${application.id}?from=candidates&candidateId=${candidate.id}`}
+                          className="bo-candidate-name-link"
+                        >
+                          {application.jobPosting.title}
+                        </Link>
+                      </td>
                       <td title={getApplicationStatusMeta(application.status).description}>
                         {getApplicationStatusMeta(application.status).label}
                       </td>

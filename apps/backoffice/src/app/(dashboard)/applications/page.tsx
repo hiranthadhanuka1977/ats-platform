@@ -43,6 +43,13 @@ export default async function ApplicationsPage() {
       status: application.status,
       appliedAt: application.appliedAt.toISOString(),
       updatedAt: application.updatedAt.toISOString(),
+      relevance:
+        application.relevanceScore != null
+          ? {
+              score: application.relevanceScore,
+              breakdownText: application.relevanceBreakdown,
+            }
+          : null,
       candidate: {
         id: application.candidateAccount.id,
         name: fullName,

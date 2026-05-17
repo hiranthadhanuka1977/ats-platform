@@ -10,6 +10,7 @@ import { AdministrationSectionIntro } from "./AdministrationSectionIntro";
 type Row = Record<string, unknown>;
 
 const ADD_LABEL: Record<MaintenanceSectionId, string> = {
+  companies: "Add company",
   departments: "Add department",
   locations: "Add location",
   "employment-types": "Add employment type",
@@ -30,6 +31,8 @@ async function parseError(res: Response): Promise<string> {
 
 function getDefaultForm(section: MaintenanceSectionId): Record<string, unknown> {
   switch (section) {
+    case "companies":
+      return { name: "", logoUrl: "", websiteUrl: "", isActive: true, sortOrder: 0 };
     case "departments":
       return { name: "", slug: "", isActive: true, sortOrder: 0 };
     case "locations":
@@ -51,6 +54,14 @@ function getDefaultForm(section: MaintenanceSectionId): Record<string, unknown> 
 
 function rowToForm(section: MaintenanceSectionId, row: Row): Record<string, unknown> {
   switch (section) {
+    case "companies":
+      return {
+        name: String(row.name ?? ""),
+        logoUrl: String(row.logoUrl ?? ""),
+        websiteUrl: String(row.websiteUrl ?? ""),
+        isActive: Boolean(row.isActive),
+        sortOrder: Number(row.sortOrder ?? 0),
+      };
     case "departments":
       return {
         name: String(row.name ?? ""),
@@ -103,6 +114,14 @@ function rowToForm(section: MaintenanceSectionId, row: Row): Record<string, unkn
 
 function formToPayload(section: MaintenanceSectionId, form: Record<string, unknown>): Record<string, unknown> {
   switch (section) {
+    case "companies":
+      return {
+        name: String(form.name ?? "").trim(),
+        logoUrl: String(form.logoUrl ?? "").trim(),
+        websiteUrl: String(form.websiteUrl ?? "").trim(),
+        isActive: Boolean(form.isActive),
+        sortOrder: Math.trunc(Number(form.sortOrder) || 0),
+      };
     case "departments":
       return {
         name: String(form.name ?? "").trim(),
@@ -168,6 +187,7 @@ function rowLabel(section: MaintenanceSectionId, row: Row): string {
       const parts = [row.city, row.country].map((v) => String(v ?? "").trim()).filter(Boolean);
       return parts.join(", ") || `Record #${row.id}`;
     }
+    case "companies":
     case "departments":
     case "employment-types":
     case "experience-levels":
@@ -517,6 +537,49 @@ function MaintenanceForm({
   );
 
   switch (section) {
+    case "companies":
+      return (
+        <div className="bo-admin-form-grid">
+          {input("name", "Name", String(form.name ?? ""))}
+          <div className="bo-field" style={{ gridColumn: "1 / -1" }}>
+            <label className="bo-label" htmlFor="logoUrl">
+              Logo URL
+            </label>
+            <input
+              id="logoUrl"
+              className="bo-input"
+              type="url"
+              value={String(form.logoUrl ?? "")}
+              onChange={(e) => setField("logoUrl", e.target.value)}
+              placeholder="https://…"
+            />
+          </div>
+          <div className="bo-field" style={{ gridColumn: "1 / -1" }}>
+            <label className="bo-label" htmlFor="websiteUrl">
+              Website
+            </label>
+            <input
+              id="websiteUrl"
+              className="bo-input"
+              type="url"
+              value={String(form.websiteUrl ?? "")}
+              onChange={(e) => setField("websiteUrl", e.target.value)}
+              placeholder="https://…"
+            />
+          </div>
+          <div className="bo-field">
+            <label className="bo-label bo-label--inline">
+              <input
+                type="checkbox"
+                checked={Boolean(form.isActive)}
+                onChange={(e) => setField("isActive", e.target.checked)}
+              />
+              Active
+            </label>
+          </div>
+          {input("sortOrder", "Sort order", String(form.sortOrder ?? ""), "number")}
+        </div>
+      );
     case "departments":
       return (
         <div className="bo-admin-form-grid">
@@ -724,6 +787,16 @@ function MaintenanceTable({
       <table className="bo-admin-table">
         <thead>
           <tr>
+            {section === "companies" && (
+              <>
+                <th>Name</th>
+                <th>Logo</th>
+                <th>Website</th>
+                <th>Active</th>
+                <th>In use</th>
+                <th>Sort</th>
+              </>
+            )}
             {section === "departments" && (
               <>
                 <th>Name</th>
@@ -794,6 +867,37 @@ function MaintenanceTable({
             const id = Number(row.id);
             return (
               <tr key={id}>
+                {section === "companies" && (
+                  <>
+                    <td>{String(row.name ?? "")}</td>
+                    <td>
+                      {typeof row.logoUrl === "string" && row.logoUrl.trim() ? (
+                        <img
+                          src={row.logoUrl.trim()}
+                          alt=""
+                          className="bo-admin-company-logo-thumb"
+                          width={32}
+                          height={32}
+                          loading="lazy"
+                        />
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td>
+                      {typeof row.websiteUrl === "string" && row.websiteUrl.trim() ? (
+                        <a href={row.websiteUrl.trim()} target="_blank" rel="noopener noreferrer">
+                          {row.websiteUrl.trim()}
+                        </a>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td>{row.isActive ? "Yes" : "No"}</td>
+                    {inUseCell(row)}
+                    <td>{String(row.sortOrder ?? "")}</td>
+                  </>
+                )}
                 {section === "departments" && (
                   <>
                     <td>{String(row.name ?? "")}</td>

@@ -9,6 +9,7 @@ import {
   type JobPostingFormDraft,
   saveJobPostingCreateDraft,
 } from "@/lib/job-posting-create-draft";
+import { SALARY_PERIOD_OPTIONS, parseSalaryPeriod, type SalaryPeriodValue } from "@ats-platform/types";
 import type { SerializedJobPosting } from "@/lib/job-posting-serialize";
 import {
   formatSalaryDigitsWithCommas,
@@ -16,12 +17,14 @@ import {
   salaryValueToDigits,
 } from "@/lib/salary-input";
 
+type CompanyLookup = { id: number; name: string; logoUrl: string | null; websiteUrl: string | null };
 type Lookup = { id: number; name: string; slug: string };
 type LocationLookup = { id: number; city: string; country: string; slug: string };
 type BenefitLookup = { id: number; description: string };
 type TagLookup = { id: number; name: string; variant: string };
 
 type FormOptions = {
+  companies: CompanyLookup[];
   departments: Lookup[];
   locations: LocationLookup[];
   employmentTypes: Lookup[];
@@ -37,12 +40,14 @@ type QualRow = { description: string; type: "required" | "preferred" };
 type CoreFieldKey =
   | "title"
   | "summary"
+  | "companyId"
   | "departmentId"
   | "locationId"
   | "employmentTypeId"
   | "experienceLevelId";
 
 const CORE_FIELD_ORDER: CoreFieldKey[] = [
+  "companyId",
   "title",
   "summary",
   "departmentId",
@@ -54,6 +59,7 @@ const CORE_FIELD_ORDER: CoreFieldKey[] = [
 const CORE_FIELD_IDS: Record<CoreFieldKey, string> = {
   title: "job-title",
   summary: "job-summary",
+  companyId: "job-company",
   departmentId: "job-dept",
   locationId: "job-loc",
   employmentTypeId: "job-emp",
@@ -95,6 +101,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [summary, setSummary] = useState("");
+  const [companyId, setCompanyId] = useState("");
   const [departmentId, setDepartmentId] = useState("");
   const [locationId, setLocationId] = useState("");
   const [employmentTypeId, setEmploymentTypeId] = useState("");
@@ -109,6 +116,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
   const [salaryCurrency, setSalaryCurrency] = useState("");
+  const [salaryPeriod, setSalaryPeriod] = useState<SalaryPeriodValue>("annual");
   const [isSalaryVisible, setIsSalaryVisible] = useState(false);
   const [bannerImageUrl, setBannerImageUrl] = useState("");
   const [bannerImageAlt, setBannerImageAlt] = useState("");
@@ -147,6 +155,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
     if (!s) next.summary = "Summary is required.";
     else if (s.length > 500) next.summary = "Summary must be at most 500 characters.";
 
+    if (!companyId) next.companyId = "Please select a company.";
     if (!departmentId) next.departmentId = "Please select a department.";
     if (!locationId) next.locationId = "Please select a location.";
     if (!employmentTypeId) next.employmentTypeId = "Please select an employment type.";
@@ -168,6 +177,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
     setTitle(d.title);
     setSlug(d.slug);
     setSummary(d.summary);
+    setCompanyId(d.companyId ?? "");
     setDepartmentId(d.departmentId);
     setLocationId(d.locationId);
     setEmploymentTypeId(d.employmentTypeId);
@@ -181,6 +191,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
     setSalaryMin(salaryValueToDigits(d.salaryMin));
     setSalaryMax(salaryValueToDigits(d.salaryMax));
     setSalaryCurrency(d.salaryCurrency);
+    setSalaryPeriod(parseSalaryPeriod(d.salaryPeriod));
     setIsSalaryVisible(d.isSalaryVisible);
     setBannerImageUrl(d.bannerImageUrl);
     setBannerImageAlt(d.bannerImageAlt);
@@ -197,6 +208,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
     setTitle(j.title);
     setSlug(j.slug);
     setSummary(j.summary);
+    setCompanyId(String(j.companyId));
     setDepartmentId(String(j.departmentId));
     setLocationId(String(j.locationId));
     setEmploymentTypeId(String(j.employmentTypeId));
@@ -210,6 +222,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
     setSalaryMin(salaryValueToDigits(j.salaryMin));
     setSalaryMax(salaryValueToDigits(j.salaryMax));
     setSalaryCurrency(j.salaryCurrency ?? "");
+    setSalaryPeriod(parseSalaryPeriod(j.salaryPeriod));
     setIsSalaryVisible(j.isSalaryVisible);
     setBannerImageUrl(j.bannerImageUrl ?? "");
     setBannerImageAlt(j.bannerImageAlt ?? "");
@@ -259,6 +272,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
       title,
       slug,
       summary,
+      companyId,
       departmentId,
       locationId,
       employmentTypeId,
@@ -272,6 +286,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
       salaryMin,
       salaryMax,
       salaryCurrency,
+      salaryPeriod,
       isSalaryVisible,
       bannerImageUrl,
       bannerImageAlt,
@@ -305,6 +320,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
     return {
       title: title.trim(),
       summary: summary.trim(),
+      companyId: Number(companyId),
       departmentId: Number(departmentId),
       locationId: Number(locationId),
       employmentTypeId: Number(employmentTypeId),
@@ -319,6 +335,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
       salaryMin: salaryMin.trim() || null,
       salaryMax: salaryMax.trim() || null,
       salaryCurrency: salaryCurrency.trim() || null,
+      salaryPeriod,
       isSalaryVisible,
       bannerImageUrl: bannerImageUrl.trim() || null,
       bannerImageAlt: bannerImageAlt.trim() || null,
@@ -415,6 +432,40 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
       )}
 
       <div className="bo-job-form-section">
+        <div className="bo-field">
+          <label className="bo-label" htmlFor="job-company">
+            Company <ReqStar />
+          </label>
+          {fieldErrors.companyId ? (
+            <p id="job-company-error" className="bo-field-error" role="alert">
+              {fieldErrors.companyId}
+            </p>
+          ) : null}
+          <select
+            id="job-company"
+            className={`bo-input${fieldErrors.companyId ? " bo-input-error" : ""}`}
+            value={companyId}
+            onChange={(e) => {
+              setCompanyId(e.target.value);
+              clearCoreError("companyId");
+            }}
+            disabled={!options}
+            autoFocus
+            aria-invalid={fieldErrors.companyId ? true : undefined}
+            aria-describedby={fieldErrors.companyId ? "job-company-error" : undefined}
+            aria-required
+          >
+            <option value="">Select…</option>
+            {options?.companies.map((c) => (
+              <option key={c.id} value={String(c.id)}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="bo-job-form-section">
         <h2 className="bo-job-form-section-title">Basics</h2>
         <div className="bo-admin-form-grid">
           <div className="bo-field" style={{ gridColumn: "1 / -1" }}>
@@ -430,7 +481,6 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
               id="job-title"
               className={`bo-input${fieldErrors.title ? " bo-input-error" : ""}`}
               value={title}
-              autoFocus
               onChange={(e) => {
                 setTitle(e.target.value);
                 clearCoreError("title");
@@ -754,6 +804,23 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
               maxLength={3}
               placeholder="USD"
             />
+          </div>
+          <div className="bo-field">
+            <label className="bo-label" htmlFor="job-salary-period">
+              Salary period
+            </label>
+            <select
+              id="job-salary-period"
+              className="bo-input"
+              value={salaryPeriod}
+              onChange={(e) => setSalaryPeriod(parseSalaryPeriod(e.target.value))}
+            >
+              {SALARY_PERIOD_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="bo-field bo-jobs-filters-remote">
             <label className="bo-label bo-label--inline">

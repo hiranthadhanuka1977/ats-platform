@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getApplicationStatusMeta } from "@ats-platform/types";
 import { loadCandidateSession } from "@/lib/auth-storage";
 import { formatShortDate } from "@/lib/format";
+import { ApplicationStatusCallout } from "@/components/dashboard/ApplicationStatusCallout";
 
 type ApplicationItem = {
   id: string;
@@ -80,34 +80,25 @@ export function MyApplicationsPageClient() {
         ) : null}
 
         {!loading && !error && items.length > 0 ? (
-          <div>
-            {items.map((item, index) => (
-              <div key={item.id} style={{ padding: "0.8rem 0 0.9rem" }}>
-                {(() => {
-                  const statusMeta = getApplicationStatusMeta(item.status);
-                  return (
-                    <>
-                <h2 style={{ margin: 0, fontSize: "1.05rem" }}>{item.job.title}</h2>
-                <p className="bo-page-sub" style={{ margin: "0.35rem 0 0.25rem" }}>
-                  {item.job.department} • {item.job.location}
-                </p>
-                <p className="bo-page-sub" style={{ margin: 0 }}>
-                  Status: <strong>{statusMeta.label}</strong> • Applied{" "}
-                  {formatShortDate(item.appliedAt)}
-                </p>
-                <p className="bo-page-sub" style={{ margin: "0.2rem 0 0" }}>
-                  {statusMeta.description}
-                </p>
-                <div style={{ marginTop: "0.6rem" }}>
-                  <Link href={`/jobs/${item.job.slug}`} className="btn btn-secondary btn-sm">
-                    View job
-                  </Link>
+          <div className="myapps-application-list">
+            {items.map((item) => (
+              <article key={item.id} className="myapps-application-row">
+                <div className="myapps-application-row-main">
+                  <h2 className="myapps-application-row-title">{item.job.title}</h2>
+                  <p className="myapps-application-row-meta">
+                    {item.job.department} • {item.job.location}
+                  </p>
+                  <p className="myapps-application-row-applied">Applied {formatShortDate(item.appliedAt)}</p>
+                  <div className="myapps-application-row-actions">
+                    <Link href={`/jobs/${item.job.slug}`} className="btn btn-secondary btn-sm">
+                      View job
+                    </Link>
+                  </div>
                 </div>
-                {index < items.length - 1 ? <hr style={{ marginTop: "0.9rem", border: 0, borderTop: "1px solid var(--color-border)" }} /> : null}
-                    </>
-                  );
-                })()}
-              </div>
+                <div className="myapps-application-row-status">
+                  <ApplicationStatusCallout status={item.status} />
+                </div>
+              </article>
             ))}
           </div>
         ) : null}

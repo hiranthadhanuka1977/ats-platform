@@ -11,7 +11,13 @@ export async function GET() {
     const auth = await requireStaffSession();
     if (auth instanceof NextResponse) return auth;
 
-    const [departments, locations, employmentTypes, experienceLevels, skills, benefits, tags] = await Promise.all([
+    const [companies, departments, locations, employmentTypes, experienceLevels, skills, benefits, tags] =
+      await Promise.all([
+    prisma.company.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      select: { id: true, name: true, logoUrl: true, websiteUrl: true },
+    }),
     prisma.department.findMany({
       where: { isActive: true },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
@@ -50,6 +56,7 @@ export async function GET() {
   ]);
 
     return NextResponse.json({
+      companies,
       departments,
       locations,
       employmentTypes,

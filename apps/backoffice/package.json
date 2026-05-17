@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "@ats-platform/db": "*",
+    "@ats-platform/utils": "*",
     "@ats-platform/types": "*",
     "@ats-platform/ui": "*",
     "bcryptjs": "^3.0.2",

@@ -193,6 +193,16 @@
   margin-top: var(--space-6, 1.5rem);
 }
 
+.myapps-cv-text-apply-block {
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.myapps-cv-text-apply-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-2, 0.5rem);
+}
+
 .myapps-cv-done {
   margin-top: var(--space-4, 1rem);
 }

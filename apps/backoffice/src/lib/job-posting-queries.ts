@@ -1,5 +1,6 @@
 /** Prisma include for full job posting (PDP + relations). */
 export const JOB_POSTING_FULL_INCLUDE = {
+  company: { select: { id: true, name: true, logoUrl: true, websiteUrl: true } },
   department: { select: { id: true, name: true, slug: true } },
   location: { select: { id: true, city: true, country: true, slug: true } },
   employmentType: { select: { id: true, name: true, slug: true } },

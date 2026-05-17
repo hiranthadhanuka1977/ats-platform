@@ -30,6 +30,13 @@ const SEED_STAFF_USER = {
   role: 'admin',
 };
 
+/** Employers / brands for job postings */
+const COMPANIES = [
+  { name: 'TalentHub', logoUrl: null, websiteUrl: 'https://example.com', sortOrder: 1 },
+  { name: 'Acme Corporation', logoUrl: null, websiteUrl: null, sortOrder: 2 },
+  { name: 'Northwind Labs', logoUrl: null, websiteUrl: null, sortOrder: 3 },
+];
+
 /** @see db-schema.md §1.1 */
 const DEPARTMENTS = [
   { name: 'Engineering', slug: 'engineering', sortOrder: 1 },
@@ -187,6 +194,7 @@ async function seedJobPostings() {
     console.log('Removed previous seed job postings:', deleted.count);
   }
 
+  const companies = await prisma.company.findMany({ where: { isActive: true } });
   const departments = await prisma.department.findMany({ where: { isActive: true } });
   const locations = await prisma.location.findMany({ where: { isActive: true } });
   const employmentTypes = await prisma.employmentType.findMany();
@@ -196,6 +204,7 @@ async function seedJobPostings() {
   const tags = await prisma.tag.findMany();
 
   if (
+    companies.length === 0 ||
     departments.length === 0 ||
     locations.length === 0 ||
     employmentTypes.length === 0 ||
@@ -229,6 +238,7 @@ async function seedJobPostings() {
   for (let i = 0; i < 30; i++) {
     const title = titles[i];
     const slug = `${SEED_JOB_SLUG_PREFIX}${String(i + 1).padStart(3, '0')}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`.slice(0, 220);
+    const company = pick(companies);
     const dept = pick(departments);
     const loc = pick(locations);
     const emp = pick(employmentTypes);
@@ -256,6 +266,7 @@ async function seedJobPostings() {
       data: {
         title,
         slug,
+        companyId: company.id,
         departmentId: dept.id,
         locationId: loc.id,
         employmentTypeId: emp.id,
@@ -307,6 +318,26 @@ async function seedJobPostings() {
 }
 
 async function seedLookups() {
+  for (const row of COMPANIES) {
+    await prisma.company.upsert({
+      where: { name: row.name },
+      create: {
+        name: row.name,
+        logoUrl: row.logoUrl,
+        websiteUrl: row.websiteUrl,
+        isActive: true,
+        sortOrder: row.sortOrder,
+      },
+      update: {
+        logoUrl: row.logoUrl,
+        websiteUrl: row.websiteUrl,
+        isActive: true,
+        sortOrder: row.sortOrder,
+      },
+    });
+  }
+  console.log('Seeded companies:', COMPANIES.length);
+
   for (const row of DEPARTMENTS) {
     await prisma.department.upsert({
       where: { slug: row.slug },

@@ -2568,41 +2568,50 @@ body.bo-nav-open .bo-sidebar-overlay {
   margin-bottom: var(--space-3);
 }
 
-.bo-admin-subnav {
-  margin-bottom: var(--space-6);
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: var(--space-2);
-}
-
-.bo-admin-subnav ul {
+.bo-admin-section-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
 }
 
-.bo-admin-subnav a {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-lg);
+.bo-admin-section-nav-label {
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-secondary);
-  border: 1px solid transparent;
+  margin: 0;
 }
 
-.bo-admin-subnav a:hover {
+.bo-admin-section-select {
+  min-width: min(100%, 16rem);
+  max-width: 22rem;
+  flex: 1 1 12rem;
+  cursor: pointer;
+}
+
+.bo-admin-company-logo-thumb {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
   background: var(--color-surface-alt);
-  color: var(--color-text);
 }
 
-.bo-admin-subnav a[aria-current="page"] {
-  background: rgba(37, 99, 235, 0.1);
-  color: var(--color-primary);
-  border-color: rgba(37, 99, 235, 0.25);
+.bo-job-preview-company-brand {
+  gap: var(--space-2);
+}
+
+.bo-job-preview-company-logo {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
 }
 
 .bo-admin-section-intro {
@@ -2970,6 +2979,247 @@ body.bo-nav-open .bo-sidebar-overlay {
   font-weight: var(--weight-medium);
   background: var(--color-surface-alt);
   border: 1px solid var(--color-border);
+}
+
+/* Applications pipeline — fullscreen board */
+.bo-pipeline-board-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.bo-pipeline-board-header .bo-card-title {
+  margin-bottom: 0;
+}
+
+.bo-pipeline-board {
+  position: relative;
+}
+
+.bo-pipeline-flyover-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.bo-pipeline-board:fullscreen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.bo-pipeline-board:fullscreen .bo-pipeline-flyover-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+
+.bo-pipeline-board:fullscreen .bo-pipeline-board-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.bo-pipeline-board:fullscreen .bo-pipeline-columns {
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.bo-pipeline-board:fullscreen .bo-pipeline-column {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+.bo-pipeline-board:fullscreen .bo-pipeline-column-cards {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Relevance score breakdown flyover (portal to pipeline flyover layer) */
+.bo-relevance-breakdown-flyover {
+  position: fixed;
+  z-index: 10050;
+  width: 268px;
+  max-height: 280px;
+  overflow: auto;
+  padding: 0.6rem 0.7rem;
+  border-radius: 10px;
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #0f172a);
+  border: 1px solid var(--color-border, #e2e8f0);
+  box-shadow:
+    0 4px 6px -1px rgba(15, 23, 42, 0.08),
+    0 12px 28px -4px rgba(15, 23, 42, 0.18);
+  pointer-events: auto;
+}
+
+.bo-relevance-breakdown-flyover-refresh {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-accent, #2563eb);
+  background: transparent;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.bo-relevance-breakdown-flyover-refresh:hover {
+  background: var(--color-surface-alt, #f1f5f9);
+}
+
+.bo-relevance-breakdown-flyover--layer {
+  position: absolute;
+  z-index: 1;
+}
+
+.bo-relevance-breakdown-flyover-title {
+  margin: 0;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--color-text, #0f172a);
+}
+
+.bo-relevance-breakdown-flyover-body {
+  margin: 0.4rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  font-family: inherit;
+  color: var(--color-text-secondary, #475569);
+}
+
+.bo-relevance-ring-anchor {
+  z-index: 1;
+}
+
+/* Application detail — AI relevance charts */
+.bo-relevance-detail-intro {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+}
+
+.bo-relevance-detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.5rem 2rem;
+}
+
+.bo-relevance-detail-overall {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 0 0 auto;
+}
+
+.bo-relevance-detail-overall-copy {
+  min-width: 0;
+}
+
+.bo-relevance-detail-overall-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #475569);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bo-relevance-detail-overall-value {
+  margin: 0.2rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--color-text, #0f172a);
+}
+
+.bo-relevance-detail-overall-value--muted {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.bo-relevance-detail-scored-at {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.bo-relevance-detail-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.25rem;
+  flex: 1 1 280px;
+  align-items: flex-start;
+}
+
+.bo-relevance-detail-breakdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 4.5rem;
+}
+
+.bo-relevance-detail-breakdown-label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #475569);
+  text-align: center;
+  line-height: 1.2;
+  max-width: 5.5rem;
+}
+
+.bo-relevance-detail-breakdown-value {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text, #0f172a);
+}
+
+.bo-relevance-detail-fallback-text {
+  margin: 0;
+  flex: 1 1 200px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  font-family: inherit;
+  color: var(--color-text-secondary, #475569);
+}
+
+.bo-relevance-detail-message {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+}
+
+.bo-relevance-detail-actions {
+  margin-top: 1rem;
+}
+
+.bo-relevance-detail-actions .bo-relevance-breakdown-flyover-refresh {
+  width: auto;
+  display: inline-block;
 }
 
 /* Reduce motion */

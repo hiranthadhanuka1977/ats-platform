@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 /** How many job postings reference this lookup (direct FK or junction row). */
 export async function countJobPostingRefs(section: MaintenanceSectionId, id: number): Promise<number> {
   switch (section) {
+    case "companies":
+      return prisma.jobPosting.count({ where: { companyId: id } });
     case "departments":
       return prisma.jobPosting.count({ where: { departmentId: id } });
     case "locations":

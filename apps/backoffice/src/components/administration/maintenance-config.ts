@@ -1,5 +1,9 @@
 /** Copy for each section lives in `content/administration/<section>.md` (summary + optional body). */
 export const MAINTENANCE_SECTIONS = {
+  companies: {
+    title: "Companies",
+    apiPath: "/api/admin/companies",
+  },
   departments: {
     title: "Departments",
     apiPath: "/api/admin/departments",

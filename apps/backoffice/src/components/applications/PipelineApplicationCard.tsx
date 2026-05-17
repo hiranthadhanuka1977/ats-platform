@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useRef, type RefObject } from "react";
+import type { RelevanceEntry } from "@/hooks/usePipelineRelevanceScores";
+import { RelevanceScoreRing } from "@/components/applications/RelevanceScoreRing";
 
 export type PipelineCardItem = {
   id: string;
@@ -29,11 +31,59 @@ type Props = {
   item: PipelineCardItem;
   disabled: boolean;
   draggingId: string | null;
+  relevance?: RelevanceEntry;
+  flyoverLayerRef?: RefObject<HTMLDivElement | null>;
+  onRefreshRelevance?: (applicationId: string) => void;
   onDragStart: (applicationId: string, event: React.DragEvent) => void;
   onDragEnd: () => void;
 };
 
-export function PipelineApplicationCard({ item, disabled, draggingId, onDragStart, onDragEnd }: Props) {
+function ringProps(relevance: RelevanceEntry | undefined): {
+  score: number | null;
+  status: "idle" | "loading" | "ready" | "unavailable" | "error";
+  title?: string;
+  breakdownText?: string | null;
+} {
+  if (!relevance || relevance.status === "idle") {
+    return { score: null, status: "idle", breakdownText: null };
+  }
+  if (relevance.status === "loading") {
+    return { score: null, status: "loading", breakdownText: null };
+  }
+  if (relevance.status === "ready") {
+    return {
+      score: relevance.score,
+      status: "ready",
+      title: `Relevance match: ${relevance.score}%`,
+      breakdownText: relevance.breakdownText ?? null,
+    };
+  }
+  if (relevance.status === "unavailable") {
+    return {
+      score: null,
+      status: "unavailable",
+      title: relevance.message ?? "Relevance scoring unavailable",
+      breakdownText: null,
+    };
+  }
+  return {
+    score: null,
+    status: "error",
+    title: relevance.message ?? "Could not load relevance score",
+    breakdownText: null,
+  };
+}
+
+export function PipelineApplicationCard({
+  item,
+  disabled,
+  draggingId,
+  relevance,
+  flyoverLayerRef,
+  onRefreshRelevance,
+  onDragStart,
+  onDragEnd,
+}: Props) {
   const router = useRouter();
   const blockClickUntil = useRef(0);
 
@@ -71,15 +121,31 @@ export function PipelineApplicationCard({ item, disabled, draggingId, onDragStar
         background: "#fff",
         opacity: draggingId === item.id ? 0.55 : 1,
         cursor: disabled ? "progress" : "pointer",
+        display: "flex",
+        gap: "0.5rem",
+        alignItems: "flex-start",
       }}
     >
-      <p style={{ margin: 0, fontWeight: 600 }}>{item.job.title}</p>
-      <p className="bo-page-sub" style={{ margin: "0.25rem 0 0" }}>
-        {item.candidate.name}
-      </p>
-      <p className="bo-page-sub" style={{ margin: "0.15rem 0 0" }}>
-        Applied {formatDateTime(item.appliedAt)}
-      </p>
+      <RelevanceScoreRing
+        {...ringProps(relevance)}
+        size={46}
+        flyoverLayerRef={flyoverLayerRef}
+        onRefresh={
+          onRefreshRelevance && relevance?.status !== "loading" && relevance?.status !== "idle"
+            ? () => onRefreshRelevance(item.id)
+            : undefined
+        }
+        isRefreshing={relevance?.status === "loading"}
+      />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ margin: 0, fontWeight: 600 }}>{item.job.title}</p>
+        <p className="bo-page-sub" style={{ margin: "0.25rem 0 0" }}>
+          {item.candidate.name}
+        </p>
+        <p className="bo-page-sub" style={{ margin: "0.15rem 0 0" }}>
+          Applied {formatDateTime(item.appliedAt)}
+        </p>
+      </div>
     </article>
   );
 }

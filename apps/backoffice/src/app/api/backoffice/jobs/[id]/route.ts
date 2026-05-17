@@ -78,6 +78,7 @@ export async function PATCH(request: NextRequest, ctx: Params) {
       );
     }
 
+    const companyId = core.companyId ?? existing.companyId;
     const departmentId = core.departmentId ?? existing.departmentId;
     const locationId = core.locationId ?? existing.locationId;
     const employmentTypeId = core.employmentTypeId ?? existing.employmentTypeId;
@@ -112,6 +113,7 @@ export async function PATCH(request: NextRequest, ctx: Params) {
           title,
           slug,
           summary,
+          companyId,
           departmentId,
           locationId,
           employmentTypeId,
@@ -124,6 +126,7 @@ export async function PATCH(request: NextRequest, ctx: Params) {
           salaryMin: pdp.salaryMin,
           salaryMax: pdp.salaryMax,
           salaryCurrency: pdp.salaryCurrency,
+          salaryPeriod: pdp.salaryPeriod,
           isSalaryVisible: pdp.isSalaryVisible,
           isRemote: pdp.isRemote,
           isFeatured: pdp.isFeatured,

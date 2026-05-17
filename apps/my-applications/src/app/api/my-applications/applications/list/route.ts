@@ -20,9 +20,18 @@ export async function GET(request: Request) {
     );
   }
 
+  const url = new URL(request.url);
+  const limitParam = url.searchParams.get("limit");
+  const sortBy = url.searchParams.get("sortBy") === "updatedAt" ? "updatedAt" : "appliedAt";
+  const limit =
+    limitParam != null
+      ? Math.min(50, Math.max(1, Number.parseInt(limitParam, 10) || 1))
+      : undefined;
+
   const applications = await prisma.application.findMany({
     where: { candidateAccountId: user.candidateAccountId },
-    orderBy: { appliedAt: "desc" },
+    orderBy: { [sortBy]: "desc" },
+    ...(limit != null ? { take: limit } : {}),
     include: {
       jobPosting: {
         select: {
@@ -41,6 +50,7 @@ export async function GET(request: Request) {
       id: application.id,
       status: application.status,
       appliedAt: application.appliedAt.toISOString(),
+      updatedAt: application.updatedAt.toISOString(),
       job: {
         id: application.jobPosting.id,
         slug: application.jobPosting.slug,

@@ -165,18 +165,25 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const companyId = core.companyId;
   const departmentId = core.departmentId;
   const locationId = core.locationId;
   const employmentTypeId = core.employmentTypeId;
   const experienceLevelId = core.experienceLevelId;
   if (
+    companyId === undefined ||
     departmentId === undefined ||
     locationId === undefined ||
     employmentTypeId === undefined ||
     experienceLevelId === undefined
   ) {
     return NextResponse.json(
-      { error: { code: "VALIDATION_ERROR", message: "Department, location, employment type, and experience level are required." } },
+      {
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Company, department, location, employment type, and experience level are required.",
+        },
+      },
       { status: 400 }
     );
   }
@@ -205,6 +212,7 @@ export async function POST(request: NextRequest) {
         data: {
           title,
           slug,
+          companyId,
           departmentId,
           locationId,
           employmentTypeId,
@@ -221,6 +229,7 @@ export async function POST(request: NextRequest) {
           salaryMin: pdp.salaryMin,
           salaryMax: pdp.salaryMax,
           salaryCurrency: pdp.salaryCurrency,
+          salaryPeriod: pdp.salaryPeriod,
           isSalaryVisible: pdp.isSalaryVisible,
           bannerImageUrl: pdp.bannerImageUrl,
           bannerImageAlt: pdp.bannerImageAlt,

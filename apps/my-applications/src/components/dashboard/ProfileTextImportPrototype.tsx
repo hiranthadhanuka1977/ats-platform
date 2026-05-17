@@ -1,14 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ParsedCvPayload } from "@/types/cv-parse";
 import { emptyParsedCvPayload } from "@/types/cv-parse";
 import { loadCandidateSession } from "@/lib/auth-storage";
 import { COUNTRIES } from "@/lib/countries";
 import { INTERNATIONAL_DIAL_CODES } from "@/lib/international-dial-codes";
+import {
+  CandidateProfileReadOnlyView,
+  type ProfileViewApplication,
+} from "@/components/dashboard/CandidateProfileReadOnlyView";
 import "./cv-import-prototype.css";
 
 type Step = "idle" | "extracting-experience" | "extracting-education" | "saving" | "done";
+
+type PendingRowFocus = { kind: "experience" | "education"; index: number };
 
 type Props = {
   accessToken: string;
@@ -46,32 +52,93 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
   const [loadingView, setLoadingView] = useState(true);
   const [readOnlyView, setReadOnlyView] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [profileAccount, setProfileAccount] = useState<{
+    status: string;
+    createdAt: string | null;
+    lastLoginAt: string | null;
+    resumeUrl: string | null;
+  } | null>(null);
+  const [profileInsights, setProfileInsights] = useState<{
+    applicationCount: number;
+    bookmarkCount: number;
+    authProviderCount: number;
+  } | null>(null);
+  const [profileApplications, setProfileApplications] = useState<ProfileViewApplication[]>([]);
+  const [pendingRowFocus, setPendingRowFocus] = useState<PendingRowFocus | null>(null);
   const fullNameInputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    void (async () => {
-      const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
-      try {
-        const response = await fetch("/api/my-applications/profile/view", {
-          headers: { Authorization: `Bearer ${liveToken}` },
-        });
-        const payloadResponse = (await response.json().catch(() => ({}))) as {
-          data?: { payload?: ParsedCvPayload; readOnly?: boolean };
+  useLayoutEffect(() => {
+    if (!pendingRowFocus) return;
+
+    const elementId =
+      pendingRowFocus.kind === "experience"
+        ? `profile-exp-${pendingRowFocus.index}-company`
+        : `profile-edu-${pendingRowFocus.index}-qualification`;
+
+    const focusNewRow = () => {
+      const el = document.getElementById(elementId);
+      if (!(el instanceof HTMLInputElement)) return false;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.focus({ preventScroll: true });
+      return true;
+    };
+
+    if (!focusNewRow()) {
+      requestAnimationFrame(focusNewRow);
+    }
+    setPendingRowFocus(null);
+  }, [pendingRowFocus]);
+
+  async function loadProfileView(markInitialLoad = false) {
+    const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
+    try {
+      const response = await fetch("/api/my-applications/profile/view", {
+        headers: { Authorization: `Bearer ${liveToken}` },
+      });
+      const payloadResponse = (await response.json().catch(() => ({}))) as {
+        data?: {
+          payload?: ParsedCvPayload;
+          readOnly?: boolean;
+          account?: {
+            status: string;
+            createdAt: string | null;
+            lastLoginAt: string | null;
+            resumeUrl: string | null;
+          };
+          insights?: {
+            applicationCount: number;
+            bookmarkCount: number;
+            authProviderCount: number;
+          };
+          applications?: ProfileViewApplication[];
         };
-        if (response.ok && payloadResponse.data?.payload) {
-          const loaded = payloadResponse.data.payload;
-          setPayload(loaded);
-          const parsedPhone = splitPhone(loaded.candidate.phone || "");
-          setPhoneCode(parsedPhone.code);
-          setPhoneNumber(parsedPhone.number);
-          setReadOnlyView(Boolean(payloadResponse.data.readOnly));
+      };
+      if (response.ok && payloadResponse.data?.payload) {
+        const loaded = payloadResponse.data.payload;
+        setPayload(loaded);
+        const parsedPhone = splitPhone(loaded.candidate.phone || "");
+        setPhoneCode(parsedPhone.code);
+        setPhoneNumber(parsedPhone.number);
+        setReadOnlyView(Boolean(payloadResponse.data.readOnly));
+        if (payloadResponse.data.account) {
+          setProfileAccount(payloadResponse.data.account);
         }
-      } catch {
-        // keep default editable payload
-      } finally {
+        if (payloadResponse.data.insights) {
+          setProfileInsights(payloadResponse.data.insights);
+        }
+        setProfileApplications(payloadResponse.data.applications ?? []);
+      }
+    } catch {
+      // keep default editable payload
+    } finally {
+      if (markInitialLoad) {
         setLoadingView(false);
       }
-    })();
+    }
+  }
+
+  useEffect(() => {
+    void loadProfileView(true);
   }, [accessToken]);
 
   useEffect(() => {
@@ -93,10 +160,12 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
   }
 
   function addExperienceRow() {
+    const nextIndex = payload.experience.length;
     setPayload((p) => ({
       ...p,
       experience: [...p.experience, { company: "", role: "", startDate: "", endDate: "" }],
     }));
+    setPendingRowFocus({ kind: "experience", index: nextIndex });
   }
 
   function removeExperienceRow(index: number) {
@@ -107,10 +176,12 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
   }
 
   function addEducationRow() {
+    const nextIndex = payload.education.length;
     setPayload((p) => ({
       ...p,
       education: [...p.education, { qualification: "", institution: "", startDate: "", endDate: "" }],
     }));
+    setPendingRowFocus({ kind: "education", index: nextIndex });
   }
 
   function removeEducationRow(index: number) {
@@ -224,10 +295,10 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
       setStep("idle");
       return;
     }
-    setReadOnlyView(true);
     setEditMode(false);
-    setNote("Profile saved.");
-    setStep("done");
+    setNote(null);
+    setStep("idle");
+    await loadProfileView();
   }
 
   function reset() {
@@ -244,22 +315,72 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     setPhoneNumber(initialPhone.number);
   }
 
+  const displayName = payload.candidate.fullName.trim() || defaultFullName || "Candidate";
+  const showReadOnlyDashboard = readOnlyView && !editMode;
+  const readOnlyAccount = profileAccount ?? {
+    status: "—",
+    createdAt: null,
+    lastLoginAt: null,
+    resumeUrl: null,
+  };
+  const readOnlyInsights = profileInsights ?? {
+    applicationCount: 0,
+    bookmarkCount: 0,
+    authProviderCount: 0,
+  };
+
   if (loadingView) {
     return <p className="bo-page-sub">Loading profile...</p>;
   }
 
-  return (
-    <section className="bo-card bo-span-12" aria-labelledby="text-import-title">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
-        <h2 id="text-import-title" className="bo-card-title" style={{ marginBottom: 0 }}>
-          My Profile
-        </h2>
-        {readOnlyView && !editMode ? (
+  if (showReadOnlyDashboard) {
+    return (
+      <>
+        <div className="bo-page-header-actions">
+          <div>
+            <h1 className="bo-page-title">{displayName}</h1>
+            <p className="bo-page-sub">My profile</p>
+          </div>
           <button type="button" className="btn btn-secondary btn-sm" onClick={() => setEditMode(true)}>
             Update profile
           </button>
+        </div>
+
+        {error ? (
+          <p className="bo-login-error" role="alert">
+            {error}
+          </p>
+        ) : null}
+
+        <CandidateProfileReadOnlyView
+          payload={payload}
+          account={readOnlyAccount}
+          insights={readOnlyInsights}
+          applications={profileApplications}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="bo-page-header-actions">
+        <div>
+          <h1 className="bo-page-title">{readOnlyView && editMode ? "Edit profile" : displayName}</h1>
+          <p className="bo-page-sub">
+            {readOnlyView && editMode
+              ? "Update your details, then save to lock your profile again."
+              : "Complete your profile using LinkedIn text parsing."}
+          </p>
+        </div>
+        {readOnlyView && editMode ? (
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => setEditMode(false)}>
+            Cancel
+          </button>
         ) : null}
       </div>
+
+      <section className="bo-card bo-span-12" aria-labelledby="text-import-title">
 
       {error ? (
         <p className="bo-login-error" role="alert">
@@ -271,18 +392,7 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
           {note}
         </p>
       ) : null}
-      {readOnlyView ? (
-        <p className="myapps-linkedin-note" role="status">
-          Profile is completed and locked.
-        </p>
-      ) : null}
-      {readOnlyView && editMode ? (
-        <p className="myapps-linkedin-note" role="status">
-          Edit mode is enabled. Save to lock the profile again.
-        </p>
-      ) : null}
-
-      <fieldset disabled={(!editMode && readOnlyView) || step === "saving"} style={{ border: 0, padding: 0, margin: 0 }}>
+      <fieldset disabled={step === "saving"} style={{ border: 0, padding: 0, margin: 0 }}>
       <h3 className="myapps-cv-section-title">Profile review</h3>
       <div className="myapps-cv-grid">
         <label className="myapps-cv-field">
@@ -335,6 +445,7 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
       </div>
 
       <h3 className="myapps-cv-section-title">Experience</h3>
+      <div className="myapps-cv-text-apply-block">
       <label className="myapps-cv-field">
         <span className="myapps-field-label-row">
           <span>Experience text</span>
@@ -356,15 +467,16 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
           onChange={(e) => setExperienceText(e.target.value)}
         />
       </label>
-      <div className="myapps-cv-actions" style={{ marginTop: 0 }}>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          disabled={step === "extracting-experience" || step === "extracting-education" || step === "saving"}
-          onClick={() => void applyExperienceText()}
-        >
-          {step === "extracting-experience" ? "Parsing experience text..." : "Apply Experience text"}
-        </button>
+        <div className="myapps-cv-text-apply-actions">
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            disabled={step === "extracting-experience" || step === "extracting-education" || step === "saving"}
+            onClick={() => void applyExperienceText()}
+          >
+            {step === "extracting-experience" ? "Extracting experience..." : "Extract Experience"}
+          </button>
+        </div>
       </div>
       {experienceError ? (
         <p className="bo-login-error" role="alert" style={{ marginTop: "0.35rem" }}>
@@ -381,6 +493,7 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
             <label className="myapps-cv-field">
               Company
               <input
+                id={`profile-exp-${i}-company`}
                 className="myapps-cv-input"
                 value={row.company}
                 onChange={(e) =>
@@ -442,36 +555,38 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
       ))}
 
       <h3 className="myapps-cv-section-title">Education</h3>
-      <label className="myapps-cv-field">
-        <span className="myapps-field-label-row">
-          <span>Education text</span>
-          <span className="myapps-help-inline" tabIndex={0}>
-            <span className="myapps-help-icon" aria-hidden>
-              ?
-            </span>
-            <span className="myapps-help-link">What&apos;s this?</span>
-            <span className="myapps-help-tip" role="tooltip">
-              Copy and paste your LinkedIn Education section here. We map it automatically into structured education rows.
+      <div className="myapps-cv-text-apply-block">
+        <label className="myapps-cv-field">
+          <span className="myapps-field-label-row">
+            <span>Education text</span>
+            <span className="myapps-help-inline" tabIndex={0}>
+              <span className="myapps-help-icon" aria-hidden>
+                ?
+              </span>
+              <span className="myapps-help-link">What&apos;s this?</span>
+              <span className="myapps-help-tip" role="tooltip">
+                Copy and paste your LinkedIn Education section here. We map it automatically into structured education rows.
+              </span>
             </span>
           </span>
-        </span>
-        <textarea
-          className="myapps-cv-input"
-          rows={6}
-          placeholder="Paste LinkedIn Education text here..."
-          value={educationText}
-          onChange={(e) => setEducationText(e.target.value)}
-        />
-      </label>
-      <div className="myapps-cv-actions" style={{ marginTop: 0 }}>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          disabled={step === "extracting-experience" || step === "extracting-education" || step === "saving"}
-          onClick={() => void applyEducationText()}
-        >
-          {step === "extracting-education" ? "Parsing education text..." : "Apply Education text"}
-        </button>
+          <textarea
+            className="myapps-cv-input"
+            rows={6}
+            placeholder="Paste LinkedIn Education text here..."
+            value={educationText}
+            onChange={(e) => setEducationText(e.target.value)}
+          />
+        </label>
+        <div className="myapps-cv-text-apply-actions">
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            disabled={step === "extracting-experience" || step === "extracting-education" || step === "saving"}
+            onClick={() => void applyEducationText()}
+          >
+            {step === "extracting-education" ? "Extracting education..." : "Extract Education"}
+          </button>
+        </div>
       </div>
       {educationError ? (
         <p className="bo-login-error" role="alert" style={{ marginTop: "0.35rem" }}>
@@ -488,6 +603,7 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
             <label className="myapps-cv-field">
               Qualification
               <input
+                id={`profile-edu-${i}-qualification`}
                 className="myapps-cv-input"
                 value={row.qualification}
                 onChange={(e) =>
@@ -548,24 +664,17 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
         </div>
       ))}
 
-      {(!readOnlyView || editMode) ? (
       <div className="myapps-cv-actions">
         <button type="button" className="btn btn-secondary" disabled={step === "saving"} onClick={reset}>
           Reset
         </button>
-        {readOnlyView && editMode ? (
-          <button type="button" className="btn btn-secondary" disabled={step === "saving"} onClick={() => setEditMode(false)}>
-            Cancel
-          </button>
-        ) : null}
         <button type="button" className="btn btn-primary" disabled={step === "saving"} onClick={() => void onSave()}>
           {step === "saving" ? "Saving..." : "Confirm & save profile"}
         </button>
       </div>
-      ) : null}
       </fieldset>
 
-      {step === "done" && (!readOnlyView || editMode) ? (
+      {step === "done" ? (
         <div className="myapps-cv-done">
           <p className="bo-page-sub" style={{ marginBottom: "var(--space-4)" }}>
             Saved. Profile, experience, and education were updated from pasted LinkedIn text.
@@ -576,5 +685,6 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
         </div>
       ) : null}
     </section>
+    </>
   );
 }

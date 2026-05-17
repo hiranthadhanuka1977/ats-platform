@@ -1,3 +1,5 @@
+import { normalizeSalaryPeriod } from "@ats-platform/types";
+
 /**
  * Client-only draft for the create-job flow: form → review → POST.
  * Stored in sessionStorage so the user can return from review to edit.
@@ -15,6 +17,7 @@ export type JobPostingFormDraft = {
   title: string;
   slug: string;
   summary: string;
+  companyId: string;
   departmentId: string;
   locationId: string;
   employmentTypeId: string;
@@ -28,6 +31,7 @@ export type JobPostingFormDraft = {
   salaryMin: string;
   salaryMax: string;
   salaryCurrency: string;
+  salaryPeriod: string;
   isSalaryVisible: boolean;
   bannerImageUrl: string;
   bannerImageAlt: string;
@@ -92,6 +96,7 @@ export function draftToApiBody(draft: JobPostingFormDraft): Record<string, unkno
   return {
     title: draft.title.trim(),
     summary: draft.summary.trim(),
+    companyId: Number(draft.companyId),
     departmentId: Number(draft.departmentId),
     locationId: Number(draft.locationId),
     employmentTypeId: Number(draft.employmentTypeId),
@@ -106,6 +111,7 @@ export function draftToApiBody(draft: JobPostingFormDraft): Record<string, unkno
     salaryMin: draft.salaryMin.trim() || null,
     salaryMax: draft.salaryMax.trim() || null,
     salaryCurrency: draft.salaryCurrency.trim() || null,
+    salaryPeriod: normalizeSalaryPeriod(draft.salaryPeriod),
     isSalaryVisible: draft.isSalaryVisible,
     bannerImageUrl: draft.bannerImageUrl.trim() || null,
     bannerImageAlt: draft.bannerImageAlt.trim() || null,

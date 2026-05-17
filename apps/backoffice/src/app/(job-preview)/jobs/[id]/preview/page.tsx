@@ -5,6 +5,8 @@ import { JOB_POSTING_FULL_INCLUDE } from "@/lib/job-posting-queries";
 import { serializeJobPostingFull } from "@/lib/job-posting-serialize";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 type Props = Readonly<{
   params: Promise<{ id: string }>;
 }>;

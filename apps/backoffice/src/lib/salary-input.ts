@@ -20,3 +20,12 @@ export function formatSalaryDigitsWithCommas(digits: string): string {
   if (!digits) return "";
   return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+/** Display salary from API/DB value with thousands separators. */
+export function formatSalaryDisplay(value: string | null | undefined): string {
+  const digits = salaryValueToDigits(value);
+  if (!digits) return "—";
+  return formatSalaryDigitsWithCommas(digits);
+}
+
+export { formatSalaryRangeLine } from "@ats-platform/utils/salary-display";

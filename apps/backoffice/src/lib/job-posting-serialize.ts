@@ -1,3 +1,4 @@
+import { normalizeSalaryPeriod } from "@ats-platform/types";
 import type { Prisma } from "@prisma/client";
 import type { JOB_POSTING_FULL_INCLUDE } from "@/lib/job-posting-queries";
 
@@ -9,6 +10,7 @@ export type SerializedJobPosting = {
   slug: string;
   summary: string;
   status: string;
+  companyId: number;
   departmentId: number;
   locationId: number;
   employmentTypeId: number;
@@ -19,6 +21,7 @@ export type SerializedJobPosting = {
   salaryMin: string | null;
   salaryMax: string | null;
   salaryCurrency: string | null;
+  salaryPeriod: string;
   isSalaryVisible: boolean;
   isRemote: boolean;
   isFeatured: boolean;
@@ -29,6 +32,7 @@ export type SerializedJobPosting = {
   createdAt: string;
   updatedAt: string;
   createdById: string | null;
+  company: { id: number; name: string; logoUrl: string | null; websiteUrl: string | null };
   department: { id: number; name: string; slug: string };
   location: { id: number; city: string; country: string; slug: string };
   employmentType: { id: number; name: string; slug: string };
@@ -57,6 +61,7 @@ export function serializeJobPostingFull(job: JobPostingFullPayload): SerializedJ
     slug: job.slug,
     summary: job.summary,
     status: job.status,
+    companyId: job.companyId,
     departmentId: job.departmentId,
     locationId: job.locationId,
     employmentTypeId: job.employmentTypeId,
@@ -67,6 +72,7 @@ export function serializeJobPostingFull(job: JobPostingFullPayload): SerializedJ
     salaryMin: job.salaryMin?.toString() ?? null,
     salaryMax: job.salaryMax?.toString() ?? null,
     salaryCurrency: job.salaryCurrency,
+    salaryPeriod: normalizeSalaryPeriod(job.salaryPeriod),
     isSalaryVisible: job.isSalaryVisible,
     isRemote: job.isRemote,
     isFeatured: job.isFeatured,
@@ -77,6 +83,7 @@ export function serializeJobPostingFull(job: JobPostingFullPayload): SerializedJ
     createdAt: job.createdAt.toISOString(),
     updatedAt: job.updatedAt.toISOString(),
     createdById: job.createdById,
+    company: job.company,
     department: job.department,
     location: job.location,
     employmentType: job.employmentType,

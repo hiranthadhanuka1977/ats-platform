@@ -33,6 +33,11 @@ enum JobPostingStatus {
   archived
 }
 
+enum SalaryPeriod {
+  annual
+  monthly
+}
+
 enum QualificationType {
   required
   preferred
@@ -80,6 +85,20 @@ enum CandidateCvParseStatus {
 }
 
 // ─── Lookup tables ───
+
+model Company {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(200)
+  logoUrl    String?  @map("logo_url") @db.VarChar(500)
+  websiteUrl String?  @map("website_url") @db.VarChar(500)
+  isActive   Boolean  @default(true) @map("is_active")
+  sortOrder  Int      @default(0) @map("sort_order") @db.SmallInt
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  jobPostings JobPosting[]
+
+  @@map("companies")
+}
 
 model Department {
   id         Int      @id @default(autoincrement())
@@ -189,6 +208,7 @@ model JobPosting {
   id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title              String           @db.VarChar(200)
   slug               String           @unique @db.VarChar(220)
+  companyId          Int              @map("company_id")
   departmentId       Int              @map("department_id")
   locationId         Int              @map("location_id")
   employmentTypeId   Int              @map("employment_type_id")
@@ -200,6 +220,7 @@ model JobPosting {
   salaryMin          Decimal?         @map("salary_min") @db.Decimal(12, 2)
   salaryMax          Decimal?         @map("salary_max") @db.Decimal(12, 2)
   salaryCurrency     String?          @map("salary_currency") @db.Char(3)
+  salaryPeriod       SalaryPeriod     @default(annual) @map("salary_period")
   isSalaryVisible    Boolean          @default(false) @map("is_salary_visible")
   isRemote           Boolean          @default(false) @map("is_remote")
   isFeatured         Boolean          @default(false) @map("is_featured")
@@ -212,6 +233,7 @@ model JobPosting {
   bannerImageUrl     String?          @map("banner_image_url") @db.VarChar(500)
   bannerImageAlt     String?          @map("banner_image_alt") @db.VarChar(255)
 
+  company          Company            @relation(fields: [companyId], references: [id])
   department       Department         @relation(fields: [departmentId], references: [id])
   location         Location           @relation(fields: [locationId], references: [id])
   employmentType   EmploymentType     @relation(fields: [employmentTypeId], references: [id])
@@ -227,6 +249,7 @@ model JobPosting {
   applications       Application[]
 
   @@index([status, postedAt(sort: Desc)], map: "idx_postings_status_posted")
+  @@index([companyId], map: "idx_postings_company")
   @@index([departmentId], map: "idx_postings_department")
   @@index([locationId], map: "idx_postings_location")
   @@index([employmentTypeId], map: "idx_postings_emp_type")
@@ -481,6 +504,10 @@ model Application {
   isLegallyAuthorizedToWork Boolean? @map("is_legally_authorized_to_work")
   workModePreference    String?    @map("work_mode_preference") @db.VarChar(50)
   shortMotivation       String?    @map("short_motivation") @db.Text
+  relevanceScore        Int?       @map("relevance_score") @db.SmallInt
+  relevanceBreakdown    String?    @map("relevance_breakdown") @db.Text
+  relevanceScoredAt     DateTime?  @map("relevance_scored_at") @db.Timestamptz(6)
+  relevanceInputHash    String?    @map("relevance_input_hash") @db.VarChar(64)
   appliedAt          DateTime          @default(now()) @map("applied_at") @db.Timestamptz(6)
   updatedAt          DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 

@@ -307,6 +307,9 @@ export async function POST(request: Request) {
       WHERE id = ${application.id}::uuid;
     `;
 
+    const { scoreApplicationRelevanceOnApply } = await import("@/lib/score-application-relevance");
+    void scoreApplicationRelevanceOnApply(application.id);
+
     return NextResponse.json({
       data: {
         applicationId: application.id,

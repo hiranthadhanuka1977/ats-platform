@@ -5,7 +5,12 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./application-relevance": "./src/application-relevance.ts",
+    "./salary-display": "./src/salary-display.ts"
+  },
+  "dependencies": {
+    "@ats-platform/types": "*"
   },
   "devDependencies": {
     "typescript": "^5"

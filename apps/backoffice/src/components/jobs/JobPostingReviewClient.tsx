@@ -9,10 +9,13 @@ import {
   loadJobPostingCreateDraft,
   type JobPostingFormDraft,
 } from "@/lib/job-posting-create-draft";
+import { formatSalaryRangeLine } from "@/lib/salary-input";
 
 type Lookup = { id: number; name: string; slug: string };
 type LocationLookup = { id: number; city: string; country: string; slug: string };
+type CompanyLookup = { id: number; name: string; logoUrl: string | null; websiteUrl: string | null };
 type FormOptions = {
+  companies: CompanyLookup[];
   departments: Lookup[];
   locations: LocationLookup[];
   employmentTypes: Lookup[];
@@ -150,6 +153,8 @@ export function JobPostingReviewClient() {
 
   const resolved = useMemo(() => {
     if (!draft) return null;
+    const company = options?.companies.find((x) => x.id === Number(draft.companyId));
+    const companyName = company?.name ?? "—";
     const dept = options?.departments.find((x) => x.id === Number(draft.departmentId))?.name ?? "—";
     const loc = options?.locations.find((x) => x.id === Number(draft.locationId));
     const locLabel = loc ? `${loc.city}, ${loc.country}` : "—";
@@ -167,11 +172,10 @@ export function JobPostingReviewClient() {
       const t = options?.tags.find((x) => x.id === id);
       return t ? t.name : `#${id}`;
     });
-    const salaryLine =
-      draft.salaryMin.trim() || draft.salaryMax.trim()
-        ? `${draft.salaryMin || "—"} – ${draft.salaryMax || "—"} ${draft.salaryCurrency.trim() || ""}`.trim()
-        : null;
+    const salaryLine = formatSalaryRangeLine(draft.salaryMin, draft.salaryMax, draft.salaryCurrency, draft.salaryPeriod);
     return {
+      company,
+      companyName,
       dept,
       locLabel,
       emp,
@@ -194,8 +198,21 @@ export function JobPostingReviewClient() {
     );
   }
 
-  const { dept, locLabel, emp, exp, responsibilities, reqQuals, prefQuals, skillNames, benefitLines, tagLabels, salaryLine } =
-    resolved;
+  const {
+    company,
+    companyName,
+    dept,
+    locLabel,
+    emp,
+    exp,
+    responsibilities,
+    reqQuals,
+    prefQuals,
+    skillNames,
+    benefitLines,
+    tagLabels,
+    salaryLine,
+  } = resolved;
 
   const bannerUrl = draft.bannerImageUrl.trim();
   const showBanner = isLikelyImageUrl(bannerUrl);
@@ -237,6 +254,30 @@ export function JobPostingReviewClient() {
         <p className="bo-job-preview-summary">{draft.summary || "—"}</p>
 
         <div className="bo-job-preview-meta">
+          {company?.logoUrl?.trim() ? (
+            <span className="bo-job-preview-meta-item bo-job-preview-company-brand">
+              <img
+                src={company.logoUrl.trim()}
+                alt=""
+                className="bo-job-preview-company-logo"
+                width={28}
+                height={28}
+                loading="lazy"
+              />
+              {company.websiteUrl?.trim() ? (
+                <a href={company.websiteUrl.trim()} target="_blank" rel="noopener noreferrer">
+                  {companyName}
+                </a>
+              ) : (
+                companyName
+              )}
+            </span>
+          ) : (
+            <span className="bo-job-preview-meta-item">
+              <IconBriefcase className="bo-job-preview-meta-icon" />
+              {companyName}
+            </span>
+          )}
           <span className="bo-job-preview-meta-item">
             <IconBriefcase className="bo-job-preview-meta-icon" />
             {dept}
@@ -417,6 +458,10 @@ export function JobPostingReviewClient() {
               <div>
                 <dt>URL slug</dt>
                 <dd>{draft.slug.trim() ? <code className="bo-admin-code">{draft.slug.trim()}</code> : <em>Generated from title</em>}</dd>
+              </div>
+              <div>
+                <dt>Company</dt>
+                <dd>{companyName}</dd>
               </div>
               <div>
                 <dt>Department</dt>

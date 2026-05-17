@@ -2,8 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { formatShortDate } from "@/lib/format";
+import { formatSalaryRangeLine } from "@/lib/format-salary";
 import type { JobDetail } from "@/lib/jobs";
 import { getPublishedJobBySlug } from "@/lib/jobs";
+
+export const dynamic = "force-dynamic";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -29,6 +32,15 @@ export default async function MyAppsJobDetailPage({ params }: PageProps) {
   const workplaceTag = job.jobPostingTags.find(
     (tag) => tag.tag.name === "Remote" || tag.tag.name === "Hybrid" || tag.tag.name === "On-site",
   );
+  const salaryLine =
+    job.isSalaryVisible
+      ? formatSalaryRangeLine(
+          job.salaryMin?.toString() ?? null,
+          job.salaryMax?.toString() ?? null,
+          job.salaryCurrency,
+          job.salaryPeriod,
+        )
+      : null;
 
   return (
     <main id="main-content" className="bo-content">
@@ -41,8 +53,8 @@ export default async function MyAppsJobDetailPage({ params }: PageProps) {
           {job.title}
         </h1>
         <p className="bo-page-sub" style={{ marginBottom: "1rem" }}>
-          {job.department.name} • {job.location.city}, {job.location.country} • {job.employmentType.name} •{" "}
-          {job.experienceLevel.name}
+          {job.company.name} • {job.department.name} • {job.location.city}, {job.location.country} •{" "}
+          {job.employmentType.name} • {job.experienceLevel.name}
           {workplaceTag ? ` • ${workplaceTag.tag.name}` : ""}
         </p>
       </section>
@@ -88,10 +100,12 @@ export default async function MyAppsJobDetailPage({ params }: PageProps) {
           style={{ maxWidth: "340px", justifySelf: "start", width: "100%" }}
         >
           <h2 className="bo-card-title">Quick Info</h2>
+          <DetailRow label="Company" value={job.company.name} />
           <DetailRow label="Department" value={job.department.name} />
           <DetailRow label="Location" value={`${job.location.city}, ${job.location.country}`} />
           <DetailRow label="Employment Type" value={job.employmentType.name} />
           <DetailRow label="Experience Level" value={job.experienceLevel.name} />
+          {salaryLine ? <DetailRow label="Salary" value={salaryLine} /> : null}
           <DetailRow label="Posted Date" value={formatShortDate(job.postedAt)} />
           <DetailRow label="Applications" value={String(job._count?.applications ?? 0)} />
           <DetailRow label="Saves" value={String(job._count?.bookmarks ?? 0)} />
