@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import type { ParsedCvPayload } from "@/types/cv-parse";
 import { emptyParsedCvPayload } from "@/types/cv-parse";
 import { loadCandidateSession } from "@/lib/auth-storage";
+import {
+  clearCvProfileAutofillDraft,
+  clearPendingCvParseId,
+  loadCvProfileAutofillDraft,
+  loadPendingCvParseId,
+  savePendingCvParseId,
+} from "@/lib/cv-profile-autofill-draft";
 import { COUNTRIES } from "@/lib/countries";
 import { INTERNATIONAL_DIAL_CODES } from "@/lib/international-dial-codes";
 import {
@@ -31,6 +40,10 @@ function splitPhone(raw: string): { code: string; number: string } {
 }
 
 export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultFullName }: Props) {
+  const searchParams = useSearchParams();
+  const cvParseIdFromUrl = searchParams.get("cvParseId");
+  const cvFileNameFromUrl = searchParams.get("cvFileName");
+
   const initialPayload = useMemo(() => {
     const base = emptyParsedCvPayload();
     base.candidate.email = defaultEmail;
@@ -65,6 +78,10 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
   } | null>(null);
   const [profileApplications, setProfileApplications] = useState<ProfileViewApplication[]>([]);
   const [pendingRowFocus, setPendingRowFocus] = useState<PendingRowFocus | null>(null);
+  const [cvAutofillParseId, setCvAutofillParseId] = useState<string | null>(null);
+  const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(null);
+  const cvAutofillAppliedRef = useRef(false);
+  const cvParseIdRef = useRef<string | null>(null);
   const fullNameInputRef = useRef<HTMLInputElement | null>(null);
 
   useLayoutEffect(() => {
@@ -89,7 +106,7 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     setPendingRowFocus(null);
   }, [pendingRowFocus]);
 
-  async function loadProfileView(markInitialLoad = false) {
+  async function loadProfileView(markInitialLoad = false, force = false) {
     const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
     try {
       const response = await fetch("/api/my-applications/profile/view", {
@@ -113,12 +130,15 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
           applications?: ProfileViewApplication[];
         };
       };
-      if (response.ok && payloadResponse.data?.payload) {
-        const loaded = payloadResponse.data.payload;
-        setPayload(loaded);
-        const parsedPhone = splitPhone(loaded.candidate.phone || "");
-        setPhoneCode(parsedPhone.code);
-        setPhoneNumber(parsedPhone.number);
+      if (response.ok && payloadResponse.data) {
+        const shouldApplyPayload = force || !cvAutofillAppliedRef.current;
+        if (shouldApplyPayload && payloadResponse.data.payload) {
+          const loaded = payloadResponse.data.payload;
+          setPayload(loaded);
+          const parsedPhone = splitPhone(loaded.candidate.phone || "");
+          setPhoneCode(parsedPhone.code);
+          setPhoneNumber(parsedPhone.number);
+        }
         setReadOnlyView(Boolean(payloadResponse.data.readOnly));
         if (payloadResponse.data.account) {
           setProfileAccount(payloadResponse.data.account);
@@ -137,15 +157,103 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     }
   }
 
+  function resolveCvParseIdForSave(): string | null {
+    return cvAutofillParseId ?? cvParseIdRef.current ?? loadPendingCvParseId();
+  }
+
+  const applyCvAutofillPayload = useCallback(
+    (parsed: ParsedCvPayload, parseId: string, fileName: string) => {
+      const merged: ParsedCvPayload = {
+        candidate: {
+          fullName: parsed.candidate.fullName.trim() || defaultFullName,
+          email: parsed.candidate.email.trim() || defaultEmail,
+          phone: parsed.candidate.phone,
+          location: parsed.candidate.location,
+          currentTitle: parsed.candidate.currentTitle,
+        },
+        experience: parsed.experience,
+        education: parsed.education,
+      };
+
+      setPayload(merged);
+      const parsedPhone = splitPhone(merged.candidate.phone || "");
+      setPhoneCode(parsedPhone.code);
+      setPhoneNumber(parsedPhone.number);
+      setCvAutofillParseId(parseId);
+      cvParseIdRef.current = parseId;
+      savePendingCvParseId(parseId);
+      setEditMode(true);
+      setSaveSuccessMessage(null);
+      setStep("idle");
+      setNote(`We extracted details from ${fileName}. Review each field below, then save your profile.`);
+    },
+    [defaultEmail, defaultFullName]
+  );
+
   useEffect(() => {
     void loadProfileView(true);
   }, [accessToken]);
+
+  useEffect(() => {
+    if (loadingView || cvAutofillAppliedRef.current) return;
+
+    const run = async () => {
+      if (cvParseIdFromUrl) {
+        const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
+        try {
+          const response = await fetch(
+            `/api/my-applications/cv/parsed?id=${encodeURIComponent(cvParseIdFromUrl)}`,
+            { headers: { Authorization: `Bearer ${liveToken}` } }
+          );
+          const json = (await response.json().catch(() => ({}))) as {
+            data?: { parseId?: string; fileName?: string; payload?: ParsedCvPayload };
+            error?: { message?: string };
+          };
+          if (response.ok && json.data?.payload && json.data.parseId) {
+            cvAutofillAppliedRef.current = true;
+            applyCvAutofillPayload(
+              json.data.payload,
+              json.data.parseId,
+              json.data.fileName ?? cvFileNameFromUrl ?? "your CV"
+            );
+            return;
+          }
+          if (!response.ok) {
+            setError(json.error?.message ?? "Could not load extracted CV data for your profile.");
+          }
+        } catch {
+          setError("Network error while loading extracted CV data.");
+        }
+      }
+
+      const draft = loadCvProfileAutofillDraft();
+      if (!draft) return;
+
+      cvAutofillAppliedRef.current = true;
+      clearCvProfileAutofillDraft();
+      applyCvAutofillPayload(draft.payload, draft.parseId, draft.fileName);
+    };
+
+    void run();
+  }, [
+    loadingView,
+    cvParseIdFromUrl,
+    cvFileNameFromUrl,
+    accessToken,
+    applyCvAutofillPayload,
+  ]);
 
   useEffect(() => {
     if (readOnlyView && editMode) {
       fullNameInputRef.current?.focus();
     }
   }, [readOnlyView, editMode]);
+
+  useEffect(() => {
+    if (editMode && cvAutofillParseId) {
+      fullNameInputRef.current?.focus();
+    }
+  }, [editMode, cvAutofillParseId]);
 
   function updateCandidate<K extends keyof ParsedCvPayload["candidate"]>(key: K, value: string) {
     setPayload((p) => ({ ...p, candidate: { ...p.candidate, [key]: value } }));
@@ -281,13 +389,24 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     setError(null);
     setExperienceError(null);
     setEducationError(null);
+    setSaveSuccessMessage(null);
     setStep("saving");
 
+    const parseIdForSave = resolveCvParseIdForSave();
     const liveToken = loadCandidateSession()?.accessToken ?? accessToken;
-    const res = await fetch("/api/my-applications/screenshot/save", {
+    const saveUrl = parseIdForSave ? "/api/my-applications/cv/save" : "/api/my-applications/screenshot/save";
+    const payloadToSave: ParsedCvPayload = {
+      ...payload,
+      candidate: { ...payload.candidate, email: defaultEmail },
+    };
+    const saveBody = parseIdForSave
+      ? { parseId: parseIdForSave, payload: payloadToSave }
+      : { payload: payloadToSave };
+
+    const res = await fetch(saveUrl, {
       method: "POST",
       headers: { Authorization: `Bearer ${liveToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ payload }),
+      body: JSON.stringify(saveBody),
     });
     const json = (await res.json().catch(() => ({}))) as { error?: { message?: string } };
     if (!res.ok) {
@@ -295,10 +414,28 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
       setStep("idle");
       return;
     }
+
+    const savedFromCv = Boolean(parseIdForSave);
+    cvAutofillAppliedRef.current = false;
+    setCvAutofillParseId(null);
+    cvParseIdRef.current = null;
+    clearPendingCvParseId();
+    clearCvProfileAutofillDraft();
     setEditMode(false);
     setNote(null);
-    setStep("idle");
-    await loadProfileView();
+
+    await loadProfileView(false, true);
+
+    if (typeof window !== "undefined" && window.location.search) {
+      window.history.replaceState({}, "", "/my-profile");
+    }
+
+    setSaveSuccessMessage(
+      savedFromCv
+        ? "Your profile was saved from your CV. You can update it anytime from this page."
+        : "Your profile was saved successfully."
+    );
+    setStep("done");
   }
 
   function reset() {
@@ -307,9 +444,14 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
     setExperienceError(null);
     setEducationError(null);
     setNote(null);
+    setSaveSuccessMessage(null);
     setStep("idle");
     setExperienceText("");
     setEducationText("");
+    setCvAutofillParseId(null);
+    cvParseIdRef.current = null;
+    clearPendingCvParseId();
+    cvAutofillAppliedRef.current = false;
     setPayload(initialPayload);
     setPhoneCode(initialPhone.code);
     setPhoneNumber(initialPhone.number);
@@ -368,9 +510,11 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
         <div>
           <h1 className="bo-page-title">{readOnlyView && editMode ? "Edit profile" : displayName}</h1>
           <p className="bo-page-sub">
-            {readOnlyView && editMode
-              ? "Update your details, then save to lock your profile again."
-              : "Complete your profile using LinkedIn text parsing."}
+            {cvAutofillParseId
+              ? "Review the details we extracted from your CV, then save."
+              : readOnlyView && editMode
+                ? "Update your details, then save to lock your profile again."
+                : "Complete your profile using LinkedIn text parsing."}
           </p>
         </div>
         {readOnlyView && editMode ? (
@@ -392,7 +536,12 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
           {note}
         </p>
       ) : null}
-      <fieldset disabled={step === "saving"} style={{ border: 0, padding: 0, margin: 0 }}>
+      {saveSuccessMessage ? (
+        <p className="myapps-linkedin-note myapps-cv-save-success" role="status">
+          {saveSuccessMessage}
+        </p>
+      ) : null}
+      <fieldset disabled={step === "saving" || step === "done"} style={{ border: 0, padding: 0, margin: 0 }}>
       <h3 className="myapps-cv-section-title">Profile review</h3>
       <div className="myapps-cv-grid">
         <label className="myapps-cv-field">
@@ -406,7 +555,15 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
         </label>
         <label className="myapps-cv-field">
           Email
-          <input className="myapps-cv-input" type="email" value={payload.candidate.email} onChange={(e) => updateCandidate("email", e.target.value)} />
+          <input
+            className="myapps-cv-input myapps-cv-input-readonly"
+            type="email"
+            value={defaultEmail}
+            readOnly
+            aria-readonly="true"
+            title="Email is tied to your account and cannot be changed here"
+          />
+          <span className="myapps-field-hint">Sign-in email — cannot be edited on this page.</span>
         </label>
         <label className="myapps-cv-field">
           Phone
@@ -677,11 +834,18 @@ export function ProfileTextImportPrototype({ accessToken, defaultEmail, defaultF
       {step === "done" ? (
         <div className="myapps-cv-done">
           <p className="bo-page-sub" style={{ marginBottom: "var(--space-4)" }}>
-            Saved. Profile, experience, and education were updated from pasted LinkedIn text.
+            {saveSuccessMessage ?? "Your profile has been saved."}
           </p>
-          <button type="button" className="btn btn-primary" onClick={reset}>
-            Start again
-          </button>
+          <div className="myapps-cv-actions" style={{ marginTop: 0 }}>
+            <Link href="/dashboard" className="btn btn-primary">
+              Back to dashboard
+            </Link>
+            {!readOnlyView ? (
+              <button type="button" className="btn btn-secondary" onClick={reset}>
+                Edit again
+              </button>
+            ) : null}
+          </div>
         </div>
       ) : null}
     </section>

@@ -1,10 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { CvAutofillProcessingOverlay } from "@/components/dashboard/CvAutofillProcessingOverlay";
+import { CvAutofillPromptDialog } from "@/components/dashboard/CvAutofillPromptDialog";
 import { loadCandidateSession } from "@/lib/auth-storage";
+import type { ParsedCvPayload } from "@/types/cv-parse";
 import "./cv-import-prototype.css";
+
+type AutofillOffer = { parseId: string; fileName: string };
 
 type UploadState = "idle" | "uploading" | "done";
 type CvRow = {
@@ -28,8 +33,10 @@ function getCvTypeMeta(mimeType: string): { label: string; icon: string } {
 }
 
 export function CvUploadPageClient() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("returnTo");
+  const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [state, setState] = useState<UploadState>("idle");
   const [error, setError] = useState<string | null>(null);
   const [uploadedName, setUploadedName] = useState<string | null>(null);
@@ -44,6 +51,20 @@ export function CvUploadPageClient() {
   const [previewLoading, setPreviewLoading] = useState(false);
   const [confirmDeleteCv, setConfirmDeleteCv] = useState<CvRow | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [autofillOffer, setAutofillOffer] = useState<AutofillOffer | null>(null);
+  const [processing, setProcessing] = useState<{
+    fileName: string;
+    label: string;
+    progress: number;
+  } | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+      }
+    };
+  }, []);
 
   const loadList = useCallback(async () => {
     const session = loadCandidateSession();
@@ -78,49 +99,140 @@ export function CvUploadPageClient() {
     void loadList();
   }, [loadList]);
 
-  const uploadFile = useCallback(async (file: File) => {
-    const session = loadCandidateSession();
-    if (!session?.accessToken) {
-      setError("Session expired. Please sign in again.");
-      return;
+  const stopProgressTimer = useCallback(() => {
+    if (progressTimerRef.current) {
+      clearInterval(progressTimerRef.current);
+      progressTimerRef.current = null;
     }
+  }, []);
 
-    setError(null);
-    setSuccessMessage(null);
-    setUploadedName(null);
-    setState("uploading");
-
-    const formData = new FormData();
-    formData.set("file", file);
-
-    try {
-      const response = await fetch("/api/my-applications/cv/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-        body: formData,
+  const startProgressTimer = useCallback(() => {
+    stopProgressTimer();
+    progressTimerRef.current = setInterval(() => {
+      setProcessing((current) => {
+        if (!current || current.progress >= 88) return current;
+        const next = Math.min(88, current.progress + 2);
+        return { ...current, progress: next };
       });
-      const payload = (await response.json().catch(() => ({}))) as {
-        data?: { originalFilename?: string };
-        error?: { message?: string };
-      };
+    }, 400);
+  }, [stopProgressTimer]);
 
-      if (!response.ok || !payload.data?.originalFilename) {
-        setError(payload.error?.message ?? "Could not upload CV.");
-        setState("idle");
+  const runProfileAutofill = useCallback(
+    async (offer: AutofillOffer) => {
+      const session = loadCandidateSession();
+      if (!session?.accessToken) {
+        setError("Session expired. Please sign in again.");
         return;
       }
 
-      setUploadedName(payload.data.originalFilename);
-      setSuccessMessage(`Uploaded CV: ${payload.data.originalFilename}`);
-      setState("done");
-      await loadList();
-    } catch {
-      setError("Network error while uploading CV.");
-      setState("idle");
-    }
-  }, [loadList]);
+      setAutofillOffer(null);
+      setError(null);
+      setProcessing({
+        fileName: offer.fileName,
+        label: "Extracting text from your CV…",
+        progress: 12,
+      });
+      startProgressTimer();
+
+      try {
+        const response = await fetch("/api/my-applications/cv/parse", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ parseId: offer.parseId }),
+        });
+        const payload = (await response.json().catch(() => ({}))) as {
+          data?: { payload?: ParsedCvPayload };
+          error?: { message?: string };
+        };
+
+        stopProgressTimer();
+
+        if (!response.ok || !payload.data?.payload) {
+          setProcessing(null);
+          setError(payload.error?.message ?? "Could not extract profile details from your CV.");
+          return;
+        }
+
+        setProcessing({
+          fileName: offer.fileName,
+          label: "Preparing your profile for review…",
+          progress: 100,
+        });
+
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        const params = new URLSearchParams({
+          cvParseId: offer.parseId,
+          cvFileName: offer.fileName,
+        });
+        router.push(`/my-profile?${params.toString()}`);
+      } catch {
+        stopProgressTimer();
+        setProcessing(null);
+        setError("Network error while processing your CV.");
+      }
+    },
+    [router, startProgressTimer, stopProgressTimer]
+  );
+
+  const uploadFile = useCallback(
+    async (file: File) => {
+      const session = loadCandidateSession();
+      if (!session?.accessToken) {
+        setError("Session expired. Please sign in again.");
+        return;
+      }
+
+      const wasFirstCv = cvs.length === 0;
+
+      setError(null);
+      setSuccessMessage(null);
+      setUploadedName(null);
+      setAutofillOffer(null);
+      setState("uploading");
+
+      const formData = new FormData();
+      formData.set("file", file);
+
+      try {
+        const response = await fetch("/api/my-applications/cv/upload", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+          },
+          body: formData,
+        });
+        const payload = (await response.json().catch(() => ({}))) as {
+          data?: { parseId?: string; originalFilename?: string };
+          error?: { message?: string };
+        };
+
+        if (!response.ok || !payload.data?.originalFilename) {
+          setError(payload.error?.message ?? "Could not upload CV.");
+          setState("idle");
+          return;
+        }
+
+        setUploadedName(payload.data.originalFilename);
+        setSuccessMessage(`Uploaded CV: ${payload.data.originalFilename}`);
+        setState("done");
+        await loadList();
+
+        if (wasFirstCv && payload.data.parseId) {
+          setAutofillOffer({
+            parseId: payload.data.parseId,
+            fileName: payload.data.originalFilename,
+          });
+        }
+      } catch {
+        setError("Network error while uploading CV.");
+        setState("idle");
+      }
+    },
+    [cvs.length, loadList]
+  );
 
   const setAsDefault = useCallback(async (cvId: string) => {
     const session = loadCandidateSession();
@@ -293,7 +405,7 @@ export function CvUploadPageClient() {
           className="myapps-cv-file-input"
           id="cv-upload-file-input"
           onChange={onFileChange}
-          disabled={state === "uploading"}
+          disabled={state === "uploading" || Boolean(processing) || Boolean(autofillOffer)}
           aria-label="Choose CV file to upload"
         />
         <label htmlFor="cv-upload-file-input" className="myapps-cv-drop-inner">
@@ -427,6 +539,22 @@ export function CvUploadPageClient() {
             </div>
           </div>
         </div>
+      ) : null}
+
+      {autofillOffer ? (
+        <CvAutofillPromptDialog
+          fileName={autofillOffer.fileName}
+          onConfirm={() => void runProfileAutofill(autofillOffer)}
+          onDecline={() => setAutofillOffer(null)}
+        />
+      ) : null}
+
+      {processing ? (
+        <CvAutofillProcessingOverlay
+          fileName={processing.fileName}
+          label={processing.label}
+          progress={processing.progress}
+        />
       ) : null}
 
       {confirmDeleteCv ? (

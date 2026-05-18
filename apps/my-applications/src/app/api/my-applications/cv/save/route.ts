@@ -45,6 +45,12 @@ export async function POST(request: Request) {
   }
 
   const payload = normalizeParsedPayload(body.payload) as ParsedCvPayload;
+  payload.education = payload.education.filter(
+    (row) => row.qualification.trim() || row.institution.trim() || row.startDate.trim() || row.endDate.trim()
+  );
+  payload.experience = payload.experience.filter(
+    (row) => row.company.trim() || row.role.trim() || row.startDate.trim() || row.endDate.trim()
+  );
   const resumeUrl = `/api/my-applications/cv/download?id=${encodeURIComponent(row.id)}`;
   const { firstName, lastName } = splitFullName(payload.candidate.fullName);
 

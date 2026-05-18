@@ -59,6 +59,18 @@
   color: var(--color-text-secondary, #64748b);
 }
 
+.myapps-cv-input-readonly {
+  cursor: not-allowed;
+  background: var(--color-surface-alt, #f1f5f9);
+  color: var(--color-text-secondary, #64748b);
+}
+
+.myapps-field-hint {
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 400;
+  color: var(--color-text-muted, #94a3b8);
+}
+
 .myapps-field-label-row {
   display: flex;
   align-items: center;
@@ -327,8 +339,48 @@
   width: min(520px, 100%);
 }
 
-.myapps-cv-confirm-modal .myapps-cv-modal-body {
+.myapps-cv-confirm-modal .myapps-cv-modal-body,
+.myapps-cv-autofill-modal .myapps-cv-modal-body {
   min-height: auto;
+}
+
+.myapps-cv-autofill-modal {
+  width: min(560px, 100%);
+}
+
+.myapps-cv-processing-backdrop {
+  z-index: 50;
+}
+
+.myapps-cv-processing-card .myapps-cv-modal-body {
+  padding-top: 1.25rem;
+}
+
+.myapps-cv-processing-label {
+  margin: 0.75rem 0 0.5rem;
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--weight-medium, 500);
+  color: var(--color-text-secondary, #64748b);
+}
+
+.myapps-cv-progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-border, #e2e8f0);
+  overflow: hidden;
+}
+
+.myapps-cv-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  transition: width 0.35s ease;
+}
+
+.myapps-cv-processing-percent {
+  margin: 0.35rem 0 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .myapps-linkedin-note {
@@ -339,6 +391,12 @@
   background: var(--color-surface-alt, #f8fafc);
   color: var(--color-text-secondary, #64748b);
   font-size: var(--text-sm, 0.875rem);
+}
+
+.myapps-cv-save-success {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
 }
 
 .myapps-screenshot-grid {

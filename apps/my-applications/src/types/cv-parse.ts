@@ -122,8 +122,8 @@ const NON_NAME_TOKEN = new Set(
 
 function isWordLikeNamePart(w: string): boolean {
   if (w.length < 2 || w.length > 50) return false;
-  if (!/^[A-Za-z'-]+$/.test(w)) return false;
-  if (!/[A-Z]/.test(w)) return false;
+  if (!/^[\p{L}'-]+$/u.test(w)) return false;
+  if (!/\p{L}/u.test(w)) return false;
   return true;
 }
 
@@ -270,6 +270,91 @@ function coalesceExperienceArray(o: Record<string, unknown>): unknown[] {
   return [];
 }
 
+function coalesceEducationArray(o: Record<string, unknown>): unknown[] {
+  const keys = [
+    "education",
+    "educations",
+    "educationHistory",
+    "education_history",
+    "academicBackground",
+    "academic_background",
+    "qualifications",
+    "degrees",
+    "schooling",
+  ] as const;
+  let best: unknown[] = [];
+  for (const k of keys) {
+    const v = o[k];
+    if (!Array.isArray(v) || v.length === 0) continue;
+    if (v.length > best.length) best = v;
+  }
+  if (best.length > 0) return best;
+  for (const k of keys) {
+    const v = o[k];
+    if (Array.isArray(v)) return v;
+  }
+  return [];
+}
+
+function normalizeEducationRow(e: Record<string, unknown>): ParsedCvEducation {
+  const qualification = String(
+    e.qualification ??
+      e.degree ??
+      e.diploma ??
+      e.program ??
+      e.fieldOfStudy ??
+      e.field_of_study ??
+      e.major ??
+      e.course ??
+      e.certification ??
+      ""
+  ).trim();
+  const institution = String(
+    e.institution ?? e.school ?? e.university ?? e.college ?? e.academy ?? e.institute ?? ""
+  ).trim();
+  const startDate = String(
+    e.startDate ?? e.start ?? e.from ?? e.start_date ?? e.dateFrom ?? e.beginDate ?? e.yearFrom ?? ""
+  ).trim();
+  const endDate = String(
+    e.endDate ?? e.end ?? e.to ?? e.end_date ?? e.dateTo ?? e.finishDate ?? e.yearTo ?? e.graduationDate ?? ""
+  ).trim();
+  return { qualification, institution, startDate, endDate };
+}
+
+function coalesceCandidateRecord(o: Record<string, unknown>): Record<string, unknown> {
+  const nestedKeys = [
+    "candidate",
+    "personal",
+    "personalInfo",
+    "personal_info",
+    "contact",
+    "contactInfo",
+    "contact_info",
+    "profile",
+    "basics",
+    "header",
+  ] as const;
+
+  const merged: Record<string, unknown> = {};
+  for (const key of nestedKeys) {
+    const value = o[key];
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      Object.assign(merged, value as Record<string, unknown>);
+    }
+  }
+
+  const topLevelName = String(o.fullName ?? o.full_name ?? o.name ?? "").trim();
+  if (topLevelName && !merged.fullName && !merged.name) merged.fullName = topLevelName;
+  if (typeof o.email === "string" && !merged.email) merged.email = o.email;
+  if (typeof o.phone === "string" && !merged.phone) merged.phone = o.phone;
+  if (typeof o.location === "string" && !merged.location) merged.location = o.location;
+  if (typeof o.currentTitle === "string" && !merged.currentTitle) merged.currentTitle = o.currentTitle;
+  if (typeof o.title === "string" && !merged.currentTitle) merged.currentTitle = o.title;
+  if (typeof o.jobTitle === "string" && !merged.currentTitle) merged.currentTitle = o.jobTitle;
+
+  return merged;
+}
+
 function normalizeExperienceRow(e: Record<string, unknown>): ParsedCvExperience {
   const company = String(
     e.company ??
@@ -320,6 +405,21 @@ function collectObjectArrays(node: unknown, depth: number, out: unknown[][]): vo
   }
 }
 
+function bestEducationFromTree(raw: unknown): ParsedCvEducation[] {
+  const arrays: unknown[][] = [];
+  collectObjectArrays(raw, 14, arrays);
+  let best: ParsedCvEducation[] = [];
+  for (const arr of arrays) {
+    const rows = arr
+      .filter((e): e is Record<string, unknown> => Boolean(e && typeof e === "object"))
+      .filter((e) => isLikelyEducationRecord(e) || Boolean(String(e.degree ?? e.school ?? e.qualification ?? "").trim()))
+      .map((e) => normalizeEducationRow(e))
+      .filter((row) => row.qualification || row.institution || row.startDate || row.endDate);
+    if (rows.length > best.length) best = rows;
+  }
+  return best;
+}
+
 function bestExperienceFromTree(raw: unknown): ParsedCvExperience[] {
   const arrays: unknown[][] = [];
   collectObjectArrays(raw, 14, arrays);
@@ -339,13 +439,13 @@ export function normalizeParsedPayload(raw: unknown): ParsedCvPayload {
   const base = emptyParsedCvPayload();
   if (!raw || typeof raw !== "object") return base;
   const o = raw as Record<string, unknown>;
-  const c = o.candidate && typeof o.candidate === "object" ? (o.candidate as Record<string, unknown>) : {};
-  const rawFull = String(c.fullName ?? "").trim();
+  const c = coalesceCandidateRecord(o);
+  const rawFull = String(c.fullName ?? c.name ?? "").trim();
   const pipeParts = rawFull.split(/\s*[|｜]\s*/);
   const leftOfPipe = (pipeParts[0] ?? "").trim();
   const rightOfPipe = pipeParts.length > 1 ? pipeParts.slice(1).join(" | ").trim() : "";
 
-  let currentTitle = String(c.currentTitle ?? "").trim();
+  let currentTitle = String(c.currentTitle ?? c.title ?? c.jobTitle ?? c.headline ?? "").trim();
   if (!currentTitle && rightOfPipe) currentTitle = rightOfPipe.slice(0, 300);
 
   let fullName = sanitizeCvFullName(leftOfPipe);
@@ -354,24 +454,31 @@ export function normalizeParsedPayload(raw: unknown): ParsedCvPayload {
     const again = findBestTitleCaseNameRun(merged);
     if (again && isReasonableFullName(again)) fullName = again.slice(0, 80);
   }
+  if (!fullName && rawFull) {
+    const words = rawFull.split(/\s+/).filter(Boolean);
+    if (words.length >= 2 && words.length <= 5 && rawFull.length <= 80 && !isSentenceLikeBlob(rawFull)) {
+      fullName = rawFull.slice(0, 80);
+    }
+  }
 
   base.candidate = {
     fullName,
     email: String(c.email ?? "").trim(),
-    phone: String(c.phone ?? "").trim(),
-    location: String(c.location ?? "").trim(),
+    phone: String(c.phone ?? c.mobile ?? c.telephone ?? "").trim(),
+    location: String(c.location ?? c.address ?? c.city ?? "").trim(),
     currentTitle,
   };
-  if (Array.isArray(o.education)) {
-    base.education = o.education
-      .filter((e): e is Record<string, unknown> => e && typeof e === "object")
-      .map((e) => ({
-        qualification: String(e.qualification ?? "").trim(),
-        institution: String(e.institution ?? "").trim(),
-        startDate: String(e.startDate ?? "").trim(),
-        endDate: String(e.endDate ?? "").trim(),
-      }));
+
+  const eduRows = coalesceEducationArray(o);
+  let education = eduRows
+    .filter((e): e is Record<string, unknown> => Boolean(e && typeof e === "object"))
+    .map((e) => normalizeEducationRow(e))
+    .filter((row) => row.qualification || row.institution || row.startDate || row.endDate);
+  if (education.length === 0) {
+    education = bestEducationFromTree(raw);
   }
+  base.education = education;
+
   const expRows = coalesceExperienceArray(o);
   let experience = expRows
     .filter((e): e is Record<string, unknown> => Boolean(e && typeof e === "object"))

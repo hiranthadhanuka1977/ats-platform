@@ -1,5 +1,6 @@
 import type { ParsedCvPayload } from "@/types/cv-parse";
 import { emptyParsedCvPayload, normalizeParsedPayload, pickFullNameFromCvPlainText } from "@/types/cv-parse";
+import { getServerEnv } from "@/lib/server-env";
 
 function heuristicParse(text: string): ParsedCvPayload {
   const out = emptyParsedCvPayload();
@@ -38,7 +39,7 @@ Rules:
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: process.env.OPENAI_CV_MODEL ?? "gpt-4o-mini",
+      model: getServerEnv("OPENAI_CV_MODEL") || "gpt-4o-mini",
       temperature: 0.1,
       response_format: { type: "json_object" },
       messages: [
@@ -78,15 +79,16 @@ function parseModelJson(content: string): unknown {
 }
 
 export async function parseCvText(text: string): Promise<ParsedCvPayload> {
-  const key = process.env.OPENAI_API_KEY?.trim();
+  const trimmed = text.trim();
+  if (!trimmed) return emptyParsedCvPayload();
+
+  const key = getServerEnv("OPENAI_API_KEY");
   if (key) {
     try {
-      return await parseWithOpenAI(text, key);
+      return await parseWithOpenAI(trimmed, key);
     } catch (err) {
-      if (process.env.NODE_ENV !== "production") {
-        console.warn("[cv-parse] OpenAI parse failed, using heuristic:", err instanceof Error ? err.message : err);
-      }
+      console.warn("[cv-parse] OpenAI parse failed, using heuristic:", err instanceof Error ? err.message : err);
     }
   }
-  return heuristicParse(text);
+  return heuristicParse(trimmed);
 }

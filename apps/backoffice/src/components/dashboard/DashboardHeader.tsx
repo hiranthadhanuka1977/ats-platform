@@ -3,8 +3,7 @@ export function DashboardHeader() {
     <>
       <h1 className="bo-page-title">Recruitment Health</h1>
       <p className="bo-page-sub">
-        Snapshot of hiring velocity, pipeline balance, and signals that need attention — dummy data for
-        markup.
+        Live snapshot of hiring velocity, pipeline balance, and signals that need attention from your ATS data.
       </p>
     </>
   );

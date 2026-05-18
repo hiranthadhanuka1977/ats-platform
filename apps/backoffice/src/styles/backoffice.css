@@ -490,6 +490,42 @@ button {
   flex-shrink: 0;
 }
 
+.bo-application-header-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.bo-application-actions-dropdown {
+  min-width: 260px;
+}
+
+.bo-application-actions-dropdown .bo-candidate-menu-item {
+  display: flex !important;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3);
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.bo-application-actions-dropdown .bo-candidate-menu-item:hover:not(:disabled) {
+  background: var(--color-surface-alt);
+}
+
+.bo-application-actions-dropdown .bo-candidate-menu-item:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .bo-page-actions-dropdown {
   position: absolute;
   right: 0;

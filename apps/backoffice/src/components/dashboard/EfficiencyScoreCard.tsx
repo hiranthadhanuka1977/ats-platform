@@ -22,7 +22,7 @@ export function EfficiencyScoreCard({ score = 78 }: EfficiencyScoreCardProps) {
         </div>
       </div>
       <p className="bo-score-hint">
-        Based on time-to-fill, offer acceptance, and stage conversion vs. your 90-day baseline.
+        Derived from advance rate, hires, live job coverage, and interviews without movement in 14+ days.
       </p>
     </section>
   );

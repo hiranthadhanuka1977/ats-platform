@@ -63,6 +63,11 @@ export function RecentActivity({ items = defaultActivity }: RecentActivityProps)
       <h2 id="activity-title" className="bo-card-title">
         Recent activity
       </h2>
+      {items.length === 0 ? (
+        <p className="bo-page-sub" style={{ margin: 0 }}>
+          No application status changes recorded yet.
+        </p>
+      ) : null}
       <ul className="bo-activity-list">
         {items.map((item) => (
           <li key={item.id} className="bo-activity-item">

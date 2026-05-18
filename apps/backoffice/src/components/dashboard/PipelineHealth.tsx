@@ -33,7 +33,7 @@ export function PipelineHealth({ stages = defaultStages }: PipelineHealthProps) 
         className="bo-page-sub"
         style={{ margin: "-0.5rem 0 1rem", fontSize: "var(--text-xs)" }}
       >
-        Share of open applications by stage (illustrative)
+        Share of all applications by current status
       </p>
       <div className="bo-pipeline-stages">
         {stages.map((row) => (

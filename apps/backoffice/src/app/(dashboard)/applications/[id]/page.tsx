@@ -171,6 +171,8 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
         <Link href={backHref}>{`← ${backLabel}`}</Link>
       </p>
       <ApplicationDetailsHeader
+        applicationId={application.id}
+        status={application.status}
         title={application.jobPosting.title}
         subtitle={
           <>

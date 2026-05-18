@@ -1,0 +1,49 @@
+import type { ApplicationStatusValue } from "@ats-platform/types";
+
+/** Actions available from the application details header menu. */
+export type ApplicationActionId = "schedule_interview" | "request_more_information";
+
+export type ApplicationActionDefinition = {
+  id: ApplicationActionId;
+  label: string;
+  /** When set, the action updates the application to this status via the backoffice API. */
+  nextStatus?: ApplicationStatusValue;
+};
+
+export const APPLICATION_ACTION_DEFINITIONS: Record<ApplicationActionId, ApplicationActionDefinition> = {
+  schedule_interview: {
+    id: "schedule_interview",
+    label: "Schedule an Interview",
+    nextStatus: "interview_scheduled",
+  },
+  request_more_information: {
+    id: "request_more_information",
+    label: "Request more information",
+  },
+};
+
+const DEFAULT_ACTION_IDS: ApplicationActionId[] = ["request_more_information"];
+
+/**
+ * Per-status menu overrides. Statuses not listed here receive {@link DEFAULT_ACTION_IDS}.
+ * Align keys with Prisma `ApplicationStatus` / `ApplicationStatusValue`.
+ */
+export const APPLICATION_STATUS_ACTION_IDS: Partial<Record<ApplicationStatusValue, ApplicationActionId[]>> = {
+  shortlisted: ["schedule_interview", "request_more_information"],
+};
+
+/** Legacy DB value treated like `interview_scheduled` for action resolution only. */
+const STATUS_ALIASES: Record<string, ApplicationStatusValue> = {
+  interview: "interview_scheduled",
+};
+
+export function normalizeApplicationStatusForActions(status: string): ApplicationStatusValue | string {
+  return STATUS_ALIASES[status] ?? status;
+}
+
+export function getApplicationActionsForStatus(status: string): ApplicationActionDefinition[] {
+  const normalized = normalizeApplicationStatusForActions(status);
+  const ids =
+    APPLICATION_STATUS_ACTION_IDS[normalized as ApplicationStatusValue] ?? DEFAULT_ACTION_IDS;
+  return ids.map((id) => APPLICATION_ACTION_DEFINITIONS[id]);
+}

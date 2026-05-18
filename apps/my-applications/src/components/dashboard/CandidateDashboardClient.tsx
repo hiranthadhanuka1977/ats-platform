@@ -104,18 +104,18 @@ export function CandidateDashboardClient() {
     const hasCoverLetter = Boolean(profileProgress?.hasCoverLetter);
     const steps: JourneyStep[] = [
       {
-        label: "Complete your profile",
-        description: "Add your details, experience, and education.",
-        complete: profileComplete,
-        actionHref: "/my-profile",
-        actionLabel: profileComplete ? "View profile" : "Complete profile",
-      },
-      {
         label: hasCv ? "CV on file" : "Upload your CV",
         description: "Upload at least one résumé to apply faster.",
         complete: hasCv,
         actionHref: "/cv-upload",
         actionLabel: hasCv ? "Manage CVs" : "Upload CV",
+      },
+      {
+        label: "Complete your profile",
+        description: "Add your details, experience, and education.",
+        complete: profileComplete,
+        actionHref: "/my-profile",
+        actionLabel: profileComplete ? "View profile" : "Complete profile",
       },
       {
         label: hasCoverLetter ? "Cover letters ready" : "Add a cover letter",

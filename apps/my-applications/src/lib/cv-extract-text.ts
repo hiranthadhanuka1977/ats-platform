@@ -1,16 +1,21 @@
 import { readFile } from "node:fs/promises";
 
-async function extractPdfText(buffer: Buffer): Promise<string> {
+async function extractPdfText(buffer: Uint8Array): Promise<string> {
   const mod = await import("pdf-parse");
   const legacy = (mod as { default?: (b: Buffer) => Promise<{ text?: string }> }).default;
   if (typeof legacy === "function") {
-    const res = await legacy(buffer);
+    const res = await legacy(Buffer.from(buffer));
     return (res.text ?? "").trim();
   }
-  const PDFParse = (mod as { PDFParse?: new (opts: { data: Buffer }) => { getText: () => Promise<{ text: string }>; destroy: () => Promise<void> } })
-    .PDFParse;
+  const PDFParse = (mod as {
+    PDFParse?: new (opts: { data: Uint8Array }) => {
+      getText: () => Promise<{ text: string }>;
+      destroy: () => Promise<void>;
+    };
+  }).PDFParse;
   if (!PDFParse) throw new Error("PDF_PARSE_UNAVAILABLE");
-  const parser = new PDFParse({ data: buffer });
+  const data = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+  const parser = new PDFParse({ data });
   try {
     const result = await parser.getText();
     return (result.text ?? "").trim();
@@ -23,7 +28,8 @@ export async function extractTextFromCvFile(mimeType: string, absPath: string): 
   const buf = await readFile(absPath);
 
   if (mimeType === "application/pdf") {
-    return extractPdfText(Buffer.from(buf));
+    const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+    return extractPdfText(bytes);
   }
 
   if (

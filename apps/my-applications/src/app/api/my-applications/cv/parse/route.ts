@@ -45,7 +45,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: { code: "EXTRACT_FAILED", message: msg } }, { status: 422 });
   }
 
-  const payload = await parseCvText(extracted);
+  const trimmedExtract = extracted.trim();
+  if (trimmedExtract.length < 40) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "EXTRACT_EMPTY",
+          message:
+            "We could not read enough text from this file. If it is a scanned PDF, export a text-based PDF or upload a Word (.docx) version.",
+        },
+      },
+      { status: 422 }
+    );
+  }
+
+  const payload = await parseCvText(trimmedExtract);
 
   await prisma.candidateCvParse.update({
     where: { id: row.id },

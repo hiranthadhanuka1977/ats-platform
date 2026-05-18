@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadCandidateSession } from "@/lib/auth-storage";
 import { ProfileTextImportPrototype } from "@/components/dashboard/ProfileTextImportPrototype";
@@ -62,6 +62,12 @@ export function DashboardPrototypeToolsClient() {
   if (!profile) return null;
 
   return accessToken ? (
-    <ProfileTextImportPrototype accessToken={accessToken} defaultEmail={profile.email} defaultFullName={displayName} />
+    <Suspense fallback={<p className="bo-page-sub">Loading profile…</p>}>
+      <ProfileTextImportPrototype
+        accessToken={accessToken}
+        defaultEmail={profile.email}
+        defaultFullName={displayName}
+      />
+    </Suspense>
   ) : null;
 }

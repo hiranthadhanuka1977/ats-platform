@@ -1,11 +1,14 @@
-import type { Metadata } from "next";
 import { DashboardGrid } from "@/components/dashboard/DashboardGrid";
+import { getDashboardStats } from "@/lib/dashboard-stats";
+import { prisma } from "@/lib/prisma";
 
-export const metadata: Metadata = {
-  title: "Dashboard — TalentHub Back Office",
-  description: "Recruitment health overview for your organization.",
+export const metadata = {
+  title: "Dashboard | ATS Back Office",
+  description: "Recruitment health overview for hiring teams.",
 };
 
-export default function DashboardPage() {
-  return <DashboardGrid />;
+export default async function DashboardPage() {
+  const dashboard = await getDashboardStats(prisma);
+
+  return <DashboardGrid {...dashboard} />;
 }
