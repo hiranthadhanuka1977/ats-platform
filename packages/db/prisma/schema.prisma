@@ -197,7 +197,8 @@ model User {
   isActive     Boolean  @default(true) @map("is_active")
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  createdJobPostings JobPosting[] @relation("JobPostingCreator")
+  createdJobPostings       JobPosting[]              @relation("JobPostingCreator")
+  applicationStatusChanges ApplicationStatusEvent[]
 
   @@map("users")
 }
@@ -511,13 +512,29 @@ model Application {
   appliedAt          DateTime          @default(now()) @map("applied_at") @db.Timestamptz(6)
   updatedAt          DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id])
-  jobPosting       JobPosting       @relation(fields: [jobPostingId], references: [id])
+  candidateAccount CandidateAccount         @relation(fields: [candidateAccountId], references: [id])
+  jobPosting       JobPosting               @relation(fields: [jobPostingId], references: [id])
+  statusEvents     ApplicationStatusEvent[]
 
   @@unique([candidateAccountId, jobPostingId], map: "idx_applications_unique")
   @@index([status], map: "idx_applications_status")
   @@index([jobPostingId, appliedAt(sort: Desc)], map: "idx_applications_job")
   @@map("applications")
+}
+
+model ApplicationStatusEvent {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  applicationId    String             @map("application_id") @db.Uuid
+  fromStatus       ApplicationStatus? @map("from_status")
+  toStatus         ApplicationStatus  @map("to_status")
+  changedAt        DateTime           @default(now()) @map("changed_at") @db.Timestamptz(6)
+  changedByStaffId String?            @map("changed_by_staff_id") @db.Uuid
+
+  application    Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  changedByStaff User?       @relation(fields: [changedByStaffId], references: [id], onDelete: SetNull)
+
+  @@index([applicationId, changedAt(sort: Desc)], map: "idx_application_status_events_app_time")
+  @@map("application_status_events")
 }
 
 model CandidateCoverLetter {

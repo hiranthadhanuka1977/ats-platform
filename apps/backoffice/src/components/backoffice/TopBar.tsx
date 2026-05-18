@@ -2,6 +2,7 @@
 
 import type { HeaderUserDisplay } from "./header-user-display";
 import { IconMenu } from "./nav-icons";
+import { TopBarRecentActivity } from "./TopBarRecentActivity";
 import { UserMenu } from "./UserMenu";
 
 type TopBarProps = {
@@ -38,11 +39,14 @@ export function TopBar({
           <span className="bo-org-badge">{orgBadge}</span>
         </div>
       </div>
-      <UserMenu
-        userName={userDisplay.userName}
-        userRole={userDisplay.userRole}
-        avatarInitials={userDisplay.avatarInitials}
-      />
+      <div className="bo-topbar-right">
+        <TopBarRecentActivity />
+        <UserMenu
+          userName={userDisplay.userName}
+          userRole={userDisplay.userRole}
+          avatarInitials={userDisplay.avatarInitials}
+        />
+      </div>
     </header>
   );
 }

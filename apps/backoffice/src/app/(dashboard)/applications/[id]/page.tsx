@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getApplicationStatusMeta } from "@ats-platform/types";
+import { ApplicationDetailsHeader } from "@/components/applications/ApplicationDetailsHeader";
 import { ApplicationRelevanceSection } from "@/components/applications/ApplicationRelevanceSection";
+import { toApplicationStatusActivityItems } from "@/lib/application-status-activity";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = {
@@ -89,6 +91,12 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
           company: { select: { id: true, name: true } },
         },
       },
+      statusEvents: {
+        orderBy: { changedAt: "desc" },
+        include: {
+          changedByStaff: { select: { name: true } },
+        },
+      },
     },
   });
 
@@ -138,6 +146,7 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
   }
 
   const statusMeta = getApplicationStatusMeta(application.status);
+  const statusActivityItems = toApplicationStatusActivityItems(application.statusEvents);
   const salaryFormatted =
     application.salaryExpectationAnnual != null
       ? new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(
@@ -161,15 +170,16 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
       <p className="bo-jobs-back">
         <Link href={backHref}>{`← ${backLabel}`}</Link>
       </p>
-      <div className="bo-page-header-actions">
-        <div>
-          <h1 className="bo-page-title">{application.jobPosting.title}</h1>
-          <p className="bo-page-sub">
+      <ApplicationDetailsHeader
+        title={application.jobPosting.title}
+        subtitle={
+          <>
             Application for {fullName} ·{" "}
             <span title={statusMeta.description}>{statusMeta.label}</span>
-          </p>
-        </div>
-      </div>
+          </>
+        }
+        activityItems={statusActivityItems}
+      />
 
       <div className="bo-dash-grid">
         <ApplicationRelevanceSection

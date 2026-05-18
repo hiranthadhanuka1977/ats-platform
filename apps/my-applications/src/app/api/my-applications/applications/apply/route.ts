@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import { recordApplicationStatusEvent } from "@ats-platform/db";
 import { prisma } from "@/lib/prisma";
 import { getCvStorageRoot } from "@/lib/cv-storage";
 import { getBearerToken, verifyCandidateAccessToken } from "@/lib/verify-candidate-token";
@@ -262,6 +263,16 @@ export async function POST(request: Request) {
       coverLetterValueForApplication = `cover_letter_id:${coverLetterId}`;
     }
 
+    const existingApplication = await prisma.application.findUnique({
+      where: {
+        candidateAccountId_jobPostingId: {
+          candidateAccountId: user.candidateAccountId,
+          jobPostingId: job.id,
+        },
+      },
+      select: { id: true, status: true },
+    });
+
     const application = await prisma.application.upsert({
       where: {
         candidateAccountId_jobPostingId: {
@@ -306,6 +317,12 @@ export async function POST(request: Request) {
       SET is_legally_authorized_to_work = ${isLegallyAuthorizedToWork}
       WHERE id = ${application.id}::uuid;
     `;
+
+    await recordApplicationStatusEvent(prisma, {
+      applicationId: application.id,
+      fromStatus: existingApplication?.status ?? null,
+      toStatus: application.status,
+    });
 
     const { scoreApplicationRelevanceOnApply } = await import("@/lib/score-application-relevance");
     void scoreApplicationRelevanceOnApply(application.id);

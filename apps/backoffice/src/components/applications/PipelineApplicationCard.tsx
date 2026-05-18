@@ -8,6 +8,7 @@ import { RelevanceScoreRing } from "@/components/applications/RelevanceScoreRing
 export type PipelineCardItem = {
   id: string;
   appliedAt: string;
+  updatedAt: string;
   candidate: { name: string };
   job: { title: string };
 };
@@ -143,6 +144,9 @@ export function PipelineApplicationCard({
           {item.candidate.name}
         </p>
         <p className="bo-page-sub" style={{ margin: "0.15rem 0 0" }}>
+          Updated {formatDateTime(item.updatedAt)}
+        </p>
+        <p className="bo-page-sub" style={{ margin: "0.1rem 0 0", fontSize: "0.72rem" }}>
           Applied {formatDateTime(item.appliedAt)}
         </p>
       </div>

@@ -450,7 +450,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
               clearCoreError("companyId");
             }}
             disabled={!options}
-            autoFocus
+            autoFocus={mode === "create"}
             aria-invalid={fieldErrors.companyId ? true : undefined}
             aria-describedby={fieldErrors.companyId ? "job-company-error" : undefined}
             aria-required
@@ -487,6 +487,7 @@ export function JobPostingForm({ mode, jobId, initialJob }: Props) {
               }}
               maxLength={200}
               autoComplete="off"
+              autoFocus={mode === "edit"}
               aria-invalid={fieldErrors.title ? true : undefined}
               aria-describedby={fieldErrors.title ? "job-title-error" : undefined}
               aria-required

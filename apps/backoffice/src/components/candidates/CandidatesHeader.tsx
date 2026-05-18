@@ -11,7 +11,6 @@ type CandidatesHeaderProps = {
 
 export function CandidatesHeader({ activeTab, searchCandidates }: CandidatesHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [recentActivityOpen, setRecentActivityOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -24,7 +23,6 @@ export function CandidatesHeader({ activeTab, searchCandidates }: CandidatesHead
     const onEsc = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setMenuOpen(false);
-        setRecentActivityOpen(false);
       }
     };
     window.addEventListener("mousedown", onClickOutside);
@@ -91,20 +89,6 @@ export function CandidatesHeader({ activeTab, searchCandidates }: CandidatesHead
             ) : null}
           </div>
         ) : null}
-        <button
-          type="button"
-          className="bo-page-actions-trigger bo-candidate-activity-trigger"
-          aria-label="Open recent activity panel"
-          aria-expanded={recentActivityOpen}
-          onClick={() => setRecentActivityOpen(true)}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M13 3a9 9 0 1 0 8.95 10h-2.02A7 7 0 1 1 13 5v4l5-4-5-4v2Zm-1 5h2v5h4v2h-6V8Z"
-            />
-          </svg>
-        </button>
       </div>
 
       <p className="bo-page-sub">Static candidate dashboard preview for the backoffice portal.</p>
@@ -127,48 +111,6 @@ export function CandidatesHeader({ activeTab, searchCandidates }: CandidatesHead
           All Candidates
         </Link>
       </div>
-
-      {recentActivityOpen ? (
-        <div className="bo-candidate-activity-overlay" onClick={() => setRecentActivityOpen(false)}>
-          <aside
-            className="bo-candidate-activity-panel"
-            aria-label="Recent Activity"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="bo-candidate-activity-head">
-              <h2 className="bo-candidate-activity-title">Recent Activity</h2>
-              <button
-                type="button"
-                className="bo-candidate-activity-close"
-                aria-label="Close recent activity panel"
-                onClick={() => setRecentActivityOpen(false)}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fill="currentColor" d="m18.3 5.71-1.41-1.42L12 9.17 7.11 4.29 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.42L12 12l4.89 4.91 1.41-1.42-4.88-4.89 4.88-4.89Z" />
-                </svg>
-              </button>
-            </div>
-            <ul className="bo-candidate-activity-list">
-              <li>
-                <p className="bo-candidate-activity-item-title">Aarav Sharma moved to Shortlisted</p>
-                <p className="bo-candidate-activity-item-meta">12 minutes ago</p>
-              </li>
-              <li>
-                <p className="bo-candidate-activity-item-title">New candidate profile created: Emily Davis</p>
-                <p className="bo-candidate-activity-item-meta">45 minutes ago</p>
-              </li>
-              <li>
-                <p className="bo-candidate-activity-item-title">3 candidates without applications detected</p>
-                <p className="bo-candidate-activity-item-meta">Today, 09:10 AM</p>
-              </li>
-              <li>
-                <p className="bo-candidate-activity-item-title">Michael Chen submitted application for Product Designer</p>
-                <p className="bo-candidate-activity-item-meta">Yesterday, 06:35 PM</p>
-              </li>
-            </ul>
-          </aside>
-        </div>
-      ) : null}
     </>
   );
 }

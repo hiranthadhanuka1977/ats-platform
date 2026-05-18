@@ -77,6 +77,13 @@ function addUtcDays(date: Date, days: number): Date {
   return d;
 }
 
+/** Week offset from the current UTC week (0 = this week, -1 = previous, …). */
+function pipelineWeekOffsetForDate(date: Date): number {
+  const thisWeekStart = startOfUtcWeekMonday(new Date()).getTime();
+  const targetWeekStart = startOfUtcWeekMonday(date).getTime();
+  return Math.round((targetWeekStart - thisWeekStart) / (7 * 24 * 60 * 60 * 1000));
+}
+
 function formatUtcWeekLabel(weekStartMonday: Date): string {
   const weekEndSunday = addUtcDays(weekStartMonday, 6);
   const sameMonthYear =
@@ -169,7 +176,7 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
     const startMs = pipelineWeekStart.getTime();
     const endMs = pipelineWeekEndExclusive.getTime();
     return items.filter((item) => {
-      const t = new Date(item.appliedAt).getTime();
+      const t = new Date(item.updatedAt).getTime();
       if (Number.isNaN(t)) return false;
       return t >= startMs && t < endMs;
     });
@@ -212,13 +219,15 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
     const previous = items;
     setError(null);
     setUpdatingId(applicationId);
+    const optimisticUpdatedAt = new Date().toISOString();
     setItems((current) =>
       current.map((item) =>
         item.id === applicationId
-          ? { ...item, status: nextStatus, updatedAt: new Date().toISOString() }
+          ? { ...item, status: nextStatus, updatedAt: optimisticUpdatedAt }
           : item,
       ),
     );
+    setPipelineWeekOffset(pipelineWeekOffsetForDate(new Date(optimisticUpdatedAt)));
     try {
       const response = await fetch(`/api/backoffice/applications/${applicationId}/status`, {
         method: "PATCH",
@@ -233,13 +242,18 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
       if (!response.ok || !payload.data) {
         throw new Error(payload.error?.message || "Could not update application status.");
       }
+      const serverUpdatedAt = payload.data?.updatedAt;
       setItems((current) =>
         current.map((item) =>
           item.id === applicationId
-            ? { ...item, status: payload.data?.status ?? nextStatus, updatedAt: payload.data?.updatedAt ?? item.updatedAt }
+            ? { ...item, status: payload.data?.status ?? nextStatus, updatedAt: serverUpdatedAt ?? item.updatedAt }
             : item,
         ),
       );
+      if (serverUpdatedAt) {
+        const targetWeekOffset = pipelineWeekOffsetForDate(new Date(serverUpdatedAt));
+        setPipelineWeekOffset((current) => (current === targetWeekOffset ? current : targetWeekOffset));
+      }
     } catch (err) {
       setItems(previous);
       setError(err instanceof Error ? err.message : "Could not update application status.");
@@ -364,7 +378,7 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
           </div>
           <div className="bo-pipeline-board-body">
           <p className="bo-page-sub">
-            Showing applications by the week they were submitted (UTC, Monday–Sunday). Each card shows an AI
+            Showing applications by the week they were last updated (UTC, Monday–Sunday). Each card shows an AI
             relevance score (0–100%) for the submitted CV vs the job (saved until job, CV, or answers change).
             Hover the ring for criteria; use Recalculate to score again on demand. Click a card for full application
             details.
@@ -432,7 +446,7 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
 
           {pipelineWeekItems.length === 0 ? (
             <p className="bo-admin-muted" style={{ marginBottom: "0.75rem" }}>
-              No applications with an applied date in this week.
+              No applications updated in this week.
             </p>
           ) : null}
 
@@ -452,6 +466,11 @@ export function ApplicationsPageClient({ initialApplications }: Props) {
                     event.preventDefault();
                     const id = event.dataTransfer.getData("text/plain");
                     if (!id || id === updatingId) return;
+                    const dragged = items.find((item) => item.id === id);
+                    if (dragged && normalizeForPipeline(dragged.status) === status) {
+                      setDraggingId(null);
+                      return;
+                    }
                     void patchStatus(id, status);
                     setDraggingId(null);
                   }}

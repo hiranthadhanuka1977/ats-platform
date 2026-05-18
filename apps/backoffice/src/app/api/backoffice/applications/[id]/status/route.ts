@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { ApplicationStatus } from "@prisma/client";
+import { recordApplicationStatusEvent } from "@ats-platform/db";
 import type { ApplicationStatusValue } from "@ats-platform/types";
 import { requireStaffSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
@@ -49,26 +51,35 @@ export async function PATCH(request: NextRequest, ctx: Params) {
   }
 
   try {
-    const updatedRows = await prisma.$queryRaw<Array<{ id: string; status: string; updated_at: Date }>>`
-      UPDATE applications
-      SET status = ${status}::"ApplicationStatus",
-          updated_at = NOW()
-      WHERE id = ${id}::uuid
-      RETURNING id, status::text, updated_at;
-    `;
-    const updated = updatedRows[0];
-    if (!updated) {
+    const existing = await prisma.application.findUnique({
+      where: { id },
+      select: { status: true },
+    });
+    if (!existing) {
       return NextResponse.json(
         { error: { code: "NOT_FOUND", message: "Application not found." } },
         { status: 404 },
       );
     }
 
+    const updated = await prisma.application.update({
+      where: { id },
+      data: { status: status as ApplicationStatus },
+      select: { id: true, status: true, updatedAt: true },
+    });
+
+    await recordApplicationStatusEvent(prisma, {
+      applicationId: id,
+      fromStatus: existing.status,
+      toStatus: updated.status,
+      changedByStaffId: auth.userId,
+    });
+
     return NextResponse.json({
       data: {
         id: updated.id,
         status: updated.status,
-        updatedAt: updated.updated_at.toISOString(),
+        updatedAt: updated.updatedAt.toISOString(),
       },
     });
   } catch (error) {
