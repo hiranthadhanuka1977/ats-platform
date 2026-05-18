@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ScheduleInterviewModal } from "@/components/applications/ScheduleInterviewModal";
 import {
   getApplicationActionsForStatus,
   type ApplicationActionDefinition,
@@ -11,6 +12,9 @@ import {
 type Props = {
   applicationId: string;
   status: string;
+  candidateName: string;
+  candidateEmail: string;
+  jobTitle: string;
   onFeedback?: (message: string | null) => void;
   onError?: (message: string | null) => void;
 };
@@ -40,12 +44,16 @@ function ActionIcon({ actionId }: { actionId: ApplicationActionId }) {
 export function ApplicationDetailsActionsMenu({
   applicationId,
   status,
+  candidateName,
+  candidateEmail,
+  jobTitle,
   onFeedback,
   onError,
 }: Props) {
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [busyActionId, setBusyActionId] = useState<ApplicationActionId | null>(null);
 
   const actions = getApplicationActionsForStatus(status);
@@ -71,6 +79,12 @@ export function ApplicationDetailsActionsMenu({
     setMenuOpen(false);
     onError?.(null);
     onFeedback?.(null);
+
+    if (action.opensScheduleModal) {
+      setScheduleModalOpen(true);
+      return;
+    }
+
     setBusyActionId(action.id);
 
     try {
@@ -98,45 +112,64 @@ export function ApplicationDetailsActionsMenu({
     }
   }
 
+  function handleScheduled(message: string) {
+    setScheduleModalOpen(false);
+    onFeedback?.(message);
+    router.refresh();
+  }
+
   if (actions.length === 0) return null;
 
   return (
-    <div className="bo-page-actions-menu bo-application-actions-menu" ref={menuRef}>
-      <button
-        type="button"
-        className="bo-page-actions-trigger"
-        aria-label="Application actions"
-        aria-haspopup="menu"
-        aria-expanded={menuOpen}
-        disabled={busyActionId !== null}
-        onClick={() => setMenuOpen((prev) => !prev)}
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M12 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-        </svg>
-      </button>
-      {menuOpen ? (
-        <div className="bo-page-actions-dropdown bo-application-actions-dropdown" role="menu">
-          <ul>
-            {actions.map((action) => (
-              <li key={action.id} role="none">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`bo-candidate-menu-item${action.id === "schedule_interview" ? " bo-candidate-menu-item--primary" : ""}`}
-                  disabled={busyActionId !== null}
-                  onClick={() => void runAction(action)}
-                >
-                  <span className="bo-candidate-menu-icon">
-                    <ActionIcon actionId={action.id} />
-                  </span>
-                  {busyActionId === action.id ? "Working…" : action.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </div>
+    <>
+      <div className="bo-page-actions-menu bo-application-actions-menu" ref={menuRef}>
+        <button
+          type="button"
+          className="bo-page-actions-trigger"
+          aria-label="Application actions"
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          disabled={busyActionId !== null || scheduleModalOpen}
+          onClick={() => setMenuOpen((prev) => !prev)}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M12 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+          </svg>
+        </button>
+        {menuOpen ? (
+          <div className="bo-page-actions-dropdown bo-application-actions-dropdown" role="menu">
+            <ul>
+              {actions.map((action) => (
+                <li key={action.id} role="none">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`bo-candidate-menu-item${action.id === "schedule_interview" ? " bo-candidate-menu-item--primary" : ""}`}
+                    disabled={busyActionId !== null}
+                    onClick={() => void runAction(action)}
+                  >
+                    <span className="bo-candidate-menu-icon">
+                      <ActionIcon actionId={action.id} />
+                    </span>
+                    {busyActionId === action.id ? "Working…" : action.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
+
+      <ScheduleInterviewModal
+        open={scheduleModalOpen}
+        applicationId={applicationId}
+        candidateName={candidateName}
+        candidateEmail={candidateEmail}
+        jobTitle={jobTitle}
+        onClose={() => setScheduleModalOpen(false)}
+        onScheduled={handleScheduled}
+        onError={(message) => onError?.(message)}
+      />
+    </>
   );
 }

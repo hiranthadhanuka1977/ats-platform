@@ -7,6 +7,9 @@ import { ApplicationDetailsActionsMenu } from "@/components/applications/Applica
 type Props = {
   applicationId: string;
   status: string;
+  candidateName: string;
+  candidateEmail: string;
+  jobTitle: string;
   title: string;
   subtitle: ReactNode;
   activityItems: ActivitySidePanelItem[];
@@ -15,6 +18,9 @@ type Props = {
 export function ApplicationDetailsHeader({
   applicationId,
   status,
+  candidateName,
+  candidateEmail,
+  jobTitle,
   title,
   subtitle,
   activityItems,
@@ -58,6 +64,9 @@ export function ApplicationDetailsHeader({
           <ApplicationDetailsActionsMenu
             applicationId={applicationId}
             status={status}
+            candidateName={candidateName}
+            candidateEmail={candidateEmail}
+            jobTitle={jobTitle}
             onFeedback={setActionFeedback}
             onError={setActionError}
           />

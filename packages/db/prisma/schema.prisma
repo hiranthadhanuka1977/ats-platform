@@ -199,6 +199,7 @@ model User {
 
   createdJobPostings       JobPosting[]              @relation("JobPostingCreator")
   applicationStatusChanges ApplicationStatusEvent[]
+  scheduledInterviews      ApplicationInterview[]    @relation("InterviewScheduledBy")
 
   @@map("users")
 }
@@ -515,6 +516,7 @@ model Application {
   candidateAccount CandidateAccount         @relation(fields: [candidateAccountId], references: [id])
   jobPosting       JobPosting               @relation(fields: [jobPostingId], references: [id])
   statusEvents     ApplicationStatusEvent[]
+  interviews       ApplicationInterview[]
 
   @@unique([candidateAccountId, jobPostingId], map: "idx_applications_unique")
   @@index([status], map: "idx_applications_status")
@@ -535,6 +537,24 @@ model ApplicationStatusEvent {
 
   @@index([applicationId, changedAt(sort: Desc)], map: "idx_application_status_events_app_time")
   @@map("application_status_events")
+}
+
+model ApplicationInterview {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  applicationId        String   @map("application_id") @db.Uuid
+  startsAt             DateTime @map("starts_at") @db.Timestamptz(6)
+  endsAt               DateTime @map("ends_at") @db.Timestamptz(6)
+  notifyCandidateEmail Boolean  @default(true) @map("notify_candidate_email")
+  notificationSentAt   DateTime? @map("notification_sent_at") @db.Timestamptz(6)
+  scheduledByStaffId   String?  @map("scheduled_by_staff_id") @db.Uuid
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  scheduledByStaff User?       @relation("InterviewScheduledBy", fields: [scheduledByStaffId], references: [id], onDelete: SetNull)
+
+  @@index([applicationId, startsAt(sort: Desc)], map: "idx_application_interviews_app_time")
+  @@map("application_interviews")
 }
 
 model CandidateCoverLetter {

@@ -1768,6 +1768,209 @@ details.bo-page-actions-menu:not([open]) > .bo-page-actions-dropdown {
   gap: var(--space-3);
 }
 
+.bo-modal--schedule-interview {
+  max-width: 480px;
+}
+
+.bo-schedule-interview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 520px) {
+  .bo-schedule-interview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bo-schedule-interview-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  margin-bottom: var(--space-4);
+}
+
+.bo-schedule-interview-checkbox input {
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.bo-required {
+  color: var(--color-error, #dc2626);
+}
+
+/* Application detail — scheduled interviews (below page header) */
+.bo-application-interviews {
+  margin-bottom: var(--space-6);
+}
+
+.bo-application-interviews-heading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.bo-application-interviews-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.bo-application-interview-card {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-accent-light, #c7d2fe);
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 55%, #e0e7ff 100%);
+  box-shadow: var(--shadow-xs);
+}
+
+.bo-application-interview-card--in_progress {
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+}
+
+.bo-application-interview-card--past {
+  background: var(--color-surface-alt);
+  border-color: var(--color-border);
+  opacity: 0.92;
+}
+
+.bo-application-interview-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.bo-application-interview-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.bo-application-interview-primary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+.bo-application-interview-when {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+.bo-application-interview-time {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+}
+
+.bo-application-interview-utc,
+.bo-application-interview-duration-inline {
+  font-weight: var(--weight-normal);
+  color: var(--color-text-muted, var(--color-text-secondary));
+}
+
+.bo-application-interview-phase {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border: 1px solid var(--color-accent-light, #c7d2fe);
+}
+
+.bo-application-interview-phase--in_progress {
+  color: var(--color-accent, #4f46e5);
+  background: #eef2ff;
+}
+
+.bo-application-interview-card--past .bo-application-interview-phase {
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.bo-application-interview-meta {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+
+.bo-application-interview-badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.bo-application-interview-badge--sent {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.bo-application-interview-badge--pending {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.bo-application-interview-badge--muted {
+  background: transparent;
+}
+
+.bo-application-interview-scheduler {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .bo-application-interview-card {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}
+
 /* Jobs — listing & create */
 .bo-jobs-header {
   display: flex;

@@ -6,7 +6,9 @@ export type ApplicationActionId = "schedule_interview" | "request_more_informati
 export type ApplicationActionDefinition = {
   id: ApplicationActionId;
   label: string;
-  /** When set, the action updates the application to this status via the backoffice API. */
+  /** Opens the schedule-interview modal instead of calling the API directly. */
+  opensScheduleModal?: boolean;
+  /** When set (and not using the schedule modal), PATCHes application status via the backoffice API. */
   nextStatus?: ApplicationStatusValue;
 };
 
@@ -14,7 +16,7 @@ export const APPLICATION_ACTION_DEFINITIONS: Record<ApplicationActionId, Applica
   schedule_interview: {
     id: "schedule_interview",
     label: "Schedule an Interview",
-    nextStatus: "interview_scheduled",
+    opensScheduleModal: true,
   },
   request_more_information: {
     id: "request_more_information",

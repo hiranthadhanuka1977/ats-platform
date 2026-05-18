@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getApplicationStatusMeta } from "@ats-platform/types";
 import { ApplicationDetailsHeader } from "@/components/applications/ApplicationDetailsHeader";
 import { ApplicationRelevanceSection } from "@/components/applications/ApplicationRelevanceSection";
+import { ApplicationScheduledInterviews } from "@/components/applications/ApplicationScheduledInterviews";
 import { toApplicationStatusActivityItems } from "@/lib/application-status-activity";
 import { prisma } from "@/lib/prisma";
 
@@ -97,6 +98,12 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
           changedByStaff: { select: { name: true } },
         },
       },
+      interviews: {
+        orderBy: { startsAt: "desc" },
+        include: {
+          scheduledByStaff: { select: { name: true } },
+        },
+      },
     },
   });
 
@@ -173,6 +180,9 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
       <ApplicationDetailsHeader
         applicationId={application.id}
         status={application.status}
+        candidateName={fullName}
+        candidateEmail={candidate.email}
+        jobTitle={application.jobPosting.title}
         title={application.jobPosting.title}
         subtitle={
           <>
@@ -181,6 +191,17 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
           </>
         }
         activityItems={statusActivityItems}
+      />
+
+      <ApplicationScheduledInterviews
+        interviews={application.interviews.map((interview) => ({
+          id: interview.id,
+          startsAt: interview.startsAt,
+          endsAt: interview.endsAt,
+          notifyCandidateEmail: interview.notifyCandidateEmail,
+          notificationSentAt: interview.notificationSentAt,
+          scheduledByName: interview.scheduledByStaff?.name ?? null,
+        }))}
       />
 
       <div className="bo-dash-grid">
