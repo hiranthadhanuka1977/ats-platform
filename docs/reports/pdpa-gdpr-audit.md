@@ -1,292 +1,333 @@
-# PDPA (Sri Lanka) & GDPR (EU) Content Audit — Candidate Portal
+# PDPA (Sri Lanka) & GDPR (EU) Privacy Audit — ATS Platform (Next.js)
 
-> **Scope note (May 2026):** This audit covers **static markup** under `docs/markup/candidate-portal/`. Runtime apps and backoffice pipeline are out of scope unless re-audited. See [README.md](README.md).
-
-**Audit Date:** 06 April 2026  
-**Audited By:** AI-assisted review  
-**Portal:** TalentHub Candidate Portal  
-**Files Audited:** `job-listing.html`, `job-detail.html`, `tokens.css`, `styles.css`, `main.js`  
-**Regulations:** Sri Lanka Personal Data Protection Act No. 9 of 2022 (PDPA), EU General Data Protection Regulation 2016/679 (GDPR)  
-**Conformance Target:** Full compliance readiness for a public-facing recruitment portal
+**Audit date:** 19 May 2026  
+**Audited by:** AI-assisted code review  
+**Regulations:** Sri Lanka Personal Data Protection Act No. 9 of 2022 (PDPA); EU GDPR 2016/679  
+**Method:** Front-end UX, API routes, auth/storage patterns, and third-party integrations in running apps. Organizational policies, DPAs, and infrastructure reviews are out of scope but required for full compliance.
 
 ---
 
-## Summary
+## Scope
 
-| Severity               | Count |
-|------------------------|-------|
-| **Critical (legal risk)** | 5     |
-| **High (non-compliance)** | 5     |
-| **Medium (best practice gap)** | 4 |
-| **Informational**       | 3     |
+| App | Port | Data subjects | Key processing |
+|-----|------|---------------|----------------|
+| `apps/candidate-portal` | 3000 | Visitors, applicants (browse) | Job search (URL/query), no account on this app |
+| `apps/my-applications` | 3002 | Candidates | Registration, login, profile, CV/screenshot import, job applications |
+| `apps/backoffice` | 3001 | Staff | Candidate/application data, status changes, interviews, AI relevance scoring |
+| `apps/api` | 4000 | Candidates (auth) | Register, OTP, password reset, email delivery |
+
+**Storage (repo):** `storage/cvs/{candidateAccountId}/`, `storage/cover-letters/{candidateAccountId}/` (see [ATS_Local_Environment_Specification.md](../specification/ATS_Local_Environment_Specification.md)).
+
+**Out of scope:** Static HTML under `docs/markup/` (superseded for product behaviour by Next.js; see [Appendix A](#appendix-a-static-markup-vs-implementation)).
 
 ---
 
-## Critical Findings
+## Executive summary
 
-### C1. Google Fonts loaded from external CDN — unlawful cross-border data transfer
+| Severity | Count |
+|----------|-------|
+| **Critical** | 6 |
+| **High** | 7 |
+| **Medium** | 5 |
+| **Informational** | 4 |
 
-**GDPR:** Art. 44–49 (International transfers), Art. 5(1)(a) (Lawfulness)  
-**PDPA:** Section 25 (Cross-border transfers)
+**Improved vs static markup (April 2026):** Candidate portal and my-applications load fonts via **`next/font`** (no Google Fonts CDN on those apps). Registration includes a **terms checkbox**. CV upload enforces type/size limits server-side.
 
-**Location:** `tokens.css`, line 1
+**Still blocking compliance readiness:** No working **privacy policy** or **cookie consent**; **OpenAI** and **email** processing without in-product privacy notice; **candidate JWT in browser storage**; **backoffice** still loads **Google Fonts from CDN**; staff login sets tokens in **non-HttpOnly** `document.cookie` despite HttpOnly-capable API route.
 
-```css
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+---
+
+## Data inventory (what the implementation processes)
+
+### Candidate personal data
+
+| Category | Examples | Where collected | Retention in UI |
+|----------|----------|-----------------|-----------------|
+| Identity & contact | Email, name, phone | Register, profile, apply | Not disclosed |
+| Credentials | Password hash (server) | Register | N/A |
+| Employment | CV, experience, education, motivation | Apply, CV import, screenshot import | Not disclosed |
+| Preferences | Salary, notice, relocation, work auth | Apply form | Not disclosed |
+| Behavioural | Search/filter (portal URL), dashboard usage | Portal, dashboard | Not disclosed |
+| Auth tokens | JWT access/refresh | Login → `localStorage` / `sessionStorage` | Not disclosed |
+
+### Staff / recruitment data
+
+| Category | Examples | Where |
+|----------|----------|-------|
+| Candidate PII in recruitment | Name, email on pipeline cards | Backoffice applications |
+| Application decisions | Status, rejection reason, notes | Status PATCH, modals |
+| Interview | Start/end, notify email flag | Schedule interview API |
+| AI scoring | Relevance score, breakdown | `GET .../relevance-score`, OpenAI |
+
+### Subprocessors & third parties (technical)
+
+| Processor | Purpose | Apps | Disclosed in UI? |
+|-----------|---------|------|------------------|
+| **OpenAI** | CV parse, LinkedIn text, screenshot extract, application relevance | my-applications, backoffice | Mentioned in dev copy only (`CvImportPrototype.tsx`); **not** in privacy policy |
+| **Email (SMTP/API)** | OTP, password reset, interview/reject notifications | `apps/api`, backoffice modals | **No** |
+| **Google Fonts CDN** | Web fonts | backoffice `globals.css` | **No** (IP transfer on load) |
+| **PostgreSQL** | Primary datastore | All server routes | Infrastructure (not UI) |
+
+---
+
+## Critical findings
+
+### C1. No functional privacy policy or terms (all candidate-facing apps)
+
+**GDPR:** Art. 13–14 (Transparency)  
+**PDPA:** S.7–8 (Duty to inform)
+
+**Evidence:**
+
+```7:9:apps/candidate-portal/src/components/SiteFooter.tsx
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Accessibility</a>
 ```
 
-Every page load transmits the visitor's IP address to Google LLC (USA) without consent, notice, or a lawful transfer mechanism. Following the *LG München* ruling (Jan 2022) and Austrian DPA decisions, this is a confirmed GDPR violation. Under PDPA Section 25, cross-border transfers require data subject consent or an adequacy finding by the Sri Lankan Data Protection Authority, neither of which are in place.
+Same pattern in `apps/my-applications/src/components/SiteFooter.tsx`. Register requires agreeing to “Terms of Service and Privacy Policy” but they are **not linked** (`RegisterForm.tsx` ~436).
 
-**Remediation:** Self-host both font families. Download the WOFF2 files and serve them from the same domain.
+**Risk:** Processing without accessible privacy information before collection (register, apply, CV upload).
 
----
-
-### C2. No cookie/consent banner anywhere on the portal
-
-**GDPR:** Art. 6(1)(a) (Consent), Art. 7 (Conditions for consent), ePrivacy Directive Art. 5(3)  
-**PDPA:** Section 6 (Consent), Section 7 (Duty to inform)
-
-Neither page includes a consent mechanism for:
-
-- Cookies or local storage (if the backend uses session cookies, analytics, etc.)
-- The Google Fonts external request (see C1)
-- Any future analytics or tracking
-
-Both GDPR and PDPA require **prior, informed, specific, freely given** consent before non-essential processing. The portal currently starts processing (Google Fonts IP transfer) on first load with zero notice.
-
-**Remediation:** Add a cookie consent banner that blocks non-essential external requests (including Google Fonts CDN) until consent is granted. Must include accept/reject options with granular categories.
+**Remediation:** Publish `/privacy` and `/terms` routes (or external URLs); link from footer, registration checkbox, and apply flow; include Art. 13 / PDPA S.8 content (controller, purposes, legal basis, retention, rights, transfers, subprocessors).
 
 ---
 
-### C3. Privacy Policy link is non-functional
+### C2. No cookie / consent mechanism
 
-**GDPR:** Art. 13–14 (Right to be informed)  
-**PDPA:** Section 7 (Duty to inform), Section 8 (Information to be provided)
+**GDPR:** Art. 6(1)(a), Art. 7; ePrivacy Directive  
+**PDPA:** S.6–7
 
-**Location:** `job-listing.html`, line 436; `job-detail.html`, line 232
+No consent banner or preference centre in any Next.js app. Any non-essential cookies, analytics, or third-party requests should be blocked until consent.
 
-```html
-<a href="#">Privacy Policy</a>
+**Remediation:** Implement consent UI; default-deny non-essential scripts/requests; document essential cookies (session) vs optional.
+
+---
+
+### C3. Backoffice loads Google Fonts from Google CDN
+
+**GDPR:** Art. 44–49 (Transfers)  
+**PDPA:** S.25 (Cross-border transfers)
+
+**Evidence:**
+
+```1:1:apps/backoffice/src/app/globals.css
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap");
 ```
 
-The Privacy Policy link (`href="#"`) goes nowhere. Both regulations **require** a privacy notice to be accessible **before** any personal data is collected. The portal has a "Register" button and "Apply Now" CTA that lead to data collection, but no functional privacy notice exists. This is a fundamental compliance failure.
+Each backoffice page load can send visitor IP to Google (US) without notice or consent. Candidate portal and my-applications use **`next/font`** and avoid this pattern.
 
-**Remediation:** Create a dedicated `privacy-policy.html` page covering all Article 13/14 GDPR requirements and PDPA Section 8 disclosures. Link it from the footer and from any data collection point.
-
----
-
-### C4. No consent mechanism or privacy notice at the application point
-
-**GDPR:** Art. 6(1)(a) (Consent), Art. 7 (Conditions for consent), Art. 13 (Information at collection)  
-**PDPA:** Section 6 (Consent requirements), Section 7 (Duty to inform before collection)
-
-**Location:** `job-detail.html`, lines 216–220
-
-```html
-<a href="#" class="btn btn-primary btn-lg btn-block">Apply Now</a>
-
-<p class="sidebar-note">
-  Candidates must register or log in using Google, LinkedIn, or email to apply.
-</p>
-```
-
-The "Apply Now" CTA leads directly to action with:
-
-- No consent checkbox or consent capture mechanism
-- No mention of what personal data will be processed
-- No stated purpose of processing
-- No data retention period
-- No mention of data subject rights
-- No legal basis identified
-
-A job application involves processing **sensitive categories** of data (employment history, qualifications, potentially health/disability if disclosed). This requires explicit consent under GDPR Art. 9 and PDPA Section 5.
-
-**Remediation:** Before application submission, display a consent form with: purpose of processing, categories of data collected, retention period, data subject rights summary, and a link to the full privacy policy. Include an explicit opt-in checkbox.
+**Remediation:** Mirror `apps/candidate-portal/src/app/layout.tsx` — `next/font/google` with self-hosted files.
 
 ---
 
-### C5. OAuth providers mentioned without data sharing transparency
+### C4. OpenAI processing without privacy notice or explicit consent
 
-**GDPR:** Art. 13(1)(e)–(f) (Recipients, international transfers)  
-**PDPA:** Section 8(1)(d) (Third parties), Section 25 (Cross-border transfers)
+**GDPR:** Art. 13(1)(e) (Recipients), Art. 28 (Processor), Art. 9 (Special categories — if CV contains health/etc.)  
+**PDPA:** S.8(1)(d), S.5 (Sensitive data)
 
-**Location:** `job-detail.html`, lines 218–220
+**Evidence (non-exhaustive):**
 
-```html
-<p class="sidebar-note">
-  Candidates must register or log in using Google, LinkedIn, or email to apply.
-</p>
-```
+- `apps/my-applications/src/app/api/my-applications/cv/parse/route.ts` — CV text to OpenAI
+- `apps/my-applications/src/app/api/my-applications/screenshot/extract/route.ts`
+- `apps/my-applications/src/app/api/my-applications/text/extract/route.ts`
+- `packages/db` / backoffice `ensureApplicationRelevanceScore` — relevance scoring
 
-This casually references Google and LinkedIn as authentication providers without disclosing:
+UI mentions OpenAI in prototype help text only; no privacy policy, no opt-in before sending CV/screenshot content.
 
-- What profile data is obtained from these providers (name, email, profile photo, etc.)
-- That data is transferred to Google (US) and LinkedIn (US/Ireland)
-- The legal basis for this third-party data sharing
-- Whether the user can apply without using these third-party services (GDPR requires freely given consent — bundling with third-party OAuth without an alternative may not qualify)
-
-**Remediation:** Add a disclosure explaining what data is shared with/received from each OAuth provider. Ensure email-only registration exists as a non-third-party alternative. Link to each provider's privacy policy.
+**Remediation:** Name OpenAI as processor in privacy policy; lawful basis (consent or legitimate interest with LIA); explicit checkbox before AI-assisted import/scoring where required; data minimization (send only necessary fields); DPA with OpenAI.
 
 ---
 
-## High Findings
+### C5. Candidate session tokens in browser storage (XSS exposure)
 
-### H1. No Data Controller identification
+**GDPR:** Art. 32 (Security)  
+**PDPA:** S.18 (Security safeguards)
 
-**GDPR:** Art. 13(1)(a) (Identity and contact details of the controller)  
-**PDPA:** Section 8(1)(a) (Identity of the controller)
+**Evidence:** `apps/my-applications/src/lib/auth-storage.ts` — JWT in `localStorage` / `sessionStorage`.
 
-Neither page identifies who the Data Controller is. "TalentHub" appears as a brand name, but there is no:
+**Risk:** Any XSS can exfiltrate tokens; not equivalent to HttpOnly, Secure, SameSite cookies.
 
-- Registered company name or legal entity
-- Registered address
-- Data Protection Officer (DPO) contact details
-- Contact email for data protection queries
+**Remediation:** Issue session via HttpOnly cookies from Next.js BFF or API; shorten access token TTL; CSP and XSS hardening; document in privacy notice.
 
-**Remediation:** Add a data controller identification block (company name, registration number, address, DPO email) in the footer and/or privacy policy.
+---
+
+### C6. Application / registration without layered consent at collection point
+
+**GDPR:** Art. 6(1)(a), Art. 7; Art. 9 where special-category data possible in CV  
+**PDPA:** S.6
+
+Apply flow collects extensive PII (CV, cover letter, salary, work authorization) without just-in-time notice or separate consent for recruitment pool / AI / marketing.
+
+**Remediation:** Before submit: purpose, categories, retention, who receives data (employer, processors), link to privacy policy, required checkbox(es).
+
+---
+
+## High findings
+
+### H1. No data controller identification in UI
+
+**GDPR:** Art. 13(1)(a)  
+**PDPA:** S.8(1)(a)
+
+Footer shows “TalentHub” only — no legal entity, address, or DPO/contact email.
+
+**Remediation:** Add controller block to footer and privacy policy.
 
 ---
 
 ### H2. No data subject rights information
 
-**GDPR:** Art. 13(2)(b)–(d) (Rights disclosure)  
-**PDPA:** Sections 9–17 (Data subject rights)
+**GDPR:** Art. 15–22  
+**PDPA:** S.9–17
 
-Nowhere on the portal are candidates informed of their rights to:
+No in-app explanation of access, rectification, erasure, portability, objection, or complaint to supervisory authority.
 
-| Right                          | GDPR Article | PDPA Section |
-|--------------------------------|-------------|-------------|
-| Access                         | Art. 15     | Section 9   |
-| Rectification                  | Art. 16     | Section 10  |
-| Erasure / "Right to be forgotten" | Art. 17  | Section 11  |
-| Restriction of processing      | Art. 18     | Section 12  |
-| Object to processing           | Art. 21     | Section 13  |
-| Data portability               | Art. 20     | Section 14  |
-| Withdraw consent               | Art. 7(3)   | Section 6(5)|
-| Lodge complaint with authority  | Art. 13(2)(d) | Section 19 |
-
-**Remediation:** Include a "Your Rights" section in the privacy policy and a brief summary near the application form.
+**Remediation:** “Your rights” section in privacy policy + short summary at register/apply.
 
 ---
 
-### H3. No data retention / storage limitation disclosure
+### H3. No retention periods disclosed
 
-**GDPR:** Art. 5(1)(e) (Storage limitation), Art. 13(2)(a) (Retention period)  
-**PDPA:** Section 5(1)(e) (Storage limitation)
+**GDPR:** Art. 5(1)(e), Art. 13(2)(a)  
+**PDPA:** S.5(1)(e)
 
-There is no information about:
+Database holds applications, status events, interviews, CV files — no UI or policy stating how long data is kept after hire/reject.
 
-- How long application data is retained
-- What happens to candidate data after a position is filled
-- Whether data is kept in a talent pool (and if consent is sought for this)
-- When data is anonymized or deleted
-
-**Remediation:** State the retention period at the point of data collection (e.g., "We retain your application for 12 months after the position is filled") and in the privacy policy.
+**Remediation:** Define retention schedule; show at collection; implement deletion jobs.
 
 ---
 
-### H4. Cross-border data transfer implications undisclosed
+### H4. Cross-border transfers not explained
 
 **GDPR:** Art. 13(1)(f), Art. 44–49  
-**PDPA:** Section 25–27
+**PDPA:** S.25–27
 
-The portal advertises jobs in **four jurisdictions**: Colombo (Sri Lanka), London (UK), New York (USA), Singapore. This implies candidate data may be transferred between these jurisdictions. No information is provided about:
+Jobs may reference multiple locations; OpenAI and Google (fonts on backoffice) imply transfers outside Sri Lanka/EU without disclosure or mechanism (SCCs, etc.).
 
-- Where data is stored and processed
-- Whether adequate protection exists for each transfer route
-- Transfer mechanisms in use (Standard Contractual Clauses, adequacy decisions, etc.)
-
-Sri Lanka does not yet have adequacy status under GDPR. US transfers post-Schrems II require SCCs + supplementary measures.
-
-**Remediation:** Disclose data transfer routes and legal mechanisms in the privacy policy.
+**Remediation:** Privacy policy transfer section; map each subprocessor region.
 
 ---
 
-### H5. No legal basis for processing stated anywhere
+### H5. No legal basis stated
 
-**GDPR:** Art. 6 (Lawfulness of processing), Art. 13(1)(c) (Legal basis disclosure)  
-**PDPA:** Section 5(1)(a) (Lawful processing)
+**GDPR:** Art. 6, Art. 13(1)(c)  
+**PDPA:** S.5
 
-The portal does not state the legal basis for processing candidate data. For a recruitment portal, the relevant bases are:
+Recruitment processing should document basis (typically **consent** or **legitimate interest** / pre-contractual steps for applicants).
 
-- **Consent** (Art. 6(1)(a) / PDPA S.6) — for voluntary applications
-- **Legitimate interest** (Art. 6(1)(f)) — for the employer's recruitment needs
-- **Pre-contractual steps** (Art. 6(1)(b)) — for processing at the candidate's request
-
-The chosen basis must be disclosed. If relying on consent, the consent mechanism must meet Art. 7 standards.
-
-**Remediation:** State the legal basis in the privacy policy and summarize it at the point of data collection.
+**Remediation:** State basis per processing activity in privacy policy.
 
 ---
 
-## Medium Findings
+### H6. Staff authentication: HttpOnly cookies bypassed on client
 
-### M1. No equal opportunity / non-discrimination statement
+**Evidence:**
 
-While not strictly a PDPA/GDPR data protection requirement, both regulations have special provisions around **sensitive data** (GDPR Art. 9 "special categories"; PDPA Section 5 "sensitive personal data"). Job postings that collect location data, require qualifications from specific countries, or process applications from diverse jurisdictions should include an equal opportunity statement and disclose how sensitive data (if any) is handled.
+- `apps/backoffice/src/app/api/auth/login/route.ts` — sets **HttpOnly** `bo_access` / `bo_refresh`
+- `apps/backoffice/src/components/login/LoginForm.tsx` — also sets tokens via **`document.cookie`** (readable by JS)
 
----
+**Risk:** Undermines secure cookie design; XSS can steal staff session.
 
-### M2. "Terms of Service" link is non-functional
-
-`href="#"` on the Terms of Service link. While not directly a data protection requirement, terms of service often contain data processing provisions and are referenced by privacy policies as the contractual basis for processing.
-
----
-
-### M3. No age verification or children's data protection notice
-
-**GDPR:** Art. 8 (Child's consent)  
-**PDPA:** Section 20 (Processing data of children)
-
-The portal has no age restriction notice. If internship positions (listed in the Employment Type filter) could attract applicants under 16/18, additional protections are needed.
+**Remediation:** Use POST to `/api/auth/login` only; remove client-side cookie writes; rely on middleware (`middleware.ts`) with HttpOnly tokens.
 
 ---
 
-### M4. Search and filter behavior data not disclosed
+### H7. Email notifications without transparency
 
-Job search queries, filter selections, and browsing patterns constitute personal data when associated with a logged-in user. Under GDPR Art. 13 and PDPA Section 7, the purpose and legal basis for processing this behavioral data should be disclosed.
+Reject/schedule modals offer “notify candidate” (`PipelineStatusModals.tsx`, `ScheduleInterviewModal.tsx`). OTP and password email via `apps/api`. No privacy notice describing email content, provider, or opt-out.
+
+**Remediation:** Disclose email processor; allow preference where appropriate.
+
+---
+
+## Medium findings
+
+### M1. Terms checkbox without linkable policies
+
+Register validates `terms` but policies are not URLs (`RegisterForm.tsx`). Fails “informed” consent under Art. 7.
+
+### M2. OAuth / social login referenced in product copy; verify alternatives
+
+Ensure email/password registration remains available; disclose profile fields imported from any future OAuth provider.
+
+### M3. File uploads — partial technical controls
+
+CV upload: MIME and size checks (`cv/upload/route.ts`). Good practice; still need privacy notice (what is stored, where, who can access in backoffice).
+
+### M4. Candidate account status PATCH without staff auth guard
+
+`PATCH /api/backoffice/candidates/{id}/status` — documented in API spec; no `requireStaffSession` in route. **Security/privacy risk** if exposed.
+
+### M5. Search and dashboard behaviour
+
+Logged-in job search and profile edits are personal data when linked to account — disclose in privacy policy (purpose: account management / application).
 
 ---
 
 ## Informational
 
-**I1.** The "Accessibility" link in the footer (`href="#"`) is non-functional. While not a PDPA/GDPR item, GDPR Recital 39 emphasizes that privacy information must be accessible to all individuals, including those with disabilities.
-
-**I2.** No DPIA (Data Protection Impact Assessment) reference. Given the cross-border nature and potential volume of candidate data, a DPIA may be required under GDPR Art. 35 and PDPA Section 21. The front-end should reference this in the privacy policy.
-
-**I3.** No breach notification mechanism visible. Both GDPR (Art. 34) and PDPA (Section 24) require notifying affected data subjects of high-risk breaches. Consider including a dedicated security/breach contact in the footer or privacy policy.
-
----
-
-## Compliance Readiness Scorecard
-
-| Area                      | GDPR Reference    | PDPA Reference | Status              |
-|---------------------------|-------------------|----------------|---------------------|
-| Cookie consent            | Art. 6-7, ePrivacy| S.6-7          | Not implemented     |
-| Privacy notice            | Art. 13-14        | S.7-8          | Link exists, page missing |
-| Legal basis               | Art. 6            | S.5            | Not disclosed       |
-| Data subject rights       | Art. 15-22        | S.9-17         | Not disclosed       |
-| Controller identity       | Art. 13(1)(a)     | S.8(1)(a)      | Not disclosed       |
-| Retention periods         | Art. 5(1)(e)      | S.5(1)(e)      | Not disclosed       |
-| Cross-border transfers    | Art. 44-49        | S.25-27        | Google Fonts violates; no disclosures |
-| Consent at collection     | Art. 6(1)(a), 7   | S.6            | Not implemented     |
-| Third-party disclosures   | Art. 13(1)(e)     | S.8(1)(d)      | Google/LinkedIn mentioned without detail |
-| Data minimization         | Art. 5(1)(c)      | S.5(1)(c)      | Appears reasonable  |
-| Security measures         | Art. 32           | S.18           | Cannot assess from front-end |
+| ID | Topic |
+|----|--------|
+| I1 | No DPIA reference in UI — may be required (GDPR Art. 35, PDPA S.21) for AI + recruitment at scale |
+| I2 | No breach notification contact in UI |
+| I3 | Backoffice has no footer legal links (staff-facing; internal policy may suffice) |
+| I4 | `localStorage` used for jobs view preference in backoffice — low risk; classify in cookie policy |
 
 ---
 
-## Recommended Next Steps (Priority Order)
+## Compliance readiness scorecard
 
-1. **Self-host Google Fonts** — eliminates the most clear-cut violation immediately
-2. **Build a privacy policy page** — required before any data collection goes live
-3. **Add a cookie consent banner** — must block non-essential processing until accepted
-4. **Add consent capture to the application flow** — checkbox + disclosure before "Apply Now" submission
-5. **Add data controller identification to the footer** — legal entity name, DPO email
-6. **Disclose data subject rights** — in the privacy policy, with a summary near the application form
-7. **Document cross-border transfer mechanisms** — especially for the multi-jurisdiction job postings
-8. **Add OAuth provider data sharing disclosures** — before Google/LinkedIn authentication
+| Area | GDPR | PDPA | Status (May 2026) |
+|------|------|------|-------------------|
+| Privacy notice | Art. 13–14 | S.7–8 | **Not implemented** (placeholder links) |
+| Cookie consent | Art. 6–7 | S.6–7 | **Not implemented** |
+| Legal basis | Art. 6 | S.5 | **Not disclosed** |
+| Data subject rights | Art. 15–22 | S.9–17 | **Not disclosed** |
+| Controller identity | Art. 13(1)(a) | S.8(1)(a) | **Not disclosed** |
+| Retention | Art. 5(1)(e) | S.5(1)(e) | **Not disclosed** |
+| Cross-border transfers | Art. 44–49 | S.25–27 | **Partial fail** (backoffice fonts; OpenAI) |
+| Consent at collection | Art. 6–7 | S.6 | **Partial** (terms checkbox only) |
+| Processor transparency | Art. 13(1)(e), 28 | S.8(1)(d) | **Fail** (OpenAI, email) |
+| Security | Art. 32 | S.18 | **Partial** (candidate tokens in storage; staff cookie issue) |
+| Data minimization | Art. 5(1)(c) | S.5(1)(c) | **Reasonable** in forms |
+| Self-hosted fonts (portal) | — | — | **Pass** (candidate-portal, my-applications) |
 
 ---
 
-*This audit covers front-end content and visible UX patterns only. A complete PDPA/GDPR compliance assessment requires reviewing backend data flows, server infrastructure, third-party processor agreements, and organizational policies.*
+## Recommended next steps (priority)
+
+1. **Privacy policy + terms** — real pages and footer/register/apply links (C1, H1, H2).
+2. **Cookie consent** — block non-essential until accepted (C2).
+3. **Backoffice fonts** — `next/font`, remove Google `@import` (C3).
+4. **OpenAI & email** — privacy policy + consent/checkbox before CV/screenshot/relevance processing (C4).
+5. **Candidate auth** — HttpOnly session cookies; remove JWT from `localStorage` (C5).
+6. **Staff auth** — use HttpOnly login route only (H6).
+7. **Apply flow notice** — just-in-time disclosure + retention (C6, H3).
+8. **Retention & deletion** — policy + technical job to purge old applications/CV files.
+9. **DPAs** — OpenAI, email provider, hosting.
+10. **Secure candidate status API** — add staff auth on `PATCH .../candidates/{id}/status` (M4).
+
+---
+
+## Appendix A: Static markup vs implementation
+
+| Topic | Static markup (Apr 2026) | Next.js (May 2026) |
+|-------|--------------------------|---------------------|
+| Google Fonts CDN | **Fail** (`tokens.css` @import) | **Pass** on portal & my-applications (`next/font`); **Fail** on backoffice |
+| Privacy link | `href="#"` | Still `href="#"` in `SiteFooter` |
+| Cookie banner | None | None |
+| Registration consent | N/A in static job pages | Terms checkbox (unlinked) |
+| CV / AI | N/A | OpenAI integrations — new compliance surface |
+
+---
+
+## Appendix B: Related documentation
+
+- [implementation-alignment-2026.md](implementation-alignment-2026.md) — which app implements which API  
+- [api/backoffice-applications.md](../specification/api/backoffice-applications.md) — staff processing of application data  
+- [wcag22-audit.md](wcag22-audit.md) — accessibility (privacy information must be perceivable)
+
+---
+
+*This audit reflects code and UX as of 19 May 2026. Legal review by qualified counsel is required before claiming GDPR/PDPA compliance.*

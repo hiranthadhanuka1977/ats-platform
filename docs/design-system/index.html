@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TalentHub Design System — ATS Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="components.css" />
+  <link rel="stylesheet" href="ds-layout.css" />
+</head>
+<body>
+  <div class="ds-page">
+    <aside class="ds-sidebar" aria-label="Design system navigation">
+      <p class="ds-brand">TalentHub DS</p>
+      <p class="ds-brand-sub">ATS Platform</p>
+      <p class="ds-last-updated">Last updated<br /><time datetime="2026-05-20">20 May 2026</time></p>
+      <nav>
+        <ul class="ds-nav">
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#colors">Colors</a></li>
+          <li><a href="#typography">Typography</a></li>
+          <li><a href="#spacing">Spacing & radius</a></li>
+          <li class="ds-nav-group">Components</li>
+          <li><a href="#buttons">Buttons</a></li>
+          <li><a href="#forms">Forms</a></li>
+          <li><a href="#badges">Badges & pills</a></li>
+          <li><a href="#icon-buttons">Icon buttons</a></li>
+          <li><a href="#cards">Cards</a></li>
+          <li><a href="#alerts">Alerts</a></li>
+          <li><a href="#pagination">Pagination</a></li>
+          <li><a href="#toggles">Toggles & tabs</a></li>
+          <li><a href="#modals">Modals</a></li>
+          <li><a href="#pipeline">Pipeline</a></li>
+          <li><a href="#journey">Onboarding journey</a></li>
+          <li><a href="#tables">Tables</a></li>
+          <li><a href="#empty">Empty state</a></li>
+          <li><a href="#login">Login layout</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="ds-main" id="main-content">
+      <header class="ds-hero" id="overview">
+        <h1>TalentHub design system</h1>
+        <p>
+          Living reference for UI implemented in <strong>candidate-portal</strong> (3000),
+          <strong>my-applications</strong> (3002), and <strong>backoffice</strong> (3001).
+          Tokens and class names match production CSS; use <code>data-surface="backoffice"</code> where staff UI differs.
+        </p>
+        <div class="ds-meta">
+          <span>Source: apps/*/src/styles</span>
+          <span>Fonts: Nunito + DM Sans</span>
+          <span>Primary: #2563eb</span>
+        </div>
+      </header>
+
+      <!-- Colors -->
+      <section class="ds-section" id="colors">
+        <h2>Colors</h2>
+        <p class="ds-lead">Semantic palette from <code>candidate-tokens.css</code> / <code>tokens.css</code>. Each swatch shows the CSS variable and hex value.</p>
+
+        <div class="ds-colors-group">
+          <h3>Brand &amp; action</h3>
+          <div class="ds-swatch-grid">
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#2563eb"></div><div class="ds-swatch-info"><strong>Primary</strong><span class="ds-swatch-hex">#2563eb</span><code>--color-primary</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#1d4ed8"></div><div class="ds-swatch-info"><strong>Primary hover</strong><span class="ds-swatch-hex">#1d4ed8</span><code>--color-primary-hover</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#dbeafe"></div><div class="ds-swatch-info"><strong>Primary light</strong><span class="ds-swatch-hex">#dbeafe</span><code>--color-primary-light</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#0f172a"></div><div class="ds-swatch-info"><strong>Secondary</strong><span class="ds-swatch-hex">#0f172a</span><code>--color-secondary</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#3b82f6"></div><div class="ds-swatch-info"><strong>Accent</strong><span class="ds-swatch-hex">#3b82f6</span><code>--color-accent</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#eff6ff"></div><div class="ds-swatch-info"><strong>Accent light</strong><span class="ds-swatch-hex">#eff6ff</span><code>--color-accent-light</code></div></div>
+          </div>
+        </div>
+
+        <div class="ds-colors-group">
+          <h3>Surfaces &amp; text</h3>
+          <div class="ds-swatch-grid">
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#f8fafc;border-bottom:1px solid #e2e8f0"></div><div class="ds-swatch-info"><strong>Background</strong><span class="ds-swatch-hex">#f8fafc</span><code>--color-bg</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#ffffff;border-bottom:1px solid #e2e8f0"></div><div class="ds-swatch-info"><strong>Surface</strong><span class="ds-swatch-hex">#ffffff</span><code>--color-surface</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#f1f5f9;border-bottom:1px solid #e2e8f0"></div><div class="ds-swatch-info"><strong>Surface alt</strong><span class="ds-swatch-hex">#f1f5f9</span><code>--color-surface-alt</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#0f172a"></div><div class="ds-swatch-info"><strong>Text</strong><span class="ds-swatch-hex">#0f172a</span><code>--color-text</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#334155"></div><div class="ds-swatch-info"><strong>Text secondary</strong><span class="ds-swatch-hex">#334155</span><code>--color-text-secondary</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#475569"></div><div class="ds-swatch-info"><strong>Muted</strong><span class="ds-swatch-hex">#475569</span><code>--color-muted</code></div></div>
+          </div>
+        </div>
+
+        <div class="ds-colors-group">
+          <h3>Borders</h3>
+          <div class="ds-swatch-grid">
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#cbd5e1"></div><div class="ds-swatch-info"><strong>Border</strong><span class="ds-swatch-hex">#cbd5e1</span><code>--color-border</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#94a3b8"></div><div class="ds-swatch-info"><strong>Border hover</strong><span class="ds-swatch-hex">#94a3b8</span><code>--color-border-hover</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#64748b"></div><div class="ds-swatch-info"><strong>Border input</strong><span class="ds-swatch-hex">#64748b</span><code>--color-border-input</code></div></div>
+          </div>
+        </div>
+
+        <div class="ds-colors-group">
+          <h3>Feedback</h3>
+          <div class="ds-swatch-grid">
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#16a34a"></div><div class="ds-swatch-info"><strong>Success</strong><span class="ds-swatch-hex">#16a34a</span><code>--color-success</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#dcfce7;border-bottom:1px solid #e2e8f0"></div><div class="ds-swatch-info"><strong>Success light</strong><span class="ds-swatch-hex">#dcfce7</span><code>--color-success-light</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#d97706"></div><div class="ds-swatch-info"><strong>Warning</strong><span class="ds-swatch-hex">#d97706</span><code>--color-warning</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#fef3c7;border-bottom:1px solid #e2e8f0"></div><div class="ds-swatch-info"><strong>Warning light</strong><span class="ds-swatch-hex">#fef3c7</span><code>--color-warning-light</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#dc2626"></div><div class="ds-swatch-info"><strong>Error</strong><span class="ds-swatch-hex">#dc2626</span><code>--color-error</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#fee2e2;border-bottom:1px solid #e2e8f0"></div><div class="ds-swatch-info"><strong>Error light</strong><span class="ds-swatch-hex">#fee2e2</span><code>--color-error-light</code></div></div>
+          </div>
+        </div>
+
+        <div class="ds-colors-group">
+          <h3>Featured (job cards)</h3>
+          <div class="ds-swatch-grid">
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#92400e"></div><div class="ds-swatch-info"><strong>Featured</strong><span class="ds-swatch-hex">#92400e</span><code>--color-featured</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#fffbeb;border-bottom:1px solid #e2e8f0"></div><div class="ds-swatch-info"><strong>Featured light</strong><span class="ds-swatch-hex">#fffbeb</span><code>--color-featured-light</code></div></div>
+          </div>
+        </div>
+
+        <div class="ds-colors-group" data-surface="backoffice">
+          <h3>Backoffice overrides</h3>
+          <p class="ds-lead" style="margin-bottom:var(--space-4);font-size:var(--text-sm)">Applied when <code>data-surface="backoffice"</code> — accent and neutrals differ slightly.</p>
+          <div class="ds-swatch-grid">
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#6366f1"></div><div class="ds-swatch-info"><strong>Accent</strong><span class="ds-swatch-hex">#6366f1</span><code>--color-accent</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#e0e7ff;border-bottom:1px solid #e2e8f0"></div><div class="ds-swatch-info"><strong>Accent light</strong><span class="ds-swatch-hex">#e0e7ff</span><code>--color-accent-light</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#475569"></div><div class="ds-swatch-info"><strong>Text secondary</strong><span class="ds-swatch-hex">#475569</span><code>--color-text-secondary</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#6b7280"></div><div class="ds-swatch-info"><strong>Muted</strong><span class="ds-swatch-hex">#6b7280</span><code>--color-muted</code></div></div>
+            <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#e2e8f0"></div><div class="ds-swatch-info"><strong>Border</strong><span class="ds-swatch-hex">#e2e8f0</span><code>--color-border</code></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Typography -->
+      <section class="ds-section" id="typography">
+        <h2>Typography</h2>
+        <p class="ds-lead"><strong>Nunito</strong> (<code>--font-display</code>) for headings; <strong>DM Sans</strong> (<code>--font-body</code>) for UI and body. Production apps load via <code>next/font</code>.</p>
+        <div class="ds-panel">
+          <div class="ds-type-sample" style="font-family:var(--font-display);font-size:var(--text-4xl);font-weight:800;line-height:1.2">Display 4xl — Careers hero</div>
+          <p class="ds-type-meta">--text-4xl · 2.25rem · weight 800</p>
+          <div class="ds-type-sample" style="font-family:var(--font-display);font-size:var(--text-3xl);font-weight:700">Heading 3xl — Page title</div>
+          <p class="ds-type-meta">--text-3xl · 1.875rem</p>
+          <div class="ds-type-sample" style="font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700">Heading 2xl — Login / section</div>
+          <p class="ds-type-meta">--text-2xl · 1.5rem</p>
+          <div class="ds-type-sample" style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:700">Heading xl — Card title</div>
+          <p class="ds-type-meta">--text-xl · 1.25rem</p>
+          <div class="ds-type-sample" style="font-size:var(--text-base);line-height:var(--leading-relaxed)">Body base — Job summary and form copy. The quick brown fox jumps over the lazy dog.</div>
+          <p class="ds-type-meta">--text-base · 1rem · leading-relaxed 1.65</p>
+          <div class="ds-type-sample" style="font-size:var(--text-sm);color:var(--color-text-secondary)">Body sm — Secondary text, labels, table cells</div>
+          <p class="ds-type-meta">--text-sm · 0.875rem</p>
+          <div class="ds-type-sample" style="font-size:var(--text-xs);color:var(--color-muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600">Caption xs — Meta, column headers</div>
+          <p class="ds-type-meta">--text-xs · 0.75rem</p>
+        </div>
+      </section>
+
+      <!-- Spacing -->
+      <section class="ds-section" id="spacing">
+        <h2>Spacing & radius</h2>
+        <p class="ds-lead">Spacing scale uses rem. Border radius differs by product surface.</p>
+        <table class="ds-table-token">
+          <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td><code>--space-2</code></td><td>0.5rem</td><td>Tight gaps, icon padding</td></tr>
+            <tr><td><code>--space-4</code></td><td>1rem</td><td>Default padding</td></tr>
+            <tr><td><code>--space-6</code></td><td>1.5rem</td><td>Card padding, modal padding</td></tr>
+            <tr><td><code>--space-8</code></td><td>2rem</td><td>Section spacing</td></tr>
+          </tbody>
+        </table>
+        <div class="ds-grid-2">
+          <div class="ds-panel">
+            <span class="ds-surface-tag">Portal / my-applications</span>
+            <p>All radii <strong>5px</strong> (<code>--radius-sm</code> through <code>--radius-full</code>).</p>
+          </div>
+          <div class="ds-panel" data-surface="backoffice">
+            <span class="ds-surface-tag">Backoffice</span>
+            <p><code>--radius-sm</code> 2px · <code>--radius-md</code> 4px · <code>--radius-lg</code> 6px · pills <code>9999px</code>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Buttons -->
+      <section class="ds-section" id="buttons">
+        <h2>Buttons</h2>
+        <p class="ds-lead">Class <code>.btn</code> + variant. Shared across portal, my-applications, and backoffice.</p>
+        <div class="ds-subsection">
+          <h3>Variants & sizes</h3>
+          <span class="ds-state-label">Default</span>
+          <div class="ds-row">
+            <button type="button" class="btn btn-primary">Primary</button>
+            <button type="button" class="btn btn-secondary">Secondary</button>
+            <button type="button" class="btn btn-ghost">Ghost</button>
+            <button type="button" class="btn btn-danger">Danger</button>
+          </div>
+          <span class="ds-state-label">Sizes</span>
+          <div class="ds-row">
+            <button type="button" class="btn btn-primary btn-lg">Large</button>
+            <button type="button" class="btn btn-primary">Default</button>
+            <button type="button" class="btn btn-primary btn-sm">Small</button>
+          </div>
+          <span class="ds-state-label">States</span>
+          <div class="ds-row">
+            <button type="button" class="btn btn-primary" disabled>Disabled</button>
+            <button type="button" class="btn btn-secondary" disabled>Disabled</button>
+          </div>
+          <span class="ds-state-label">Block</span>
+          <button type="button" class="btn btn-primary btn-block" style="max-width:320px">Block primary</button>
+        </div>
+      </section>
+
+      <!-- Forms -->
+      <section class="ds-section" id="forms">
+        <h2>Forms</h2>
+        <p class="ds-lead">Patterns from auth, apply flow, job posting, and pipeline modals.</p>
+        <div class="ds-grid-2">
+          <div class="ds-panel">
+            <span class="ds-state-label">Default</span>
+            <div class="ds-stack">
+              <div class="form-group">
+                <label class="form-label" for="ds-email">Email</label>
+                <input id="ds-email" class="form-input" type="email" placeholder="you@example.com" autocomplete="email" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ds-select">Department</label>
+                <select id="ds-select" class="form-select"><option>Engineering</option><option>Product</option></select>
+              </div>
+              <label class="form-checkbox">
+                <input type="checkbox" checked />
+                <span class="form-checkbox-mark" aria-hidden="true"></span>
+                Remember me
+              </label>
+            </div>
+          </div>
+          <div class="ds-panel">
+            <span class="ds-state-label">Error & disabled</span>
+            <div class="ds-stack">
+              <div class="form-group">
+                <label class="form-label" for="ds-err">Password</label>
+                <input id="ds-err" class="form-input form-input--error" type="password" value="short" aria-invalid="true" />
+                <p class="form-error" role="alert">Password must be at least 8 characters.</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ds-dis">Disabled field</label>
+                <input id="ds-dis" class="form-input" disabled value="Read only" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ds-subsection" style="margin-top:var(--space-6)">
+          <h3>Toggle switch</h3>
+          <div class="toggle-wrapper">
+            <button type="button" class="toggle" role="switch" aria-checked="false" id="ds-toggle" onclick="this.setAttribute('aria-checked', this.getAttribute('aria-checked')==='true'?'false':'true')"></button>
+            <label for="ds-toggle">Remote only</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Badges -->
+      <section class="ds-section" id="badges">
+        <h2>Badges & status pills</h2>
+        <div class="ds-subsection">
+          <h3>Job badges</h3>
+          <div class="ds-row">
+            <span class="badge badge-primary">Full-time</span>
+            <span class="badge badge-accent">Remote</span>
+            <span class="badge badge-success">New</span>
+            <span class="badge badge-warning">Urgent</span>
+          </div>
+        </div>
+        <div class="ds-subsection">
+          <h3>Hero department pills</h3>
+          <div class="ds-row">
+            <button type="button" class="hero-pill is-active">All</button>
+            <button type="button" class="hero-pill">Engineering</button>
+            <button type="button" class="hero-pill">Product</button>
+          </div>
+        </div>
+        <div class="ds-subsection" data-surface="backoffice">
+          <h3>Candidate / application status (backoffice)</h3>
+          <div class="ds-row">
+            <span class="bo-candidate-status-pill bo-candidate-status-pill--new">New</span>
+            <span class="bo-candidate-status-pill bo-candidate-status-pill--active">Active</span>
+            <span class="bo-candidate-status-pill bo-candidate-status-pill--shortlisted">Shortlisted</span>
+            <span class="bo-candidate-status-pill bo-candidate-status-pill--rejected">Rejected</span>
+            <span class="bo-candidate-status-pill bo-candidate-status-pill--hired">Hired</span>
+            <span class="bo-admin-pill">draft</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Icon buttons -->
+      <section class="ds-section" id="icon-buttons">
+        <h2>Icon buttons</h2>
+        <div class="ds-row">
+          <button type="button" class="icon-btn" aria-label="Share">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v14"/></svg>
+          </button>
+          <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark" aria-pressed="false" onclick="this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')==='true'?'false':'true')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+          <button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmarked" aria-pressed="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- Cards -->
+      <section class="ds-section" id="cards">
+        <h2>Cards</h2>
+        <div class="ds-grid-2">
+          <article class="job-card job-card--featured">
+            <div class="job-card-header">
+              <h3 class="job-card-title">Senior Business Analyst</h3>
+              <span class="job-card-pill" role="img" aria-label="Featured">Featured</span>
+            </div>
+            <p class="job-card-meta">Colombo · Engineering · Full-time</p>
+            <p class="job-card-summary">Lead requirements workshops and deliver actionable insights for digital banking products.</p>
+            <footer class="job-card-footer">
+              <div class="job-card-tags">
+                <span class="badge badge-primary">Full-time</span>
+                <span class="badge badge-accent">Remote</span>
+              </div>
+              <div class="ds-row" style="margin:0">
+                <button type="button" class="btn btn-secondary btn-sm">View</button>
+                <button type="button" class="btn btn-primary btn-sm">Apply</button>
+              </div>
+            </footer>
+          </article>
+          <div data-surface="backoffice">
+            <div class="bo-card">
+              <h3 class="bo-card-title">Hiring efficiency</h3>
+              <p style="margin:0;font-size:var(--text-2xl);font-weight:700;text-align:center">78%</p>
+              <p style="margin:var(--space-2) 0 0;text-align:center;color:var(--color-muted);font-size:var(--text-sm)">Score this month</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alerts -->
+      <section class="ds-section" id="alerts">
+        <h2>Alerts</h2>
+        <div class="ds-stack" style="max-width:560px" data-surface="backoffice">
+          <div class="bo-admin-alert" role="alert">Could not save job posting. Please try again.</div>
+          <div class="bo-admin-alert bo-admin-alert--success" role="status">Job published successfully.</div>
+          <div class="bo-login-error">Invalid email or password.</div>
+        </div>
+      </section>
+
+      <!-- Pagination -->
+      <section class="ds-section" id="pagination">
+        <h2>Pagination</h2>
+        <nav class="pagination" aria-label="Pagination">
+          <button type="button" class="pagination-btn" disabled aria-label="Previous">‹</button>
+          <button type="button" class="pagination-btn is-active" aria-current="page">1</button>
+          <button type="button" class="pagination-btn">2</button>
+          <button type="button" class="pagination-btn">3</button>
+          <button type="button" class="pagination-btn" aria-label="Next">›</button>
+        </nav>
+      </section>
+
+      <!-- Toggles -->
+      <section class="ds-section" id="toggles">
+        <h2>View toggles & segmented tabs</h2>
+        <div data-surface="backoffice">
+          <span class="ds-state-label">List / pipeline (applications, jobs)</span>
+          <div class="bo-jobs-view-toggle" role="group" aria-label="View mode">
+            <button type="button" aria-pressed="true" aria-label="Pipeline view" title="Pipeline">▦</button>
+            <button type="button" aria-pressed="false" aria-label="List view" title="List">☰</button>
+          </div>
+          <span class="ds-state-label" style="margin-top:var(--space-6)">Board tabs / week nav</span>
+          <div class="bo-candidate-tabs" role="tablist">
+            <button type="button" class="bo-candidate-tab is-active" role="tab" aria-selected="true">Active</button>
+            <button type="button" class="bo-candidate-tab" role="tab">Rejected</button>
+            <button type="button" class="bo-candidate-tab" role="tab">All</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modals -->
+      <section class="ds-section" id="modals">
+        <h2>Modals</h2>
+        <p class="ds-lead">Production uses portals; shown inline for documentation. Classes: <code>.bo-modal-backdrop</code>, <code>.bo-modal</code>.</p>
+        <div class="ds-grid-2" data-surface="backoffice">
+          <div class="bo-modal-backdrop is-demo-inline">
+            <div class="bo-modal bo-modal--status" role="dialog" aria-modal="true" aria-labelledby="reject-title">
+              <h2 id="reject-title" class="bo-modal-title">Reject application</h2>
+              <p class="bo-modal-warning">This action cannot be undone without reopening.</p>
+              <label class="form-label">Reason <span class="form-input" style="display:block;padding:0;border:0"><textarea class="form-input" rows="3" placeholder="Required"></textarea></span></label>
+              <label class="bo-schedule-interview-checkbox"><input type="checkbox" checked /> Notify candidate by email</label>
+              <div class="bo-modal-actions">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <button type="button" class="btn btn-danger">Reject</button>
+              </div>
+            </div>
+          </div>
+          <div class="bo-modal-backdrop is-demo-inline">
+            <div class="bo-modal bo-modal--status" role="dialog" aria-labelledby="schedule-title">
+              <h2 id="schedule-title" class="bo-modal-title">Schedule interview</h2>
+              <label class="form-label">Start <input class="form-input" type="datetime-local" /></label>
+              <label class="form-label">End <input class="form-input" type="datetime-local" /></label>
+              <label class="bo-schedule-interview-checkbox"><input type="checkbox" checked /> Send email to candidate</label>
+              <div class="bo-modal-actions">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <button type="button" class="btn btn-primary">Schedule</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pipeline -->
+      <section class="ds-section" id="pipeline">
+        <h2>Applications pipeline</h2>
+        <p class="ds-lead">Kanban columns and cards from <code>ApplicationsPipelineBoard</code>. States: default, drop-valid, drop-invalid, dragging.</p>
+        <div data-surface="backoffice">
+          <div class="bo-pipeline-columns">
+            <div class="bo-pipeline-column">
+              <header class="bo-pipeline-column-header">
+                <h3 class="bo-pipeline-column-title">Shortlisted</h3>
+                <p class="bo-pipeline-column-count">2 applications</p>
+              </header>
+              <div class="bo-pipeline-column-cards">
+                <article class="bo-pipeline-card">
+                  <div class="bo-pipeline-card-main">
+                    <div class="bo-relevance-ring" role="img" aria-label="Relevance 82">82</div>
+                    <div class="bo-pipeline-card-body">
+                      <p class="bo-pipeline-card-job">Product Manager</p>
+                      <span class="bo-pipeline-card-candidate" title="Alexandra Chen">Alexandra Chen</span>
+                      <p class="bo-pipeline-card-meta">Updated 2d ago</p>
+                    </div>
+                  </div>
+                  <button type="button" class="bo-pipeline-card-menu-trigger" aria-label="Move application">⋮</button>
+                </article>
+              </div>
+            </div>
+            <div class="bo-pipeline-column bo-pipeline-column--drop-valid">
+              <header class="bo-pipeline-column-header">
+                <h3 class="bo-pipeline-column-title">Interview scheduled</h3>
+                <p class="bo-pipeline-column-count">Drop target (valid)</p>
+              </header>
+              <p class="bo-pipeline-column-empty" style="font-size:var(--text-xs);color:var(--color-muted)">Release to move</p>
+            </div>
+            <div class="bo-pipeline-column bo-pipeline-column--drop-invalid">
+              <header class="bo-pipeline-column-header">
+                <h3 class="bo-pipeline-column-title">Hired</h3>
+                <p class="bo-pipeline-column-count">Drop target (invalid)</p>
+              </header>
+            </div>
+          </div>
+          <div class="ds-subsection" style="margin-top:var(--space-6)">
+            <h3>Card menu (keyboard alternative to drag)</h3>
+            <div style="position:relative;max-width:280px">
+              <article class="bo-pipeline-card">
+                <div class="bo-pipeline-card-main">
+                  <div class="bo-pipeline-card-body">
+                    <p class="bo-pipeline-card-job">Analyst</p>
+                    <span class="bo-pipeline-card-candidate">Jamie Rivera</span>
+                  </div>
+                </div>
+              </article>
+              <div class="bo-pipeline-card-menu" style="position:relative;top:0;margin-top:var(--space-2)">
+                <p class="bo-pipeline-card-menu-label">Move to</p>
+                <button type="button">Under review</button>
+                <button type="button">Interview scheduled</button>
+                <button type="button" class="bo-pipeline-card-menu-danger">Reject…</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Journey -->
+      <section class="ds-section" id="journey">
+        <h2>Onboarding journey</h2>
+        <p class="ds-lead">Dashboard stepper from <code>my-applications-forms.css</code>.</p>
+        <div class="ds-panel">
+          <div class="myapps-journey-progress">
+            <div class="myapps-journey-progress-bar"><div class="myapps-journey-progress-fill" style="width:50%"></div></div>
+          </div>
+          <ol class="myapps-journey-track">
+            <li class="myapps-journey-step myapps-journey-step--complete">
+              <span class="myapps-journey-marker">✓</span>
+              <div class="myapps-journey-step-panel">
+                <p class="myapps-journey-step-kicker">Step 1</p>
+                <p class="myapps-journey-step-title">Verify email</p>
+              </div>
+            </li>
+            <li class="myapps-journey-step myapps-journey-step--current">
+              <span class="myapps-journey-marker">2</span>
+              <div class="myapps-journey-step-panel">
+                <p class="myapps-journey-step-kicker">Step 2</p>
+                <p class="myapps-journey-step-title">Complete profile</p>
+                <button type="button" class="btn btn-primary btn-sm">Continue</button>
+              </div>
+            </li>
+            <li class="myapps-journey-step">
+              <span class="myapps-journey-marker">3</span>
+              <div class="myapps-journey-step-panel">
+                <p class="myapps-journey-step-kicker">Step 3</p>
+                <p class="myapps-journey-step-title">Upload CV</p>
+              </div>
+            </li>
+            <li class="myapps-journey-step">
+              <span class="myapps-journey-marker">4</span>
+              <div class="myapps-journey-step-panel">
+                <p class="myapps-journey-step-kicker">Step 4</p>
+                <p class="myapps-journey-step-title">Apply</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Tables -->
+      <section class="ds-section" id="tables">
+        <h2>Tables</h2>
+        <div class="ds-panel" data-surface="backoffice">
+          <table class="bo-admin-table">
+            <thead>
+              <tr><th>Candidate</th><th>Status</th><th>Applied</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="#">Morgan Lee</a></td>
+                <td><span class="bo-candidate-status-pill bo-candidate-status-pill--shortlisted">Shortlisted</span></td>
+                <td>12 May 2026</td>
+              </tr>
+              <tr>
+                <td><a href="#">Sam Taylor</a></td>
+                <td><span class="bo-candidate-status-pill bo-candidate-status-pill--new">New</span></td>
+                <td>10 May 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Empty -->
+      <section class="ds-section" id="empty">
+        <h2>Empty state</h2>
+        <div class="ds-panel ds-panel--alt">
+          <div class="empty-state">
+            <p class="empty-state-title">No jobs found</p>
+            <p class="empty-state-text">Try adjusting your filters or search terms.</p>
+            <button type="button" class="btn btn-primary" style="margin-top:var(--space-4)">Clear filters</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Login -->
+      <section class="ds-section" id="login">
+        <h2>Login layout</h2>
+        <p class="ds-lead">Backoffice / auth split screen (<code>login.css</code>).</p>
+        <div class="ds-grid-2" data-surface="backoffice">
+          <div class="bo-login-visual">
+            <h2 class="bo-login-heading" style="color:#fff;margin:0">TalentHub Back Office</h2>
+            <p style="margin:var(--space-3) 0 0;opacity:.85;max-width:28ch">Manage jobs, applications, and interviews in one place.</p>
+          </div>
+          <div class="ds-panel">
+            <h2 class="bo-login-heading">Sign in</h2>
+            <p style="color:var(--color-muted);margin:0 0 var(--space-6)">Staff credentials only</p>
+            <form class="auth-form" style="display:flex;flex-direction:column;gap:var(--space-5)" onsubmit="return false">
+              <div class="form-group">
+                <label class="form-label" for="bo-email">Email</label>
+                <input id="bo-email" class="form-input" type="email" autocomplete="username" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="bo-pass">Password</label>
+                <input id="bo-pass" class="form-input" type="password" autocomplete="current-password" />
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Log in</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <footer style="padding:var(--space-8) 0;color:var(--color-muted);font-size:var(--text-xs);border-top:1px solid var(--color-border)">
+        <p>Generated from monorepo implementation · <a href="../README.md">docs index</a> · Update <code>tokens.css</code> / <code>components.css</code> when styles change.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var links = document.querySelectorAll(".ds-nav a");
+      var sections = [];
+      links.forEach(function (a) {
+        var id = a.getAttribute("href").slice(1);
+        var el = document.getElementById(id);
+        if (el) sections.push({ link: a, el: el });
+      });
+      function onScroll() {
+        var y = window.scrollY + 120;
+        var current = sections[0];
+        sections.forEach(function (s) {
+          if (s.el.offsetTop <= y) current = s;
+        });
+        links.forEach(function (l) { l.classList.remove("is-active"); });
+        if (current) current.link.classList.add("is-active");
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    })();
+  </script>
+</body>
+</html>

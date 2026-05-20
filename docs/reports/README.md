@@ -2,19 +2,12 @@
 
 **Last updated:** 19 May 2026
 
-This folder holds **static markup audits** and notes on how they relate to the running monorepo.
+| Report | Scope |
+|--------|--------|
+| [wcag22-audit.md](wcag22-audit.md) | WCAG 2.2 AA — **`apps/candidate-portal`**, **`apps/my-applications`**, **`apps/backoffice`** (Next.js) |
+| [pdpa-gdpr-audit.md](pdpa-gdpr-audit.md) | PDPA / GDPR — same three apps + `apps/api` auth/email and OpenAI integrations |
+| [implementation-alignment-2026.md](implementation-alignment-2026.md) | Spec vs implementation matrix (APIs, storage, ports) |
 
-| Report | Scope | Target |
-|--------|--------|--------|
-| [wcag22-audit.md](wcag22-audit.md) | WCAG 2.2 AA checklist | `docs/markup/candidate-portal/` and `docs/markup/backoffice/` HTML prototypes |
-| [pdpa-gdpr-audit.md](pdpa-gdpr-audit.md) | PDPA / GDPR-oriented review | Same static markup + stated data flows in specs |
+Static HTML under `docs/markup/` is referenced only as an appendix inside the WCAG/PDPA reports (April 2026 prototype baseline). **Production sign-off should use the Next.js audits.**
 
-These reports do **not** automatically cover:
-
-- `apps/candidate-portal`, `apps/my-applications`, or `apps/backoffice` (Next.js)
-- `apps/api` HTTP handlers
-- Runtime file storage under repo `storage/`
-
-For implementation vs specification alignment, see [implementation-alignment-2026.md](implementation-alignment-2026.md).
-
-When re-auditing for production, repeat checks against deployed URLs (ports **3000**, **3002**, **3001**) and update or add dated report files here.
+**Dev URLs for manual re-test:** `http://localhost:3000` (portal), `3002` (my-applications), `3001` (backoffice).

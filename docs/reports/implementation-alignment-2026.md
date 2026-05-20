@@ -20,7 +20,7 @@
 | Application pipeline | Static backoffice HTML | **backoffice** `/applications` Kanban + list; status APIs under `/api/backoffice/applications/*` |
 | Application statuses | Older docs listed 7 values | **10** Prisma enum values incl. `interview_scheduled`, `interview_completed`, `hired` |
 | Interviews | Not in early API dictionary | `application_interviews` table; **one row per application**; schedule via backoffice POST |
-| WCAG / PDPA reports | Apr 2026 markup review | Re-run against Next.js UI before release claims |
+| WCAG / PDPA reports | **Updated 19 May 2026** — [wcag22-audit.md](wcag22-audit.md), [pdpa-gdpr-audit.md](pdpa-gdpr-audit.md) cover Next.js apps |
 
 ## File storage (local)
 
