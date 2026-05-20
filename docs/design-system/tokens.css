@@ -88,6 +88,7 @@
 
   --container-max: 1280px;
   --header-height: 72px;
+  --sidebar-width: 300px;
   --bo-sidebar-width: 260px;
   --bo-topbar-height: 64px;
 }

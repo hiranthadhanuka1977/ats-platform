@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="tokens.css" />
   <link rel="stylesheet" href="components.css" />
+  <link rel="stylesheet" href="layouts.css" />
   <link rel="stylesheet" href="ds-layout.css" />
 </head>
 <body>
@@ -23,6 +24,15 @@
           <li><a href="#colors">Colors</a></li>
           <li><a href="#typography">Typography</a></li>
           <li><a href="#spacing">Spacing & radius</a></li>
+          <li class="ds-nav-group">Layouts</li>
+          <li><a href="#layout-portal-public">Public portal</a></li>
+          <li><a href="#layout-portal-jobs">Job listing</a></li>
+          <li><a href="#layout-auth-split">Auth split</a></li>
+          <li><a href="#layout-dashboard-shell">Dashboard shell</a></li>
+          <li><a href="#layout-page-standard">Standard page</a></li>
+          <li><a href="#layout-dashboard-grid">Dashboard grid</a></li>
+          <li><a href="#layout-full-width">Full-width list</a></li>
+          <li><a href="#layout-pipeline">Pipeline viewport</a></li>
           <li class="ds-nav-group">Components</li>
           <li><a href="#buttons">Buttons</a></li>
           <li><a href="#forms">Forms</a></li>
@@ -37,7 +47,6 @@
           <li><a href="#journey">Onboarding journey</a></li>
           <li><a href="#tables">Tables</a></li>
           <li><a href="#empty">Empty state</a></li>
-          <li><a href="#login">Login layout</a></li>
         </ul>
       </nav>
     </aside>
@@ -48,7 +57,7 @@
         <p>
           Living reference for UI implemented in <strong>candidate-portal</strong> (3000),
           <strong>my-applications</strong> (3002), and <strong>backoffice</strong> (3001).
-          Tokens and class names match production CSS; use <code>data-surface="backoffice"</code> where staff UI differs.
+          Tokens, components, and page layout templates match production CSS; use <code>data-surface="backoffice"</code> where staff UI differs.
         </p>
         <div class="ds-meta">
           <span>Source: apps/*/src/styles</span>
@@ -207,6 +216,353 @@ background: var(--color-error-light); /* #fee2e2 */</script>
           <script type="text/plain" class="ds-markup-source"><div style="padding: var(--space-4); gap: var(--space-2); border-radius: var(--radius-md);">
   <!-- Portal: all radii 5px. Backoffice: see tokens.css [data-surface="backoffice"] -->
 </div></script>
+        </div>
+      </section>
+
+      <!-- Layout templates -->
+      <section class="ds-section" id="layouts">
+        <h2>Layout templates</h2>
+        <p class="ds-lead">Page shells and content regions from production apps. Wireframes show region roles; markup blocks match React layout components and route wrappers.</p>
+
+        <div class="ds-subsection" id="layout-portal-public">
+          <h3>Public portal page</h3>
+          <p>Candidate portal home and static pages — skip link, sticky header, main landmark, footer.</p>
+          <dl class="ds-layout-meta">
+            <dt>App</dt><dd>candidate-portal (3000)</dd>
+            <dt>Source</dt><dd><code>page.tsx</code>, <code>SiteHeader</code>, <code>SiteFooter</code></dd>
+          </dl>
+          <div class="ds-layout-preview">
+            <div class="ds-layout-preview-label">Structure</div>
+            <div class="ds-layout-preview--portal-public">
+              <div class="ds-wire ds-wire--header">header.site-header · sticky</div>
+              <div class="ds-wire ds-wire--hero">Hero / page intro (optional)</div>
+              <div class="ds-wire ds-wire--main">main#main-content · .container</div>
+              <div class="ds-wire ds-wire--footer">footer.site-footer</div>
+            </div>
+          </div>
+          <div class="ds-markup">
+            <div class="ds-markup-header">
+              <span class="ds-markup-title">Markup</span>
+              <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+            </div>
+            <pre class="ds-markup-pre"><code></code></pre>
+            <script type="text/plain" class="ds-markup-source"><a href="#main-content" class="skip-link">Skip to main content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <!-- logo, nav, auth -->
+  </div>
+</header>
+
+<main id="main-content">
+  <div class="container">
+    <!-- page content -->
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <!-- footer links -->
+  </div>
+</footer></script>
+          </div>
+        </div>
+
+        <div class="ds-subsection" id="layout-portal-jobs">
+          <h3>Job listing (filter + listings)</h3>
+          <p>Two-column layout inside <code>.container.content-layout</code>. Filter panel becomes a drawer below 1024px.</p>
+          <dl class="ds-layout-meta">
+            <dt>App</dt><dd>candidate-portal</dd>
+            <dt>Source</dt><dd><code>JobListingShell.tsx</code>, <code>candidate-portal.css</code></dd>
+          </dl>
+          <div class="ds-layout-preview">
+            <div class="ds-layout-preview-label">Structure</div>
+            <div class="ds-layout-preview--jobs">
+              <div class="ds-wire-row">
+                <div class="ds-wire ds-wire--filter">aside.filter-panel<br /><code>300px</code></div>
+                <div class="ds-wire ds-wire--list">section.job-listings<br />toolbar · cards · pagination</div>
+              </div>
+            </div>
+          </div>
+          <div class="ds-markup">
+            <div class="ds-markup-header">
+              <span class="ds-markup-title">Markup</span>
+              <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+            </div>
+            <pre class="ds-markup-pre"><code></code></pre>
+            <script type="text/plain" class="ds-markup-source"><div class="container content-layout">
+  <aside class="filter-panel" id="filterPanel" aria-label="Job filters">
+    <!-- JobFilterForm -->
+  </aside>
+  <section class="job-listings" aria-label="Job listings">
+    <!-- toolbar, JobCard list, pagination -->
+  </section>
+</div></script>
+          </div>
+        </div>
+
+        <div class="ds-subsection" id="layout-auth-split">
+          <h3>Auth split (login / register)</h3>
+          <p>Full-viewport split screen for staff and candidate auth. Visual panel + form panel stack on narrow viewports.</p>
+          <dl class="ds-layout-meta">
+            <dt>Apps</dt><dd>backoffice, my-applications</dd>
+            <dt>Source</dt><dd><code>login.css</code>, <code>bo-login-split</code></dd>
+          </dl>
+          <div class="ds-layout-preview">
+            <div class="ds-layout-preview-label">Structure</div>
+            <div class="ds-layout-preview--auth">
+              <div class="ds-wire ds-wire--visual">.bo-login-visual<br />brand + copy</div>
+              <div class="ds-wire ds-wire--form-panel">.bo-login-panel<br />form</div>
+            </div>
+          </div>
+          <div data-surface="backoffice" style="margin-top:var(--space-4)">
+            <div class="bo-login-split" style="min-height:auto;border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden">
+              <div class="bo-login-visual">
+                <h2 class="bo-login-heading" style="color:#fff;margin:0">TalentHub Back Office</h2>
+                <p style="margin:var(--space-3) 0 0;opacity:.85;max-width:28ch">Manage jobs, applications, and interviews in one place.</p>
+              </div>
+              <div class="bo-login-panel">
+                <h2 class="bo-login-heading">Sign in</h2>
+                <p style="color:var(--color-muted);margin:0 0 var(--space-6)">Staff credentials only</p>
+                <form class="auth-form" style="display:flex;flex-direction:column;gap:var(--space-5)" onsubmit="return false">
+                  <div class="form-group">
+                    <label class="form-label" for="layout-bo-email">Email</label>
+                    <input id="layout-bo-email" class="form-input" type="email" autocomplete="username" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="layout-bo-pass">Password</label>
+                    <input id="layout-bo-pass" class="form-input" type="password" autocomplete="current-password" />
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Log in</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="ds-markup">
+            <div class="ds-markup-header">
+              <span class="ds-markup-title">Markup</span>
+              <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+            </div>
+            <pre class="ds-markup-pre"><code></code></pre>
+            <script type="text/plain" class="ds-markup-source"><div class="bo-login-page">
+  <div class="bo-login-split">
+    <div class="bo-login-visual">
+      <div class="bo-login-visual-inner">
+        <h1 class="bo-login-heading">TalentHub Back Office</h1>
+      </div>
+    </div>
+    <div class="bo-login-panel">
+      <div class="bo-login-panel-inner">
+        <h2 class="bo-login-heading">Sign in</h2>
+        <form class="auth-form">
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input id="email" class="form-input" type="email" autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input id="password" class="form-input" type="password" autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div></script>
+          </div>
+        </div>
+
+        <div class="ds-subsection" id="layout-dashboard-shell">
+          <h3>Dashboard shell (sidebar + top bar)</h3>
+          <p>Authenticated staff and my-applications chrome. Children render inside <code>bo-main-wrap</code> after the top bar.</p>
+          <dl class="ds-layout-meta">
+            <dt>Apps</dt><dd>backoffice (3001), my-applications (3002)</dd>
+            <dt>Source</dt><dd><code>BackOfficeShell.tsx</code>, <code>MyAppsShell.tsx</code></dd>
+          </dl>
+          <div class="ds-layout-preview" data-surface="backoffice">
+            <div class="ds-layout-preview-label">Structure</div>
+            <div class="ds-layout-preview--shell">
+              <div class="ds-wire ds-wire--sidebar">nav.bo-sidebar · 260px</div>
+              <div class="ds-wire-column">
+                <div class="ds-wire ds-wire--topbar">header.bo-topbar · 64px</div>
+                <div class="ds-wire ds-wire--main">main.bo-content</div>
+              </div>
+            </div>
+          </div>
+          <div class="ds-markup">
+            <div class="ds-markup-header">
+              <span class="ds-markup-title">Markup</span>
+              <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+            </div>
+            <pre class="ds-markup-pre"><code></code></pre>
+            <script type="text/plain" class="ds-markup-source"><div class="bo-app">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div class="bo-shell">
+    <nav class="bo-sidebar" aria-label="Main navigation">
+      <!-- Sidebar links -->
+    </nav>
+    <div class="bo-sidebar-overlay" id="boOverlay" aria-hidden="true"></div>
+    <div class="bo-main-wrap">
+      <header class="bo-topbar">
+        <!-- menu toggle, breadcrumbs, user menu -->
+      </header>
+      <main id="main-content" class="bo-content">
+        <!-- route page content -->
+      </main>
+    </div>
+  </div>
+</div></script>
+          </div>
+        </div>
+
+        <div class="ds-subsection" id="layout-page-standard">
+          <h3>Standard backoffice page</h3>
+          <p>Default content width (max 1400px) with page title and optional subtitle before the main body.</p>
+          <dl class="ds-layout-meta">
+            <dt>Modifier</dt><dd><code>main.bo-content</code> (default)</dd>
+            <dt>Source</dt><dd><code>backoffice.css</code></dd>
+          </dl>
+          <div class="ds-layout-preview" data-surface="backoffice">
+            <div class="ds-layout-preview-label">Live preview</div>
+            <div style="padding:var(--space-4);background:var(--color-bg)">
+              <h1 class="bo-page-title">Page title</h1>
+              <p class="bo-page-sub">Optional subtitle or context line for the page.</p>
+              <div class="ds-wire ds-wire--panel">Page body — cards, forms, tables</div>
+            </div>
+          </div>
+          <div class="ds-markup">
+            <div class="ds-markup-header">
+              <span class="ds-markup-title">Markup</span>
+              <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+            </div>
+            <pre class="ds-markup-pre"><code></code></pre>
+            <script type="text/plain" class="ds-markup-source"><main id="main-content" class="bo-content">
+  <h1 class="bo-page-title">Jobs</h1>
+  <p class="bo-page-sub">Manage published and draft job postings.</p>
+  <!-- page body -->
+</main></script>
+          </div>
+        </div>
+
+        <div class="ds-subsection" id="layout-dashboard-grid">
+          <h3>Dashboard metrics grid</h3>
+          <p>12-column CSS grid for dashboard widgets. Use <code>bo-span-4</code>, <code>bo-span-8</code>, or <code>bo-span-12</code> on child cards.</p>
+          <dl class="ds-layout-meta">
+            <dt>Source</dt><dd><code>DashboardGrid.tsx</code>, <code>.bo-dash-grid</code></dd>
+          </dl>
+          <div class="ds-layout-preview ds-layout-preview--dash-grid" data-surface="backoffice">
+            <div class="ds-layout-preview-label">12-column grid</div>
+            <div class="bo-dash-grid">
+              <div class="bo-card bo-span-4"><div class="ds-wire" style="min-height:60px;border:none;background:transparent">bo-span-4</div></div>
+              <div class="bo-card bo-span-8"><div class="ds-wire" style="min-height:60px;border:none;background:transparent">bo-span-8</div></div>
+              <div class="bo-card bo-span-12"><div class="ds-wire" style="min-height:48px;border:none;background:transparent">bo-span-12</div></div>
+            </div>
+          </div>
+          <div class="ds-markup">
+            <div class="ds-markup-header">
+              <span class="ds-markup-title">Markup</span>
+              <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+            </div>
+            <pre class="ds-markup-pre"><code></code></pre>
+            <script type="text/plain" class="ds-markup-source"><main id="main-content" class="bo-content">
+  <h1 class="bo-page-title">Dashboard</h1>
+  <div class="bo-dash-grid">
+    <div class="bo-card bo-span-4"><!-- stat widget --></div>
+    <div class="bo-card bo-span-8"><!-- chart --></div>
+    <div class="bo-card bo-span-12"><!-- full-width table --></div>
+  </div>
+</main></script>
+          </div>
+        </div>
+
+        <div class="ds-subsection" id="layout-full-width">
+          <h3>Full-width list / board</h3>
+          <p>Applications and interviews pages drop the 1400px cap so tables and boards use the full main area.</p>
+          <dl class="ds-layout-meta">
+            <dt>Modifiers</dt><dd><code>bo-content--applications</code>, <code>bo-content--interviews</code></dd>
+            <dt>Routes</dt><dd><code>/applications</code>, <code>/interviews</code></dd>
+          </dl>
+          <div class="ds-layout-preview" data-surface="backoffice">
+            <div class="ds-layout-preview-label">Structure</div>
+            <div style="padding:var(--space-3);background:var(--color-bg)">
+              <div class="bo-applications-page-header">
+                <div>
+                  <h1 class="bo-page-title" style="margin-bottom:0">Applications</h1>
+                  <p class="bo-page-sub" style="margin-bottom:0">Pipeline overview</p>
+                </div>
+                <div class="ds-wire" style="min-height:32px;min-width:120px;padding:var(--space-2)">view toggle</div>
+              </div>
+              <div class="ds-wire ds-wire--panel" style="margin-top:var(--space-3)">Table or list — full width</div>
+            </div>
+          </div>
+          <div class="ds-markup">
+            <div class="ds-markup-header">
+              <span class="ds-markup-title">Markup</span>
+              <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+            </div>
+            <pre class="ds-markup-pre"><code></code></pre>
+            <script type="text/plain" class="ds-markup-source"><main id="main-content" class="bo-content bo-content--applications">
+  <div class="bo-applications-page-header">
+    <div>
+      <h1 class="bo-page-title">Applications</h1>
+      <p class="bo-page-sub">Review and move candidates through the pipeline.</p>
+    </div>
+    <!-- filters, view mode toggle -->
+  </div>
+  <!-- table or list view -->
+</main>
+
+<!-- Interviews -->
+<main id="main-content" class="bo-content bo-content--interviews">
+  <h1 class="bo-page-title">Interviews</h1>
+  <!-- interview schedule -->
+</main></script>
+          </div>
+        </div>
+
+        <div class="ds-subsection" id="layout-pipeline">
+          <h3>Pipeline full viewport</h3>
+          <p>Kanban board mode adds <code>bo-content--pipeline</code> so columns fill remaining viewport height below the page header.</p>
+          <dl class="ds-layout-meta">
+            <dt>Modifier</dt><dd><code>bo-content--applications bo-content--pipeline</code></dd>
+            <dt>Source</dt><dd><code>ApplicationsPageClient.tsx</code></dd>
+          </dl>
+          <div class="ds-layout-preview ds-layout-preview--pipeline" data-surface="backoffice">
+            <div class="ds-layout-preview-label">Kanban columns (scroll horizontally)</div>
+            <div class="bo-applications-page-header" style="margin-bottom:0">
+              <h1 class="bo-page-title" style="margin:0;font-size:var(--text-xl)">Applications</h1>
+            </div>
+            <div class="bo-applications-pipeline-slot">
+              <div class="ds-wire-columns">
+                <div class="ds-wire-col">Applied</div>
+                <div class="ds-wire-col">Screening</div>
+                <div class="ds-wire-col">Interview</div>
+                <div class="ds-wire-col">Offer</div>
+              </div>
+            </div>
+          </div>
+          <div class="ds-markup">
+            <div class="ds-markup-header">
+              <span class="ds-markup-title">Markup</span>
+              <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+            </div>
+            <pre class="ds-markup-pre"><code></code></pre>
+            <script type="text/plain" class="ds-markup-source"><main id="main-content" class="bo-content bo-content--applications bo-content--pipeline">
+  <div class="bo-applications-page-header">
+    <div>
+      <h1 class="bo-page-title">Applications</h1>
+      <p class="bo-page-sub">Drag cards between stages or use the status menu.</p>
+    </div>
+    <!-- list / pipeline view toggle -->
+  </div>
+  <div class="bo-applications-pipeline-slot">
+    <div class="bo-pipeline-board-body">
+      <div class="bo-pipeline-columns">
+        <div class="bo-pipeline-column"><!-- stage column --></div>
+      </div>
+    </div>
+  </div>
+</main></script>
+          </div>
         </div>
       </section>
 
@@ -882,65 +1238,8 @@ background: var(--color-error-light); /* #fee2e2 */</script>
         </div>
       </section>
 
-      <!-- Login -->
-      <section class="ds-section" id="login">
-        <h2>Login layout</h2>
-        <p class="ds-lead">Backoffice / auth split screen (<code>login.css</code>).</p>
-        <div class="ds-grid-2" data-surface="backoffice">
-          <div class="bo-login-visual">
-            <h2 class="bo-login-heading" style="color:#fff;margin:0">TalentHub Back Office</h2>
-            <p style="margin:var(--space-3) 0 0;opacity:.85;max-width:28ch">Manage jobs, applications, and interviews in one place.</p>
-          </div>
-          <div class="ds-panel">
-            <h2 class="bo-login-heading">Sign in</h2>
-            <p style="color:var(--color-muted);margin:0 0 var(--space-6)">Staff credentials only</p>
-            <form class="auth-form" style="display:flex;flex-direction:column;gap:var(--space-5)" onsubmit="return false">
-              <div class="form-group">
-                <label class="form-label" for="bo-email">Email</label>
-                <input id="bo-email" class="form-input" type="email" autocomplete="username" />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="bo-pass">Password</label>
-                <input id="bo-pass" class="form-input" type="password" autocomplete="current-password" />
-              </div>
-              <button type="submit" class="btn btn-primary btn-block">Log in</button>
-            </form>
-          </div>
-        </div>
-        <div class="ds-markup">
-          <div class="ds-markup-header">
-            <span class="ds-markup-title">Markup</span>
-            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
-          </div>
-          <pre class="ds-markup-pre"><code></code></pre>
-          <script type="text/plain" class="ds-markup-source"><div class="bo-login-split">
-  <div class="bo-login-visual">
-    <div class="bo-login-visual-inner">
-      <h1 class="bo-login-heading">TalentHub Back Office</h1>
-    </div>
-  </div>
-  <div class="bo-login-panel">
-    <div class="bo-login-panel-inner">
-      <h2 class="bo-login-heading">Sign in</h2>
-      <form class="auth-form">
-        <div class="form-group">
-          <label class="form-label" for="email">Email</label>
-          <input id="email" class="form-input" type="email" autocomplete="username" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <input id="password" class="form-input" type="password" autocomplete="current-password" />
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Log in</button>
-      </form>
-    </div>
-  </div>
-</div></script>
-        </div>
-      </section>
-
       <footer style="padding:var(--space-8) 0;color:var(--color-muted);font-size:var(--text-xs);border-top:1px solid var(--color-border)">
-        <p>Generated from monorepo implementation · <a href="../README.md">docs index</a> · Update <code>tokens.css</code> / <code>components.css</code> when styles change.</p>
+        <p>Generated from monorepo implementation · <a href="../README.md">docs index</a> · Update <code>tokens.css</code>, <code>components.css</code>, and <code>layouts.css</code> when styles change.</p>
       </footer>
     </main>
   </div>

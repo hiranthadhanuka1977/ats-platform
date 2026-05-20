@@ -1,0 +1,373 @@
+/**
+ * Layout templates — wireframe previews + structural classes for the design system.
+ * Source: candidate-portal.css, backoffice.css, login.css, shell components.
+ */
+
+/* ─── Wireframe previews (design system only) ─── */
+.ds-layout-preview {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.ds-layout-preview-label {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface-alt);
+  border-bottom: 1px solid var(--color-border);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ds-wire {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-3);
+  font-weight: var(--weight-medium);
+  line-height: 1.35;
+  border: 1px dashed var(--color-border-hover);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary-light) 35%, var(--color-surface));
+  color: var(--color-text-secondary);
+}
+
+.ds-wire code {
+  font-size: 0.65rem;
+  display: block;
+  margin-top: 2px;
+  color: var(--color-muted);
+}
+
+.ds-wire--header { background: color-mix(in srgb, var(--color-surface-alt) 80%, #fff); min-height: 48px; }
+.ds-wire--hero { background: color-mix(in srgb, var(--color-primary-light) 55%, #fff); min-height: 64px; }
+.ds-wire--sidebar { background: var(--color-secondary); color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.15); min-height: 200px; }
+.ds-wire--topbar { background: var(--color-surface); min-height: 40px; border-style: solid; }
+.ds-wire--main { flex: 1; min-height: 120px; background: var(--color-bg); }
+.ds-wire--footer { background: var(--color-secondary); color: rgba(255,255,255,.7); border-color: rgba(255,255,255,.12); min-height: 40px; }
+.ds-wire--filter { min-width: 120px; min-height: 140px; flex-shrink: 0; }
+.ds-wire--list { flex: 1; min-height: 140px; }
+.ds-wire--panel { min-height: 80px; }
+.ds-wire--visual { background: linear-gradient(145deg, #0f172a, #2563eb); color: rgba(255,255,255,.9); border: none; min-height: 100px; }
+.ds-wire--form-panel { background: var(--color-bg); min-height: 100px; }
+
+/* Portal public page */
+.ds-layout-preview--portal-public {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.ds-layout-preview--portal-public .ds-wire-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Job listing two-column */
+.ds-layout-preview--jobs .ds-wire-row {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 700px) {
+  .ds-layout-preview--jobs .ds-wire-row { flex-direction: column; }
+}
+
+/* Dashboard shell */
+.ds-layout-preview--shell {
+  display: flex;
+  min-height: 220px;
+}
+
+.ds-layout-preview--shell .ds-wire--sidebar {
+  width: 72px;
+  flex-shrink: 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.65rem;
+  padding: var(--space-2);
+}
+
+.ds-layout-preview--shell .ds-wire-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-bg);
+}
+
+/* Auth split */
+.ds-layout-preview--auth {
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+}
+
+@media (min-width: 640px) {
+  .ds-layout-preview--auth { flex-direction: row; }
+  .ds-layout-preview--auth .ds-wire--visual { flex: 1; }
+  .ds-layout-preview--auth .ds-wire--form-panel { flex: 1; }
+}
+
+/* Dashboard grid */
+.ds-layout-preview--dash-grid {
+  padding: var(--space-3);
+  background: var(--color-bg);
+}
+
+.ds-layout-preview--dash-grid .bo-dash-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-3);
+}
+
+.ds-layout-preview--dash-grid .bo-span-4 { grid-column: span 4; }
+.ds-layout-preview--dash-grid .bo-span-8 { grid-column: span 8; }
+.ds-layout-preview--dash-grid .bo-span-12 { grid-column: span 12; }
+
+@media (max-width: 700px) {
+  .ds-layout-preview--dash-grid .bo-span-4,
+  .ds-layout-preview--dash-grid .bo-span-8 { grid-column: span 12; }
+}
+
+/* Pipeline full height */
+.ds-layout-preview--pipeline {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  padding: var(--space-2);
+  gap: var(--space-2);
+  background: var(--color-bg);
+}
+
+.ds-layout-preview--pipeline .ds-wire-columns {
+  display: flex;
+  gap: var(--space-2);
+  flex: 1;
+  overflow-x: auto;
+}
+
+.ds-layout-preview--pipeline .ds-wire-col {
+  flex: 0 0 100px;
+  min-height: 100px;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  text-align: center;
+  padding: var(--space-2);
+}
+
+/* ─── Minimal structural classes (match production markup) ─── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  z-index: 2000;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}
+.skip-link:focus { top: var(--space-2); color: #fff; }
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+}
+
+.site-footer {
+  background: var(--color-secondary);
+  color: rgba(255, 255, 255, 0.75);
+  padding: var(--space-8) 0;
+}
+
+.content-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+@media (min-width: 1024px) {
+  .content-layout { flex-direction: row; }
+  .filter-panel {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    flex-shrink: 0;
+    border-right: 1px solid var(--color-border);
+    padding-right: var(--space-5);
+  }
+  .job-listings { flex: 1; min-width: 0; }
+}
+
+.filter-panel { padding: var(--space-4); }
+.job-listings { padding: var(--space-4); }
+
+.bo-app { min-height: 100vh; background: var(--color-bg); }
+.bo-shell { display: flex; min-height: 100vh; }
+
+.bo-sidebar {
+  width: var(--bo-sidebar-width);
+  flex-shrink: 0;
+  background: var(--color-secondary);
+  color: #e2e8f0;
+  padding: var(--space-4);
+  font-size: var(--text-xs);
+}
+
+.bo-main-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.bo-topbar {
+  height: var(--bo-topbar-height);
+  padding: 0 var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bo-content {
+  flex: 1;
+  padding: var(--space-6);
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.bo-content.bo-content--applications,
+.bo-content.bo-content--interviews { max-width: none; }
+
+.bo-content.bo-content--applications.bo-content--pipeline {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  max-width: none;
+}
+
+.bo-page-title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-extrabold);
+  color: var(--color-secondary);
+  margin: 0 0 var(--space-2);
+}
+
+.bo-page-sub {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  margin: 0 0 var(--space-6);
+}
+
+.bo-applications-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.bo-applications-pipeline-slot {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bo-login-page { min-height: 100vh; background: var(--color-surface); }
+.bo-login-split { display: flex; flex-direction: column; min-height: 100vh; }
+
+@media (min-width: 900px) {
+  .bo-login-split { flex-direction: row; }
+  .bo-login-visual { flex: 1 1 48%; }
+  .bo-login-panel { flex: 1 1 52%; }
+}
+
+.bo-login-visual {
+  min-height: 200px;
+  background: linear-gradient(145deg, #0f172a 0%, #1e3a5f 45%, #2563eb 100%);
+}
+
+.bo-login-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-8);
+  background: var(--color-bg);
+}
+
+.bo-dash-grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.bo-span-4 { grid-column: span 4; }
+.bo-span-8 { grid-column: span 8; }
+.bo-span-12 { grid-column: span 12; }
+
+.ds-layout-meta {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+.ds-layout-meta dt {
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+  display: inline;
+}
+.ds-layout-meta dt::after { content: ": "; }
+.ds-layout-meta dd {
+  display: inline;
+  margin: 0 var(--space-4) 0 0;
+}
