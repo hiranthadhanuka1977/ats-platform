@@ -37,6 +37,8 @@ Then visit [http://localhost:5199](http://localhost:5199).
 
 When you change production styles, update `tokens.css` / `components.css` here and bump the **Last updated** date in `index.html` (sidebar + `<time datetime="…">`).
 
+Each component section includes a **Markup** block with a **Copy** button — paste-ready HTML matching production class names.
+
 ## Surfaces
 
 - Default sections use **portal** tokens (5px radius, stronger input borders).

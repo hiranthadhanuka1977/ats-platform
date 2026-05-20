@@ -126,6 +126,19 @@
             <div class="ds-swatch"><div class="ds-swatch-chip" style="background:#e2e8f0"></div><div class="ds-swatch-info"><strong>Border</strong><span class="ds-swatch-hex">#e2e8f0</span><code>--color-border</code></div></div>
           </div>
         </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup — CSS variables</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source">color: var(--color-primary);        /* #2563eb */
+background: var(--color-surface);    /* #ffffff */
+border-color: var(--color-border);   /* #cbd5e1 portal / #e2e8f0 backoffice */
+color: var(--color-text);            /* #0f172a */
+color: var(--color-muted);           /* #475569 portal / #6b7280 backoffice */
+background: var(--color-error-light); /* #fee2e2 */</script>
+        </div>
       </section>
 
       <!-- Typography -->
@@ -147,6 +160,18 @@
           <p class="ds-type-meta">--text-sm · 0.875rem</p>
           <div class="ds-type-sample" style="font-size:var(--text-xs);color:var(--color-muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600">Caption xs — Meta, column headers</div>
           <p class="ds-type-meta">--text-xs · 0.75rem</p>
+        </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><h1 class="job-listing-hero-title">Find your next role</h1>
+<h2 class="section-title">Open positions</h2>
+<h3 class="job-card-title">Senior Business Analyst</h3>
+<p class="job-card-summary">Body copy uses --font-body at --text-sm or --text-base.</p>
+<p class="bo-card-title">UPPERCASE SECTION LABEL</p></script>
         </div>
       </section>
 
@@ -172,6 +197,16 @@
             <span class="ds-surface-tag">Backoffice</span>
             <p><code>--radius-sm</code> 2px · <code>--radius-md</code> 4px · <code>--radius-lg</code> 6px · pills <code>9999px</code>.</p>
           </div>
+        </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><div style="padding: var(--space-4); gap: var(--space-2); border-radius: var(--radius-md);">
+  <!-- Portal: all radii 5px. Backoffice: see tokens.css [data-surface="backoffice"] -->
+</div></script>
         </div>
       </section>
 
@@ -201,6 +236,32 @@
           </div>
           <span class="ds-state-label">Block</span>
           <button type="button" class="btn btn-primary btn-block" style="max-width:320px">Block primary</button>
+        </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><!-- Variants -->
+<button type="button" class="btn btn-primary">Primary</button>
+<button type="button" class="btn btn-secondary">Secondary</button>
+<button type="button" class="btn btn-ghost">Ghost</button>
+<button type="button" class="btn btn-danger">Danger</button>
+
+<!-- Sizes -->
+<button type="button" class="btn btn-primary btn-lg">Large</button>
+<button type="button" class="btn btn-primary">Default</button>
+<button type="button" class="btn btn-primary btn-sm">Small</button>
+
+<!-- Link styled as button (portal job cards) -->
+<a href="/jobs/example" class="btn btn-primary btn-sm">Apply</a>
+
+<!-- Disabled -->
+<button type="button" class="btn btn-primary" disabled>Disabled</button>
+
+<!-- Full width -->
+<button type="button" class="btn btn-primary btn-block">Block primary</button></script>
         </div>
       </section>
 
@@ -249,6 +310,40 @@
             <label for="ds-toggle">Remote only</label>
           </div>
         </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><div class="form-group">
+  <label class="form-label" for="email">Email</label>
+  <input id="email" class="form-input" type="email" placeholder="you@example.com" autocomplete="email" />
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="department">Department</label>
+  <select id="department" class="form-select">
+    <option>Engineering</option>
+  </select>
+</div>
+
+<label class="form-checkbox">
+  <input type="checkbox" name="remember" />
+  <span class="form-checkbox-mark" aria-hidden="true"></span>
+  Remember me
+</label>
+
+<!-- Error state -->
+<input class="form-input form-input--error" type="password" aria-invalid="true" />
+<p class="form-error" role="alert">Password must be at least 8 characters.</p>
+
+<!-- Toggle -->
+<div class="toggle-wrapper">
+  <button type="button" class="toggle" role="switch" aria-checked="false" id="remote-only"></button>
+  <label for="remote-only">Remote only</label>
+</div></script>
+        </div>
       </section>
 
       <!-- Badges -->
@@ -282,6 +377,25 @@
             <span class="bo-admin-pill">draft</span>
           </div>
         </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><span class="badge badge-primary">Full-time</span>
+<span class="badge badge-accent">Remote</span>
+<span class="badge badge-success">New</span>
+<span class="badge badge-warning">Urgent</span>
+
+<button type="button" class="hero-pill is-active">All</button>
+<button type="button" class="hero-pill">Engineering</button>
+
+<!-- Backoffice status pills -->
+<span class="bo-candidate-status-pill bo-candidate-status-pill--shortlisted">Shortlisted</span>
+<span class="bo-candidate-status-pill bo-candidate-status-pill--rejected">Rejected</span>
+<span class="bo-admin-pill">draft</span></script>
+        </div>
       </section>
 
       <!-- Icon buttons -->
@@ -298,9 +412,25 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
           </button>
         </div>
-      </section>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><button type="button" class="icon-btn" aria-label="Share">
+  <!-- SVG icon, aria-hidden="true" -->
+</button>
 
-      <!-- Cards -->
+<button type="button" class="icon-btn icon-btn--bookmark" aria-label="Bookmark job" aria-pressed="false">
+  <!-- SVG icon -->
+</button>
+
+<button type="button" class="icon-btn icon-btn--bookmark" aria-label="Remove bookmark" aria-pressed="true">
+  <!-- SVG icon, filled when pressed -->
+</button></script>
+        </div>
+      </section>
       <section class="ds-section" id="cards">
         <h2>Cards</h2>
         <div class="ds-grid-2">
@@ -330,6 +460,36 @@
             </div>
           </div>
         </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><article class="job-card job-card--featured">
+  <div class="job-card-header">
+    <h3 class="job-card-title">Senior Business Analyst</h3>
+    <span class="job-card-pill" role="img" aria-label="Featured">Featured</span>
+  </div>
+  <p class="job-card-meta">Colombo · Engineering · Full-time</p>
+  <p class="job-card-summary">Lead requirements workshops…</p>
+  <footer class="job-card-footer">
+    <div class="job-card-tags">
+      <span class="badge badge-primary">Full-time</span>
+    </div>
+    <div class="job-card-actions">
+      <a href="/jobs/example" class="btn btn-secondary btn-sm">View</a>
+      <a href="/apply/example" class="btn btn-primary btn-sm">Apply</a>
+    </div>
+  </footer>
+</article>
+
+<!-- Backoffice dashboard card -->
+<div class="bo-card">
+  <h3 class="bo-card-title">Hiring efficiency</h3>
+  <p>78%</p>
+</div></script>
+        </div>
       </section>
 
       <!-- Alerts -->
@@ -339,6 +499,16 @@
           <div class="bo-admin-alert" role="alert">Could not save job posting. Please try again.</div>
           <div class="bo-admin-alert bo-admin-alert--success" role="status">Job published successfully.</div>
           <div class="bo-login-error">Invalid email or password.</div>
+        </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><div class="bo-admin-alert" role="alert">Could not save job posting.</div>
+<div class="bo-admin-alert bo-admin-alert--success" role="status">Job published successfully.</div>
+<p class="bo-login-error">Invalid email or password.</p></script>
         </div>
       </section>
 
@@ -352,6 +522,19 @@
           <button type="button" class="pagination-btn">3</button>
           <button type="button" class="pagination-btn" aria-label="Next">›</button>
         </nav>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><nav class="pagination" aria-label="Pagination">
+  <button type="button" class="pagination-btn" disabled aria-label="Previous">‹</button>
+  <button type="button" class="pagination-btn is-active" aria-current="page">1</button>
+  <button type="button" class="pagination-btn">2</button>
+  <button type="button" class="pagination-btn" aria-label="Next">›</button>
+</nav></script>
+        </div>
       </section>
 
       <!-- Toggles -->
@@ -369,6 +552,25 @@
             <button type="button" class="bo-candidate-tab" role="tab">Rejected</button>
             <button type="button" class="bo-candidate-tab" role="tab">All</button>
           </div>
+        </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><div class="bo-jobs-view-toggle" role="group" aria-label="Applications view">
+  <button type="button" aria-pressed="true" aria-label="Pipeline view">…</button>
+  <button type="button" aria-pressed="false" aria-label="List view">…</button>
+</div>
+
+<div class="bo-candidate-tabs" role="tablist">
+  <button type="button" class="bo-candidate-tab is-active" role="tab" aria-selected="true">Active</button>
+  <button type="button" class="bo-candidate-tab" role="tab">Rejected</button>
+</div>
+
+<button type="button" class="bo-candidate-tab">← Previous week</button>
+<button type="button" class="bo-candidate-tab is-active">This week</button></script>
         </div>
       </section>
 
@@ -401,6 +603,42 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><!-- Render via portal in React; structure: -->
+<div class="bo-modal-backdrop">
+  <div class="bo-modal bo-modal--status" role="dialog" aria-modal="true" aria-labelledby="reject-title">
+    <h2 id="reject-title" class="bo-modal-title">Reject application</h2>
+    <p class="bo-modal-warning">This action cannot be undone without reopening.</p>
+    <label class="form-label">
+      Reason
+      <textarea class="form-input" rows="3" placeholder="Required"></textarea>
+    </label>
+    <label class="bo-schedule-interview-checkbox">
+      <input type="checkbox" checked /> Notify candidate by email
+    </label>
+    <div class="bo-modal-actions">
+      <button type="button" class="btn btn-secondary">Cancel</button>
+      <button type="button" class="btn btn-danger">Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule interview modal -->
+<div class="bo-modal bo-modal--status" role="dialog" aria-labelledby="schedule-title">
+  <h2 id="schedule-title" class="bo-modal-title">Schedule interview</h2>
+  <label class="form-label">Start <input class="form-input" type="datetime-local" /></label>
+  <label class="form-label">End <input class="form-input" type="datetime-local" /></label>
+  <div class="bo-modal-actions">
+    <button type="button" class="btn btn-secondary">Cancel</button>
+    <button type="button" class="btn btn-primary">Schedule</button>
+  </div>
+</div></script>
         </div>
       </section>
 
@@ -463,6 +701,42 @@
             </div>
           </div>
         </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><div class="bo-pipeline-columns">
+  <div class="bo-pipeline-column">
+    <header class="bo-pipeline-column-header">
+      <h3 class="bo-pipeline-column-title">Shortlisted</h3>
+      <p class="bo-pipeline-column-count">2 applications</p>
+    </header>
+    <div class="bo-pipeline-column-cards">
+      <article class="bo-pipeline-card">
+        <div class="bo-pipeline-card-main">
+          <div class="bo-relevance-ring" role="img" aria-label="Relevance 82">82</div>
+          <div class="bo-pipeline-card-body">
+            <p class="bo-pipeline-card-job">Product Manager</p>
+            <span class="bo-pipeline-card-candidate" title="Alexandra Chen">Alexandra Chen</span>
+            <p class="bo-pipeline-card-meta">Updated 2d ago</p>
+          </div>
+        </div>
+        <button type="button" class="bo-pipeline-card-menu-trigger" aria-label="Move application">⋮</button>
+      </article>
+    </div>
+  </div>
+  <div class="bo-pipeline-column bo-pipeline-column--drop-valid">…</div>
+  <div class="bo-pipeline-column bo-pipeline-column--drop-invalid">…</div>
+</div>
+
+<div class="bo-pipeline-card-menu">
+  <p class="bo-pipeline-card-menu-label">Move to</p>
+  <button type="button">Under review</button>
+  <button type="button" class="bo-pipeline-card-menu-danger">Reject…</button>
+</div></script>
+        </div>
       </section>
 
       <!-- Journey -->
@@ -505,6 +779,36 @@
             </li>
           </ol>
         </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><div class="myapps-journey-progress">
+  <div class="myapps-journey-progress-bar">
+    <div class="myapps-journey-progress-fill" style="width:50%"></div>
+  </div>
+</div>
+
+<ol class="myapps-journey-track">
+  <li class="myapps-journey-step myapps-journey-step--complete">
+    <span class="myapps-journey-marker">✓</span>
+    <div class="myapps-journey-step-panel">
+      <p class="myapps-journey-step-kicker">Step 1</p>
+      <p class="myapps-journey-step-title">Verify email</p>
+    </div>
+  </li>
+  <li class="myapps-journey-step myapps-journey-step--current">
+    <span class="myapps-journey-marker">2</span>
+    <div class="myapps-journey-step-panel">
+      <p class="myapps-journey-step-kicker">Step 2</p>
+      <p class="myapps-journey-step-title">Complete profile</p>
+      <button type="button" class="btn btn-primary btn-sm">Continue</button>
+    </div>
+  </li>
+</ol></script>
+        </div>
       </section>
 
       <!-- Tables -->
@@ -529,6 +833,29 @@
             </tbody>
           </table>
         </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><table class="bo-admin-table">
+  <thead>
+    <tr>
+      <th>Candidate</th>
+      <th>Status</th>
+      <th>Applied</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="/candidates/id">Morgan Lee</a></td>
+      <td><span class="bo-candidate-status-pill bo-candidate-status-pill--shortlisted">Shortlisted</span></td>
+      <td>12 May 2026</td>
+    </tr>
+  </tbody>
+</table></script>
+        </div>
       </section>
 
       <!-- Empty -->
@@ -540,6 +867,18 @@
             <p class="empty-state-text">Try adjusting your filters or search terms.</p>
             <button type="button" class="btn btn-primary" style="margin-top:var(--space-4)">Clear filters</button>
           </div>
+        </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><div class="empty-state">
+  <p class="empty-state-title">No jobs found</p>
+  <p class="empty-state-text">Try adjusting your filters or search terms.</p>
+  <button type="button" class="btn btn-primary">Clear filters</button>
+</div></script>
         </div>
       </section>
 
@@ -568,6 +907,36 @@
             </form>
           </div>
         </div>
+        <div class="ds-markup">
+          <div class="ds-markup-header">
+            <span class="ds-markup-title">Markup</span>
+            <button type="button" class="ds-markup-copy btn btn-sm btn-secondary">Copy</button>
+          </div>
+          <pre class="ds-markup-pre"><code></code></pre>
+          <script type="text/plain" class="ds-markup-source"><div class="bo-login-split">
+  <div class="bo-login-visual">
+    <div class="bo-login-visual-inner">
+      <h1 class="bo-login-heading">TalentHub Back Office</h1>
+    </div>
+  </div>
+  <div class="bo-login-panel">
+    <div class="bo-login-panel-inner">
+      <h2 class="bo-login-heading">Sign in</h2>
+      <form class="auth-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input id="email" class="form-input" type="email" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input id="password" class="form-input" type="password" autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+      </form>
+    </div>
+  </div>
+</div></script>
+        </div>
       </section>
 
       <footer style="padding:var(--space-8) 0;color:var(--color-muted);font-size:var(--text-xs);border-top:1px solid var(--color-border)">
@@ -578,6 +947,40 @@
 
   <script>
     (function () {
+      /* Populate markup blocks from embedded sources */
+      document.querySelectorAll(".ds-markup").forEach(function (block) {
+        var source = block.querySelector(".ds-markup-source");
+        var code = block.querySelector(".ds-markup-pre code");
+        if (source && code) {
+          code.textContent = source.textContent.replace(/^\n/, "").replace(/\n$/, "");
+        }
+        var copyBtn = block.querySelector(".ds-markup-copy");
+        if (copyBtn && code) {
+          copyBtn.addEventListener("click", function () {
+            var text = code.textContent;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(function () {
+                copyBtn.textContent = "Copied!";
+                copyBtn.classList.add("is-copied");
+                setTimeout(function () {
+                  copyBtn.textContent = "Copy";
+                  copyBtn.classList.remove("is-copied");
+                }, 2000);
+              });
+            } else {
+              var ta = document.createElement("textarea");
+              ta.value = text;
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand("copy");
+              document.body.removeChild(ta);
+              copyBtn.textContent = "Copied!";
+            }
+          });
+        }
+      });
+
+      /* Sidebar active section */
       var links = document.querySelectorAll(".ds-nav a");
       var sections = [];
       links.forEach(function (a) {
