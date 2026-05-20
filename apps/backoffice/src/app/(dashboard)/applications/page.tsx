@@ -30,6 +30,7 @@ export default async function ApplicationsPage() {
           slug: true,
         },
       },
+      _count: { select: { interviews: true } },
     },
     take: 500,
   });
@@ -59,13 +60,12 @@ export default async function ApplicationsPage() {
         id: application.jobPosting.id,
         title: application.jobPosting.title,
       },
+      hasScheduledInterview: application._count.interviews > 0,
     };
   });
 
   return (
-    <main id="main-content" className="bo-content">
-      <h1 className="bo-page-title">Applications</h1>
-      <p className="bo-page-sub">Switch between table and pipeline views to manage applications.</p>
+    <main id="main-content" className="bo-content bo-content--applications">
       <ApplicationsPageClient initialApplications={initialApplications} />
     </main>
   );

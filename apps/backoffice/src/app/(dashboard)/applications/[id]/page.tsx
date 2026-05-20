@@ -180,6 +180,7 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
       <ApplicationDetailsHeader
         applicationId={application.id}
         status={application.status}
+        hasScheduledInterview={application.interviews.length > 0}
         candidateName={fullName}
         candidateEmail={candidate.email}
         jobTitle={application.jobPosting.title}

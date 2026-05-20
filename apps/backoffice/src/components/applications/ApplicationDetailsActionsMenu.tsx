@@ -12,6 +12,7 @@ import {
 type Props = {
   applicationId: string;
   status: string;
+  hasScheduledInterview?: boolean;
   candidateName: string;
   candidateEmail: string;
   jobTitle: string;
@@ -44,6 +45,7 @@ function ActionIcon({ actionId }: { actionId: ApplicationActionId }) {
 export function ApplicationDetailsActionsMenu({
   applicationId,
   status,
+  hasScheduledInterview = false,
   candidateName,
   candidateEmail,
   jobTitle,
@@ -56,7 +58,7 @@ export function ApplicationDetailsActionsMenu({
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [busyActionId, setBusyActionId] = useState<ApplicationActionId | null>(null);
 
-  const actions = getApplicationActionsForStatus(status);
+  const actions = getApplicationActionsForStatus(status, { hasScheduledInterview });
 
   useEffect(() => {
     const onClickOutside = (event: MouseEvent) => {

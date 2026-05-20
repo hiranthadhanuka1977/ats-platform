@@ -43,9 +43,15 @@ export function normalizeApplicationStatusForActions(status: string): Applicatio
   return STATUS_ALIASES[status] ?? status;
 }
 
-export function getApplicationActionsForStatus(status: string): ApplicationActionDefinition[] {
+export function getApplicationActionsForStatus(
+  status: string,
+  options?: { hasScheduledInterview?: boolean },
+): ApplicationActionDefinition[] {
   const normalized = normalizeApplicationStatusForActions(status);
-  const ids =
+  let ids =
     APPLICATION_STATUS_ACTION_IDS[normalized as ApplicationStatusValue] ?? DEFAULT_ACTION_IDS;
+  if (options?.hasScheduledInterview) {
+    ids = ids.filter((id) => id !== "schedule_interview");
+  }
   return ids.map((id) => APPLICATION_ACTION_DEFINITIONS[id]);
 }

@@ -64,6 +64,23 @@ export async function POST(request: NextRequest, ctx: Params) {
     return NextResponse.json({ error: { code: "NOT_FOUND", message: "Application not found." } }, { status: 404 });
   }
 
+  const existingInterview = await prisma.applicationInterview.findFirst({
+    where: { applicationId },
+    select: { id: true },
+  });
+
+  if (existingInterview) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "CONFLICT",
+          message: "This application already has a scheduled interview. Reschedule or remove it before scheduling another.",
+        },
+      },
+      { status: 409 },
+    );
+  }
+
   const now = new Date();
   const notificationSentAt = notifyCandidateEmail ? now : null;
 

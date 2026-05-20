@@ -7,6 +7,7 @@ import { ApplicationDetailsActionsMenu } from "@/components/applications/Applica
 type Props = {
   applicationId: string;
   status: string;
+  hasScheduledInterview?: boolean;
   candidateName: string;
   candidateEmail: string;
   jobTitle: string;
@@ -18,6 +19,7 @@ type Props = {
 export function ApplicationDetailsHeader({
   applicationId,
   status,
+  hasScheduledInterview = false,
   candidateName,
   candidateEmail,
   jobTitle,
@@ -64,6 +66,7 @@ export function ApplicationDetailsHeader({
           <ApplicationDetailsActionsMenu
             applicationId={applicationId}
             status={status}
+            hasScheduledInterview={hasScheduledInterview}
             candidateName={candidateName}
             candidateEmail={candidateEmail}
             jobTitle={jobTitle}

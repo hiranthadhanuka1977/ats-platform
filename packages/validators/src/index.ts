@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export { z };
+export * from "./application-status";
 
 /** Example shared schema — extend with API DTOs. */
 export const paginationQuerySchema = z.object({

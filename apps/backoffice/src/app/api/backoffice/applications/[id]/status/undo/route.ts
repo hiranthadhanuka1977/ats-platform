@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { applicationStatusPatchSchema } from "@ats-platform/validators";
+import { applicationStatusUndoSchema } from "@ats-platform/validators";
 import { requireStaffSession } from "@/lib/admin-auth";
-import { updateApplicationStatus } from "@/lib/application-status-service";
+import { undoApplicationStatus } from "@/lib/application-status-service";
 
 type Params = { params: Promise<{ id: string }> };
 
-export async function PATCH(request: NextRequest, ctx: Params) {
+export async function POST(request: NextRequest, ctx: Params) {
   const auth = await requireStaffSession();
   if (auth instanceof NextResponse) return auth;
 
@@ -27,13 +27,13 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     );
   }
 
-  const parsed = applicationStatusPatchSchema.safeParse(body);
+  const parsed = applicationStatusUndoSchema.safeParse(body);
   if (!parsed.success) {
     const message = parsed.error.issues[0]?.message ?? "Invalid request body.";
     return NextResponse.json({ error: { code: "VALIDATION_ERROR", message } }, { status: 400 });
   }
 
-  const result = await updateApplicationStatus(id, auth.userId, parsed.data);
+  const result = await undoApplicationStatus(id, auth.userId, parsed.data);
 
   if ("httpStatus" in result) {
     return NextResponse.json(

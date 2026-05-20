@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
+import { getApplicationStatusMeta } from "@ats-platform/types";
 import type { RelevanceEntry } from "@/hooks/usePipelineRelevanceScores";
 import { RelevanceScoreRing } from "@/components/applications/RelevanceScoreRing";
 
@@ -9,7 +10,7 @@ export type PipelineCardItem = {
   id: string;
   appliedAt: string;
   updatedAt: string;
-  candidate: { name: string };
+  candidate: { id: string; name: string; email: string };
   job: { title: string };
 };
 
@@ -30,10 +31,17 @@ function formatDateTime(value: string): string {
 
 type Props = {
   item: PipelineCardItem;
+  status: string;
   disabled: boolean;
+  draggable: boolean;
   draggingId: string | null;
   relevance?: RelevanceEntry;
   flyoverLayerRef?: RefObject<HTMLDivElement | null>;
+  allowedTargets: string[];
+  onMoveToStatus: (status: string) => void;
+  onReject?: () => void;
+  onWithdraw?: () => void;
+  onReopen?: () => void;
   onRefreshRelevance?: (applicationId: string) => void;
   onDragStart: (applicationId: string, event: React.DragEvent) => void;
   onDragEnd: () => void;
@@ -77,78 +85,168 @@ function ringProps(relevance: RelevanceEntry | undefined): {
 
 export function PipelineApplicationCard({
   item,
+  status,
   disabled,
+  draggable,
   draggingId,
   relevance,
   flyoverLayerRef,
+  allowedTargets,
+  onMoveToStatus,
+  onReject,
+  onWithdraw,
+  onReopen,
   onRefreshRelevance,
   onDragStart,
   onDragEnd,
 }: Props) {
   const router = useRouter();
   const blockClickUntil = useRef(0);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onClickOutside = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
+    };
+    window.addEventListener("mousedown", onClickOutside);
+    return () => window.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  const activeTargets = allowedTargets.filter(
+    (t) => t !== "rejected" && t !== "withdrawn" && t !== status,
+  );
 
   return (
     <article
-      role="button"
-      tabIndex={disabled ? -1 : 0}
+      className="bo-pipeline-card"
       aria-disabled={disabled}
-      aria-label={`Open application for ${item.job.title}, ${item.candidate.name}`}
-      draggable={!disabled}
-      onDragStart={(event) => {
-        blockClickUntil.current = 0;
-        onDragStart(item.id, event);
-      }}
-      onDragEnd={() => {
-        onDragEnd();
-        blockClickUntil.current = Date.now() + 200;
-      }}
-      onClick={() => {
-        if (disabled) return;
-        if (Date.now() < blockClickUntil.current) return;
-        router.push(`/applications/${item.id}`);
-      }}
-      onKeyDown={(event) => {
-        if (disabled) return;
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          router.push(`/applications/${item.id}`);
-        }
-      }}
-      style={{
-        border: "1px solid var(--color-border)",
-        borderRadius: "8px",
-        padding: "0.55rem 0.6rem",
-        background: "#fff",
-        opacity: draggingId === item.id ? 0.55 : 1,
-        cursor: disabled ? "progress" : "pointer",
-        display: "flex",
-        gap: "0.5rem",
-        alignItems: "flex-start",
-      }}
     >
-      <RelevanceScoreRing
-        {...ringProps(relevance)}
-        size={46}
-        flyoverLayerRef={flyoverLayerRef}
-        onRefresh={
-          onRefreshRelevance && relevance?.status !== "loading" && relevance?.status !== "idle"
-            ? () => onRefreshRelevance(item.id)
-            : undefined
-        }
-        isRefreshing={relevance?.status === "loading"}
-      />
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ margin: 0, fontWeight: 600 }}>{item.job.title}</p>
-        <p className="bo-page-sub" style={{ margin: "0.25rem 0 0" }}>
-          {item.candidate.name}
-        </p>
-        <p className="bo-page-sub" style={{ margin: "0.15rem 0 0" }}>
-          Updated {formatDateTime(item.updatedAt)}
-        </p>
-        <p className="bo-page-sub" style={{ margin: "0.1rem 0 0", fontSize: "0.72rem" }}>
-          Applied {formatDateTime(item.appliedAt)}
-        </p>
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={`Open application for ${item.job.title}, ${item.candidate.name}`}
+        draggable={draggable && !disabled}
+        onDragStart={(event) => {
+          blockClickUntil.current = 0;
+          onDragStart(item.id, event);
+        }}
+        onDragEnd={() => {
+          onDragEnd();
+          blockClickUntil.current = Date.now() + 200;
+        }}
+        onClick={() => {
+          if (disabled || menuOpen) return;
+          if (Date.now() < blockClickUntil.current) return;
+          router.push(`/applications/${item.id}`);
+        }}
+        onKeyDown={(event) => {
+          if (disabled) return;
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            router.push(`/applications/${item.id}`);
+          }
+        }}
+        className={`bo-pipeline-card-main${draggingId === item.id ? " is-dragging" : ""}${disabled ? " is-disabled" : ""}`}
+      >
+        <RelevanceScoreRing
+          {...ringProps(relevance)}
+          size={52}
+          flyoverLayerRef={flyoverLayerRef}
+          onRefresh={
+            onRefreshRelevance && relevance?.status !== "loading" && relevance?.status !== "idle"
+              ? () => onRefreshRelevance(item.id)
+              : undefined
+          }
+          isRefreshing={relevance?.status === "loading"}
+        />
+        <div className="bo-pipeline-card-body">
+          <p className="bo-pipeline-card-job">{item.job.title}</p>
+          <p className="bo-pipeline-card-candidate" title={item.candidate.name}>
+            {item.candidate.name}
+          </p>
+          <p className="bo-pipeline-card-meta">Updated {formatDateTime(item.updatedAt)}</p>
+        </div>
+      </div>
+
+      <div className="bo-pipeline-card-actions" ref={menuRef}>
+        <button
+          type="button"
+          className="bo-pipeline-card-menu-trigger"
+          aria-label="Application actions"
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          disabled={disabled}
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen((open) => !open);
+          }}
+        >
+          ⋮
+        </button>
+        {menuOpen ? (
+          <div className="bo-pipeline-card-menu" role="menu">
+            {activeTargets.length > 0 ? (
+              <>
+                <p className="bo-pipeline-card-menu-label">Move to</p>
+                {activeTargets.map((target) => (
+                  <button
+                    key={target}
+                    type="button"
+                    role="menuitem"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuOpen(false);
+                      onMoveToStatus(target);
+                    }}
+                  >
+                    {getApplicationStatusMeta(target).label}
+                  </button>
+                ))}
+              </>
+            ) : null}
+            {onReject ? (
+              <button
+                type="button"
+                role="menuitem"
+                className="bo-pipeline-card-menu-danger"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  onReject();
+                }}
+              >
+                Reject…
+              </button>
+            ) : null}
+            {onWithdraw ? (
+              <button
+                type="button"
+                role="menuitem"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  onWithdraw();
+                }}
+              >
+                Withdraw…
+              </button>
+            ) : null}
+            {onReopen ? (
+              <button
+                type="button"
+                role="menuitem"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  onReopen();
+                }}
+              >
+                Reopen application…
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </article>
   );
