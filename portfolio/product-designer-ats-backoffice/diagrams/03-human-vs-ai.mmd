@@ -1,0 +1,22 @@
+flowchart TB
+  subgraph HUMAN["Human-owned"]
+    H1[Problem framing and scope]
+    H2[Information architecture and flows]
+    H3[Business rules and edge cases]
+    H4[Copy, labels, error messages]
+    H5[QA, accessibility, polish decisions]
+  end
+
+  subgraph AI["AI-accelerated"]
+    A1[UI components]
+    A2[Styles against design tokens]
+    A3[API routes and validation]
+    A4[Data layer and migrations]
+    A5[Boilerplate and layout fixes]
+  end
+
+  HUMAN -.->|writes spec| AI
+  AI -.->|implements| HUMAN
+
+  style HUMAN fill:#eef2ff,stroke:#4f46e5
+  style AI fill:#ecfdf5,stroke:#059669

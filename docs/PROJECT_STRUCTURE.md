@@ -119,6 +119,24 @@ Both use the **App Router** under `src/app/`. Shared folder conventions:
 
 **Turbopack:** each Next app sets `turbopack.root` to the **repository root** so tooling resolves the monorepo lockfile correctly.
 
+#### Backoffice (`apps/backoffice`) — UI & BFF highlights
+
+| Path | Purpose |
+|------|---------|
+| `/applications` | Applications hub — **pipeline** (Kanban) default, list view toggle, fullscreen board |
+| `/applications/[id]` | Application detail — status actions, relevance score, CV/cover letter, schedule interview |
+| `/interviews` | Interviews calendar (full-width) |
+| `/jobs`, `/jobs/new`, `/jobs/[id]/edit` | Job posting CRUD |
+| `/candidates`, `/candidates/all`, `/candidates/[id]` | Candidate accounts |
+
+Key feature folders: `src/components/applications/` (pipeline board, modals, cards), `src/components/interviews/`, `src/lib/application-status-service.ts`.
+
+Next.js API handlers: `src/app/api/backoffice/applications/*` — documented in **`docs/specification/api/backoffice-applications.md`**.
+
+#### Candidate portal (`apps/candidate-portal`)
+
+Public job listing and detail use **Prisma** in server code (`src/lib/jobs.ts`), not the central `GET /api/v1/jobs` stub.
+
 ### HTTP API (`apps/api`)
 
 #### Source tree
@@ -205,7 +223,7 @@ import { prisma } from "@ats-platform/db";
 | **`docs/specification/`** | `db-schema.md`, REST specs under **`api/`**, **`API_Dictionary.md`**, ER diagram, templates, prompts. |
 | **`docs/markup/candidate-portal/`** | Static HTML/CSS/JS prototypes for public jobs UI and legacy candidate auth flows. |
 | **`docs/markup/backoffice/`** | Static markup for the back office (add files as you go). |
-| **`docs/reports/`** | Compliance / audit notes. |
+| **`docs/reports/`** | WCAG / PDPA audits (static markup) + [implementation-alignment-2026.md](reports/implementation-alignment-2026.md). |
 
 The **canonical Prisma schema** is **`packages/db/prisma/schema.prisma`**, not under `docs/specification/`. Markdown specs link to that file where needed.
 

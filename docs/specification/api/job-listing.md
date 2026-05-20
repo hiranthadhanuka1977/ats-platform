@@ -2,7 +2,10 @@
 
 **Doc version:** 1.2 (aligned with [`JobPosting`](../../../packages/db/prisma/schema.prisma), [`JobPostingStatus`](../../../packages/db/prisma/schema.prisma), [`db-schema.md`](../db-schema.md) §2.1, §5, GIN index)
 
-> Implementation status (22 Apr 2026): only `GET /api/v1/jobs` exists and currently returns a stub payload from `apps/api/src/modules/jobs/index.ts`. The endpoints below are target contracts, not fully implemented yet.
+> **Implementation status (19 May 2026):**  
+> - **Candidate portal (`apps/candidate-portal`, port 3000):** job list and detail are served via **Prisma** in Next.js (`src/lib/jobs.ts`), not via the central API.  
+> - **Central API:** `GET /api/v1/jobs` in `apps/api` still returns a **stub** until the Hono module is implemented.  
+> The endpoints below describe the **target** `GET /api/v1/jobs` contract for clients that call the central service.
 
 Endpoints that power **search**, **filters**, **sort**, **pagination**, **results count**, **hero department pills**, and **lookup data** for dropdowns. Matches `docs/markup/candidate-portal/job-listing.html` and `db-schema.md` filters.
 

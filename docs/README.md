@@ -5,9 +5,9 @@ Static reference material: **specifications**, **API dictionary**, **static HTML
 | Path | Contents |
 |------|----------|
 | **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)** | Monorepo layout: `apps/*`, `packages/*`, API modules, env, npm scripts |
-| **[specification/](specification/)** | `db-schema.md`, REST API specs (`api/`, including `api/my-applications-routes.md` for candidate Next.js handlers), ER diagram, job templates, AI prompts — *see Prisma note below* |
+| **[specification/](specification/)** | `db-schema.md`, REST API specs (`api/`), [API_Dictionary.md](specification/API_Dictionary.md), application pipeline ([ATS_Application_State_UI_API_Requirements.md](specification/ATS_Application_State_UI_API_Requirements.md)), [api/backoffice-applications.md](specification/api/backoffice-applications.md) |
 | **[markup/](markup/)** | Static HTML prototypes: **`markup/candidate-portal/`** (public jobs UX), **`markup/backoffice/`** (staff UI), and legacy auth reference markup now implemented in `apps/my-applications` |
-| **[reports/](reports/)** | WCAG / PDPA-GDPR audit notes |
+| **[reports/](reports/)** | WCAG / PDPA-GDPR audits (markup) + [implementation-alignment-2026.md](reports/implementation-alignment-2026.md) |
 
 ### Prisma schema (source of truth)
 

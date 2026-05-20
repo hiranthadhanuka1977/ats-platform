@@ -1,5 +1,7 @@
 # WCAG 2.2 Accessibility Audit — Candidate Portal
 
+> **Scope note (May 2026):** This audit covers **static markup** under `docs/markup/candidate-portal/`. Running Next.js apps (`apps/candidate-portal`, `apps/my-applications`, `apps/backoffice`) are not covered here. See [README.md](README.md) and [implementation-alignment-2026.md](implementation-alignment-2026.md).
+
 **Audit Date:** 06 April 2026  
 **Audited By:** AI-assisted review  
 **Portal:** TalentHub Candidate Portal  

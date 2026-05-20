@@ -1,7 +1,9 @@
 # Database Schema — Candidate Portal
 
-**Version:** 1.7  
-**Date:** 22 April 2026  
+**Version:** 1.8  
+**Date:** 19 May 2026  
+
+**v1.8:** Application pipeline — full `ApplicationStatus` enum, application screening/relevance columns, `application_status_events`, `application_interviews` (one interview per application).
 **Derived From:** `docs/markup/candidate-portal/job-listing.html`, `job-detail.html`, `Job_Posting_Templates.md`  
 **Database:** PostgreSQL (compatible with MySQL / SQL Server with minor adjustments)
 
@@ -585,11 +587,24 @@ Job applications submitted by candidates.
 | `job_posting_id` | `UUID` | FK → job_postings.id, NOT NULL | |
 | `status` | `VARCHAR(30)` (DDL) / `ApplicationStatus` enum (Prisma) | DEFAULT `submitted` | submitted |
 | `cover_letter` | `TEXT` | NULL | |
-| `resume_url` | `VARCHAR(500)` | NULL | |
+| `resume_url` | `VARCHAR(500)` | NULL | File reference (`?id=` for stored CV) |
+| `experience_years` | `INT` | NULL | Screening |
+| `experience_months` | `INT` | NULL | Screening |
+| `has_domain_experience` | `BOOLEAN` | NULL | |
+| `notice_periods` | `TEXT` | NULL | |
+| `salary_expectation_annual` | `DECIMAL(12,2)` | NULL | |
+| `willing_to_relocate` | `BOOLEAN` | NULL | |
+| `is_legally_authorized_to_work` | `BOOLEAN` | NULL | |
+| `work_mode_preference` | `VARCHAR(50)` | NULL | |
+| `short_motivation` | `TEXT` | NULL | |
+| `relevance_score` | `SMALLINT` | NULL | AI match 0–100 |
+| `relevance_breakdown` | `TEXT` | NULL | JSON/text breakdown |
+| `relevance_scored_at` | `TIMESTAMPTZ` | NULL | |
+| `relevance_input_hash` | `VARCHAR(64)` | NULL | Cache invalidation |
 | `applied_at` | `TIMESTAMPTZ` | DEFAULT NOW() | |
-| `updated_at` | `TIMESTAMPTZ` | DEFAULT NOW() | |
+| `updated_at` | `TIMESTAMPTZ` | DEFAULT NOW() | Optimistic concurrency in API |
 
-`status` values: `submitted`, `under_review`, `shortlisted`, `interview`, `offered`, `rejected`, `withdrawn`
+`status` values (`ApplicationStatus`): `submitted`, `under_review`, `shortlisted`, `interview` (legacy — treat as `interview_scheduled` in pipeline rules), `interview_scheduled`, `interview_completed`, `offered`, `hired`, `rejected`, `withdrawn`
 
 **Indexes:**
 
@@ -598,6 +613,49 @@ CREATE UNIQUE INDEX idx_applications_unique ON applications (candidate_account_i
 CREATE INDEX idx_applications_status        ON applications (status);
 CREATE INDEX idx_applications_job           ON applications (job_posting_id, applied_at DESC);
 ```
+
+### 3.9 `application_status_events`
+
+Audit trail for pipeline status changes (and schedule-driven updates).
+
+| Column | Type | Constraints | Notes |
+|--------|------|-------------|-------|
+| `id` | `UUID` | PK | |
+| `application_id` | `UUID` | FK → applications.id, NOT NULL | |
+| `from_status` | `ApplicationStatus` | NULL | First event may be null |
+| `to_status` | `ApplicationStatus` | NOT NULL | |
+| `reason` | `TEXT` | NULL | e.g. rejection reason |
+| `note` | `TEXT` | NULL | Internal note / metadata |
+| `change_source` | `VARCHAR(50)` | NULL | e.g. `pipeline`, `reopen` |
+| `changed_at` | `TIMESTAMPTZ` | DEFAULT NOW() | |
+| `changed_by_staff_id` | `UUID` | FK → users.id, NULL | |
+
+```sql
+CREATE INDEX idx_application_status_events_app_time
+  ON application_status_events (application_id, changed_at DESC);
+```
+
+### 3.10 `application_interviews`
+
+At most **one** scheduled interview per application (`application_id` UNIQUE).
+
+| Column | Type | Constraints | Notes |
+|--------|------|-------------|-------|
+| `id` | `UUID` | PK | |
+| `application_id` | `UUID` | FK → applications.id, UNIQUE | One row per application |
+| `starts_at` | `TIMESTAMPTZ` | NOT NULL | |
+| `ends_at` | `TIMESTAMPTZ` | NOT NULL | Must be after `starts_at` |
+| `notify_candidate_email` | `BOOLEAN` | DEFAULT true | |
+| `notification_sent_at` | `TIMESTAMPTZ` | NULL | Set when notification queued |
+| `scheduled_by_staff_id` | `UUID` | FK → users.id, NULL | |
+| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() | |
+| `updated_at` | `TIMESTAMPTZ` | DEFAULT NOW() | |
+
+```sql
+CREATE INDEX idx_application_interviews_starts_at ON application_interviews (starts_at DESC);
+```
+
+API: [api/backoffice-applications.md](api/backoffice-applications.md). Transition rules require an interview row before `interview_scheduled` via PATCH when no schedule POST has run.
 
 ---
 
@@ -1024,4 +1082,4 @@ The **`@ats-platform/db`** workspace package sets `"prisma": { "schema": "prisma
 
 ## 10. HTTP API (REST dictionary)
 
-REST-style endpoints for the candidate portal are documented separately: **[API_Dictionary.md](API_Dictionary.md)** (index) and **[api/](api/)** (authentication, registration/sign-in, job listing, job detail).
+REST-style endpoints are documented separately: **[API_Dictionary.md](API_Dictionary.md)** (index) and **[api/](api/)** — candidate auth and jobs, [api/my-applications-routes.md](api/my-applications-routes.md), and staff application pipeline [api/backoffice-applications.md](api/backoffice-applications.md).

@@ -1,0 +1,15 @@
+flowchart LR
+  A["① Discover & frame<br/><small>human-led</small><br/>Problem · users · scope · flows"]
+  B["② Specify<br/><small>human-led</small><br/>Behaviour · edge cases · acceptance criteria"]
+  C["③ Implement<br/><small>AI-assisted</small><br/>Against spec · design system · codebase"]
+  D["④ Validate<br/><small>human-led</small><br/>Run product · compare to intent"]
+  E["⑤ Ship<br/><small>increment complete</small>"]
+
+  A --> B --> C --> D --> E
+  D -->|not ready| C
+
+  style A fill:#f8fafc,stroke:#64748b
+  style B fill:#eef2ff,stroke:#4f46e5
+  style C fill:#ecfdf5,stroke:#059669
+  style D fill:#fffbeb,stroke:#d97706
+  style E fill:#f0fdf4,stroke:#16a34a

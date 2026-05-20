@@ -1,0 +1,24 @@
+flowchart TB
+  START([User opens feature area]) --> VIEW{Primary view}
+  VIEW -->|View A| WORKSPACE[Main workspace]
+  VIEW -->|View B| WORKSPACE
+
+  WORKSPACE --> ACT{Action}
+  ACT -->|Open item| DETAIL[Detail view]
+  ACT -->|Change state| VALID{Allowed?}
+  VALID -->|No| BLOCK[Blocked or feedback]
+  VALID -->|Yes| MODAL{Needs confirmation?}
+  MODAL -->|Destructive or complex| CONFIRM[Confirmation dialog]
+  MODAL -->|Simple update| API[Persist change]
+  CONFIRM --> API
+  MODAL -->|Missing prerequisite| PROMPT[Prompt or guided flow]
+  PROMPT -->|Continue| API
+  PROMPT -->|Cancel| WORKSPACE
+
+  DETAIL --> RELATED[Related context]
+  RELATED --> WORKSPACE
+  API --> WORKSPACE
+
+  style START fill:#f8fafc,stroke:#64748b
+  style DETAIL fill:#eef2ff,stroke:#4f46e5
+  style API fill:#ecfdf5,stroke:#059669

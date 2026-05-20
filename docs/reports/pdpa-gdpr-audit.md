@@ -1,5 +1,7 @@
 # PDPA (Sri Lanka) & GDPR (EU) Content Audit — Candidate Portal
 
+> **Scope note (May 2026):** This audit covers **static markup** under `docs/markup/candidate-portal/`. Runtime apps and backoffice pipeline are out of scope unless re-audited. See [README.md](README.md).
+
 **Audit Date:** 06 April 2026  
 **Audited By:** AI-assisted review  
 **Portal:** TalentHub Candidate Portal  

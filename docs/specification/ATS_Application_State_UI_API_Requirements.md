@@ -15,6 +15,20 @@ It covers:
 - Error handling
 - Recommended implementation payloads
 
+### 1.1 Implementation status (May 2026)
+
+| Topic | Status |
+|-------|--------|
+| Backoffice Kanban pipeline | **Implemented** — `apps/backoffice` `/applications` (default view), list toggle, fullscreen |
+| Status APIs | **Implemented** on Next.js BFF, not central Hono |
+| Base path | **`/api/backoffice/applications/{applicationId}/...`** (staff session cookies) |
+| Central API | `GET /api/v1/applications` remains a **stub** in `apps/api` |
+| Detailed API contract | [api/backoffice-applications.md](api/backoffice-applications.md) |
+| Shared transition rules | `@ats-platform/types` → `APPLICATION_STATUS_TRANSITIONS` |
+| Interviews | **One** `application_interviews` row per application; schedule via `POST .../interviews` |
+
+Section 8 below describes product intent; **§8.0** lists implemented endpoints and payload shapes.
+
 ---
 
 ## 2. Application States
@@ -500,12 +514,23 @@ Open card -> Change Status -> Select allowed target status
 
 ## 8. Backend API Validation Requirements
 
+### 8.0 Implemented endpoints (`apps/backoffice`)
+
+| Action | Method | Path |
+|--------|--------|------|
+| Update status | `PATCH` | `/api/backoffice/applications/{applicationId}/status` |
+| Undo | `POST` | `/api/backoffice/applications/{applicationId}/status/undo` |
+| Reopen (from rejected) | `POST` | `/api/backoffice/applications/{applicationId}/reopen` |
+| List / schedule interview | `GET` / `POST` | `/api/backoffice/applications/{applicationId}/interviews` |
+
+Reject and withdraw use the status PATCH with `status: "rejected"` or `"withdrawn"` (no separate `/reject` or `/withdraw` routes). Full error codes and fields: [api/backoffice-applications.md](api/backoffice-applications.md).
+
+---
+
 ### 8.1 Status Update API
 
-Recommended endpoint:
-
 ```http
-PATCH /api/applications/{applicationId}/status
+PATCH /api/backoffice/applications/{applicationId}/status
 ```
 
 Purpose: Update application status after validating business rules.
@@ -516,12 +541,15 @@ Purpose: Update application status after validating business rules.
 
 ```json
 {
-  "targetStatus": "Shortlisted",
+  "status": "shortlisted",
   "reason": "Candidate has relevant fintech experience",
   "note": "Move to shortlist for hiring manager review",
-  "notifyCandidate": false
+  "notifyCandidate": false,
+  "expectedUpdatedAt": "2026-05-19T10:30:00.000Z"
 }
 ```
+
+Use snake_case status values matching Prisma `ApplicationStatus`.
 
 ---
 
@@ -531,11 +559,12 @@ Purpose: Update application status after validating business rules.
 
 ```json
 {
-  "success": true,
-  "applicationId": "app_123",
-  "previousStatus": "Under Review",
-  "currentStatus": "Shortlisted",
-  "updatedAt": "2026-05-19T10:30:00Z"
+  "data": {
+    "id": "uuid",
+    "status": "shortlisted",
+    "previousStatus": "under_review",
+    "updatedAt": "2026-05-19T10:30:00.000Z"
+  }
 }
 ```
 
@@ -543,9 +572,10 @@ Purpose: Update application status after validating business rules.
 
 ```json
 {
-  "success": false,
-  "errorCode": "INVALID_STATUS_TRANSITION",
-  "message": "Application cannot be moved from Offered to Shortlisted."
+  "error": {
+    "code": "INVALID_STATUS_TRANSITION",
+    "message": "Application cannot be moved from offered to shortlisted."
+  }
 }
 ```
 
@@ -616,14 +646,14 @@ if currentStatus == "Withdrawn":
 Recommended endpoint:
 
 ```http
-POST /api/applications/{applicationId}/reopen
+POST /api/backoffice/applications/{applicationId}/reopen
 ```
 
 Request:
 
 ```json
 {
-  "targetStatus": "Under Review",
+  "targetStatus": "under_review",
   "reason": "Candidate was rejected by mistake",
   "note": "Reopened after hiring manager review"
 }
@@ -641,18 +671,15 @@ Validation:
 
 ### 8.8 Reject Application API
 
-This can be handled through the normal status update API, but a dedicated endpoint can make the workflow clearer.
-
-Recommended endpoint:
+**Implemented** via status PATCH:
 
 ```http
-POST /api/applications/{applicationId}/reject
+PATCH /api/backoffice/applications/{applicationId}/status
 ```
-
-Request:
 
 ```json
 {
+  "status": "rejected",
   "reason": "Does not meet required experience level",
   "note": "Candidate has 1 year experience; role requires 5+",
   "notifyCandidate": true
@@ -663,18 +690,12 @@ Request:
 
 ### 8.9 Withdraw Application API
 
-Recommended endpoint:
-
-```http
-POST /api/applications/{applicationId}/withdraw
-```
-
-Request:
+**Implemented** via status PATCH:
 
 ```json
 {
-  "source": "Candidate Request",
-  "reason": "Candidate accepted another offer",
+  "status": "withdrawn",
+  "withdrawalSource": "Candidate request",
   "note": "Updated by recruiter based on email confirmation"
 }
 ```

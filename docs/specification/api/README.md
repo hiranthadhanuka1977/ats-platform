@@ -1,7 +1,7 @@
 # API Documentation — Candidate Portal (ATS)
 
-**Version:** 1.3  
-**Date:** 6 May 2026  
+**Version:** 1.4  
+**Date:** 19 May 2026  
 **Base path (central API):** `/api/v1`  
 **Format:** JSON over HTTPS (central API and typical Next.js JSON handlers)  
 **Auth:** Bearer access token (JWT) for protected routes; public routes for published job data.
@@ -25,6 +25,7 @@ Everything aligns with [`schema.prisma`](../../../packages/db/prisma/schema.pris
 | [job-listing.md](job-listing.md) | Job listing page — search, filters, sort, pagination, lookups |
 | [job-detail.md](job-detail.md) | Job detail target contract — single job, apply, bookmarks (implementation in progress) |
 | [my-applications-routes.md](my-applications-routes.md) | Candidate app Next.js routes: CV import + screenshot-based profile import |
+| [backoffice-applications.md](backoffice-applications.md) | Staff app: application status, undo, reopen, interviews, relevance, attachments |
 
 ---
 
@@ -103,7 +104,7 @@ Prefix all routes with `/api/v1`. Breaking changes require `/api/v2`.
 | Prisma enum | Values |
 |-------------|--------|
 | `JobPostingStatus` | `draft`, `published`, `closed`, `archived` |
-| `ApplicationStatus` | `submitted`, `under_review`, `shortlisted`, `interview`, `offered`, `rejected`, `withdrawn` |
+| `ApplicationStatus` | `submitted`, `under_review`, `shortlisted`, `interview` (legacy), `interview_scheduled`, `interview_completed`, `offered`, `hired`, `rejected`, `withdrawn` |
 | `UserRole` | `admin`, `recruiter`, `hiring_manager` |
 | `QualificationType` | `required`, `preferred` |
 
@@ -154,10 +155,11 @@ Staff session cookies via **`/api/auth/login`** (and refresh/logout). Domain rou
 |------|----------------|---------|
 | Auth | `POST /api/auth/login`, `POST /api/auth/logout`, `POST /api/auth/refresh` | Staff authentication |
 | Jobs | `GET/POST /api/backoffice/jobs`, `GET/PATCH/DELETE /api/backoffice/jobs/{id}`, `POST /api/backoffice/jobs/{id}/publish`, `GET /api/backoffice/jobs/form-options` | Job posting CRUD and publish |
-| Candidates | `PATCH /api/backoffice/candidates/{id}/status` | Application/candidate status updates |
+| Applications | `PATCH /api/backoffice/applications/{id}/status`, `POST .../status/undo`, `POST .../reopen`, `GET/POST .../interviews`, `GET .../relevance-score`, `GET .../attachments/cv`, `GET .../attachments/cover-letter` | Pipeline status, interview, scoring, files — see [backoffice-applications.md](backoffice-applications.md) |
+| Candidates | `PATCH /api/backoffice/candidates/{id}/status` | **Candidate account** status (`active`, `locked`, etc.) — not application pipeline status |
 | Admin lookups | `/api/admin/departments`, `/api/admin/locations`, `/api/admin/skills`, `/api/admin/tags`, `/api/admin/benefits`, `/api/admin/experience-levels`, `/api/admin/employment-types` (collection + `/{id}`) | Reference data for job builder |
 
-Implementations live under `apps/backoffice/src/app/api/`.
+Implementations live under `apps/backoffice/src/app/api/`. UI routes: `/applications` (pipeline default), `/applications/{id}`, `/interviews`.
 
 ---
 

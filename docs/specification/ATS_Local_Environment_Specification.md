@@ -85,11 +85,24 @@ Design for future modules:
 ```
 Developer Machine
  ├── Frontend (candidate-portal + my-applications + backoffice)
- ├── Backend
+ ├── Backend (apps/api — Hono, port 4000)
  ├── PostgreSQL
- ├── File Storage
- └── Config Files
+ ├── File Storage (repo storage/)
+ └── Config Files (.env, app .env.local)
 ```
+
+### 4.1 Dev servers (monorepo)
+
+Run all from repo root: `npm run dev:all`
+
+| App | Package | Port | Role |
+|-----|---------|------|------|
+| Candidate portal | `apps/candidate-portal` | **3000** | Public jobs browse |
+| My Applications | `apps/my-applications` | **3002** | Candidate auth & dashboard |
+| Backoffice | `apps/backoffice` | **3001** | Staff ATS (pipeline, jobs, interviews) |
+| API | `apps/api` | **4000** | Central JSON API (`/api/v1/*`) |
+
+See [PROJECT_STRUCTURE.md](../PROJECT_STRUCTURE.md) for routes and scripts.
 
 ---
 
@@ -105,11 +118,16 @@ Developer Machine
 - Prisma / Knex / Flyway
 
 ### File Storage
+
+Default `UPLOAD_ROOT=./storage` at repository root:
+
 ```
-/storage
-  /resumes
-  /banners
-  /avatars
+storage/
+  cvs/{candidateAccountId}/          # application CV downloads (backoffice)
+  cover-letters/{candidateAccountId}/
+  resumes/                           # legacy / other uploads
+  banners/
+  avatars/
 ```
 
 ---
@@ -119,14 +137,15 @@ Developer Machine
 ```
 /markup_v1
   /apps
-    /candidate-portal
-    /backoffice
-    /api
+    /candidate-portal      # port 3000
+    /my-applications       # port 3002
+    /backoffice            # port 3001
+    /api                   # port 4000
   /packages
     /db
       /prisma
         /migrations
-        /seed.js
+  /storage                 # UPLOAD_ROOT (gitignored uploads)
   /docs
   .env
 ```

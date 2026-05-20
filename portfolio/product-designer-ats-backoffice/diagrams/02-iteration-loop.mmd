@@ -1,0 +1,12 @@
+flowchart LR
+  A["Define behaviour<br/><small>spec bullet or acceptance note</small>"] --> B["AI session<br/><small>Cursor + context files</small>"]
+  B --> C["Test in browser<br/><small>running product</small>"]
+  C --> D{OK?}
+  D -->|No| E["Fix drift<br/><small>rules · props · UI</small>"]
+  E --> B
+  D -->|Yes| F["Increment done"]
+
+  style A fill:#eef2ff,stroke:#4f46e5
+  style B fill:#ecfdf5,stroke:#059669
+  style C fill:#f8fafc,stroke:#64748b
+  style F fill:#f0fdf4,stroke:#16a34a
