@@ -4,7 +4,7 @@ export const INTERVIEW_DURATION_MINUTES = [15, 30, 45, 60, 90, 120] as const;
 
 export type InterviewDurationMinutes = (typeof INTERVIEW_DURATION_MINUTES)[number];
 
-/** Common IANA zones for staff scheduling dropdowns. */
+/** Common IANA zones — fallback when Intl.supportedValuesOf is unavailable. */
 export const SCHEDULING_TIMEZONE_IDS = [
   "UTC",
   "Europe/London",
@@ -22,11 +22,65 @@ export const SCHEDULING_TIMEZONE_IDS = [
   "Asia/Hong_Kong",
   "Asia/Tokyo",
   "Asia/Kolkata",
+  "Asia/Colombo",
   "Australia/Sydney",
   "Pacific/Auckland",
 ] as const;
 
 const FALLBACK_TIME_ZONE = "UTC";
+
+/** All IANA time zones for scheduling dropdowns (browser/Node Intl when available). */
+export function listSchedulingTimeZoneIds(...ensureIncluded: string[]): string[] {
+  const ids = new Set<string>([FALLBACK_TIME_ZONE, ...ensureIncluded.filter(Boolean)]);
+
+  if (typeof Intl !== "undefined" && "supportedValuesOf" in Intl) {
+    try {
+      for (const tz of Intl.supportedValuesOf("timeZone")) {
+        ids.add(tz);
+      }
+    } catch {
+      /* use fallback list below */
+    }
+  }
+
+  if (ids.size <= SCHEDULING_TIMEZONE_IDS.length + ensureIncluded.length) {
+    for (const tz of SCHEDULING_TIMEZONE_IDS) ids.add(tz);
+  }
+
+  return [...ids].sort((a, b) => {
+    if (a === FALLBACK_TIME_ZONE) return -1;
+    if (b === FALLBACK_TIME_ZONE) return 1;
+    return a.localeCompare(b);
+  });
+}
+
+export type SchedulingTimeZoneGroup = {
+  region: string;
+  zones: string[];
+};
+
+/** Group IANA ids by region prefix (e.g. America, Europe) for optgroup selects. */
+export function groupSchedulingTimeZones(ids: string[]): SchedulingTimeZoneGroup[] {
+  const groups = new Map<string, string[]>();
+
+  for (const id of ids) {
+    const region = id.includes("/") ? (id.split("/")[0] ?? "Other") : "Other";
+    const list = groups.get(region) ?? [];
+    list.push(id);
+    groups.set(region, list);
+  }
+
+  const regionOrder = [...groups.keys()].sort((a, b) => {
+    if (a === "Other") return 1;
+    if (b === "Other") return -1;
+    return a.localeCompare(b);
+  });
+
+  return regionOrder.map((region) => ({
+    region,
+    zones: (groups.get(region) ?? []).sort((a, b) => a.localeCompare(b)),
+  }));
+}
 
 export function isValidIanaTimeZone(timeZone: string | null | undefined): boolean {
   if (typeof timeZone !== "string" || !timeZone.trim()) return false;
@@ -64,8 +118,8 @@ export function schedulingTimeZoneLabel(timeZone: string | null | undefined): st
       timeZoneName: "shortOffset",
     }).formatToParts(new Date());
     const offset = parts.find((part) => part.type === "timeZoneName")?.value ?? "";
-    const city = zone.split("/").pop()?.replace(/_/g, " ") ?? zone;
-    return offset ? `${city} (${offset})` : city;
+    const display = zone.replace(/_/g, " ");
+    return offset ? `${display} (${offset})` : display;
   } catch {
     return zone.replace(/_/g, " ");
   }

@@ -5,9 +5,10 @@ import {
   defaultSchedulingFields,
   formatCandidateInterviewPreview,
   formatDurationLabel,
+  groupSchedulingTimeZones,
   INTERVIEW_DURATION_MINUTES,
+  listSchedulingTimeZoneIds,
   resolveDefaultSchedulingTimeZone,
-  SCHEDULING_TIMEZONE_IDS,
   schedulingTimeZoneLabel,
   type InterviewDurationMinutes,
 } from "@ats-platform/utils/interview-scheduling";
@@ -24,12 +25,17 @@ type Props = {
   onError: (message: string) => void;
 };
 
-function buildTimezoneOptions(preferredTimeZone: string) {
-  const ids = new Set<string>([preferredTimeZone, ...SCHEDULING_TIMEZONE_IDS]);
-  return [...ids].map((value) => ({
-    value,
-    label: schedulingTimeZoneLabel(value),
-  }));
+function candidateInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0] ?? ""}${parts[parts.length - 1][0] ?? ""}`.toUpperCase();
+}
+
+function durationChipLabel(minutes: InterviewDurationMinutes): string {
+  if (minutes < 60) return `${minutes}m`;
+  if (minutes % 60 === 0) return `${minutes / 60}h`;
+  return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
 }
 
 export function ScheduleInterviewModal({
@@ -59,10 +65,16 @@ export function ScheduleInterviewModal({
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const timezoneOptions = useMemo(
-    () => buildTimezoneOptions(schedulingTimeZone),
-    [schedulingTimeZone],
-  );
+  const timezoneGroups = useMemo(() => {
+    const ids = listSchedulingTimeZoneIds(resolveDefaultSchedulingTimeZone());
+    return groupSchedulingTimeZones(ids).map((group) => ({
+      ...group,
+      options: group.zones.map((value) => ({
+        value,
+        label: schedulingTimeZoneLabel(value),
+      })),
+    }));
+  }, [open]);
 
   const preview = useMemo(
     () =>
@@ -150,110 +162,134 @@ export function ScheduleInterviewModal({
     <div className="bo-modal-backdrop" role="presentation" onClick={submitting ? undefined : onClose}>
       <div
         ref={dialogRef}
-        className="bo-modal bo-modal--schedule-interview"
+        className="bo-schedule-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id={titleId} className="bo-modal-title">
-          Schedule an interview
-        </h2>
-        <p className="bo-modal-body bo-modal-body--schedule-context">
-          <strong>{candidateName}</strong> · {jobTitle}
-        </p>
-
-        <form className="bo-modal-form bo-modal-form--schedule-interview" onSubmit={(e) => void handleSubmit(e)}>
-          <div className="bo-schedule-interview-fields">
-            <label className="form-label">
-              <span className="form-label-text">
-                Interview date <span className="bo-required">*</span>
-              </span>
-              <input
-                type="date"
-                className="form-input"
-                value={interviewDate}
-                required
-                disabled={submitting}
-                onChange={(e) => setInterviewDate(e.target.value)}
-              />
-            </label>
-
-            <label className="form-label">
-              <span className="form-label-text">
-                Start time <span className="bo-required">*</span>
-              </span>
-              <input
-                type="time"
-                className="form-input form-input--time"
-                value={startTime}
-                required
-                step={900}
-                disabled={submitting}
-                onChange={(e) => setStartTime(e.target.value)}
-              />
-            </label>
-
-            <label className="form-label">
-              <span className="form-label-text">
-                Duration <span className="bo-required">*</span>
-              </span>
-              <select
-                className="form-input"
-                value={durationMinutes}
-                required
-                disabled={submitting}
-                onChange={(e) =>
-                  setDurationMinutes(Number(e.target.value) as InterviewDurationMinutes)
-                }
-              >
-                {INTERVIEW_DURATION_MINUTES.map((minutes) => (
-                  <option key={minutes} value={minutes}>
-                    {formatDurationLabel(minutes)}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="form-label">
-              <span className="form-label-text">
-                Time zone <span className="bo-required">*</span>
-              </span>
-              <select
-                className="form-input"
-                value={schedulingTimeZone}
-                required
-                disabled={submitting}
-                onChange={(e) => setSchedulingTimeZone(e.target.value)}
-              >
-                {timezoneOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+        <header className="bo-schedule-modal__header">
+          <div className="bo-schedule-modal__header-text">
+            <h2 id={titleId} className="bo-schedule-modal__title">
+              Schedule interview
+            </h2>
+            <p className="bo-schedule-modal__subtitle">Pick a slot and confirm the candidate preview.</p>
           </div>
-
-          <div
-            id={previewId}
-            className="bo-schedule-interview-preview"
-            role="status"
-            aria-live="polite"
+          <button
+            type="button"
+            className="bo-schedule-modal__close"
+            aria-label="Close"
+            disabled={submitting}
+            onClick={onClose}
           >
-            <p className="bo-schedule-interview-preview-title">Candidate time preview</p>
-            <div className="bo-schedule-interview-preview-row">
-              <span className="bo-schedule-interview-preview-label">Scheduling time</span>
-              <span className="bo-schedule-interview-preview-value">{preview.schedulingLabel}</span>
+            ×
+          </button>
+        </header>
+
+        <div className="bo-schedule-modal__context">
+          <span className="bo-schedule-modal__avatar" aria-hidden="true">
+            {candidateInitials(candidateName)}
+          </span>
+          <div className="bo-schedule-modal__context-body">
+            <p className="bo-schedule-modal__context-name">{candidateName}</p>
+            <p className="bo-schedule-modal__context-job">{jobTitle}</p>
+          </div>
+        </div>
+
+        <form className="bo-schedule-modal__form" onSubmit={(e) => void handleSubmit(e)}>
+          <fieldset className="bo-schedule-modal__section" disabled={submitting}>
+            <legend className="bo-schedule-modal__legend">When</legend>
+            <div className="bo-schedule-modal__when-row">
+              <label className="bo-schedule-modal__field">
+                <span className="bo-schedule-modal__label">Date</span>
+                <input
+                  type="date"
+                  className="bo-schedule-modal__input"
+                  value={interviewDate}
+                  required
+                  onChange={(e) => setInterviewDate(e.target.value)}
+                />
+              </label>
+              <label className="bo-schedule-modal__field">
+                <span className="bo-schedule-modal__label">Start time</span>
+                <input
+                  type="time"
+                  className="bo-schedule-modal__input"
+                  value={startTime}
+                  required
+                  step={900}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </label>
             </div>
-            <div className="bo-schedule-interview-preview-row">
-              <span className="bo-schedule-interview-preview-label">Candidate local</span>
-              <span className="bo-schedule-interview-preview-value">{preview.candidateLabel}</span>
+          </fieldset>
+
+          <fieldset className="bo-schedule-modal__section" disabled={submitting}>
+            <legend className="bo-schedule-modal__legend">Duration</legend>
+            <div className="bo-schedule-modal__duration-grid" role="group" aria-label="Interview duration">
+              {INTERVIEW_DURATION_MINUTES.map((minutes) => {
+                const selected = durationMinutes === minutes;
+                return (
+                  <button
+                    key={minutes}
+                    type="button"
+                    className={`bo-schedule-modal__duration${selected ? " is-selected" : ""}`}
+                    aria-pressed={selected}
+                    onClick={() => setDurationMinutes(minutes)}
+                  >
+                    <span className="bo-schedule-modal__duration-short">{durationChipLabel(minutes)}</span>
+                    <span className="bo-schedule-modal__duration-full">{formatDurationLabel(minutes)}</span>
+                  </button>
+                );
+              })}
             </div>
+          </fieldset>
+
+          <label className="bo-schedule-modal__field bo-schedule-modal__field--full">
+            <span className="bo-schedule-modal__label">Time zone</span>
+            <select
+              className="bo-schedule-modal__input bo-schedule-modal__select"
+              value={schedulingTimeZone}
+              required
+              disabled={submitting}
+              onChange={(e) => setSchedulingTimeZone(e.target.value)}
+            >
+              {timezoneGroups.map((group) => (
+                <optgroup key={group.region} label={group.region}>
+                  {group.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </label>
+
+          <div id={previewId} className="bo-schedule-modal__preview" role="status" aria-live="polite">
+            <div className="bo-schedule-modal__preview-head">
+              <span className="bo-schedule-modal__preview-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" />
+                  <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                </svg>
+              </span>
+              <span className="bo-schedule-modal__preview-title">Candidate time preview</span>
+            </div>
+            <dl className="bo-schedule-modal__preview-list">
+              <div className="bo-schedule-modal__preview-item">
+                <dt>Your scheduling time</dt>
+                <dd>{preview.schedulingLabel}</dd>
+              </div>
+              <div className="bo-schedule-modal__preview-item">
+                <dt>Candidate local</dt>
+                <dd>{preview.candidateLabel}</dd>
+              </div>
+            </dl>
           </div>
 
-          <label className="bo-schedule-interview-checkbox">
+          <label className="bo-schedule-modal__notify">
             <input
               type="checkbox"
               checked={notifyCandidateEmail}
@@ -261,24 +297,24 @@ export function ScheduleInterviewModal({
               onChange={(e) => setNotifyCandidateEmail(e.target.checked)}
             />
             <span>
-              Send email notification to <strong>{candidateEmail}</strong>
+              Email the candidate at <strong>{candidateEmail}</strong>
             </span>
           </label>
 
           {fieldError ? (
-            <p className="bo-login-error" role="alert">
+            <p className="bo-schedule-modal__error" role="alert">
               {fieldError}
             </p>
           ) : null}
 
-          <div className="bo-modal-actions">
+          <footer className="bo-schedule-modal__footer">
             <button type="button" className="btn btn-secondary" disabled={submitting} onClick={onClose}>
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={submitting}>
-              {submitting ? "Scheduling…" : "Schedule"}
+              {submitting ? "Scheduling…" : "Schedule interview"}
             </button>
-          </div>
+          </footer>
         </form>
       </div>
     </div>
