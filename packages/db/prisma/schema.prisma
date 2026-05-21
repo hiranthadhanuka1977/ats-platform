@@ -364,6 +364,7 @@ model CandidateProfile {
   resumeUrl          String?  @map("resume_url") @db.VarChar(500)
   location           String?  @db.VarChar(200)
   currentTitle       String?  @map("current_title") @db.VarChar(200)
+  timeZone           String?  @map("time_zone") @db.VarChar(64)
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -547,6 +548,7 @@ model ApplicationInterview {
   applicationId        String   @unique @map("application_id") @db.Uuid
   startsAt             DateTime @map("starts_at") @db.Timestamptz(6)
   endsAt               DateTime @map("ends_at") @db.Timestamptz(6)
+  schedulingTimeZone   String   @default("UTC") @map("scheduling_time_zone") @db.VarChar(64)
   notifyCandidateEmail Boolean  @default(true) @map("notify_candidate_email")
   notificationSentAt   DateTime? @map("notification_sent_at") @db.Timestamptz(6)
   scheduledByStaffId   String?  @map("scheduled_by_staff_id") @db.Uuid

@@ -1,7 +1,16 @@
+import {
+  formatDurationLabel,
+  formatInterviewRangeInZone,
+  interviewDurationMinutes,
+  normalizeSchedulingTimeZone,
+} from "@ats-platform/utils/interview-scheduling";
+
 export type ApplicationInterviewDisplay = {
   id: string;
   startsAt: Date | string;
   endsAt: Date | string;
+  schedulingTimeZone?: string | null;
+  candidateTimeZone?: string | null;
   notifyCandidateEmail: boolean;
   notificationSentAt: Date | string | null;
   scheduledByName: string | null;
@@ -15,44 +24,11 @@ function toDate(value: Date | string): Date {
   return typeof value === "string" ? new Date(value) : value;
 }
 
-function formatInterviewDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-GB", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(date);
-}
-
-function formatInterviewTime(date: Date): string {
-  return new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "UTC",
-  }).format(date);
-}
-
-function formatDurationMinutes(start: Date, end: Date): string {
-  const minutes = Math.round((end.getTime() - start.getTime()) / 60_000);
-  if (minutes < 60) return `${minutes} min`;
-  const hours = Math.floor(minutes / 60);
-  const rem = minutes % 60;
-  return rem > 0 ? `${hours} hr ${rem} min` : `${hours} hr`;
-}
-
 function interviewPhase(startsAt: Date, endsAt: Date): "upcoming" | "in_progress" | "past" {
   const now = Date.now();
   if (now < startsAt.getTime()) return "upcoming";
   if (now <= endsAt.getTime()) return "in_progress";
   return "past";
-}
-
-function formatInterviewDateRange(start: Date, end: Date): string {
-  const startLabel = formatInterviewDate(start);
-  const endLabel = formatInterviewDate(end);
-  return startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`;
 }
 
 function CalendarIcon() {
@@ -83,6 +59,14 @@ export function ApplicationScheduledInterviews({ interviews }: Props) {
           const startsAt = toDate(interview.startsAt);
           const endsAt = toDate(interview.endsAt);
           const phase = interviewPhase(startsAt, endsAt);
+          const duration = interviewDurationMinutes(startsAt, endsAt);
+          const schedulingTimeZone = normalizeSchedulingTimeZone(interview.schedulingTimeZone);
+          const schedulingLabel = formatInterviewRangeInZone(startsAt, endsAt, schedulingTimeZone);
+          const candidateLabel =
+            interview.candidateTimeZone &&
+            interview.candidateTimeZone !== schedulingTimeZone
+              ? formatInterviewRangeInZone(startsAt, endsAt, interview.candidateTimeZone)
+              : null;
 
           return (
             <li
@@ -95,7 +79,7 @@ export function ApplicationScheduledInterviews({ interviews }: Props) {
               <div className="bo-application-interview-body">
                 <div className="bo-application-interview-primary">
                   <p className="bo-application-interview-when">
-                    <time dateTime={startsAt.toISOString()}>{formatInterviewDateRange(startsAt, endsAt)}</time>
+                    <time dateTime={startsAt.toISOString()}>{schedulingLabel}</time>
                   </p>
                   <span className={`bo-application-interview-phase bo-application-interview-phase--${phase}`}>
                     {phase === "upcoming"
@@ -106,14 +90,13 @@ export function ApplicationScheduledInterviews({ interviews }: Props) {
                   </span>
                 </div>
                 <p className="bo-application-interview-time">
-                  <time dateTime={startsAt.toISOString()}>{formatInterviewTime(startsAt)}</time>
-                  {" – "}
-                  <time dateTime={endsAt.toISOString()}>{formatInterviewTime(endsAt)}</time>
-                  <span className="bo-application-interview-utc"> UTC</span>
-                  <span className="bo-application-interview-duration-inline">
-                    · {formatDurationMinutes(startsAt, endsAt)}
-                  </span>
+                  Duration: {formatDurationLabel(duration)}
                 </p>
+                {candidateLabel ? (
+                  <p className="bo-application-interview-candidate-time">
+                    Candidate local: {candidateLabel}
+                  </p>
+                ) : null}
                 <ul className="bo-application-interview-meta">
                   {interview.notifyCandidateEmail ? (
                     <li>

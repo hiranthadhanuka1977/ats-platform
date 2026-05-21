@@ -6,6 +6,8 @@ Use this as a **repeatable worksheet**. Replace bracketed sections with screensh
 
 Show hiring managers and design leads that you **grounded decisions** in market patterns—not arbitrary UI.
 
+**Deep research:** See [18-market-research-summary.md](./18-market-research-summary.md) (case study insert) or [17-netnographic-ats-research.md](./17-netnographic-ats-research.md) (full report).
+
 ---
 
 ## Pattern 1 — Dual view (table + board)

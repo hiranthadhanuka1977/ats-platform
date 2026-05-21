@@ -2,6 +2,8 @@
 
 Use these as **Figma frame titles** or **annotation specs**. Replace dimensions with your grid system.
 
+**Status vocabulary:** ten application statuses per [PRD §6](../../docs/specification/PRD.md). **Terminal:** Rejected, Withdrawn (separate from active Kanban columns).
+
 ---
 
 ## Screen: Applications — Table
@@ -61,6 +63,8 @@ Use these as **Figma frame titles** or **annotation specs**. Replace dimensions 
   - Job and timeline  
   - Submission details (+ motivation block if present)  
   - Documents (CV submitted, default CV, cover letter)  
+  - **Status history** (audit timeline)  
+  - **Schedule interview** (action + modal)  
   - Applicant (link to candidate)  
   - *(Conditional)* Cover letter text — full width if content exists  
   - Profile overview  

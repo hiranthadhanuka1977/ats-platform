@@ -183,6 +183,7 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
         hasScheduledInterview={application.interviews.length > 0}
         candidateName={fullName}
         candidateEmail={candidate.email}
+        candidateTimeZone={candidate.profile?.timeZone ?? null}
         jobTitle={application.jobPosting.title}
         title={application.jobPosting.title}
         subtitle={
@@ -199,6 +200,8 @@ export default async function ApplicationDetailsPage({ params, searchParams }: P
           id: interview.id,
           startsAt: interview.startsAt,
           endsAt: interview.endsAt,
+          schedulingTimeZone: interview.schedulingTimeZone ?? "UTC",
+          candidateTimeZone: candidate.profile?.timeZone ?? null,
           notifyCandidateEmail: interview.notifyCandidateEmail,
           notificationSentAt: interview.notificationSentAt,
           scheduledByName: interview.scheduledByStaff?.name ?? null,

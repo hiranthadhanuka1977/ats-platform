@@ -22,7 +22,7 @@ export const APPLICATION_STATUS_TRANSITIONS: Record<PipelineStatus, PipelineStat
   submitted: ["under_review", "shortlisted", "rejected", "withdrawn"],
   under_review: ["shortlisted", "interview_scheduled", "rejected", "withdrawn"],
   shortlisted: ["under_review", "interview_scheduled", "rejected", "withdrawn"],
-  interview_scheduled: ["interview_completed", "rejected", "withdrawn"],
+  interview_scheduled: ["interview_completed", "under_review", "shortlisted", "rejected", "withdrawn"],
   interview_completed: ["shortlisted", "interview_scheduled", "offered", "rejected", "withdrawn"],
   offered: ["hired", "rejected", "withdrawn"],
   hired: [],
@@ -39,6 +39,7 @@ export type StatusTransitionErrorCode =
   | "WITHDRAWAL_SOURCE_REQUIRED"
   | "OFFER_ACCEPTANCE_REQUIRED"
   | "INTERVIEW_RECORD_REQUIRED"
+  | "INTERVIEW_CANCEL_REQUIRED"
   | "STATUS_CONFLICT";
 
 export function normalizePipelineStatus(status: string): PipelineStatus | null {

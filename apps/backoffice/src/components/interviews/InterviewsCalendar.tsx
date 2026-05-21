@@ -84,7 +84,7 @@ export function InterviewsCalendar({ interviews }: Props) {
           {monthInterviewCount === 0
             ? "No interviews scheduled this month."
             : `${monthInterviewCount} interview${monthInterviewCount === 1 ? "" : "s"} this month`}
-          <span className="bo-interviews-calendar-utc-note"> · All times UTC</span>
+          <span className="bo-interviews-calendar-utc-note"> · Times in scheduling timezone</span>
         </p>
 
         <div className="bo-interviews-calendar-grid" role="grid" aria-label="Interview calendar">
@@ -127,7 +127,7 @@ export function InterviewsCalendar({ interviews }: Props) {
                             hour: "2-digit",
                             minute: "2-digit",
                             hour12: false,
-                            timeZone: "UTC",
+                            timeZone: item.schedulingTimeZone ?? "UTC",
                           }).format(new Date(item.startsAt))}
                         </span>
                         <span className="bo-interviews-calendar-event-name">{item.candidateName}</span>
@@ -157,7 +157,9 @@ export function InterviewsCalendar({ interviews }: Props) {
           <ul className="bo-interviews-day-list">
             {selectedInterviews.map((item) => (
               <li key={item.id} className="bo-interviews-day-item">
-                <p className="bo-interviews-day-item-time">{formatInterviewTimeRange(item.startsAt, item.endsAt)}</p>
+                <p className="bo-interviews-day-item-time">
+                  {formatInterviewTimeRange(item.startsAt, item.endsAt, item.schedulingTimeZone)}
+                </p>
                 <p className="bo-interviews-day-item-candidate">{item.candidateName}</p>
                 <p className="bo-interviews-day-item-job">{item.jobTitle}</p>
                 <p className="bo-interviews-day-item-meta">

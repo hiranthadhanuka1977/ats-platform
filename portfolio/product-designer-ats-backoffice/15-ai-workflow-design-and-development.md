@@ -21,7 +21,7 @@ I led product design and hands-on implementation for a **staff Applications** sl
 
 ## Context
 
-**Product:** `ats-platform` — a monorepo with a staff **backoffice** (Next.js), candidate-facing apps, and a Hono API, backed by PostgreSQL (Prisma).
+**Product:** **TalentHub** (`ats-platform`) — monorepo with staff **backoffice** (Next.js), candidate portal, my-applications, and Hono API, backed by PostgreSQL (Prisma). As-built scope: [PRD](../../docs/specification/PRD.md).
 
 **Problem:** Recruiters need to triage applications at volume—see who applied, for which role, in which funnel stage, with documents and interviews in context—without dead-end navigation or invalid status changes.
 

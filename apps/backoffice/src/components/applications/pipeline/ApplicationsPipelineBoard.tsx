@@ -14,6 +14,7 @@ import { PipelineApplicationCard, type PipelineCardItem } from "@/components/app
 import { IconFullscreen, IconFullscreenExit } from "@/components/backoffice/nav-icons";
 import { ScheduleInterviewModal } from "@/components/applications/ScheduleInterviewModal";
 import {
+  PipelineCancelScheduledInterviewModal,
   PipelineHiredModal,
   PipelineMissingInterviewModal,
   PipelineRejectModal,
@@ -125,11 +126,10 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
     valid: boolean;
   } | null>(null);
   const [pipelineFullscreen, setPipelineFullscreen] = useState(false);
-  const [relevanceRefreshIds, setRelevanceRefreshIds] = useState<string[]>([]);
   const [pendingMove, setPendingMove] = useState<PendingMove | null>(null);
   const [modalApp, setModalApp] = useState<PipelineApplicationItem | null>(null);
   const [modalKind, setModalKind] = useState<
-    "reject" | "withdraw" | "hired" | "reopen" | "missing_interview" | null
+    "reject" | "withdraw" | "hired" | "reopen" | "missing_interview" | "cancel_interview" | null
   >(null);
   const [scheduleInterviewOpen, setScheduleInterviewOpen] = useState(false);
   const [lastUndo, setLastUndo] = useState<UndoablePipelineMove | null>(null);
@@ -188,7 +188,6 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
   const { scores: relevanceById, scoringUnavailableMessage } = usePipelineRelevanceScores(
     true,
     tabFilteredItems,
-    relevanceRefreshIds,
   );
 
   const draggingItem = draggingId ? items.find((i) => i.id === draggingId) : null;
@@ -210,12 +209,6 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
     } catch {
       /* unsupported */
     }
-  }, []);
-
-  const requestRelevanceRefresh = useCallback((applicationId: string) => {
-    setRelevanceRefreshIds((current) =>
-      current.includes(applicationId) ? current : [...current, applicationId],
-    );
   }, []);
 
   const applyServerUpdate = useCallback(
@@ -264,7 +257,12 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
     onItemsChange((current) =>
       current.map((item) =>
         item.id === applicationId
-          ? { ...item, status: nextStatus, updatedAt: optimisticUpdatedAt }
+          ? {
+              ...item,
+              status: nextStatus,
+              updatedAt: optimisticUpdatedAt,
+              ...(extra.cancelInterview === true ? { hasScheduledInterview: false } : {}),
+            }
           : item,
       ),
     );
@@ -290,6 +288,13 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
       }
 
       applyServerUpdate(applicationId, payload.data.status, payload.data.updatedAt);
+      if (extra.cancelInterview === true) {
+        onItemsChange((current) =>
+          current.map((item) =>
+            item.id === applicationId ? { ...item, hasScheduledInterview: false } : item,
+          ),
+        );
+      }
       registerUndoableMove(
         applicationId,
         payload.data.previousStatus,
@@ -382,6 +387,16 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
     if (targetStatus === "interview_scheduled" && !item.hasScheduledInterview) {
       setModalApp(item);
       setModalKind("missing_interview");
+      setPendingMove({ applicationId: item.id, targetStatus, expectedUpdatedAt });
+      return;
+    }
+    if (
+      from === "interview_scheduled" &&
+      item.hasScheduledInterview &&
+      (targetStatus === "shortlisted" || targetStatus === "under_review")
+    ) {
+      setModalApp(item);
+      setModalKind("cancel_interview");
       setPendingMove({ applicationId: item.id, targetStatus, expectedUpdatedAt });
       return;
     }
@@ -480,7 +495,12 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
         aria-label="Applications pipeline"
       >
         {lastUndo ? (
-          <div className="bo-pipeline-board-header">
+          <div className="bo-pipeline-undo-hint" role="status">
+            <p className="bo-pipeline-undo-hint-text">
+              Last move: <strong>{lastUndo.candidateName}</strong> ({lastUndo.jobTitle}) —{" "}
+              {getApplicationStatusMeta(lastUndo.currentStatus).label} → undo restores{" "}
+              {getApplicationStatusMeta(lastUndo.previousStatus).label}.
+            </p>
             <button
               type="button"
               className="btn btn-secondary btn-sm bo-pipeline-undo-btn"
@@ -491,14 +511,6 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
               {undoing ? "Undoing…" : "Undo last move"}
             </button>
           </div>
-        ) : null}
-
-        {lastUndo ? (
-          <p className="bo-pipeline-undo-hint" role="status">
-            Last move: <strong>{lastUndo.candidateName}</strong> ({lastUndo.jobTitle}) —{" "}
-            {getApplicationStatusMeta(lastUndo.currentStatus).label} → undo restores{" "}
-            {getApplicationStatusMeta(lastUndo.previousStatus).label}.
-          </p>
         ) : null}
 
         <div className="bo-pipeline-board-body">
@@ -649,7 +661,6 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
                               }
                             : undefined
                         }
-                        onRefreshRelevance={requestRelevanceRefresh}
                         onDragStart={(applicationId, event) => {
                           event.dataTransfer.setData("text/plain", applicationId);
                           event.dataTransfer.effectAllowed = "move";
@@ -755,6 +766,27 @@ export function ApplicationsPipelineBoard({ items, onItemsChange, onError }: Pro
           jobTitle={modalApp.job.title}
           onClose={closeModals}
           onScheduleNow={openScheduleInterviewFromPrompt}
+        />
+      ) : null}
+
+      {modalApp && modalKind === "cancel_interview" && pendingMove ? (
+        <PipelineCancelScheduledInterviewModal
+          open
+          candidateName={modalApp.candidate.name}
+          jobTitle={modalApp.job.title}
+          targetStatusLabel={getApplicationStatusMeta(pendingMove.targetStatus).label}
+          submitting={updatingId === modalApp.id}
+          onClose={closeModals}
+          onConfirm={({ cancelInterview, notifyCandidate }) => {
+            void patchStatus(
+              pendingMove.applicationId,
+              pendingMove.targetStatus,
+              { cancelInterview, notifyCandidate },
+              pendingMove.expectedUpdatedAt,
+            ).then((ok) => {
+              if (ok) closeModals();
+            });
+          }}
         />
       ) : null}
 

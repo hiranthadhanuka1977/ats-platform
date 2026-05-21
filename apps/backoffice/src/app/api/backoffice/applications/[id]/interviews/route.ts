@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { ApplicationStatus } from "@prisma/client";
 import { recordApplicationStatusEvent } from "@ats-platform/db";
+import { scheduleInterviewSchema } from "@ats-platform/validators";
+import {
+  computeInterviewEndUtc,
+  isValidIanaTimeZone,
+  type InterviewDurationMinutes,
+} from "@ats-platform/utils/interview-scheduling";
 import { requireStaffSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 
@@ -8,10 +14,25 @@ type Params = { params: Promise<{ id: string }> };
 
 const INTERVIEW_SCHEDULED_STATUS = "interview_scheduled" satisfies ApplicationStatus;
 
-function parseInstant(value: unknown): Date | null {
-  if (typeof value !== "string" || !value.trim()) return null;
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? null : date;
+function mapInterviewRow(row: {
+  id: string;
+  applicationId: string;
+  startsAt: Date;
+  endsAt: Date;
+  schedulingTimeZone: string;
+  notifyCandidateEmail: boolean;
+  notificationSentAt: Date | null;
+}) {
+  return {
+    id: row.id,
+    applicationId: row.applicationId,
+    startsAt: row.startsAt.toISOString(),
+    endsAt: row.endsAt.toISOString(),
+    schedulingTimeZone: row.schedulingTimeZone,
+    durationMinutes: Math.round((row.endsAt.getTime() - row.startsAt.getTime()) / 60_000),
+    notifyCandidateEmail: row.notifyCandidateEmail,
+    notificationSentAt: row.notificationSentAt?.toISOString() ?? null,
+  };
 }
 
 export async function POST(request: NextRequest, ctx: Params) {
@@ -26,30 +47,43 @@ export async function POST(request: NextRequest, ctx: Params) {
     );
   }
 
-  let body: { startsAt?: unknown; endsAt?: unknown; notifyCandidateEmail?: unknown };
+  let body: unknown;
   try {
-    body = (await request.json()) as typeof body;
+    body = await request.json();
   } catch {
     return NextResponse.json({ error: { code: "VALIDATION_ERROR", message: "Invalid JSON body." } }, { status: 400 });
   }
 
-  const startsAt = parseInstant(body.startsAt);
-  const endsAt = parseInstant(body.endsAt);
-  const notifyCandidateEmail = body.notifyCandidateEmail !== false;
+  const parsed = scheduleInterviewSchema.safeParse(body);
+  if (!parsed.success) {
+    const message = parsed.error.issues[0]?.message ?? "Invalid request body.";
+    return NextResponse.json({ error: { code: "VALIDATION_ERROR", message } }, { status: 400 });
+  }
 
-  if (!startsAt || !endsAt) {
+  if (!isValidIanaTimeZone(parsed.data.schedulingTimeZone)) {
     return NextResponse.json(
-      { error: { code: "VALIDATION_ERROR", message: "Interview start and end date/time are required." } },
+      { error: { code: "VALIDATION_ERROR", message: "Invalid scheduling time zone." } },
       { status: 400 },
     );
   }
 
-  if (endsAt.getTime() <= startsAt.getTime()) {
-    return NextResponse.json(
-      { error: { code: "VALIDATION_ERROR", message: "End time must be after start time." } },
-      { status: 400 },
+  let startsAt: Date;
+  let endsAt: Date;
+  try {
+    const computed = computeInterviewEndUtc(
+      parsed.data.interviewDate,
+      parsed.data.startTime,
+      parsed.data.durationMinutes as InterviewDurationMinutes,
+      parsed.data.schedulingTimeZone,
     );
+    startsAt = computed.startsAt;
+    endsAt = computed.endsAt;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Invalid interview date or time.";
+    return NextResponse.json({ error: { code: "VALIDATION_ERROR", message } }, { status: 400 });
   }
+
+  const notifyCandidateEmail = parsed.data.notifyCandidateEmail !== false;
 
   const application = await prisma.application.findUnique({
     where: { id: applicationId },
@@ -91,6 +125,7 @@ export async function POST(request: NextRequest, ctx: Params) {
           applicationId,
           startsAt,
           endsAt,
+          schedulingTimeZone: parsed.data.schedulingTimeZone,
           notifyCandidateEmail,
           notificationSentAt,
           scheduledByStaffId: auth.userId,
@@ -116,14 +151,7 @@ export async function POST(request: NextRequest, ctx: Params) {
 
     return NextResponse.json({
       data: {
-        interview: {
-          id: interview.id,
-          applicationId: interview.applicationId,
-          startsAt: interview.startsAt.toISOString(),
-          endsAt: interview.endsAt.toISOString(),
-          notifyCandidateEmail: interview.notifyCandidateEmail,
-          notificationSentAt: interview.notificationSentAt?.toISOString() ?? null,
-        },
+        interview: mapInterviewRow(interview),
         emailNotificationQueued: notifyCandidateEmail,
         candidateEmail: application.candidateAccount.email,
       },
@@ -160,11 +188,7 @@ export async function GET(_request: NextRequest, ctx: Params) {
   return NextResponse.json({
     data: {
       interviews: interviews.map((row) => ({
-        id: row.id,
-        startsAt: row.startsAt.toISOString(),
-        endsAt: row.endsAt.toISOString(),
-        notifyCandidateEmail: row.notifyCandidateEmail,
-        notificationSentAt: row.notificationSentAt?.toISOString() ?? null,
+        ...mapInterviewRow(row),
         scheduledBy: row.scheduledByStaff?.name ?? null,
       })),
     },

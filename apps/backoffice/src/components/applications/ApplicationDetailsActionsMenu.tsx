@@ -15,6 +15,7 @@ type Props = {
   hasScheduledInterview?: boolean;
   candidateName: string;
   candidateEmail: string;
+  candidateTimeZone?: string | null;
   jobTitle: string;
   onFeedback?: (message: string | null) => void;
   onError?: (message: string | null) => void;
@@ -48,6 +49,7 @@ export function ApplicationDetailsActionsMenu({
   hasScheduledInterview = false,
   candidateName,
   candidateEmail,
+  candidateTimeZone = null,
   jobTitle,
   onFeedback,
   onError,
@@ -167,6 +169,7 @@ export function ApplicationDetailsActionsMenu({
         applicationId={applicationId}
         candidateName={candidateName}
         candidateEmail={candidateEmail}
+        candidateTimeZone={candidateTimeZone}
         jobTitle={jobTitle}
         onClose={() => setScheduleModalOpen(false)}
         onScheduled={handleScheduled}

@@ -1,10 +1,13 @@
 /** UTC calendar helpers for the interviews page (Monday-first weeks). */
 
+import { formatInterviewRangeInZone } from "@ats-platform/utils/interview-scheduling";
+
 export type InterviewCalendarItem = {
   id: string;
   applicationId: string;
   startsAt: string;
   endsAt: string;
+  schedulingTimeZone: string;
   candidateName: string;
   jobTitle: string;
   notifyCandidateEmail: boolean;
@@ -94,14 +97,10 @@ export function groupInterviewsByDay(
   return map;
 }
 
-export function formatInterviewTimeRange(startsAt: string, endsAt: string): string {
-  const start = new Date(startsAt);
-  const end = new Date(endsAt);
-  const fmt = new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "UTC",
-  });
-  return `${fmt.format(start)} – ${fmt.format(end)} UTC`;
+export function formatInterviewTimeRange(
+  startsAt: string,
+  endsAt: string,
+  schedulingTimeZone = "UTC",
+): string {
+  return formatInterviewRangeInZone(startsAt, endsAt, schedulingTimeZone);
 }

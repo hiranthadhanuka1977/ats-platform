@@ -7,7 +7,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./application-relevance": "./src/application-relevance.ts",
-    "./salary-display": "./src/salary-display.ts"
+    "./salary-display": "./src/salary-display.ts",
+    "./interview-scheduling": "./src/interview-scheduling.ts"
   },
   "dependencies": {
     "@ats-platform/types": "*"

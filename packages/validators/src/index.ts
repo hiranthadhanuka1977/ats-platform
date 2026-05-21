@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export { z };
 export * from "./application-status";
+export * from "./schedule-interview";
 
 /** Example shared schema — extend with API DTOs. */
 export const paginationQuerySchema = z.object({

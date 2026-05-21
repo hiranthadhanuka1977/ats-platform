@@ -1,51 +1,68 @@
 # Information architecture
 
+*Aligned with [PRD §4](../../docs/specification/PRD.md) and `docs/PROJECT_STRUCTURE.md`.*
+
 ## Platform context (monorepo)
 
-High-level (from `docs/PROJECT_STRUCTURE.md`):
+| App | Port | Audience | PRD section |
+|-----|------|----------|-------------|
+| `apps/candidate-portal` | 3000 | Public candidates | §5.1 |
+| `apps/my-applications` | 3002 | Authenticated candidates | §5.2 |
+| `apps/backoffice` | 3001 | Staff | §5.3–§5.9 |
+| `apps/api` | 4000 | Auth + candidate registration | §5.10 |
 
-| App | Port | Audience |
-|-----|------|----------|
-| `apps/candidate-portal` | 3000 | Public candidates |
-| `apps/backoffice` | 3001 | Staff |
-| `apps/my-applications` | 3002 | Authenticated candidates |
-| `apps/api` | 4000 | HTTP API |
-
-This portfolio slice focuses on **`apps/backoffice`** applications workflow and its relationship to **candidates** and **jobs**.
+This portfolio slice focuses on **`apps/backoffice`** applications workflow and its relationships to **candidates**, **jobs**, and **interviews**. Candidate apply flow lives in **my-applications**; public browse in **candidate-portal**.
 
 ---
 
-## Backoffice — primary navigation (conceptual)
+## Backoffice — primary navigation
 
 ```
-Dashboard (home)
+Dashboard (home)                    ← KPIs, pipeline health, recent activity [Done]
 ├── Jobs
-│   ├── List
-│   ├── New
-│   └── [id] / Edit
+│   ├── List                        [Done]
+│   ├── New → Review → Success      [Done]
+│   ├── [id] / Edit                 [Done]
+│   └── [id] / Preview              [Done]
 ├── Candidates
-│   ├── All (list)
-│   └── [id] / Detail (+ edit)
-├── Applications  ← slice focus
-│   ├── /applications (table | pipeline)
-│   └── /applications/[id] (detail)
-├── Interviews
-├── Reports
-├── Administration
-└── Settings
+│   ├── Summary + All (list)        [Done]
+│   └── [id] / Detail (+ edit status) [Done]
+├── Applications                    ← portfolio slice focus
+│   ├── /applications (table | pipeline) [Done]
+│   └── /applications/[id] (detail) [Done]
+├── Interviews                      [Done]
+├── Reports                         [Placeholder]
+├── Administration                  [Done — lookup CRUD]
+└── Settings                        [Placeholder]
 ```
 
 ---
 
 ## Key routes (implementation-aligned)
 
-| Route | Purpose |
-|-------|---------|
-| `/applications` | Applications hub: **Table** and **Pipeline** tabs |
-| `/applications/[id]` | **Application detail** — packet review |
-| `/candidates/all` | Candidate directory |
-| `/candidates/[id]` | Candidate profile & history |
-| `/jobs/[id]/edit` | Job posting edit (linked from application detail) |
+| Route | Purpose | Status |
+|-------|---------|--------|
+| `/` | Dashboard — stats, pipeline snapshot, activity | Done |
+| `/applications` | Applications hub: **Table** and **Pipeline** (pipeline default) | Done |
+| `/applications/[id]` | **Application detail** — packet review, status, interview | Done |
+| `/interviews` | Interview calendar | Done |
+| `/candidates`, `/candidates/all` | Candidate summary and directory | Done |
+| `/candidates/[id]` | Candidate profile & history | Done |
+| `/jobs`, `/jobs/new`, `/jobs/[id]/edit` | Job posting lifecycle | Done |
+| `/administration/[section]` | Lookup CRUD (departments, skills, etc.) | Done |
+| `/reports`, `/settings` | Placeholder copy | Planned |
+
+---
+
+## Application lifecycle (IA implication)
+
+Active Kanban columns (PRD §6):
+
+```text
+Submitted → Under Review → Shortlisted → Interview Scheduled → Interview Completed → Offered → Hired
+```
+
+Terminal views: **Rejected**, **Withdrawn** (separate tabs/filters, not active board clutter).
 
 ---
 
@@ -58,11 +75,20 @@ Dashboard (home)
 | Pipeline card | Application detail | `/applications/[id]` |
 | Application detail — applicant | Candidate detail | `?from=applications` |
 | Application detail — job | Job edit | `/jobs/[id]/edit` |
+| Application detail — schedule interview | Modal → `/interviews` calendar | One interview per application |
+| Dashboard — recent activity | Application or job detail | Contextual deep links |
 
 ---
 
 ## Depth vs breadth
 
-- **Breadth:** `/applications` for throughput  
-- **Depth:** `/applications/[id]` for adjudication  
-- **Person context:** `/candidates/[id]` when history across jobs matters  
+- **Breadth:** `/applications` for throughput; `/interviews` for schedule overview
+- **Depth:** `/applications/[id]` for adjudication and status actions
+- **Person context:** `/candidates/[id]` when history across jobs matters
+- **Platform context:** `/` dashboard for daily orientation
+
+---
+
+## Design system
+
+Layout templates and components documented in [design-system/index.html](../../docs/design-system/index.html): portal shell, job listing, auth split, dashboard shell, pipeline full viewport.

@@ -244,6 +244,72 @@ type MissingInterviewProps = BaseProps & {
   onScheduleNow: () => void;
 };
 
+type CancelScheduledInterviewProps = BaseProps & {
+  targetStatusLabel: string;
+  onConfirm: (payload: { cancelInterview: boolean; notifyCandidate: boolean }) => void;
+  submitting: boolean;
+};
+
+export function PipelineCancelScheduledInterviewModal({
+  open,
+  candidateName,
+  jobTitle,
+  targetStatusLabel,
+  onClose,
+  onConfirm,
+  submitting,
+}: CancelScheduledInterviewProps) {
+  const titleId = useId();
+  const [cancelAndNotify, setCancelAndNotify] = useState(true);
+
+  useEffect(() => {
+    if (!open) return;
+    setCancelAndNotify(true);
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <ModalShell
+      titleId={titleId}
+      title="Interview already scheduled"
+      onClose={submitting ? undefined : onClose}
+    >
+      <p className="bo-modal-body" style={{ marginTop: 0 }}>
+        <strong>{candidateName}</strong> · {jobTitle}
+      </p>
+      <p className="bo-modal-body">
+        This application already has an interview scheduled. Moving it to{" "}
+        <strong>{targetStatusLabel}</strong> requires cancelling that interview.
+      </p>
+      <form
+        className="bo-modal-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (submitting) return;
+          onConfirm({ cancelInterview: true, notifyCandidate: cancelAndNotify });
+        }}
+      >
+        <label className="bo-schedule-interview-checkbox">
+          <input
+            type="checkbox"
+            checked={cancelAndNotify}
+            disabled={submitting}
+            onChange={(e) => setCancelAndNotify(e.target.checked)}
+          />
+          <span>Cancel the interview and notify the candidate by email</span>
+        </label>
+        <ModalActions
+          submitting={submitting}
+          confirmLabel="Cancel Interview"
+          confirmType="submit"
+          onCancel={onClose}
+        />
+      </form>
+    </ModalShell>
+  );
+}
+
 export function PipelineMissingInterviewModal({
   open,
   candidateName,

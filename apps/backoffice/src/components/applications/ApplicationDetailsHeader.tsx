@@ -10,6 +10,7 @@ type Props = {
   hasScheduledInterview?: boolean;
   candidateName: string;
   candidateEmail: string;
+  candidateTimeZone?: string | null;
   jobTitle: string;
   title: string;
   subtitle: ReactNode;
@@ -22,6 +23,7 @@ export function ApplicationDetailsHeader({
   hasScheduledInterview = false,
   candidateName,
   candidateEmail,
+  candidateTimeZone = null,
   jobTitle,
   title,
   subtitle,
@@ -69,6 +71,7 @@ export function ApplicationDetailsHeader({
             hasScheduledInterview={hasScheduledInterview}
             candidateName={candidateName}
             candidateEmail={candidateEmail}
+            candidateTimeZone={candidateTimeZone}
             jobTitle={jobTitle}
             onFeedback={setActionFeedback}
             onError={setActionError}

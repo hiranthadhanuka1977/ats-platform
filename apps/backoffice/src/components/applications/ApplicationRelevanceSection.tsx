@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { parseRelevanceBreakdown } from "@ats-platform/utils/application-relevance";
 import { RelevanceScoreRing } from "@/components/applications/RelevanceScoreRing";
+import { AiRelevanceBiasNotice } from "@/components/applications/AiRelevanceBiasNotice";
 
 type RelevanceEntry =
   | { status: "idle" }
@@ -116,9 +117,12 @@ export function ApplicationRelevanceSection({
 
   return (
     <section className="bo-card bo-span-12" aria-labelledby="application-relevance-title">
-      <h2 id="application-relevance-title" className="bo-card-title">
-        AI relevance match
-      </h2>
+      <div className="bo-relevance-section-header">
+        <h2 id="application-relevance-title" className="bo-card-title">
+          AI relevance match
+        </h2>
+        <AiRelevanceBiasNotice variant="detail" id="application-relevance-bias-notice" />
+      </div>
       <p className="bo-admin-muted bo-relevance-detail-intro">
         CV and application answers vs this job posting (0–100%). Scores are cached until inputs change.
       </p>

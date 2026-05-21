@@ -42,7 +42,6 @@ type Props = {
   onReject?: () => void;
   onWithdraw?: () => void;
   onReopen?: () => void;
-  onRefreshRelevance?: (applicationId: string) => void;
   onDragStart: (applicationId: string, event: React.DragEvent) => void;
   onDragEnd: () => void;
 };
@@ -96,7 +95,6 @@ export function PipelineApplicationCard({
   onReject,
   onWithdraw,
   onReopen,
-  onRefreshRelevance,
   onDragStart,
   onDragEnd,
 }: Props) {
@@ -153,15 +151,11 @@ export function PipelineApplicationCard({
           {...ringProps(relevance)}
           size={52}
           flyoverLayerRef={flyoverLayerRef}
-          onRefresh={
-            onRefreshRelevance && relevance?.status !== "loading" && relevance?.status !== "idle"
-              ? () => onRefreshRelevance(item.id)
-              : undefined
-          }
-          isRefreshing={relevance?.status === "loading"}
         />
         <div className="bo-pipeline-card-body">
-          <p className="bo-pipeline-card-job">{item.job.title}</p>
+          <p className="bo-pipeline-card-job" title={item.job.title}>
+            {item.job.title}
+          </p>
           <p className="bo-pipeline-card-candidate" title={item.candidate.name}>
             {item.candidate.name}
           </p>

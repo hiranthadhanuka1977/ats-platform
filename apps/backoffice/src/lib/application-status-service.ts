@@ -33,6 +33,8 @@ export type StatusUpdateFailure = {
   httpStatus: number;
 };
 
+const BACKWARD_FROM_INTERVIEW_TARGETS = new Set(["under_review", "shortlisted"]);
+
 function mapToPrismaStatus(status: string): ApplicationStatus {
   if (status === "interview") return "interview_scheduled";
   return status as ApplicationStatus;
@@ -171,6 +173,20 @@ export async function updateApplicationStatus(
     };
   }
 
+  if (
+    fromNormalized === "interview_scheduled" &&
+    toNormalized &&
+    BACKWARD_FROM_INTERVIEW_TARGETS.has(toNormalized) &&
+    existing._count.interviews > 0 &&
+    input.cancelInterview !== true
+  ) {
+    return {
+      code: "INTERVIEW_CANCEL_REQUIRED",
+      message: "Cancel the scheduled interview before moving this application backward in the pipeline.",
+      httpStatus: 409,
+    };
+  }
+
   const prismaStatus = mapToPrismaStatus(input.status);
   const noteParts: string[] = [];
   if (input.note?.trim()) noteParts.push(input.note.trim());
@@ -178,9 +194,22 @@ export async function updateApplicationStatus(
     noteParts.push(`Withdrawal source: ${input.withdrawalSource.trim()}`);
   }
   if (input.notifyCandidate) noteParts.push("Notify candidate: yes");
+  if (input.cancelInterview) noteParts.push("Scheduled interview cancelled");
+  if (input.cancelInterview && input.notifyCandidate) {
+    noteParts.push("Interview cancellation notification: yes");
+  }
 
   try {
     const updated = await prisma.$transaction(async (tx) => {
+      if (
+        fromNormalized === "interview_scheduled" &&
+        toNormalized &&
+        BACKWARD_FROM_INTERVIEW_TARGETS.has(toNormalized) &&
+        input.cancelInterview
+      ) {
+        await tx.applicationInterview.deleteMany({ where: { applicationId } });
+      }
+
       const row = await tx.application.update({
         where: { id: applicationId },
         data: { status: prismaStatus },

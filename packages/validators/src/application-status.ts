@@ -20,6 +20,7 @@ export const applicationStatusPatchSchema = z.object({
   notifyCandidate: z.boolean().optional(),
   withdrawalSource: z.string().trim().optional(),
   offerAccepted: z.boolean().optional(),
+  cancelInterview: z.boolean().optional(),
   expectedUpdatedAt: z.string().datetime().optional(),
 });
 

@@ -38,6 +38,7 @@ export async function listInterviewsForCalendar(): Promise<InterviewCalendarItem
       applicationId: row.application.id,
       startsAt: row.startsAt.toISOString(),
       endsAt: row.endsAt.toISOString(),
+      schedulingTimeZone: row.schedulingTimeZone ?? "UTC",
       candidateName,
       jobTitle: row.application.jobPosting.title,
       notifyCandidateEmail: row.notifyCandidateEmail,

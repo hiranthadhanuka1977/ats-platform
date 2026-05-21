@@ -6,6 +6,7 @@ This is the **entry point** for HTTP API documentation. It now reflects the curr
 
 | Document | Contents |
 |----------|----------|
+| [**PRD.md**](PRD.md) | **Product Requirements Document** — vision, personas, as-built features, lifecycle, gaps (May 2026) |
 | [**api/README.md**](api/README.md) | Conventions, error format, pagination, **master endpoint index** |
 | [**api/authentication.md**](api/authentication.md) | Implemented auth endpoints: login, logout, `/auth/me` |
 | [**api/registration-sign-in.md**](api/registration-sign-in.md) | Register, OTP verify/resend, forgot/reset password |

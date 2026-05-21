@@ -1,50 +1,50 @@
-# Loom video script (~90 seconds)
+# Loom video script (~2 minutes)
 
-**Title suggestion:** “ATS backoffice — from weekly triage to application packet (Product Design)”
+**Title suggestion:** “TalentHub — weekly triage, validated pipeline, full application packet (Product Design)”
 
 ---
 
 **[0:00–0:10] Hook**
 
-“Hiring ops live in two modes: **scanning lists** and **moving people through stages**. I designed a slice of our staff backoffice so those modes don’t fight each other—and so reviewers always know **where they are**.”
+“Hiring ops live in two modes: **scanning lists** and **moving people through stages**. I designed a slice of **TalentHub**—our staff backoffice—so those modes don’t fight each other, status changes stay trustworthy, and reviewers always know **where they are**.”
 
 ---
 
-**[0:10–0:25] Context**
+**[0:10–0:25] Platform context**
 
-“This is part of a larger hiring platform: candidates apply through their portal, staff work in **backoffice**. My focus here is **Applications**.”
+“TalentHub is four apps: candidates browse and apply on the portal and **My Applications**; staff work here in **backoffice**. My focus is the **Applications** hub and how it connects to interviews and the rest of the hiring loop.”
 
-*[Screen: Applications page, show tabs]*
-
----
-
-**[0:25–0:45] Pipeline + week”**
-
-“The pipeline is intentionally **week-scoped**—I can go to **previous weeks** to compare cohorts, and I **can’t** advance into a **future** week because that would be an empty, confusing state.”
-
-*[Screen: click previous week, show label; try next week disabled on current week]*
+*[Screen: optional dashboard glance, then Applications page]*
 
 ---
 
-**[0:45–1:05] Detail page”**
+**[0:25–0:45] Pipeline + week**
 
-“When I need depth, I open **application details**—job and timestamps, structured answers, and **documents** in one place, plus a clear path to the **candidate profile** and **job edit**.”
+“The pipeline is **week-scoped**—I can go to **previous weeks** to compare cohorts, and I **can’t** advance into a **future** week. Rejected and withdrawn applications live in separate terminal views so the active board stays focused.”
 
-*[Screen: open `/applications/[id]`, scroll documents and applicant]*
+*[Screen: week toolbar; disabled Next week; optional terminal tab]*
 
 ---
 
-**[1:05–1:20] Orientation”**
+**[0:45–1:05] Status + detail**
 
-“If I came from the applications table into a candidate, the **back** action returns me to **Applications**, not the general candidate directory—small detail, big reduction in frustration.”
+“Dragging updates status, but the server validates transitions—reject needs a reason, and I can’t jump to Interview Scheduled without scheduling first. When I need depth, **application detail** gives me submission, documents, **status history**, and interview scheduling in one place.”
 
-*[Screen: table → candidate → back]*
+*[Screen: drag card or reject modal; open `/applications/[id]`]*
+
+---
+
+**[1:05–1:20] Interviews + orientation**
+
+“I schedule from the packet; the **interviews calendar** shows what’s coming up. If I came from Applications into a candidate profile, **back** returns me to Applications—not the general directory.”
+
+*[Screen: schedule modal or `/interviews`; table → candidate → back]*
 
 ---
 
 **[1:20–1:30] Close**
 
-“If you want the full case study, see the link below—thanks.”
+“The full case study and PRD are linked below—thanks.”
 
 ---
 
@@ -53,3 +53,4 @@
 - **1080p**, hide unrelated browser bookmarks  
 - **Zoom cursor** for small controls  
 - Use **staging** data with realistic names **or blur PII**  
+- Optional: 10s clip of **my-applications** apply flow for platform context  

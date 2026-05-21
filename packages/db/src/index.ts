@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 /** Bump when the Prisma schema changes so dev HMR does not keep a stale client (missing new columns). */
-const PRISMA_CLIENT_SCHEMA_TOKEN = "20260519-one-interview-per-application";
+const PRISMA_CLIENT_SCHEMA_TOKEN = "20260519-interview-scheduling-timezone";
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;

@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
+import {
+  AiRelevanceBiasNotice,
+  AI_RELEVANCE_SCORE_DISCLAIMER,
+} from "@/components/applications/AiRelevanceBiasNotice";
 
 type Props = {
   /** 0–100 when ready */
@@ -17,7 +21,7 @@ type Props = {
 };
 
 const TOOLTIP_WIDTH = 268;
-const TOOLTIP_MAX_HEIGHT = 280;
+const TOOLTIP_MAX_HEIGHT = 360;
 const VIEWPORT_PAD = 12;
 
 type TooltipPosition = { top: number; left: number };
@@ -103,10 +107,10 @@ export function RelevanceScoreRing({
   }, [flyoverLayerRef]);
 
   const displayStatus = isRefreshing ? "loading" : status;
-  const showBreakdownTooltip = hovered && displayStatus === "ready" && Boolean(breakdownText);
+  const showScoreTooltip = hovered && displayStatus === "ready" && score != null;
 
   useEffect(() => {
-    if (!showBreakdownTooltip) {
+    if (!showScoreTooltip) {
       setTooltipPos(null);
       return;
     }
@@ -119,7 +123,7 @@ export function RelevanceScoreRing({
       window.removeEventListener("resize", updateTooltipPosition);
       document.removeEventListener("fullscreenchange", updateTooltipPosition);
     };
-  }, [showBreakdownTooltip, updateTooltipPosition]);
+  }, [showScoreTooltip, updateTooltipPosition]);
 
   const stroke = 3;
   const r = (size - stroke) / 2;
@@ -144,8 +148,8 @@ export function RelevanceScoreRing({
     title ??
     (status === "ready" && score != null
       ? breakdownText
-        ? `Relevance match: ${score}%\n\n${breakdownText}`
-        : `Relevance match: ${score}%`
+        ? `Relevance match: ${score}%\n\n${breakdownText}\n\n${AI_RELEVANCE_SCORE_DISCLAIMER}`
+        : `Relevance match: ${score}%\n\n${AI_RELEVANCE_SCORE_DISCLAIMER}`
       : status === "loading"
         ? "Calculating relevance score"
         : status === "unavailable"
@@ -156,19 +160,22 @@ export function RelevanceScoreRing({
               ? "Relevance score pending"
               : "Relevance");
 
-  const useNativeTitle = !showBreakdownTooltip;
+  const useNativeTitle = !showScoreTooltip;
 
   const portalTarget =
     flyoverLayerRef?.current ?? (typeof document !== "undefined" ? document.body : null);
 
-  const flyover = showBreakdownTooltip && tooltipPos && portalTarget ? (
+  const flyover = showScoreTooltip && tooltipPos && portalTarget ? (
     <div
       role="tooltip"
       className={`bo-relevance-breakdown-flyover${useLayerCoords ? " bo-relevance-breakdown-flyover--layer" : ""}`}
       style={{ top: tooltipPos.top, left: tooltipPos.left }}
     >
       <p className="bo-relevance-breakdown-flyover-title">{`Relevance: ${score}%`}</p>
-      <pre className="bo-relevance-breakdown-flyover-body">{breakdownText}</pre>
+      {breakdownText ? (
+        <pre className="bo-relevance-breakdown-flyover-body">{breakdownText}</pre>
+      ) : null}
+      <AiRelevanceBiasNotice variant="flyover" />
       {onRefresh ? (
         <button
           type="button"

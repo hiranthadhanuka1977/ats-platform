@@ -1,92 +1,107 @@
 # Presentation deck outline (PDF / Google Slides / Keynote)
 
-**Suggested length:** 10–12 slides  
+**Suggested length:** 12–14 slides  
 **Audience:** Hiring manager for design role  
+**Ground truth:** [PRD](../../docs/specification/PRD.md)
 
 ---
 
 ### Slide 1 — Title
 
 - Your name, **Product Designer**  
-- Project title: **Staff applications workflow — ATS backoffice**  
-- Visual: hero screenshot of Application detail or Pipeline  
+- Project title: **TalentHub — staff applications workflow**  
+- Visual: hero screenshot of Pipeline or Application detail  
 
 ---
 
-### Slide 2 — Context
+### Slide 2 — Platform context
 
-- One-liner: multi-app **hiring platform** monorepo  
-- Your slice: **staff backoffice** applications experience  
-- Visual: simplified diagram (candidate apps vs staff app)  
+- **TalentHub ATS:** four apps, one database  
+- Diagram: candidate portal (3000) + my-applications (3002) → backoffice (3001)  
+- Your slice: **staff applications experience** within the full hiring loop  
 
 ---
 
 ### Slide 3 — Problem
 
-- Bullet: volume + funnel + documents + orientation  
-- Visual: before sketch (busy undifferentiated pipeline)  
+- Volume + funnel + documents + orientation + invalid status risk  
+- Visual: before sketch (undifferentiated pipeline)  
 
 ---
 
 ### Slide 4 — Users & JTBD
 
-- Primary persona + 2 JTBD statements  
-- Visual: persona card (photo optional)  
+- Primary persona + 2–3 JTBD statements  
+- Visual: persona card  
 
 ---
 
 ### Slide 5 — Process
 
-- Discover → IA → flows → UI → spec → validate → QA  
-- Visual: timeline photo or icons  
+- Discover → IA → flows → UI → spec → design system → validate → QA  
+- Visual: timeline or icons  
 
 ---
 
 ### Slide 6 — IA / navigation
 
-- Small sitemap: Applications, Application detail, Candidate, Job edit  
-- Visual: FigJam export  
+- Sitemap: Dashboard, Applications, Detail, Candidates, Interviews, Jobs  
+- Visual: FigJam export or `04-information-architecture.md` diagram  
 
 ---
 
 ### Slide 7 — Solution overview
 
-- Table + Pipeline + Detail + contextual back  
-- Visual: 3 screenshots in a row  
+- Table + Pipeline + Detail + Interview + contextual back  
+- Visual: 3–4 screenshots in a row  
 
 ---
 
 ### Slide 8 — Pipeline week scope
 
-- Why cohort matters; no future weeks  
-- Visual: pipeline toolbar close-up + disabled state  
+- Why cohort matters; no future weeks; terminal tabs  
+- Visual: pipeline toolbar + disabled Next week  
 
 ---
 
-### Slide 9 — Application detail
+### Slide 9 — Status workflow
 
-- Packet concept: submission + documents + applicant summary  
+- Ten statuses, validated transitions, undo/reopen, audit history  
+- Visual: Kanban + reject modal or history timeline  
+
+---
+
+### Slide 10 — Application detail & interviews
+
+- Packet concept + schedule interview + calendar  
 - Visual: detail page annotated  
 
 ---
 
-### Slide 10 — Edge cases & craft
+### Slide 11 — Platform loop *(optional)*
 
-- Drag vs click; empty week; missing documents  
+- Publish job → candidate apply → staff triage → hire  
+- Visual: simplified end-to-end diagram (`diagrams/04-product-user-flow.png`)  
+
+---
+
+### Slide 12 — Edge cases & craft
+
+- Drag vs click; empty week; interview gate; missing documents  
 - Visual: two small callouts  
 
 ---
 
-### Slide 11 — Outcomes
+### Slide 13 — Outcomes
 
-- Table with metrics *(fill or use qualitative)*  
+- Table with metrics *(fill or use qualitative from PRD §11)*  
 - Visual: quote callout  
 
 ---
 
-### Slide 12 — Reflection
+### Slide 14 — Reflection
 
-- Tradeoff + next iteration (one each)  
+- One tradeoff + one next iteration  
 - CTA: **Contact / Figma link / case study URL**  
 
 ---
