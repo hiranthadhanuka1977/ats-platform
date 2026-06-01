@@ -1423,10 +1423,34 @@ a:hover { color: var(--blue-dark); }
   margin-bottom: 0.5rem;
 }
 
-.footer-note {
+.footer-meta {
   margin: 0;
   font-size: 0.8125rem;
-  max-width: 28rem;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+.footer-meta p {
+  margin: 0 0 0.4rem;
+}
+
+.footer-meta p:last-child {
+  margin-bottom: 0;
+}
+
+.footer-meta-tagline {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.footer-meta a {
+  color: #cbd5e1;
+  text-decoration: none;
+}
+
+.footer-meta a:hover {
+  color: #fff;
+  text-decoration: underline;
 }
 
 .footer-nav {

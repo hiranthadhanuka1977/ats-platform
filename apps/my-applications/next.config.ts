@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname, "../.."),
   },
   serverExternalPackages: ["pdf-parse", "mammoth"],
+  experimental: {
+    // Allow CV uploads up to 10 MB through the App Router
+    proxyClientMaxBodySize: "10mb",
+  },
 };
 
 export default nextConfig;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CvAutofillProcessingOverlay } from "@/components/dashboard/CvAutofillProcessingOverlay";
@@ -33,10 +33,19 @@ function getCvTypeMeta(mimeType: string): { label: string; icon: string } {
 }
 
 export function CvUploadPageClient() {
+  return (
+    <Suspense fallback={<p className="bo-page-sub">Loading CV upload…</p>}>
+      <CvUploadPageContent />
+    </Suspense>
+  );
+}
+
+function CvUploadPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("returnTo");
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<UploadState>("idle");
   const [error, setError] = useState<string | null>(null);
   const [uploadedName, setUploadedName] = useState<string | null>(null);
@@ -362,15 +371,23 @@ export function CvUploadPageClient() {
     [uploadFile]
   );
 
+  const uploadDisabled = state === "uploading" || Boolean(processing);
+
+  const openFilePicker = useCallback(() => {
+    if (uploadDisabled) return;
+    fileInputRef.current?.click();
+  }, [uploadDisabled]);
+
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
       event.stopPropagation();
+      if (uploadDisabled) return;
       const file = event.dataTransfer.files?.[0];
       if (!file) return;
       void uploadFile(file);
     },
-    [uploadFile]
+    [uploadDisabled, uploadFile]
   );
 
   return (
@@ -393,6 +410,17 @@ export function CvUploadPageClient() {
 
       <div
         className="myapps-cv-drop"
+        role="button"
+        tabIndex={uploadDisabled ? -1 : 0}
+        aria-disabled={uploadDisabled}
+        onClick={openFilePicker}
+        onKeyDown={(event) => {
+          if (uploadDisabled) return;
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openFilePicker();
+          }
+        }}
         onDragOver={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -400,24 +428,36 @@ export function CvUploadPageClient() {
         onDrop={onDrop}
       >
         <input
+          ref={fileInputRef}
           type="file"
           accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           className="myapps-cv-file-input"
           id="cv-upload-file-input"
           onChange={onFileChange}
-          disabled={state === "uploading" || Boolean(processing) || Boolean(autofillOffer)}
+          disabled={uploadDisabled}
           aria-label="Choose CV file to upload"
         />
-        <label htmlFor="cv-upload-file-input" className="myapps-cv-drop-inner">
+        <div className="myapps-cv-drop-inner">
           {state === "uploading" ? (
             <span>Uploading CV...</span>
           ) : (
             <>
               <strong>Drop your CV file here</strong>
               <span className="myapps-cv-drop-hint">or click to browse files</span>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm myapps-cv-browse-btn"
+                disabled={uploadDisabled}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openFilePicker();
+                }}
+              >
+                Browse files
+              </button>
             </>
           )}
-        </label>
+        </div>
       </div>
 
       {state === "done" && uploadedName ? (

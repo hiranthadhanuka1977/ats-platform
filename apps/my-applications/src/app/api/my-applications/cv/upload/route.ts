@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getBearerToken, verifyCandidateAccessToken } from "@/lib/verify-candidate-token";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
@@ -36,6 +37,15 @@ function resolveMimeAndExt(file: File): { mime: string; ext: string } | null {
       mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
     } else if (nameExt === ".doc") mime = "application/msword";
     else return null;
+  }
+  // Windows often reports .docx as a zip archive
+  if (
+    nameExt === ".docx" &&
+    (mime === "application/zip" ||
+      mime === "application/x-zip-compressed" ||
+      mime === "application/x-zip")
+  ) {
+    mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
   }
   const ext = ALLOWED.get(mime) ?? nameExt;
   if (!ALLOWED.has(mime) || !ext) return null;
@@ -92,18 +102,36 @@ export async function POST(request: Request) {
   const absPath = path.join(storageRoot, relPath);
 
   const buf = Buffer.from(await file.arrayBuffer());
-  await writeFile(absPath, buf);
+  try {
+    await writeFile(absPath, buf);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Could not save file.";
+    console.error("[cv/upload] write failed:", absPath, e);
+    return NextResponse.json(
+      { error: { code: "STORAGE_ERROR", message: `Could not save CV file: ${msg}` } },
+      { status: 500 }
+    );
+  }
 
-  const row = await prisma.candidateCvParse.create({
-    data: {
-      id,
-      candidateAccountId: user.candidateAccountId,
-      originalFilename: file.name.slice(0, 500),
-      storedPath: toStoredPath(user.candidateAccountId, storedName),
-      mimeType: mime.slice(0, 100),
-      status: "draft",
-    },
-  });
+  let row;
+  try {
+    row = await prisma.candidateCvParse.create({
+      data: {
+        id,
+        candidateAccountId: user.candidateAccountId,
+        originalFilename: file.name.slice(0, 500),
+        storedPath: toStoredPath(user.candidateAccountId, storedName),
+        mimeType: mime.slice(0, 100),
+        status: "draft",
+      },
+    });
+  } catch (e) {
+    console.error("[cv/upload] db create failed:", e);
+    return NextResponse.json(
+      { error: { code: "SERVER_ERROR", message: "Could not record CV upload." } },
+      { status: 500 }
+    );
+  }
 
   const existingDefault = await prisma.candidateProfile.findUnique({
     where: { candidateAccountId: user.candidateAccountId },
