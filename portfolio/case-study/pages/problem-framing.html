@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Problem framing & role — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class=" active">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Problem framing & role</span></nav>
+      <article class="prose"><h1>Problem framing and role</h1>
+<h2>Role</h2>
+<p><strong>Product Designer</strong> — discovery, IA, interaction design, specification, and design QA through implementation for the <strong>TalentHub ATS</strong> platform (<code>ats-platform</code> monorepo). Primary portfolio focus: the <strong>staff backoffice applications slice</strong>; work is grounded in the as-built <a href="../../docs/specification/PRD.md">PRD</a> (May 2026).</p>
+<h2>Platform context</h2>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Port</th>
+<th>Audience</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Candidate portal</td>
+<td>3000</td>
+<td>Public job discovery</td>
+</tr>
+<tr>
+<td>My Applications</td>
+<td>3002</td>
+<td>Candidate auth, CV, apply</td>
+</tr>
+<tr>
+<td>Backoffice</td>
+<td>3001</td>
+<td>Staff hiring workflows</td>
+</tr>
+<tr>
+<td>Central API</td>
+<td>4000</td>
+<td>Auth + candidate registration</td>
+</tr>
+</tbody></table>
+<p>The platform supports the core hiring loop: <strong>publish jobs → discover and apply → triage in Kanban → interview → offer → hire or reject</strong>.</p>
+<h2>Problem statement</h2>
+<p>Internal hiring staff must <strong>triage and progress</strong> job applications efficiently. Without clear structure, they face:</p>
+<ul>
+<li>Too many items in a single pipeline view (no temporal anchor)</li>
+<li>Fragmented context when moving between <strong>applications</strong>, <strong>candidates</strong>, and <strong>jobs</strong></li>
+<li>Ambiguous return navigation after deep linking into a candidate profile from an applications context</li>
+<li>Invalid or untraceable status changes when moving candidates through the funnel</li>
+</ul>
+<h2>Scope (in) — backoffice slice</h2>
+<ul>
+<li><strong>Applications</strong> hub: table + pipeline views (pipeline default); list ↔ pipeline toggle; fullscreen pipeline</li>
+<li><strong>Week-scoped</strong> pipeline browsing (past and current week only)</li>
+<li><strong>Application detail</strong>: applicant summary, submission fields, documents, job link, status history</li>
+<li><strong>Status workflow</strong>: ten application statuses, drag-and-drop with server validation, undo, controlled reopen from rejected</li>
+<li><strong>Interviews</strong>: schedule from application detail (one per application); calendar at <code>/interviews</code></li>
+<li><strong>Navigation affordances</strong>: back to applications; candidate link preserves list context (<code>?from=applications</code>)</li>
+<li><strong>Staff document access</strong>: CV and cover letter download via authenticated BFF routes</li>
+<li><strong>Cross-surface consistency</strong>: shared status vocabulary (<code>@ats-platform/types</code>), HTML design system with layout templates</li>
+</ul>
+<h2>Scope (out) — explicit</h2>
+<ul>
+<li><strong>Candidate-facing apply UX</strong> — implemented in <code>my-applications</code>; referenced here for document provenance and journey context only</li>
+<li><strong>Reports and Settings</strong> — backoffice placeholder pages (planned in PRD)</li>
+<li><strong>Enterprise RBAC</strong> beyond staff session gate and role enum (admin, recruiter, hiring_manager)</li>
+<li><strong>Central Hono domain API</strong> — jobs/applications/interviews remain stubs; logic lives in Next.js BFFs</li>
+<li><strong>Email notifications</strong> on status change — field exists; delivery not wired</li>
+<li><strong>Multi-tenant / SSO</strong> — single-tenant, email/password staff auth</li>
+</ul>
+<h2>Success criteria (aligned with PRD §11)</h2>
+<ol>
+<li>A staff user can open <strong>one page</strong> that answers: <em>who, which job, when, what they submitted, where are the files</em></li>
+<li>Pipeline supports <strong>cohort-based review</strong> (week) without allowing impossible <strong>future</strong> cohorts</li>
+<li>No “trap” navigation: user can return to <strong>Applications</strong> after opening <strong>Candidate</strong> from the applications table</li>
+<li>Status changes follow a <strong>defined transition matrix</strong> with audit logging; terminal states and reopen flows are explicit</li>
+<li>Interview can be scheduled before an application moves to <strong>Interview Scheduled</strong></li>
+</ol>
+<h2>Design principles used</h2>
+<ul>
+<li><strong>Progressive disclosure:</strong> summary in list/pipeline; depth on detail page</li>
+<li><strong>Application as unit of work:</strong> candidate and job are linked contexts, not separate workflows</li>
+<li><strong>Honest system state:</strong> disable impossible actions rather than error after the fact</li>
+<li><strong>Implementation-aligned documentation:</strong> specs, design system, and portfolio track the Next.js apps, not legacy static markup alone</li>
+</ul>
+<h2>Reference</h2>
+<ul>
+<li><a href="../../docs/specification/PRD.md">PRD — TalentHub ATS Platform</a></li>
+<li><a href="../../docs/specification/ATS_Application_State_UI_API_Requirements.md">Application state requirements</a></li>
+<li><a href="../../docs/design-system/index.html">Design system catalog</a></li>
+</ul>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

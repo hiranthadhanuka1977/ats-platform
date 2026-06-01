@@ -1,0 +1,12 @@
+{
+  "name": "talenthub-case-study-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-site.mjs",
+    "serve": "npx --yes serve . -p 3456"
+  },
+  "devDependencies": {
+    "marked": "^15.0.12"
+  }
+}

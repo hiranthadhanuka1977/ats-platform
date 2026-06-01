@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Problem Framing &amp; Role — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>Problem framing &amp; role</h1>
+        <p>Role definition, platform context, design problem, scope boundaries, success criteria, and principles for the backoffice applications slice.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#role">Role</a></li>
+            <li><a href="#platform">Platform context</a></li>
+            <li><a href="#problem">Problem statement</a></li>
+            <li><a href="#scope-in">Scope (in)</a></li>
+            <li><a href="#scope-out">Scope (out)</a></li>
+            <li><a href="#success">Success criteria</a></li>
+            <li><a href="#principles">Design principles</a></li>
+            <li><a href="#references">References</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>Backoffice applications slice</span>
+            <span>May 2026 · As-built</span>
+            <span>PRD-aligned</span>
+          </div>
+
+          <p class="pf-intro">Grounded in the as-built product. Related: <a href="index.html#context">Homepage context</a> · <a href="product-requirements.html">Product requirements</a> · <a href="user-stories-jtbd.html">User stories &amp; JTBD</a>.</p>
+
+          <!-- Role -->
+          <section class="ia-section" id="role">
+            <h2>Role</h2>
+            <div class="pf-role-card">
+              <p class="pf-role-title"><strong>Product Designer</strong></p>
+              <p>Discovery, IA, interaction design, specification, and design QA through implementation for the <strong>TalentHub ATS</strong> platform (<code>ats-platform</code> monorepo).</p>
+              <p class="pf-role-focus">Primary portfolio focus: the <strong>staff backoffice applications slice</strong> — week-scoped pipeline, application detail packet, status workflow, and interview scheduling.</p>
+            </div>
+          </section>
+
+          <!-- Platform -->
+          <section class="ia-section" id="platform">
+            <h2>Platform context</h2>
+            <div class="ia-app-grid">
+              <div class="ia-app-card">
+                <strong>Candidate portal</strong>
+                <span>Port 3000</span>
+                <p>Public job discovery for job seekers.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>My Applications</strong>
+                <span>Port 3002</span>
+                <p>Candidate auth, CV upload, apply, and track.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>Backoffice</strong>
+                <span>Port 3001</span>
+                <p>Staff hiring workflows — primary design focus.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>Central API</strong>
+                <span>Port 4000</span>
+                <p>Auth and candidate registration endpoints.</p>
+              </div>
+            </div>
+            <p class="pf-loop-callout">The platform supports the core hiring loop: <strong>publish jobs → discover and apply → triage in Kanban → interview → offer → hire or reject</strong>.</p>
+          </section>
+
+          <!-- Problem -->
+          <section class="ia-section" id="problem">
+            <h2>Problem statement</h2>
+            <p>Internal hiring staff must <strong>triage and progress</strong> job applications efficiently. Without clear structure, they face:</p>
+            <ul class="research-checklist pf-pain-list">
+              <li>Too many items in a single pipeline view — no temporal anchor for cohort review</li>
+              <li>Fragmented context when moving between <strong>applications</strong>, <strong>candidates</strong>, and <strong>jobs</strong></li>
+              <li>Ambiguous return navigation after deep linking into a candidate profile from an applications context</li>
+              <li>Invalid or untraceable status changes when moving candidates through the funnel</li>
+            </ul>
+          </section>
+
+          <!-- Scope in / out -->
+          <section class="ia-section" id="scope-in">
+            <h2>Scope (in)</h2>
+            <p>Backoffice slice — what this case study covers.</p>
+            <ul class="research-checklist">
+              <li><strong>Applications hub</strong> — table + pipeline views (pipeline default); list ↔ pipeline toggle; fullscreen pipeline</li>
+              <li><strong>Week-scoped</strong> pipeline browsing (past and current week only)</li>
+              <li><strong>Application detail</strong> — applicant summary, submission fields, documents, job link, status history</li>
+              <li><strong>Status workflow</strong> — ten application statuses, drag-and-drop with server validation, undo, controlled reopen from rejected</li>
+              <li><strong>Interviews</strong> — schedule from application detail (one per application); calendar at <code>/interviews</code></li>
+              <li><strong>Navigation affordances</strong> — back to applications; candidate link preserves list context (<code>?from=applications</code>)</li>
+              <li><strong>Staff document access</strong> — CV and cover letter download via authenticated BFF routes</li>
+              <li><strong>Cross-surface consistency</strong> — shared status vocabulary (<code>@ats-platform/types</code>), HTML design system with layout templates</li>
+            </ul>
+          </section>
+
+          <section class="ia-section" id="scope-out">
+            <h2>Scope (out)</h2>
+            <p>Explicit boundaries — referenced for context, not in portfolio depth.</p>
+            <ul class="research-checklist pf-scope-out">
+              <li><strong>Candidate-facing apply UX</strong> — implemented in my-applications; referenced for document provenance and journey context only</li>
+              <li><strong>Reports and Settings</strong> — backoffice placeholder pages (planned in PRD)</li>
+              <li><strong>Enterprise RBAC</strong> beyond staff session gate and role enum (admin, recruiter, hiring_manager)</li>
+              <li><strong>Central Hono domain API</strong> — jobs/applications/interviews remain stubs; logic lives in Next.js BFFs</li>
+              <li><strong>Email notifications</strong> on status change — field exists; delivery not wired</li>
+              <li><strong>Multi-tenant / SSO</strong> — single-tenant, email/password staff auth</li>
+            </ul>
+          </section>
+
+          <!-- Success -->
+          <section class="ia-section" id="success">
+            <h2>Success criteria</h2>
+            <p>Aligned with PRD §11 — how we know the slice works.</p>
+            <ol class="pf-success-list">
+              <li>A staff user can open <strong>one page</strong> that answers: <em>who, which job, when, what they submitted, where are the files</em></li>
+              <li>Pipeline supports <strong>cohort-based review</strong> (week) without allowing impossible <strong>future</strong> cohorts</li>
+              <li>No “trap” navigation: user can return to <strong>Applications</strong> after opening <strong>Candidate</strong> from the applications table</li>
+              <li>Status changes follow a <strong>defined transition matrix</strong> with audit logging; terminal states and reopen flows are explicit</li>
+              <li>Interview can be scheduled before an application moves to <strong>Interview Scheduled</strong></li>
+            </ol>
+          </section>
+
+          <!-- Principles -->
+          <section class="ia-section" id="principles">
+            <h2>Design principles used</h2>
+            <div class="ia-principles">
+              <div class="ia-principle">
+                <strong>Progressive disclosure</strong>
+                <p>Summary in list/pipeline; depth on detail page.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>Application as unit of work</strong>
+                <p>Candidate and job are linked contexts, not separate workflows.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>Honest system state</strong>
+                <p>Disable impossible actions rather than error after the fact.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>Implementation-aligned documentation</strong>
+                <p>Specs, design system, and portfolio track the Next.js apps — not legacy static markup alone.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- References -->
+          <section class="ia-section" id="references">
+            <h2>Reference</h2>
+            <ul class="pf-ref-list">
+              <li><a href="product-requirements.html">PRD — TalentHub ATS Platform</a></li>
+              <li><a href="../../docs/specification/ATS_Application_State_UI_API_Requirements.md">Application state requirements</a></li>
+              <li><a href="../../docs/design-system/index.html">Design system catalog</a></li>
+              <li><a href="information-architecture.html">Information architecture (full)</a></li>
+              <li><a href="netnographic-research.html">Netnographic research</a></li>
+            </ul>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">Problem framing &amp; role · May 2026</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="index.html#context">Homepage context</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

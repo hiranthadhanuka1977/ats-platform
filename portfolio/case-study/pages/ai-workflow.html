@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Human vs AI workflow — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class=" active">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Human vs AI workflow</span></nav>
+      <article class="prose"><h1>AI-assisted design &amp; development — ATS backoffice (portfolio writeup)</h1>
+<p><strong>Use this as:</strong> a standalone portfolio section, a LinkedIn “featured project” blurb, or a supplement to <code>NOTION_CASE_STUDY.md</code>.<br><strong>Tone:</strong> honest about AI as accelerator, not autopilot.</p>
+<hr>
+<h2>Headline (pick one)</h2>
+<ul>
+<li><strong>From spec to working kanban: shipping an ATS applications workflow with AI pair programming</strong></li>
+<li><strong>Designing hiring ops in the open — and building it with AI-assisted development</strong></li>
+<li><strong>Staff ATS backoffice: product design + AI-accelerated implementation in one monorepo</strong></li>
+</ul>
+<hr>
+<h2>Short summary (≈80 words)</h2>
+<p>I led product design and hands-on implementation for a <strong>staff Applications</strong> slice of an applicant tracking platform: list and pipeline views, a governed status model, interview scheduling, and application detail. I used <strong>AI-assisted workflows</strong> (Cursor, spec-driven prompts, iterative codegen) to move from written requirements to production-shaped UI and API behaviour quickly—while keeping <strong>human ownership</strong> of IA, transition rules, edge cases, and QA. The result is a coherent internal tool recruiters can actually use, not a mockup.</p>
+<hr>
+<h2>Context</h2>
+<p><strong>Product:</strong> <strong>TalentHub</strong> (<code>ats-platform</code>) — monorepo with staff <strong>backoffice</strong> (Next.js), candidate portal, my-applications, and Hono API, backed by PostgreSQL (Prisma). As-built scope: <a href="../../docs/specification/PRD.md">PRD</a>.</p>
+<p><strong>Problem:</strong> Recruiters need to triage applications at volume—see who applied, for which role, in which funnel stage, with documents and interviews in context—without dead-end navigation or invalid status changes.</p>
+<p><strong>My contribution:</strong> End-to-end ownership of the <strong>Applications</strong> experience: discovery and framing, interaction specification, visual patterns aligned to the existing design system, and <strong>direct collaboration on implementation</strong> using AI tools to ship faster without abandoning product judgment.</p>
+<hr>
+<h2>What I shipped (concrete)</h2>
+<h3>Applications hub</h3>
+<ul>
+<li><strong>Pipeline (default)</strong> and <strong>list</strong> views with icon toggle in the page header (full-width layout).</li>
+<li><strong>Kanban board</strong> aligned to active recruitment statuses (Submitted → Hired), plus Rejected / Withdrawn / All tabs.</li>
+<li><strong>Week-scoped pipeline</strong> (UTC Monday–Sunday): previous / next / this week; no future weeks.</li>
+<li><strong>Drag-and-drop</strong> with valid/invalid drop feedback; card menu for moves, reject, withdraw, reopen.</li>
+<li><strong>Confirmation modals</strong> for reject, withdraw, hire, and reopen—with form validation and accessible layout.</li>
+<li><strong>Undo last pipeline move</strong> (single-step, staff-scoped).</li>
+<li><strong>Relevance score</strong> rings on cards with breakdown flyover.</li>
+</ul>
+<h3>Interviews &amp; business rules</h3>
+<ul>
+<li><strong>Schedule interview</strong> from application detail; status moves to Interview Scheduled.</li>
+<li><strong>Interviews calendar</strong> page (month grid + day panel), full width.</li>
+<li><strong>One interview per application</strong> (DB constraint + API guard + UI hides duplicate scheduling).</li>
+<li><strong>Drag to Interview Scheduled without an interview</strong> → prompt: schedule now or cancel.</li>
+</ul>
+<h3>Application detail &amp; platform</h3>
+<ul>
+<li>Application detail: applicant summary, submission fields, CV/cover letter access, job link, status history.</li>
+<li>Shared <strong>transition matrix</strong> in <code>@ats-platform/types</code>; API validates every status change.</li>
+<li><strong>Status event audit</strong> metadata (reason, note, change source) for pipeline actions.</li>
+</ul>
+<h3>Specification &amp; structure</h3>
+<ul>
+<li>Authored / maintained <strong><code>ATS_Application_State_UI_API_Requirements.md</code></strong> as the contract for states, transitions, drag rules, and API payloads.</li>
+<li>Portfolio pack under <code>portfolio/product-designer-ats-backoffice/</code> (IA, flows, handoff, usability plan).</li>
+</ul>
+<hr>
+<h2>How I used AI workflows</h2>
+<h3>1. Spec-first, then AI implementation</h3>
+<p>I treated the <strong>state-management spec</strong> as source of truth—not the chat. AI sessions started with:</p>
+<ul>
+<li>“Implement per <code>ATS_Application_State_UI_API_Requirements.md</code>…”</li>
+<li>Pasted acceptance criteria (valid transitions, modals, 409 on conflict, interview rules).</li>
+</ul>
+<p>That kept generated code aligned with product intent and reduced rework.</p>
+<h3>2. Design in documents, UI in the repo</h3>
+<p><strong>Human-led (minimal AI):</strong></p>
+<ul>
+<li>Problem framing, JTBD, IA, task flows (<code>01–05</code> in this portfolio pack).</li>
+<li>Edge cases: week boundaries, <code>from=applications</code> return path, drag vs click, terminal columns.</li>
+<li>Content model: application as unit of work; documents via staff endpoints.</li>
+</ul>
+<p><strong>AI-assisted:</strong></p>
+<ul>
+<li>Translating wireframe-level intent into <strong>React components</strong> and <strong>CSS</strong> inside existing tokens (<code>backoffice.css</code>, shared button/form patterns).</li>
+<li>Generating <strong>Prisma migrations</strong>, <strong>API routes</strong>, and <strong>Zod validators</strong> from described behaviour.</li>
+<li>Fixing runtime issues iteratively (modal layout, ellipsis on cards, full-width pages, prop wiring).</li>
+</ul>
+<h3>3. Tight feedback loops (the real workflow)</h3>
+<p>Typical cycle:</p>
+<ol>
+<li><strong>Define</strong> behaviour in spec or a one-line acceptance note.  </li>
+<li><strong>Prompt</strong> Cursor with file paths and constraints (“match Jobs page view toggle”, “portal modals to <code>document.body</code>”).  </li>
+<li><strong>Run</strong> <code>npm run dev:all</code> and click through backoffice.  </li>
+<li><strong>Correct</strong> AI output where it drifted (wrong transition, missing guard, broken destructuring).  </li>
+<li><strong>Commit</strong> when behaviour matches spec.</li>
+</ol>
+<p>AI was fastest on <strong>boilerplate and layout</strong>; I stayed responsible for <strong>rules, cohesion, and “does this match how recruiters work?”</strong></p>
+<h3>4. What I did <em>not</em> outsource to AI</h3>
+<ul>
+<li>Which states belong on the active board vs terminal tabs.  </li>
+<li>Requiring an interview record before Interview Scheduled / Completed.  </li>
+<li>Undo scope (one move, same staff).  </li>
+<li>Navigation model and honest disable states (future weeks, second interview).  </li>
+<li>Copy and status labels via shared types (single vocabulary).</li>
+</ul>
+<hr>
+<h2>Tools</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Tools</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Design &amp; docs</td>
+<td>Figma <em>(recommended for visuals)</em>, Notion, Markdown specs in <code>docs/specification/</code></td>
+</tr>
+<tr>
+<td>Development</td>
+<td>Cursor, TypeScript, Next.js App Router, React</td>
+</tr>
+<tr>
+<td>API &amp; data</td>
+<td>Hono, Prisma, PostgreSQL</td>
+</tr>
+<tr>
+<td>AI</td>
+<td>Cursor Agent / Composer for multi-file edits; chat for targeted fixes</td>
+</tr>
+<tr>
+<td>Quality</td>
+<td>Manual QA in browser, reading API responses, migration discipline</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Outcomes (how to talk about impact)</h2>
+<p><em>Replace brackets with your metrics or quotes.</em></p>
+<ul>
+<li><strong>Velocity:</strong> Moved from static markup / partial UI to a <strong>working pipeline with API-backed status changes</strong> in iterative AI-assisted sessions rather than a multi-sprint handoff-only model.  </li>
+<li><strong>Coherence:</strong> One transition matrix drives <strong>board, menus, and API</strong>—fewer “design said X, code did Y” moments.  </li>
+<li><strong>Trust:</strong> Invalid moves are blocked in UI and server; destructive actions need confirmation; interviews are constrained to one per application.  </li>
+<li><strong>Learnings:</strong> AI is strong at <strong>patterns and speed</strong>; weak at <strong>domain rules</strong> unless you write them down first. Best results when I act as <strong>product owner + editor</strong>, not prompt-only operator.</li>
+</ul>
+<hr>
+<h2>Reflection (good for interviews)</h2>
+<p><strong>What worked</strong></p>
+<ul>
+<li>Small, testable prompts tied to <strong>real file paths</strong> and existing components.  </li>
+<li>Written specs as <strong>non-negotiable context</strong> for every AI session.  </li>
+<li>Reusing design-system classes (<code>bo-candidate-tab</code>, <code>bo-jobs-view-toggle</code>, <code>bo-modal</code>) so AI output looked native.</li>
+</ul>
+<p><strong>What I’d do again</strong></p>
+<ul>
+<li>Keep a living <strong>“decisions log”</strong> (even bullet points) when AI suggests scope creep.  </li>
+<li>Add screenshot-based QA checklist after each AI pass on visual surfaces.  </li>
+<li>Pair AI implementation with <strong>one lightweight usability session</strong> on pipeline + detail.</li>
+</ul>
+<p><strong>One sentence for your portfolio footer</strong></p>
+<blockquote>
+<p>I designed the recruiter Applications workflow for an ATS backoffice and used AI-assisted development to implement it against a formal state spec—shipping kanban, interviews, and audit-friendly status changes while keeping product rules and UX quality explicitly human-led.</p>
+</blockquote>
+<hr>
+<h2>Suggested visuals for the portfolio page</h2>
+<ol>
+<li>Applications page — pipeline view (week nav + columns).  </li>
+<li>Drag invalid vs valid column highlight.  </li>
+<li>Reject / “no interview scheduled” modals.  </li>
+<li>Application detail with scheduled interview card.  </li>
+<li>Interviews calendar (full width).  </li>
+<li>Snippet of transition spec or shared types (shows rigour behind AI code).</li>
+</ol>
+<hr>
+<h2>Credit line</h2>
+<p><strong>Product design &amp; AI-assisted implementation</strong> — Applications, pipeline, interviews, and application state management for TalentHub ATS backoffice (<code>ats-platform</code>).</p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

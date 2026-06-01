@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GDPR / PDPA audit — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class=" active">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>GDPR / PDPA audit</span></nav>
+      <article class="prose"><h1>PDPA (Sri Lanka) &amp; GDPR (EU) Privacy Audit — ATS Platform (Next.js)</h1>
+<p><strong>Audit date:</strong> 19 May 2026<br><strong>Last revised:</strong> 21 May 2026 (revision 1.1)<br><strong>Audited by:</strong> AI-assisted code review<br><strong>Regulations:</strong> Sri Lanka Personal Data Protection Act No. 9 of 2022 (PDPA); EU GDPR 2016/679<br><strong>Method:</strong> Front-end UX, API routes, auth/storage patterns, and third-party integrations in running apps. Organizational policies, DPAs, and infrastructure reviews are out of scope but required for full compliance.</p>
+<p><strong>Ground truth:</strong> <a href="../specification/PRD.md#82-privacy-and-data-protection">PRD §8.2</a> · <a href="../specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG</a> (TH-009, TH-130–131, TH-192–193) · <a href="../process-diagrams/ats-ai-development-process.md#4-validation--updates--compare-to-intent">Process stage ④</a></p>
+<hr>
+<h2>Scope</h2>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Port</th>
+<th>Data subjects</th>
+<th>Key processing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>apps/candidate-portal</code></td>
+<td>3000</td>
+<td>Visitors, applicants (browse)</td>
+<td>Job search (URL/query), no account on this app</td>
+</tr>
+<tr>
+<td><code>apps/my-applications</code></td>
+<td>3002</td>
+<td>Candidates</td>
+<td>Registration, login, profile, CV/screenshot import, job applications</td>
+</tr>
+<tr>
+<td><code>apps/backoffice</code></td>
+<td>3001</td>
+<td>Staff</td>
+<td>Candidate/application data, status changes, interviews (schedule/cancel, timezone), AI relevance scoring, <strong>AI bias awareness UI</strong></td>
+</tr>
+<tr>
+<td><code>apps/api</code></td>
+<td>4000</td>
+<td>Candidates (auth)</td>
+<td>Register, OTP, password reset, email delivery</td>
+</tr>
+</tbody></table>
+<p><strong>Storage (repo):</strong> <code>storage/cvs/{candidateAccountId}/</code>, <code>storage/cover-letters/{candidateAccountId}/</code> (see <a href="../specification/ATS_Local_Environment_Specification.md">ATS_Local_Environment_Specification.md</a>).</p>
+<p><strong>Out of scope:</strong> Static HTML under <code>docs/markup/</code> (superseded for product behaviour by Next.js; see <a href="#appendix-a-static-markup-vs-implementation">Appendix A</a>).</p>
+<hr>
+<h2>Executive summary</h2>
+<table>
+<thead>
+<tr>
+<th>Severity</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Critical</strong></td>
+<td>6</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>7</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>6</td>
+</tr>
+<tr>
+<td><strong>Informational</strong></td>
+<td>5</td>
+</tr>
+</tbody></table>
+<p><strong>Improved vs static markup (April 2026):</strong> Candidate portal and my-applications load fonts via <strong><code>next/font</code></strong> (no Google Fonts CDN on those apps). Registration includes a <strong>terms checkbox</strong>. CV upload enforces type/size limits server-side.</p>
+<p><strong>Improved vs audit v1.0 (May 2026):</strong> Redesigned <strong>schedule interview</strong> modal stores <code>schedulingTimeZone</code> and optional <code>notifyCandidateEmail</code> flag; <strong>cancel scheduled interview</strong> flow on pipeline backward moves with optional notify flag; <strong><code>AiRelevanceBiasNotice</code></strong> surfaces human-review guidance on AI relevance scores (partial <strong>GDPR Art. 22</strong> transparency in UX — not a substitute for privacy policy or legal basis).</p>
+<p><strong>Still blocking compliance readiness:</strong> No working <strong>privacy policy</strong> or <strong>cookie consent</strong>; <strong>OpenAI</strong> and <strong>email</strong> processing without in-product privacy notice; <strong>email delivery not wired</strong> (<code>notifyCandidate*</code> / OTP flags only — <strong>TH-009</strong>, <strong>TH-130</strong>, <strong>TH-131</strong>); <strong>candidate JWT in browser storage</strong> (<strong>TH-193</strong>); <strong>backoffice</strong> still loads <strong>Google Fonts from CDN</strong>; staff login sets tokens in <strong>non-HttpOnly</strong> <code>document.cookie</code> despite HttpOnly-capable API route; footer legal links still <strong><code>href=&quot;#&quot;</code></strong> (<strong>TH-192</strong>).</p>
+<hr>
+<h2>Data inventory (what the implementation processes)</h2>
+<h3>Candidate personal data</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Examples</th>
+<th>Where collected</th>
+<th>Retention in UI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Identity &amp; contact</td>
+<td>Email, name, phone</td>
+<td>Register, profile, apply</td>
+<td>Not disclosed</td>
+</tr>
+<tr>
+<td>Credentials</td>
+<td>Password hash (server)</td>
+<td>Register</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Employment</td>
+<td>CV, experience, education, motivation</td>
+<td>Apply, CV import, screenshot import</td>
+<td>Not disclosed</td>
+</tr>
+<tr>
+<td>Preferences</td>
+<td>Salary, notice, relocation, work auth, <strong>time zone</strong> (DB)</td>
+<td>Apply form, profile (partial)</td>
+<td>Not disclosed</td>
+</tr>
+<tr>
+<td>Behavioural</td>
+<td>Search/filter (portal URL), dashboard usage</td>
+<td>Portal, dashboard</td>
+<td>Not disclosed</td>
+</tr>
+<tr>
+<td>Auth tokens</td>
+<td>JWT access/refresh</td>
+<td>Login → <code>localStorage</code> / <code>sessionStorage</code></td>
+<td>Not disclosed</td>
+</tr>
+</tbody></table>
+<h3>Staff / recruitment data</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Examples</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Candidate PII in recruitment</td>
+<td>Name, email on pipeline cards</td>
+<td>Backoffice applications</td>
+</tr>
+<tr>
+<td>Application decisions</td>
+<td>Status, rejection reason, notes</td>
+<td>Status PATCH, modals</td>
+</tr>
+<tr>
+<td>Interview</td>
+<td>Start/end, <strong>scheduling time zone</strong>, duration, notify email flag, cancel on status rollback</td>
+<td><code>ScheduleInterviewModal</code>, <code>application_interviews</code>, pipeline cancel modal</td>
+</tr>
+<tr>
+<td>AI scoring</td>
+<td>Relevance score, breakdown; <strong>bias / human-review notice in UI</strong></td>
+<td><code>GET .../relevance-score</code>, OpenAI, <code>AiRelevanceBiasNotice.tsx</code></td>
+</tr>
+</tbody></table>
+<h3>Subprocessors &amp; third parties (technical)</h3>
+<table>
+<thead>
+<tr>
+<th>Processor</th>
+<th>Purpose</th>
+<th>Apps</th>
+<th>Disclosed in UI?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>OpenAI</strong></td>
+<td>CV parse, LinkedIn text, screenshot extract, application relevance</td>
+<td>my-applications, backoffice</td>
+<td>Prototype help text + <strong>bias notice in backoffice</strong>; <strong>not</strong> in privacy policy</td>
+</tr>
+<tr>
+<td><strong>Email (SMTP/API)</strong></td>
+<td>OTP, password reset, interview/reject notifications</td>
+<td><code>apps/api</code>, backoffice modals</td>
+<td><strong>No</strong> — UI flags (<code>notifyCandidateEmail</code>, <code>notifyCandidate</code>) <strong>queue only</strong>; delivery <strong>TH-009</strong></td>
+</tr>
+<tr>
+<td><strong>Google Fonts CDN</strong></td>
+<td>Web fonts</td>
+<td>backoffice <code>globals.css</code></td>
+<td><strong>No</strong> (IP transfer on load)</td>
+</tr>
+<tr>
+<td><strong>PostgreSQL</strong></td>
+<td>Primary datastore</td>
+<td>All server routes</td>
+<td>Infrastructure (not UI)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Critical findings</h2>
+<h3>C1. No functional privacy policy or terms (all candidate-facing apps)</h3>
+<p><strong>GDPR:</strong> Art. 13–14 (Transparency)<br><strong>PDPA:</strong> S.7–8 (Duty to inform)</p>
+<p><strong>Evidence:</strong></p>
+<pre><code class="language-7:9:apps/candidate-portal/src/components/SiteFooter.tsx">          &lt;a href=&quot;#&quot;&gt;Privacy Policy&lt;/a&gt;
+          &lt;a href=&quot;#&quot;&gt;Terms of Service&lt;/a&gt;
+          &lt;a href=&quot;#&quot;&gt;Accessibility&lt;/a&gt;
+</code></pre>
+<p>Same pattern in <code>apps/my-applications/src/components/SiteFooter.tsx</code>. Register requires agreeing to “Terms of Service and Privacy Policy” but they are <strong>not linked</strong> (<code>RegisterForm.tsx</code> ~436).</p>
+<p><strong>Risk:</strong> Processing without accessible privacy information before collection (register, apply, CV upload).</p>
+<p><strong>Remediation:</strong> Publish <code>/privacy</code> and <code>/terms</code> routes (or external URLs) — <strong>TH-192</strong>; link from footer, registration checkbox, and apply flow; include Art. 13 / PDPA S.8 content (controller, purposes, legal basis, retention, rights, transfers, subprocessors).</p>
+<hr>
+<h3>C2. No cookie / consent mechanism</h3>
+<p><strong>GDPR:</strong> Art. 6(1)(a), Art. 7; ePrivacy Directive<br><strong>PDPA:</strong> S.6–7</p>
+<p>No consent banner or preference centre in any Next.js app. Any non-essential cookies, analytics, or third-party requests should be blocked until consent.</p>
+<p><strong>Remediation:</strong> Implement consent UI; default-deny non-essential scripts/requests; document essential cookies (session) vs optional.</p>
+<hr>
+<h3>C3. Backoffice loads Google Fonts from Google CDN</h3>
+<p><strong>GDPR:</strong> Art. 44–49 (Transfers)<br><strong>PDPA:</strong> S.25 (Cross-border transfers)</p>
+<p><strong>Evidence:</strong></p>
+<pre><code class="language-1:1:apps/backoffice/src/app/globals.css">@import url(&quot;https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap&quot;);
+</code></pre>
+<p>Each backoffice page load can send visitor IP to Google (US) without notice or consent. Candidate portal and my-applications use <strong><code>next/font</code></strong> and avoid this pattern.</p>
+<p><strong>Remediation:</strong> Mirror <code>apps/candidate-portal/src/app/layout.tsx</code> — <code>next/font/google</code> with self-hosted files.</p>
+<hr>
+<h3>C4. OpenAI processing without privacy notice or explicit consent</h3>
+<p><strong>GDPR:</strong> Art. 13(1)(e) (Recipients), Art. 28 (Processor), Art. 9 (Special categories — if CV contains health/etc.)<br><strong>PDPA:</strong> S.8(1)(d), S.5 (Sensitive data)</p>
+<p><strong>Evidence (non-exhaustive):</strong></p>
+<ul>
+<li><code>apps/my-applications/src/app/api/my-applications/cv/parse/route.ts</code> — CV text to OpenAI</li>
+<li><code>apps/my-applications/src/app/api/my-applications/screenshot/extract/route.ts</code></li>
+<li><code>apps/my-applications/src/app/api/my-applications/text/extract/route.ts</code></li>
+<li><code>packages/db</code> / backoffice <code>ensureApplicationRelevanceScore</code> — relevance scoring</li>
+</ul>
+<p>UI mentions OpenAI in prototype help text only; backoffice shows <strong><code>AiRelevanceBiasNotice</code></strong> (“Advisory AI score only. Human review required…”) — <strong>product transparency only</strong>, not Art. 13/22 legal disclosure. No privacy policy, no opt-in before sending CV/screenshot content.</p>
+<p><strong>Remediation:</strong> Name OpenAI as processor in privacy policy; lawful basis (consent or legitimate interest with LIA); explicit checkbox before AI-assisted import/scoring where required; extend Art. 22 notice in privacy policy (logic, significance, human intervention); data minimization (send only necessary fields); DPA with OpenAI.</p>
+<hr>
+<h3>C5. Candidate session tokens in browser storage (XSS exposure)</h3>
+<p><strong>GDPR:</strong> Art. 32 (Security)<br><strong>PDPA:</strong> S.18 (Security safeguards)</p>
+<p><strong>Evidence:</strong> <code>apps/my-applications/src/lib/auth-storage.ts</code> — JWT in <code>localStorage</code> / <code>sessionStorage</code>.</p>
+<p><strong>Risk:</strong> Any XSS can exfiltrate tokens; not equivalent to HttpOnly, Secure, SameSite cookies.</p>
+<p><strong>Remediation:</strong> Issue session via HttpOnly cookies from Next.js BFF or API (<strong>TH-193</strong>); shorten access token TTL; CSP and XSS hardening; document in privacy notice.</p>
+<hr>
+<h3>C6. Application / registration without layered consent at collection point</h3>
+<p><strong>GDPR:</strong> Art. 6(1)(a), Art. 7; Art. 9 where special-category data possible in CV<br><strong>PDPA:</strong> S.6</p>
+<p>Apply flow collects extensive PII (CV, cover letter, salary, work authorization) without just-in-time notice or separate consent for recruitment pool / AI / marketing.</p>
+<p><strong>Remediation:</strong> Before submit: purpose, categories, retention, who receives data (employer, processors), link to privacy policy, required checkbox(es).</p>
+<hr>
+<h2>High findings</h2>
+<h3>H1. No data controller identification in UI</h3>
+<p><strong>GDPR:</strong> Art. 13(1)(a)<br><strong>PDPA:</strong> S.8(1)(a)</p>
+<p>Footer shows “TalentHub” only — no legal entity, address, or DPO/contact email.</p>
+<p><strong>Remediation:</strong> Add controller block to footer and privacy policy.</p>
+<hr>
+<h3>H2. No data subject rights information</h3>
+<p><strong>GDPR:</strong> Art. 15–22<br><strong>PDPA:</strong> S.9–17</p>
+<p>No in-app explanation of access, rectification, erasure, portability, objection, or complaint to supervisory authority.</p>
+<p><strong>Remediation:</strong> “Your rights” section in privacy policy + short summary at register/apply.</p>
+<hr>
+<h3>H3. No retention periods disclosed</h3>
+<p><strong>GDPR:</strong> Art. 5(1)(e), Art. 13(2)(a)<br><strong>PDPA:</strong> S.5(1)(e)</p>
+<p>Database holds applications, status events, interviews, CV files — no UI or policy stating how long data is kept after hire/reject.</p>
+<p><strong>Remediation:</strong> Define retention schedule; show at collection; implement deletion jobs.</p>
+<hr>
+<h3>H4. Cross-border transfers not explained</h3>
+<p><strong>GDPR:</strong> Art. 13(1)(f), Art. 44–49<br><strong>PDPA:</strong> S.25–27</p>
+<p>Jobs may reference multiple locations; OpenAI and Google (fonts on backoffice) imply transfers outside Sri Lanka/EU without disclosure or mechanism (SCCs, etc.).</p>
+<p><strong>Remediation:</strong> Privacy policy transfer section; map each subprocessor region.</p>
+<hr>
+<h3>H5. No legal basis stated</h3>
+<p><strong>GDPR:</strong> Art. 6, Art. 13(1)(c)<br><strong>PDPA:</strong> S.5</p>
+<p>Recruitment processing should document basis (typically <strong>consent</strong> or <strong>legitimate interest</strong> / pre-contractual steps for applicants).</p>
+<p><strong>Remediation:</strong> State basis per processing activity in privacy policy.</p>
+<hr>
+<h3>H6. Staff authentication: HttpOnly cookies bypassed on client</h3>
+<p><strong>Evidence:</strong></p>
+<ul>
+<li><code>apps/backoffice/src/app/api/auth/login/route.ts</code> — sets <strong>HttpOnly</strong> <code>bo_access</code> / <code>bo_refresh</code></li>
+<li><code>apps/backoffice/src/components/login/LoginForm.tsx</code> — also sets tokens via <strong><code>document.cookie</code></strong> (readable by JS)</li>
+</ul>
+<p><strong>Risk:</strong> Undermines secure cookie design; XSS can steal staff session.</p>
+<p><strong>Remediation:</strong> Use POST to <code>/api/auth/login</code> only; remove client-side cookie writes; rely on middleware (<code>middleware.ts</code>) with HttpOnly tokens.</p>
+<hr>
+<h3>H7. Email notifications without transparency or delivery</h3>
+<p>Reject/schedule/<strong>cancel-interview</strong> modals offer “notify candidate” (<code>PipelineStatusModals.tsx</code>, <code>ScheduleInterviewModal.tsx</code>, <code>PipelineCancelScheduledInterviewModal</code>). OTP and password email via <code>apps/api</code>. No privacy notice describing email content, provider, or opt-out.</p>
+<p><strong>Implementation gap:</strong> <code>notifyCandidate</code> / <code>notifyCandidateEmail</code> persist flags and may set <code>emailNotificationQueued</code> in API responses, but <strong>no SMTP/API delivery is wired</strong> (<strong>TH-009</strong>, <strong>TH-130</strong>, <strong>TH-131</strong>). Candidates may believe they were notified when they were not — transparency and fairness risk even before live email.</p>
+<p><strong>Remediation:</strong> Implement email service (<strong>TH-009</strong>); disclose email processor in privacy policy; log delivery status; allow preference where appropriate; do not show “notification sent” UX until delivery is confirmed.</p>
+<hr>
+<h2>Medium findings</h2>
+<h3>M1. Terms checkbox without linkable policies</h3>
+<p>Register validates <code>terms</code> but policies are not URLs (<code>RegisterForm.tsx</code>). Fails “informed” consent under Art. 7.</p>
+<h3>M2. OAuth / social login referenced in product copy; verify alternatives</h3>
+<p>Ensure email/password registration remains available; disclose profile fields imported from any future OAuth provider.</p>
+<h3>M3. File uploads — partial technical controls</h3>
+<p>CV upload: MIME and size checks (<code>cv/upload/route.ts</code>). Good practice; still need privacy notice (what is stored, where, who can access in backoffice).</p>
+<h3>M4. Candidate account status PATCH without staff auth guard</h3>
+<p><code>PATCH /api/backoffice/candidates/{id}/status</code> — documented in API spec; no <code>requireStaffSession</code> in route. <strong>Security/privacy risk</strong> if exposed. Tracked as <strong>TH-145</strong>.</p>
+<h3>M5. Search and dashboard behaviour</h3>
+<p>Logged-in job search and profile edits are personal data when linked to account — disclose in privacy policy (purpose: account management / application).</p>
+<h3>M6. Interview timezone and candidate time zone without collection notice</h3>
+<p>Schedule interview stores <strong><code>schedulingTimeZone</code></strong> on <code>ApplicationInterview</code>; preview uses candidate profile <strong><code>timeZone</code></strong> when set. Profile time zone exists in DB (<strong>TH-056</strong> — no candidate edit UI yet). Processing location-related metadata without stating purpose or accuracy limits in privacy notice.</p>
+<p><strong>Remediation:</strong> Disclose timezone use (scheduling, display); let candidates view/edit time zone on profile; document in privacy policy.</p>
+<hr>
+<h2>Informational</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Topic</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>I1</td>
+<td>No DPIA reference in UI — may be required (GDPR Art. 35, PDPA S.21) for AI + recruitment at scale</td>
+</tr>
+<tr>
+<td>I2</td>
+<td>No breach notification contact in UI</td>
+</tr>
+<tr>
+<td>I3</td>
+<td>Backoffice has no footer legal links (staff-facing; internal policy may suffice)</td>
+</tr>
+<tr>
+<td>I4</td>
+<td><code>localStorage</code> used for jobs view preference in backoffice — low risk; classify in cookie policy</td>
+</tr>
+<tr>
+<td>I5</td>
+<td><strong>AI bias notice</strong> (<code>AiRelevanceBiasNotice</code>) — good UX for human-in-the-loop; map to Art. 22 in privacy policy when scoring goes live at scale</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Compliance readiness scorecard</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>GDPR</th>
+<th>PDPA</th>
+<th>Status (May 2026)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Privacy notice</td>
+<td>Art. 13–14</td>
+<td>S.7–8</td>
+<td><strong>Not implemented</strong> (placeholder links)</td>
+</tr>
+<tr>
+<td>Cookie consent</td>
+<td>Art. 6–7</td>
+<td>S.6–7</td>
+<td><strong>Not implemented</strong></td>
+</tr>
+<tr>
+<td>Legal basis</td>
+<td>Art. 6</td>
+<td>S.5</td>
+<td><strong>Not disclosed</strong></td>
+</tr>
+<tr>
+<td>Data subject rights</td>
+<td>Art. 15–22</td>
+<td>S.9–17</td>
+<td><strong>Not disclosed</strong></td>
+</tr>
+<tr>
+<td>Controller identity</td>
+<td>Art. 13(1)(a)</td>
+<td>S.8(1)(a)</td>
+<td><strong>Not disclosed</strong></td>
+</tr>
+<tr>
+<td>Retention</td>
+<td>Art. 5(1)(e)</td>
+<td>S.5(1)(e)</td>
+<td><strong>Not disclosed</strong></td>
+</tr>
+<tr>
+<td>Cross-border transfers</td>
+<td>Art. 44–49</td>
+<td>S.25–27</td>
+<td><strong>Partial fail</strong> (backoffice fonts; OpenAI)</td>
+</tr>
+<tr>
+<td>Consent at collection</td>
+<td>Art. 6–7</td>
+<td>S.6</td>
+<td><strong>Partial</strong> (terms checkbox only)</td>
+</tr>
+<tr>
+<td>Processor transparency</td>
+<td>Art. 13(1)(e), 28</td>
+<td>S.8(1)(d)</td>
+<td><strong>Fail</strong> (OpenAI, email)</td>
+</tr>
+<tr>
+<td>Automated decision-making (Art. 22)</td>
+<td>Art. 22</td>
+<td>—</td>
+<td><strong>Partial UX</strong> (bias notice); <strong>no legal notice</strong></td>
+</tr>
+<tr>
+<td>Security</td>
+<td>Art. 32</td>
+<td>S.18</td>
+<td><strong>Partial</strong> (candidate tokens in storage; staff cookie issue)</td>
+</tr>
+<tr>
+<td>Data minimization</td>
+<td>Art. 5(1)(c)</td>
+<td>S.5(1)(c)</td>
+<td><strong>Reasonable</strong> in forms</td>
+</tr>
+<tr>
+<td>Self-hosted fonts (portal)</td>
+<td>—</td>
+<td>—</td>
+<td><strong>Pass</strong> (candidate-portal, my-applications)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Recommended next steps (priority)</h2>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Action</th>
+<th>Backlog</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>Privacy policy + terms</strong> — real pages and footer/register/apply links (C1, H1, H2)</td>
+<td><strong>TH-192</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Cookie consent</strong> — block non-essential until accepted (C2)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Backoffice fonts</strong> — <code>next/font</code>, remove Google <code>@import</code> (C3)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>OpenAI &amp; email</strong> — privacy policy + consent/checkbox before CV/screenshot/relevance processing (C4)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Email delivery</strong> — wire OTP, status, interview notifications; align UX with actual send (H7)</td>
+<td><strong>TH-009</strong>, <strong>TH-130</strong>, <strong>TH-131</strong></td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Candidate auth</strong> — HttpOnly session cookies; remove JWT from <code>localStorage</code> (C5)</td>
+<td><strong>TH-193</strong></td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Staff auth</strong> — use HttpOnly login route only (H6)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Apply flow notice</strong> — just-in-time disclosure + retention (C6, H3)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Retention &amp; deletion</strong> — policy + technical job to purge old applications/CV files</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>DPAs</strong> — OpenAI, email provider, hosting</td>
+<td>—</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Secure candidate status API</strong> — add staff auth on <code>PATCH .../candidates/{id}/status</code> (M4)</td>
+<td><strong>TH-145</strong></td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>Timezone disclosure</strong> — profile edit + privacy notice (M6)</td>
+<td><strong>TH-056</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Process alignment</h2>
+<p>This audit is the <strong>Stage ④ validation</strong> artefact alongside <a href="wcag22-audit.md">wcag22-audit.md</a> in the <a href="../process-diagrams/ats-ai-development-process.md">AI-assisted development process</a>. Re-run after <strong>TH-009</strong> (email), <strong>TH-192</strong> (legal pages), <strong>TH-193</strong> (HttpOnly tokens), or major AI/scheduling changes.</p>
+<hr>
+<h2>Appendix A: Static markup vs implementation</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Static markup (Apr 2026)</th>
+<th>Next.js (May 2026, rev 1.1)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Google Fonts CDN</td>
+<td><strong>Fail</strong> (<code>tokens.css</code> @import)</td>
+<td><strong>Pass</strong> on portal &amp; my-applications (<code>next/font</code>); <strong>Fail</strong> on backoffice</td>
+</tr>
+<tr>
+<td>Privacy link</td>
+<td><code>href=&quot;#&quot;</code></td>
+<td>Still <code>href=&quot;#&quot;</code> in <code>SiteFooter</code> (<strong>TH-192</strong>)</td>
+</tr>
+<tr>
+<td>Cookie banner</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Registration consent</td>
+<td>N/A in static job pages</td>
+<td>Terms checkbox (unlinked)</td>
+</tr>
+<tr>
+<td>CV / AI</td>
+<td>N/A</td>
+<td>OpenAI integrations — new compliance surface</td>
+</tr>
+<tr>
+<td>AI transparency</td>
+<td>N/A</td>
+<td><strong>Partial</strong> — <code>AiRelevanceBiasNotice</code> in backoffice</td>
+</tr>
+<tr>
+<td>Interview data</td>
+<td>N/A</td>
+<td>Timezone + notify flags; cancel interview on pipeline rollback</td>
+</tr>
+<tr>
+<td>Email to candidates</td>
+<td>N/A</td>
+<td>UI flags only — <strong>no delivery</strong> (<strong>TH-009</strong>)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Appendix B: Related documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="../specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a></td>
+<td>TH-009, TH-130–131, TH-192–193 remediation</td>
+</tr>
+<tr>
+<td><a href="implementation-alignment-2026.md">implementation-alignment-2026.md</a></td>
+<td>Which app implements which API</td>
+</tr>
+<tr>
+<td><a href="wcag22-audit.md">wcag22-audit.md</a></td>
+<td>Accessibility (legal links, fonts, modals)</td>
+</tr>
+<tr>
+<td><a href="../specification/api/backoffice-applications.md">api/backoffice-applications.md</a></td>
+<td>Staff processing of application data</td>
+</tr>
+<tr>
+<td><a href="../process-diagrams/ats-ai-development-process.md">portfolio/process-diagrams/</a></td>
+<td>Stage ④ compliance validation</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>Revision 1.1 · 21 May 2026 — aligned with PRD, FEATURE_BACKLOG, schedule/cancel interview flows, AI bias notice, email flag gaps.</em></p>
+<p><em>This audit reflects code and UX as of 21 May 2026. Legal review by qualified counsel is required before claiming GDPR/PDPA compliance.</em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

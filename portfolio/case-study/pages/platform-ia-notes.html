@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Platform IA notes — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class=" active">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Platform IA notes</span></nav>
+      <article class="prose"><h1>Information architecture</h1>
+<p><em>Aligned with <a href="../../docs/specification/PRD.md">PRD §4</a> and <code>docs/PROJECT_STRUCTURE.md</code>.</em></p>
+<h2>Platform context (monorepo)</h2>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Port</th>
+<th>Audience</th>
+<th>PRD section</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>apps/candidate-portal</code></td>
+<td>3000</td>
+<td>Public candidates</td>
+<td>§5.1</td>
+</tr>
+<tr>
+<td><code>apps/my-applications</code></td>
+<td>3002</td>
+<td>Authenticated candidates</td>
+<td>§5.2</td>
+</tr>
+<tr>
+<td><code>apps/backoffice</code></td>
+<td>3001</td>
+<td>Staff</td>
+<td>§5.3–§5.9</td>
+</tr>
+<tr>
+<td><code>apps/api</code></td>
+<td>4000</td>
+<td>Auth + candidate registration</td>
+<td>§5.10</td>
+</tr>
+</tbody></table>
+<p>This portfolio slice focuses on <strong><code>apps/backoffice</code></strong> applications workflow and its relationships to <strong>candidates</strong>, <strong>jobs</strong>, and <strong>interviews</strong>. Candidate apply flow lives in <strong>my-applications</strong>; public browse in <strong>candidate-portal</strong>.</p>
+<hr>
+<h2>Backoffice — primary navigation</h2>
+<p>Order matches <code>Sidebar.tsx</code> (Applications before Interviews).</p>
+<pre><code>Dashboard (home)                    ← KPIs, pipeline health, recent activity [Done]
+├── Applications                    ← portfolio slice focus
+│   ├── /applications (table | pipeline) [Done]
+│   └── /applications/[id] (detail) [Done]
+├── Interviews                      [Done]
+├── Jobs
+│   ├── List                        [Done]
+│   ├── New → Review → Success      [Done]
+│   ├── [id] / Edit                 [Done]
+│   └── [id] / Preview              [Done]
+├── Candidates
+│   ├── Summary + All (list)        [Done]
+│   └── [id] / Detail (+ edit status) [Done]
+├── Reports                         [Placeholder]
+├── Administration                  [Done — lookup CRUD]
+└── Settings                        [Placeholder]
+</code></pre>
+<p><strong>Visual IA map (PNG + Mermaid):</strong> <a href="../information-architecture/backoffice-navigation-map.md">portfolio/information-architecture/backoffice-navigation-map.md</a></p>
+<hr>
+<h2>Key routes (implementation-aligned)</h2>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Purpose</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/</code></td>
+<td>Dashboard — stats, pipeline snapshot, activity</td>
+<td>Done</td>
+</tr>
+<tr>
+<td><code>/applications</code></td>
+<td>Applications hub: <strong>Table</strong> and <strong>Pipeline</strong> (pipeline default)</td>
+<td>Done</td>
+</tr>
+<tr>
+<td><code>/applications/[id]</code></td>
+<td><strong>Application detail</strong> — packet review, status, interview</td>
+<td>Done</td>
+</tr>
+<tr>
+<td><code>/interviews</code></td>
+<td>Interview calendar</td>
+<td>Done</td>
+</tr>
+<tr>
+<td><code>/candidates</code>, <code>/candidates/all</code></td>
+<td>Candidate summary and directory</td>
+<td>Done</td>
+</tr>
+<tr>
+<td><code>/candidates/[id]</code></td>
+<td>Candidate profile &amp; history</td>
+<td>Done</td>
+</tr>
+<tr>
+<td><code>/jobs</code>, <code>/jobs/new</code>, <code>/jobs/[id]/edit</code></td>
+<td>Job posting lifecycle</td>
+<td>Done</td>
+</tr>
+<tr>
+<td><code>/administration/[section]</code></td>
+<td>Lookup CRUD (departments, skills, etc.)</td>
+<td>Done</td>
+</tr>
+<tr>
+<td><code>/reports</code>, <code>/settings</code></td>
+<td>Placeholder copy</td>
+<td>Planned</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Application lifecycle (IA implication)</h2>
+<p>Active Kanban columns (PRD §6):</p>
+<pre><code class="language-text">Submitted → Under Review → Shortlisted → Interview Scheduled → Interview Completed → Offered → Hired
+</code></pre>
+<p>Terminal views: <strong>Rejected</strong>, <strong>Withdrawn</strong> (separate tabs/filters, not active board clutter).</p>
+<hr>
+<h2>Cross-links (design intent)</h2>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>Parameter / note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Applications table — candidate name</td>
+<td>Candidate detail</td>
+<td><code>?from=applications</code> → back link returns to <strong>Applications</strong></td>
+</tr>
+<tr>
+<td>Applications table — job title</td>
+<td>Application detail</td>
+<td><code>/applications/[id]</code></td>
+</tr>
+<tr>
+<td>Pipeline card</td>
+<td>Application detail</td>
+<td><code>/applications/[id]</code></td>
+</tr>
+<tr>
+<td>Application detail — applicant</td>
+<td>Candidate detail</td>
+<td><code>?from=applications</code></td>
+</tr>
+<tr>
+<td>Application detail — job</td>
+<td>Job edit</td>
+<td><code>/jobs/[id]/edit</code></td>
+</tr>
+<tr>
+<td>Application detail — schedule interview</td>
+<td>Modal → <code>/interviews</code> calendar</td>
+<td>One interview per application</td>
+</tr>
+<tr>
+<td>Dashboard — recent activity</td>
+<td>Application or job detail</td>
+<td>Contextual deep links</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Depth vs breadth</h2>
+<ul>
+<li><strong>Breadth:</strong> <code>/applications</code> for throughput; <code>/interviews</code> for schedule overview</li>
+<li><strong>Depth:</strong> <code>/applications/[id]</code> for adjudication and status actions</li>
+<li><strong>Person context:</strong> <code>/candidates/[id]</code> when history across jobs matters</li>
+<li><strong>Platform context:</strong> <code>/</code> dashboard for daily orientation</li>
+</ul>
+<hr>
+<h2>Design system</h2>
+<p>Layout templates and components documented in <a href="../../docs/design-system/index.html">design-system/index.html</a>: portal shell, job listing, auth split, dashboard shell, pipeline full viewport.</p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

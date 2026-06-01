@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>API Dictionary — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>API dictionary</h1>
+        <p>HTTP API entry point — central Hono service, Next.js BFF routes, conventions, and master endpoint index aligned to the as-built monorepo.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#surfaces">API surfaces</a></li>
+            <li><a href="#modules">Module docs</a></li>
+            <li><a href="#conventions">Conventions</a></li>
+            <li><a href="#central">Central API</a></li>
+            <li><a href="#auth">Authentication</a></li>
+            <li><a href="#registration">Registration</a></li>
+            <li><a href="#my-apps">My Applications</a></li>
+            <li><a href="#backoffice">Backoffice</a></li>
+            <li><a href="#pipeline">Pipeline endpoints</a></li>
+            <li><a href="#enums">Schema alignment</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#related">Related docs</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>API Dictionary v1.4</span>
+            <span>19 May 2026 · As-built</span>
+            <span>JSON over HTTPS</span>
+          </div>
+
+          <p class="api-intro">Entry point for HTTP API documentation. Reflects implemented auth + candidate account flows and marks stub modules clearly. Related: <a href="product-requirements.html">Product requirements</a> · <a href="information-architecture.html">Information architecture</a>.</p>
+
+          <!-- Overview -->
+          <section class="ia-section" id="overview">
+            <h2>Overview</h2>
+            <p>TalentHub splits HTTP concerns across three runtime surfaces:</p>
+            <ul class="research-checklist">
+              <li><strong>Central API</strong> (<code>apps/api</code>, port 4000) — prefix <code>/api/v1</code> for auth and candidate registration.</li>
+              <li><strong>My Applications</strong> (port 3002) — Next.js route handlers for CV upload, parse, apply, and profile import.</li>
+              <li><strong>Backoffice</strong> (port 3001) — Next.js BFF for jobs, pipeline, interviews, and admin lookups via staff session cookies.</li>
+            </ul>
+            <p>Most domain logic lives in Next.js route handlers (BFF pattern). Central Hono routes for jobs, applications, and interviews return <strong>stub payloads</strong> until migrated.</p>
+          </section>
+
+          <!-- Surfaces -->
+          <section class="ia-section" id="surfaces">
+            <h2>Quick reference — API surfaces</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Area</th><th>Base resources</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Central HTTP API</strong><br><span class="api-port">port 4000</span></td>
+                    <td>Prefix <code>/api/v1</code> — JSON unless noted. Auth: <code>/api/v1/auth/*</code>. Candidates: <code>/api/v1/candidates/*</code>. Stub domains: jobs, applications, interviews, users, notifications.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>My Applications</strong><br><span class="api-port">port 3002</span></td>
+                    <td>App-local <code>/api/my-applications/*</code> — CV + screenshot import; Bearer JWT from central login.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Backoffice</strong><br><span class="api-port">port 3001</span></td>
+                    <td><code>/api/auth/*</code>, <code>/api/backoffice/*</code>, <code>/api/admin/*</code> — staff session cookies; applications pipeline detail in module spec.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Health probe</strong></td>
+                    <td><code>GET /health</code> on central API (outside <code>/api/v1</code>).</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Module docs -->
+          <section class="ia-section" id="modules">
+            <h2>Module documentation</h2>
+            <p>Full endpoint contracts live in the specification folder. Open these for request/response payloads and error codes.</p>
+            <div class="api-doc-grid">
+              <a class="api-doc-card" href="../../docs/specification/api/authentication.md">
+                <span class="api-doc-tag">Implemented</span>
+                <h3>Authentication</h3>
+                <p>Login, logout, <code>/auth/me</code> — candidate and staff audiences.</p>
+              </a>
+              <a class="api-doc-card" href="../../docs/specification/api/registration-sign-in.md">
+                <span class="api-doc-tag">Implemented</span>
+                <h3>Registration &amp; sign-in</h3>
+                <p>Register, OTP verify/resend, forgot/reset password.</p>
+              </a>
+              <a class="api-doc-card" href="../../docs/specification/api/my-applications-routes.md">
+                <span class="api-doc-tag">Implemented</span>
+                <h3>My Applications routes</h3>
+                <p>CV upload/parse/save/download + screenshot profile import.</p>
+              </a>
+              <a class="api-doc-card" href="../../docs/specification/api/backoffice-applications.md">
+                <span class="api-doc-tag">Implemented</span>
+                <h3>Backoffice applications</h3>
+                <p>Status PATCH, undo, reopen, interviews, relevance, attachments.</p>
+              </a>
+              <a class="api-doc-card" href="../../docs/specification/api/job-listing.md">
+                <span class="api-doc-tag api-doc-tag-stub">Target contract</span>
+                <h3>Job listing</h3>
+                <p><code>GET /jobs</code> + filters — stub in central API module today.</p>
+              </a>
+              <a class="api-doc-card" href="../../docs/specification/api/job-detail.md">
+                <span class="api-doc-tag api-doc-tag-stub">Target contract</span>
+                <h3>Job detail</h3>
+                <p>Single job, apply, bookmarks — not fully implemented in central API.</p>
+              </a>
+            </div>
+          </section>
+
+          <!-- Conventions -->
+          <section class="ia-section" id="conventions">
+            <h2>Conventions</h2>
+
+            <h3>Headers</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Header</th><th>When</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Authorization: Bearer &lt;access_token&gt;</code></td><td>Protected routes (candidate or staff)</td></tr>
+                  <tr><td><code>Content-Type: application/json</code></td><td>Request bodies with JSON</td></tr>
+                  <tr><td><code>Accept: application/json</code></td><td>All JSON responses</td></tr>
+                  <tr><td><code>Idempotency-Key: &lt;uuid&gt;</code></td><td>Optional on POST that create resources</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Success envelope</h3>
+            <pre class="ia-shell api-code">{
+  "data": { },
+  "meta": { "page": 1, "pageSize": 15, "totalCount": 124 }
+}</pre>
+
+            <h3>Error envelope</h3>
+            <pre class="ia-shell api-code">{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Human-readable summary",
+    "details": [ { "field": "email", "message": "Invalid format" } ]
+  }
+}</pre>
+
+            <h3>Common HTTP status codes</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table api-status-table">
+                <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+                <tbody>
+                  <tr><td><code>200</code></td><td>OK</td></tr>
+                  <tr><td><code>201</code></td><td>Created</td></tr>
+                  <tr><td><code>204</code></td><td>No content (delete / logout)</td></tr>
+                  <tr><td><code>400</code></td><td>Bad request / validation</td></tr>
+                  <tr><td><code>401</code></td><td>Missing or invalid authentication</td></tr>
+                  <tr><td><code>403</code></td><td>Authenticated but not allowed</td></tr>
+                  <tr><td><code>404</code></td><td>Resource not found</td></tr>
+                  <tr><td><code>409</code></td><td>Conflict (duplicate application, status transition)</td></tr>
+                  <tr><td><code>422</code></td><td>Semantic validation</td></tr>
+                  <tr><td><code>429</code></td><td>Rate limited</td></tr>
+                  <tr><td><code>500</code></td><td>Server error</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="ia-note">Identifiers use <strong>UUIDs</strong> for jobs, candidates, applications, and users. Public job URLs may use SEO <strong>slugs</strong>. All central routes are prefixed with <code>/api/v1</code>; breaking changes require <code>/api/v2</code>.</p>
+          </section>
+
+          <!-- Central API -->
+          <section class="ia-section" id="central">
+            <h2>Central API — master index</h2>
+            <p><code>apps/api</code> · prefix <code>/api/v1</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table api-endpoint-table">
+                <thead><tr><th>Domain</th><th>Method</th><th>Path</th><th>Summary</th></tr></thead>
+                <tbody>
+                  <tr><td>Auth</td><td><span class="api-method api-method-post">POST</span></td><td><code>/auth/login</code></td><td>Email/password login for candidate and staff audiences</td></tr>
+                  <tr><td>Auth</td><td><span class="api-method api-method-get">GET</span></td><td><code>/auth/me</code></td><td>Current principal (candidate or staff)</td></tr>
+                  <tr><td>Auth</td><td><span class="api-method api-method-post">POST</span></td><td><code>/auth/logout</code></td><td>Logout (returns 204)</td></tr>
+                  <tr><td>Account</td><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/register</code></td><td>Register candidate and issue verification OTP</td></tr>
+                  <tr><td>Account</td><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/resend-otp</code></td><td>Resend verification OTP with cooldown</td></tr>
+                  <tr><td>Account</td><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/verify-email</code></td><td>Verify account using 6-digit OTP</td></tr>
+                  <tr><td>Account</td><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/forgot-password</code></td><td>Request password reset</td></tr>
+                  <tr><td>Account</td><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/reset-password</code></td><td>Complete password reset</td></tr>
+                  <tr><td>Jobs</td><td><span class="api-method api-method-get">GET</span></td><td><code>/jobs</code></td><td><span class="api-stub">Stub</span> — implement job routes</td></tr>
+                  <tr><td>Applications</td><td><span class="api-method api-method-get">GET</span></td><td><code>/applications</code></td><td><span class="api-stub">Stub</span></td></tr>
+                  <tr><td>Interviews</td><td><span class="api-method api-method-get">GET</span></td><td><code>/interviews</code></td><td><span class="api-stub">Stub</span></td></tr>
+                  <tr><td>Users</td><td><span class="api-method api-method-get">GET</span></td><td><code>/users</code></td><td><span class="api-stub">Stub</span></td></tr>
+                  <tr><td>Notifications</td><td><span class="api-method api-method-get">GET</span></td><td><code>/notifications</code></td><td><span class="api-stub">Stub</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Auth -->
+          <section class="ia-section" id="auth">
+            <h2>Authentication</h2>
+            <p>Implementation: <code>apps/api/src/modules/auth/index.ts</code></p>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-post">POST</span>
+                <code>/api/v1/auth/login</code>
+              </div>
+              <p>Supports <code>audience: "candidate"</code> (default) and <code>audience: "staff"</code>. My Applications must use candidate; backoffice must use staff.</p>
+              <p><strong>Candidate:</strong> rejects <code>pending_verification</code>, <code>disabled</code>, and locked accounts. Locks for 15 minutes after 5 failed attempts.</p>
+              <p><strong>Staff:</strong> uses <code>users</code> table; requires <code>is_active = true</code>. Returns role claims in token payload.</p>
+              <p><strong>Errors:</strong> <code>VALIDATION_ERROR</code> (400), <code>INVALID_CREDENTIALS</code> (401), <code>EMAIL_NOT_VERIFIED</code> / <code>ACCOUNT_DISABLED</code> / <code>ACCOUNT_LOCKED</code> (403).</p>
+            </div>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-get">GET</span>
+                <code>/api/v1/auth/me</code>
+              </div>
+              <p>Requires <code>Authorization: Bearer &lt;access_token&gt;</code>. Returns candidate profile fields or staff name + role. Backoffice falls back to this endpoint when local JWT verification fails during dev.</p>
+            </div>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-post">POST</span>
+                <code>/api/v1/auth/logout</code>
+              </div>
+              <p>Returns <code>204 No Content</code>. Not implemented: <code>POST /auth/refresh</code>, OAuth routes.</p>
+            </div>
+          </section>
+
+          <!-- Registration -->
+          <section class="ia-section" id="registration">
+            <h2>Registration &amp; account</h2>
+            <p>Implementation: <code>apps/api/src/modules/candidates/index.ts</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table api-endpoint-table">
+                <thead><tr><th>Method</th><th>Path</th><th>Summary</th><th>Response</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/register</code></td><td>Email + password + profile; issues OTP</td><td>202 Accepted</td></tr>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/verify-email</code></td><td>6-digit OTP verification</td><td>200 OK</td></tr>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/resend-otp</code></td><td>Resend with rate limits</td><td>202 Accepted</td></tr>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/forgot-password</code></td><td>Request reset token</td><td>202 Accepted</td></tr>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/candidates/reset-password</code></td><td>Complete reset with token</td><td>200 OK</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="ia-note">Dev mode: <code>OTP_DELIVERY_MODE=dummy</code> returns message <em>"Use OTP 111111 for testing."</em> Email normalized to lowercase via <code>email_normalized</code> column.</p>
+          </section>
+
+          <!-- My Applications -->
+          <section class="ia-section" id="my-apps">
+            <h2>My Applications — Next.js routes</h2>
+            <p><code>apps/my-applications</code> · Bearer JWT (candidate) · shared <code>JWT_SECRET</code> with central API.</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table api-endpoint-table">
+                <thead><tr><th>Method</th><th>Path</th><th>Summary</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/api/my-applications/cv/upload</code></td><td>Upload PDF/Word; returns <code>parseId</code> (max 10 MB)</td></tr>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/api/my-applications/cv/parse</code></td><td>Text extraction + structured parse</td></tr>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/api/my-applications/cv/save</code></td><td>Save parsed CV to profile</td></tr>
+                  <tr><td><span class="api-method api-method-get">GET</span></td><td><code>/api/my-applications/cv/download?id=</code></td><td>Download original file</td></tr>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/api/my-applications/screenshot/extract</code></td><td>Image + section → structured rows (OpenAI)</td></tr>
+                  <tr><td><span class="api-method api-method-post">POST</span></td><td><code>/api/my-applications/screenshot/save</code></td><td>Save full payload from screenshot flow</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Backoffice -->
+          <section class="ia-section" id="backoffice">
+            <h2>Backoffice — Next.js routes</h2>
+            <p><code>apps/backoffice</code> · Staff session via httpOnly cookies from <code>POST /api/auth/login</code>.</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Area</th><th>Typical paths</th><th>Summary</th></tr></thead>
+                <tbody>
+                  <tr><td>Auth</td><td><code>POST /api/auth/login</code>, logout, refresh</td><td>Staff authentication</td></tr>
+                  <tr><td>Jobs</td><td><code>/api/backoffice/jobs</code>, publish, form-options</td><td>Job posting CRUD and publish</td></tr>
+                  <tr><td>Applications</td><td><code>/api/backoffice/applications/{id}/…</code></td><td>Pipeline status, interview, scoring, files</td></tr>
+                  <tr><td>Candidates</td><td><code>PATCH /api/backoffice/candidates/{id}/status</code></td><td>Candidate <em>account</em> status — not application pipeline</td></tr>
+                  <tr><td>Admin</td><td><code>/api/admin/departments</code>, locations, skills, tags, benefits, etc.</td><td>Reference data for job builder</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>UI routes: <code>/applications</code> (pipeline default), <code>/applications/{id}</code>, <code>/interviews</code>.</p>
+          </section>
+
+          <!-- Pipeline -->
+          <section class="ia-section" id="pipeline">
+            <h2>Backoffice pipeline endpoints</h2>
+            <p>Next.js route handlers — not central <code>/api/v1</code>. Source: <code>apps/backoffice/src/app/api/backoffice/applications/**</code></p>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-patch">PATCH</span>
+                <code>/api/backoffice/applications/{id}/status</code>
+              </div>
+              <p>Governed status transitions. Requires <code>reason</code> on reject, <code>withdrawalSource</code> on withdraw, <code>offerAccepted: true</code> for offered → hired. Optional <code>expectedUpdatedAt</code> for optimistic concurrency (409 on conflict).</p>
+              <p><strong>Key errors:</strong> <code>INVALID_STATUS_TRANSITION</code>, <code>INTERVIEW_RECORD_REQUIRED</code>, <code>USE_REOPEN_ACTION</code>, <code>TERMINAL_STATE</code>.</p>
+            </div>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-post">POST</span>
+                <code>…/status/undo</code>
+              </div>
+              <p>Reverts to previous status when latest event matches and undo is allowed.</p>
+            </div>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-post">POST</span>
+                <code>…/reopen</code>
+              </div>
+              <p>From <code>rejected</code> only. Target must be <code>under_review</code> or <code>shortlisted</code>; mandatory reason.</p>
+            </div>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-get">GET</span> <span class="api-method api-method-post">POST</span>
+                <code>…/interviews</code>
+              </div>
+              <p>One interview row per application (unique constraint). POST creates row and may advance status to <code>interview_scheduled</code>.</p>
+            </div>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-get">GET</span>
+                <code>…/relevance-score?refresh=1</code>
+              </div>
+              <p>AI relevance scoring. Requires <code>OPENAI_API_KEY</code>; returns 503 without it.</p>
+            </div>
+
+            <div class="api-endpoint-card">
+              <div class="api-endpoint-head">
+                <span class="api-method api-method-get">GET</span>
+                <code>…/attachments/cv</code> · <code>…/attachments/cover-letter</code>
+              </div>
+              <p>Streams files from <code>storage/cvs/</code> and <code>storage/cover-letters/</code>. Staff session required.</p>
+            </div>
+
+            <h3>Application status values</h3>
+            <pre class="ia-shell">Submitted → Under Review → Shortlisted → Interview Scheduled → Interview Completed → Offered → Hired
+
+Terminal: rejected, withdrawn (rejected allows controlled reopen)</pre>
+          </section>
+
+          <!-- Enums -->
+          <section class="ia-section" id="enums">
+            <h2>Schema alignment</h2>
+            <p>JSON bodies use <strong>camelCase</strong> (e.g. <code>postedAt</code>) mapping to Prisma snake_case columns. Public job routes return only <code>published</code> rows not past <code>expires_at</code>.</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Prisma enum</th><th>API string values</th></tr></thead>
+                <tbody>
+                  <tr><td><code>JobPostingStatus</code></td><td><code>draft</code>, <code>published</code>, <code>closed</code>, <code>archived</code></td></tr>
+                  <tr><td><code>ApplicationStatus</code></td><td><code>submitted</code>, <code>under_review</code>, <code>shortlisted</code>, <code>interview_scheduled</code>, <code>interview_completed</code>, <code>offered</code>, <code>hired</code>, <code>rejected</code>, <code>withdrawn</code></td></tr>
+                  <tr><td><code>UserRole</code></td><td><code>admin</code>, <code>recruiter</code>, <code>hiring_manager</code></td></tr>
+                  <tr><td><code>QualificationType</code></td><td><code>required</code>, <code>preferred</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Security -->
+          <section class="ia-section" id="security">
+            <h2>Security notes</h2>
+            <ul class="research-checklist">
+              <li>Store refresh tokens in httpOnly, Secure, SameSite cookies for browser clients.</li>
+              <li>Rate-limit login, register, resend-otp, verify-email, and forgot-password endpoints.</li>
+              <li>Never return <code>password_hash</code> in any response.</li>
+              <li>Staff routes gated by middleware; candidate routes require Bearer JWT.</li>
+              <li>File upload type and size validation on CV endpoints (10 MB max).</li>
+            </ul>
+          </section>
+
+          <!-- Related -->
+          <section class="ia-section" id="related">
+            <h2>Related documentation</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Document</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><a href="product-requirements.html">Product requirements (PRD)</a></td><td>Vision, personas, as-built features, lifecycle</td></tr>
+                  <tr><td><a href="../../docs/specification/api/README.md">api/README.md</a></td><td>Full conventions and master index</td></tr>
+                  <tr><td><a href="db-schema.html">Database schema</a></td><td>Relational model</td></tr>
+                  <tr><td><a href="../../docs/specification/ATS_Application_State_UI_API_Requirements.md">Application state spec</a></td><td>Pipeline product behaviour</td></tr>
+                  <tr><td><a href="information-architecture.html">Information architecture</a></td><td>Route map across apps</td></tr>
+                  <tr><td><a href="user-stories-jtbd.html">User stories &amp; JTBD</a></td><td>Applications slice stories</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="ia-note"><em>API Dictionary v1.4 · 19 May 2026 · For endpoint-level detail, prefer module-specific specs over this summary.</em></p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">API dictionary · v1.4 · May 2026</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="product-requirements.html">Product requirements</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 450" role="img" aria-label="My Applications dashboard wireframe">
+  <rect width="720" height="450" fill="#f8fafc"/>
+  <rect x="0" y="0" width="720" height="52" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="24" y="18" width="96" height="16" rx="3" fill="#2563eb" opacity="0.35"/>
+  <rect x="560" y="16" width="56" height="20" rx="6" fill="#f1f5f9"/>
+  <rect x="628" y="16" width="68" height="20" rx="6" fill="#2563eb" opacity="0.25"/>
+  <rect x="24" y="68" width="180" height="18" rx="4" fill="#0f172a" opacity="0.14"/>
+  <rect x="24" y="96" width="240" height="8" rx="2" fill="#94a3b8" opacity="0.4"/>
+  <rect x="24" y="120" width="148" height="68" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="36" y="134" width="64" height="8" rx="2" fill="#64748b"/>
+  <rect x="36" y="152" width="108" height="22" rx="4" fill="#eff6ff"/>
+  <rect x="184" y="120" width="148" height="68" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="196" y="134" width="64" height="8" rx="2" fill="#64748b"/>
+  <rect x="196" y="152" width="108" height="22" rx="4" fill="#eff6ff"/>
+  <rect x="344" y="120" width="148" height="68" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="356" y="134" width="64" height="8" rx="2" fill="#64748b"/>
+  <rect x="356" y="152" width="108" height="22" rx="4" fill="#eff6ff"/>
+  <rect x="504" y="120" width="192" height="68" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="516" y="134" width="64" height="8" rx="2" fill="#64748b"/>
+  <rect x="516" y="152" width="108" height="22" rx="4" fill="#eff6ff"/>
+  <rect x="24" y="204" width="672" height="36" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="36" y="216" width="100" height="8" rx="2" fill="#0f172a" opacity="0.12"/>
+  <rect x="160" y="216" width="72" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="280" y="216" width="72" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="400" y="216" width="72" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="560" y="214" width="80" height="12" rx="3" fill="#dbeafe"/>
+  <rect x="24" y="248" width="672" height="36" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="36" y="260" width="100" height="8" rx="2" fill="#0f172a" opacity="0.12"/>
+  <rect x="160" y="260" width="72" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="280" y="260" width="72" height="8" rx="2" fill="#2563eb" opacity="0.35"/>
+  <rect x="400" y="260" width="72" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="560" y="258" width="80" height="12" rx="3" fill="#f1f5f9"/>
+  <rect x="24" y="292" width="672" height="36" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="36" y="304" width="100" height="8" rx="2" fill="#0f172a" opacity="0.12"/>
+  <rect x="160" y="304" width="72" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="280" y="304" width="72" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="400" y="304" width="72" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="560" y="302" width="80" height="12" rx="3" fill="#f1f5f9"/>
+  <rect x="24" y="348" width="160" height="28" rx="6" fill="#2563eb" opacity="0.25"/>
+  <rect x="196" y="348" width="120" height="28" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <text x="360" y="442" text-anchor="middle" fill="#64748b" font-family="Arial,sans-serif" font-size="11">My Applications - dashboard</text>
+</svg>

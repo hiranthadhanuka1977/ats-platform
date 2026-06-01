@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product Requirements — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>Product requirements</h1>
+        <p>PRD v1.0 — platform scope, personas, functional requirements, application lifecycle, and as-built status across the TalentHub monorepo.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#vision">Vision &amp; objectives</a></li>
+            <li><a href="#personas">Users &amp; personas</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#functional">Functional requirements</a></li>
+            <li><a href="#lifecycle">Application lifecycle</a></li>
+            <li><a href="#data">Data model</a></li>
+            <li><a href="#nfr">Non-functional</a></li>
+            <li><a href="#journeys">User journeys</a></li>
+            <li><a href="#gaps">Out of scope</a></li>
+            <li><a href="#metrics">Success metrics</a></li>
+            <li><a href="#related">Related docs</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>TalentHub ATS · PRD v1.0</span>
+            <span>20 May 2026 · As-built</span>
+            <span>Implementation-aligned</span>
+          </div>
+
+          <p class="prd-intro">Consolidates product intent from specifications, static markup, and the live codebase. Status labels: <span class="prd-status prd-status-done">Done</span> <span class="prd-status prd-status-partial">Partial</span> <span class="prd-status prd-status-planned">Planned</span> <span class="prd-status prd-status-oos">Out of scope</span>. Related: <a href="user-stories-jtbd.html">User stories &amp; JTBD</a> · <a href="information-architecture.html">Information architecture</a>.</p>
+
+          <!-- 1. Executive summary -->
+          <section class="ia-section" id="summary">
+            <h2>1. Executive summary</h2>
+            <p>TalentHub is an applicant tracking system delivered as an npm monorepo with four runtime applications supporting the full core hiring loop: <strong>publish jobs → discover and apply → triage in a Kanban pipeline → progress through interview and offer stages → hire or reject</strong>.</p>
+
+            <div class="ia-app-grid">
+              <div class="ia-app-card">
+                <strong>Candidate portal</strong>
+                <span>Port 3000</span>
+                <p>Public job seekers browsing open roles.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>My Applications</strong>
+                <span>Port 3002</span>
+                <p>Registered candidates managing profile, CV, and applications.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>Backoffice</strong>
+                <span>Port 3001</span>
+                <p>Internal recruiters and hiring staff.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>Central API</strong>
+                <span>Port 4000</span>
+                <p>Shared authentication and candidate account services.</p>
+              </div>
+            </div>
+
+            <p>Job data, applications, and staff workflows persist in PostgreSQL via Prisma. Most domain logic runs in Next.js route handlers (BFF pattern); the central Hono API handles auth and candidate registration only. This PRD distinguishes <strong>implemented</strong>, <strong>partial</strong>, and <strong>planned</strong> capabilities.</p>
+          </section>
+
+          <!-- 2. Vision -->
+          <section class="ia-section" id="vision">
+            <h2>2. Vision and objectives</h2>
+            <h3>2.1 Vision</h3>
+            <p>Give hiring teams a focused backoffice to triage and progress applications efficiently, while giving candidates a clear path from job discovery to application tracking — without fragmenting context across jobs, candidates, and pipeline views.</p>
+
+            <h3>2.2 Product objectives</h3>
+            <ol class="prd-objectives">
+              <li><strong>Reduce time-to-triage</strong> — Staff review who applied, for which job, when, with what documents, from a single applications hub.</li>
+              <li><strong>Enforce valid hiring workflow</strong> — Status changes follow a transition matrix with audit logging and controlled reopen flows.</li>
+              <li><strong>Enable self-service candidate onboarding</strong> — Register, verify email, upload CV, apply without staff intervention.</li>
+              <li><strong>Maintain a single source of truth</strong> — One PostgreSQL schema shared across all apps; shared validators and types.</li>
+              <li><strong>Support local-first development</strong> — File uploads to disk, optional OpenAI for CV parsing and relevance scoring.</li>
+            </ol>
+
+            <h3>2.3 Design principles</h3>
+            <ul class="research-checklist">
+              <li><strong>Progressive disclosure</strong> — Summary in list/pipeline; depth on application and candidate detail pages.</li>
+              <li><strong>Application as unit of work</strong> — Candidate and job are linked contexts, not separate workflows.</li>
+              <li><strong>Honest system state</strong> — Disable or block impossible transitions rather than failing silently.</li>
+              <li><strong>Implementation-aligned documentation</strong> — Specs track the Next.js apps, not legacy static markup alone.</li>
+            </ul>
+          </section>
+
+          <!-- 3. Personas -->
+          <section class="ia-section" id="personas">
+            <h2>3. Users and personas</h2>
+            <div class="us-persona-grid">
+              <article class="us-persona-card">
+                <span class="us-persona-icon" aria-hidden="true">🌐</span>
+                <h3>Candidate (external)</h3>
+                <p>Browses published jobs, registers via My Applications, uploads CV, applies with screening answers, tracks status on a personal dashboard.</p>
+                <span class="us-persona-ref">§3.1</span>
+              </article>
+              <article class="us-persona-card">
+                <span class="us-persona-icon" aria-hidden="true">👤</span>
+                <h3>Recruiter / hiring manager</h3>
+                <p>Logs into backoffice, creates and publishes jobs, reviews applications in list or Kanban, changes status, schedules interviews, manages candidate records.</p>
+                <span class="us-persona-ref">§3.2</span>
+              </article>
+              <article class="us-persona-card">
+                <span class="us-persona-icon" aria-hidden="true">⚙</span>
+                <h3>Administrator</h3>
+                <p>Same backoffice access with admin role. Maintains reference data via Administration CRUD. Future: user management, reports, settings.</p>
+                <span class="us-persona-ref">§3.3</span>
+              </article>
+            </div>
+          </section>
+
+          <!-- 4. Architecture -->
+          <section class="ia-section" id="architecture">
+            <h2>4. Product architecture</h2>
+            <h3>4.1 High-level system</h3>
+            <pre class="ia-shell">┌─────────────────────┐     ┌─────────────────────┐
+│  candidate-portal   │     │   my-applications   │
+│  (public browse)    │────▶│  (auth + apply)     │
+└──────────┬──────────┘     └──────────┬──────────┘
+           │                           │
+           ▼                           ▼
+    ┌──────────────────────────────────────────────────────────┐
+    │              PostgreSQL (@ats-platform/db)               │
+    └──────────────────────────────────────────────────────────┘
+           ▲                 ▲
+┌──────────┴──────────┐     │     ┌─────────────────────┐
+│     backoffice      │─────┘     │    apps/api         │
+│  (staff BFF + UI)   │           │  auth + candidates  │
+└─────────────────────┘           └─────────────────────┘</pre>
+
+            <h3>4.2 Request routing</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Concern</th><th>Where implemented</th></tr></thead>
+                <tbody>
+                  <tr><td>Staff session (httpOnly cookies)</td><td><code>apps/backoffice</code> — <code>/api/auth/*</code>, <code>/api/backoffice/*</code>, <code>/api/admin/*</code></td></tr>
+                  <tr><td>Candidate JWT (Bearer + refresh)</td><td><code>apps/api</code> — <code>/api/v1/auth/*</code>; consumed by my-applications</td></tr>
+                  <tr><td>Candidate registration / OTP</td><td><code>apps/api</code> — <code>/api/v1/candidates/*</code></td></tr>
+                  <tr><td>Public job listing</td><td><code>apps/candidate-portal</code> — Prisma in server components</td></tr>
+                  <tr><td>CV upload, apply, profile</td><td><code>apps/my-applications</code> — <code>/api/my-applications/*</code></td></tr>
+                  <tr><td>Jobs CRUD, pipeline, interviews</td><td><code>apps/backoffice</code> — Next.js route handlers</td></tr>
+                  <tr><td>Central domain API</td><td><strong>Stubs</strong> — <code>/api/v1/jobs</code>, applications, interviews, users, notifications</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>4.3 Shared packages</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Package</th><th>Role</th></tr></thead>
+                <tbody>
+                  <tr><td><code>@ats-platform/db</code></td><td>Prisma schema, migrations, client</td></tr>
+                  <tr><td><code>@ats-platform/validators</code></td><td>Zod schemas for API and BFF payloads</td></tr>
+                  <tr><td><code>@ats-platform/types</code></td><td>DTOs, <code>APPLICATION_STATUS_TRANSITIONS</code></td></tr>
+                  <tr><td><code>@ats-platform/ui</code></td><td>Shared React primitives</td></tr>
+                  <tr><td><code>@ats-platform/auth</code></td><td>Session/JWT abstractions</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>4.4 File storage</h3>
+            <p>Local filesystem under <code>UPLOAD_ROOT</code> (default <code>./storage</code>): <code>storage/cvs/{candidateAccountId}/</code> and <code>storage/cover-letters/{candidateAccountId}/</code>.</p>
+          </section>
+
+          <!-- 5. Functional requirements -->
+          <section class="ia-section" id="functional">
+            <h2>5. Functional requirements</h2>
+            <p>Each requirement uses status: Done · Partial · Planned · Out of scope.</p>
+
+            <h3 id="fr-portal">5.1 Public job discovery (candidate-portal)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>CP-01</td><td>Display published job listings with pagination</td><td><span class="prd-status prd-status-done">Done</span></td><td>Server-side Prisma query</td></tr>
+                  <tr><td>CP-02</td><td>Filter by department, location, employment type, experience, remote</td><td><span class="prd-status prd-status-done">Done</span></td><td>URL-driven search params</td></tr>
+                  <tr><td>CP-03</td><td>Full-text search on job title/summary</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>q</code> parameter</td></tr>
+                  <tr><td>CP-04</td><td>Job detail page with overview, responsibilities, qualifications, skills, benefits, tags</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>/jobs/[slug]</code></td></tr>
+                  <tr><td>CP-05</td><td>Salary display when <code>is_salary_visible</code></td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>CP-06</td><td>Featured job highlighting</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>is_featured</code> flag</td></tr>
+                  <tr><td>CP-07</td><td>Banner image on job detail</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>banner_image_url</code>, alt text</td></tr>
+                  <tr><td>CP-08</td><td>Apply CTA links to My Applications login</td><td><span class="prd-status prd-status-done">Done</span></td><td>No in-portal apply</td></tr>
+                  <tr><td>CP-09</td><td>Skip link, sticky header, accessible footer</td><td><span class="prd-status prd-status-done">Done</span></td><td>WCAG-oriented markup</td></tr>
+                  <tr><td>CP-10</td><td>Candidate auth, apply, bookmarks in portal</td><td><span class="prd-status prd-status-oos">Out of scope</span></td><td>Redirects to port 3002</td></tr>
+                  <tr><td>CP-11</td><td>Bookmark jobs</td><td><span class="prd-status prd-status-planned">Planned</span></td><td>DB model exists; no API in portal</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-my-apps">5.2 Candidate account and workspace (my-applications)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>MA-01</td><td>Register with email and password</td><td><span class="prd-status prd-status-done">Done</span></td><td>Central API</td></tr>
+                  <tr><td>MA-02</td><td>Email verification via OTP</td><td><span class="prd-status prd-status-done">Done</span></td><td>Dev OTP <code>111111</code> documented</td></tr>
+                  <tr><td>MA-03</td><td>Login / logout / session refresh</td><td><span class="prd-status prd-status-done">Done</span></td><td>Bearer JWT; 15m idle logout in UI</td></tr>
+                  <tr><td>MA-04</td><td>Forgot / reset password</td><td><span class="prd-status prd-status-partial">Partial</span></td><td>API exists; no UI</td></tr>
+                  <tr><td>MA-05</td><td>Dashboard with onboarding journey and recent applications</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>MA-06</td><td>Job search (published jobs)</td><td><span class="prd-status prd-status-done">Done</span></td><td>Simpler filters than portal</td></tr>
+                  <tr><td>MA-07</td><td>Job detail and apply flow</td><td><span class="prd-status prd-status-done">Done</span></td><td>CV required; optional cover letter</td></tr>
+                  <tr><td>MA-08</td><td>Application list with status</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>MA-09</td><td>CV upload (PDF, DOC, DOCX)</td><td><span class="prd-status prd-status-done">Done</span></td><td>Max 10 MB</td></tr>
+                  <tr><td>MA-10</td><td>CV parse and structured save to profile</td><td><span class="prd-status prd-status-done">Done</span></td><td>Text extraction + OpenAI</td></tr>
+                  <tr><td>MA-11</td><td>CV library: list, default, download, delete</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>MA-12</td><td>Cover letter library (file + text modes)</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>MA-13</td><td>Screening questions on apply</td><td><span class="prd-status prd-status-done">Done</span></td><td>Per-application fields</td></tr>
+                  <tr><td>MA-14</td><td>Profile screenshot import (LinkedIn-style)</td><td><span class="prd-status prd-status-partial">Partial</span></td><td>Prototype on <code>/my-profile</code></td></tr>
+                  <tr><td>MA-15</td><td>Bookmark jobs</td><td><span class="prd-status prd-status-planned">Planned</span></td><td>Schema only</td></tr>
+                  <tr><td>MA-16</td><td>Withdraw application</td><td><span class="prd-status prd-status-planned">Planned</span></td><td>Status exists in pipeline; candidate UI TBD</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-bo-auth">5.3 Staff authentication and shell (backoffice)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>BO-01</td><td>Staff login with httpOnly session cookies</td><td><span class="prd-status prd-status-done">Done</span></td><td>Prisma <code>users</code> table</td></tr>
+                  <tr><td>BO-02</td><td>Role-based staff accounts (admin, recruiter, hiring_manager)</td><td><span class="prd-status prd-status-done">Done</span></td><td>Enum on User</td></tr>
+                  <tr><td>BO-03</td><td>Sidebar navigation, top bar, mobile nav</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>BackOfficeShell</code></td></tr>
+                  <tr><td>BO-04</td><td>Skip link and session activity tracking</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-05</td><td>Middleware protection on dashboard routes</td><td><span class="prd-status prd-status-done">Done</span></td><td>Cookie <code>bo_access</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-dashboard">5.4 Dashboard (backoffice)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>BO-10</td><td>KPI stat row (open jobs, applications, etc.)</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-11</td><td>Pipeline health snapshot</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-12</td><td>Recent activity feed</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-13</td><td>Efficiency score card</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-14</td><td>Curator insight (stalled interviews)</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-jobs">5.5 Job posting management (backoffice)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>BO-20</td><td>List jobs with search, filters, pagination</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-21</td><td>Create job (multi-section form)</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-22</td><td>Edit existing job</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-23</td><td>Review step before publish</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-24</td><td>Publish / draft status</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-25</td><td>Job preview (candidate-facing layout)</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>/jobs/[id]/preview</code></td></tr>
+                  <tr><td>BO-26</td><td>Relational content: responsibilities, qualifications, skills, benefits, tags</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-27</td><td>Salary range and visibility toggle</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-28</td><td>Remote and featured flags</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-29</td><td>Banner image URL and alt text</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-applications">5.6 Applications hub and pipeline (backoffice)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>BO-30</td><td>Applications list view with sorting and filters</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-31</td><td>Kanban pipeline view (default)</td><td><span class="prd-status prd-status-done">Done</span></td><td>Drag-and-drop status changes</td></tr>
+                  <tr><td>BO-32</td><td>Toggle list ↔ pipeline; fullscreen pipeline mode</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>bo-content--pipeline</code></td></tr>
+                  <tr><td>BO-33</td><td>Week-scoped pipeline browsing</td><td><span class="prd-status prd-status-done">Done</span></td><td>Past and current week</td></tr>
+                  <tr><td>BO-34</td><td>Ten application statuses with transition validation</td><td><span class="prd-status prd-status-done">Done</span></td><td>See §6</td></tr>
+                  <tr><td>BO-35</td><td>Status PATCH with reason, notes, optimistic concurrency</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>/api/backoffice/applications/{id}/status</code></td></tr>
+                  <tr><td>BO-36</td><td>Undo last status change</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-37</td><td>Reopen from rejected (controlled action)</td><td><span class="prd-status prd-status-done">Done</span></td><td>Mandatory reason</td></tr>
+                  <tr><td>BO-38</td><td>Application detail: applicant, job link, submission, documents</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-39</td><td>Download CV and cover letter (staff)</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-40</td><td>Schedule interview (one per application)</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>application_interviews</code></td></tr>
+                  <tr><td>BO-41</td><td>AI relevance score on applications</td><td><span class="prd-status prd-status-partial">Partial</span></td><td>Requires <code>OPENAI_API_KEY</code></td></tr>
+                  <tr><td>BO-42</td><td>Status change audit log</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>application_status_events</code></td></tr>
+                  <tr><td>BO-43</td><td>Terminal columns: Rejected, Withdrawn</td><td><span class="prd-status prd-status-done">Done</span></td><td>Separate from active board</td></tr>
+                  <tr><td>BO-44</td><td>Email notification on status change</td><td><span class="prd-status prd-status-planned">Planned</span></td><td><code>notifyCandidate</code> field exists; delivery TBD</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-candidates">5.7 Candidates (backoffice)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>BO-50</td><td>Candidates summary dashboard</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-51</td><td>Searchable candidates table</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-52</td><td>Candidate detail: profile, CV history, applications</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-53</td><td>Edit candidate account status</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-54</td><td>Return navigation from candidate → applications context</td><td><span class="prd-status prd-status-done">Done</span></td><td>Context preserved where specified</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-interviews">5.8 Interviews (backoffice)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>BO-60</td><td>Interviews calendar page</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>/interviews</code></td></tr>
+                  <tr><td>BO-61</td><td>Schedule from application detail</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-62</td><td>Interview required before <code>interview_scheduled</code> status</td><td><span class="prd-status prd-status-done">Done</span></td><td>API validation</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-admin">5.9 Administration (backoffice)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>BO-70</td><td>CRUD for companies</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>/administration/companies</code></td></tr>
+                  <tr><td>BO-71</td><td>CRUD for departments, locations</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-72</td><td>CRUD for employment types, experience levels</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-73</td><td>CRUD for skills, tags, benefits</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>BO-74</td><td>Staff user management UI</td><td><span class="prd-status prd-status-planned">Planned</span></td><td></td></tr>
+                  <tr><td>BO-75</td><td>Reports</td><td><span class="prd-status prd-status-planned">Planned</span></td><td>Placeholder page</td></tr>
+                  <tr><td>BO-76</td><td>Settings</td><td><span class="prd-status prd-status-planned">Planned</span></td><td>Placeholder page</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="fr-api">5.10 Central API (apps/api)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table prd-table">
+                <thead><tr><th>ID</th><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>API-01</td><td>Health probe</td><td><span class="prd-status prd-status-done">Done</span></td><td><code>/health</code></td></tr>
+                  <tr><td>API-02</td><td>Staff and candidate login</td><td><span class="prd-status prd-status-done">Done</span></td><td>Audience-aware JWT</td></tr>
+                  <tr><td>API-03</td><td><code>/auth/me</code>, logout, refresh</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>API-04</td><td>Candidate register, verify, resend OTP</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>API-05</td><td>Forgot / reset password</td><td><span class="prd-status prd-status-done">Done</span></td><td></td></tr>
+                  <tr><td>API-06</td><td>Jobs REST API</td><td><span class="prd-status prd-status-planned">Planned</span></td><td>Stub only</td></tr>
+                  <tr><td>API-07</td><td>Applications REST API</td><td><span class="prd-status prd-status-planned">Planned</span></td><td>Stub only</td></tr>
+                  <tr><td>API-08</td><td>Interviews REST API</td><td><span class="prd-status prd-status-planned">Planned</span></td><td>Stub only</td></tr>
+                  <tr><td>API-09</td><td>Notifications</td><td><span class="prd-status prd-status-oos">Out of scope</span></td><td>Stub; no DB model</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 6. Lifecycle -->
+          <section class="ia-section" id="lifecycle">
+            <h2>6. Application lifecycle</h2>
+            <h3>6.1 Status enum (10 values)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Status</th><th>Pipeline column</th><th>Terminal</th></tr></thead>
+                <tbody>
+                  <tr><td><code>submitted</code></td><td>Submitted</td><td>No</td></tr>
+                  <tr><td><code>under_review</code></td><td>Under Review</td><td>No</td></tr>
+                  <tr><td><code>shortlisted</code></td><td>Shortlisted</td><td>No</td></tr>
+                  <tr><td><code>interview_scheduled</code></td><td>Interview Scheduled</td><td>No</td></tr>
+                  <tr><td><code>interview_completed</code></td><td>Interview Completed</td><td>No</td></tr>
+                  <tr><td><code>offered</code></td><td>Offered</td><td>No</td></tr>
+                  <tr><td><code>hired</code></td><td>Hired</td><td>Yes</td></tr>
+                  <tr><td><code>rejected</code></td><td>Rejected</td><td>Yes*</td></tr>
+                  <tr><td><code>withdrawn</code></td><td>Withdrawn</td><td>Yes</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="ia-note">* Rejected allows controlled <strong>reopen</strong> to <code>under_review</code> or <code>shortlisted</code> only.</p>
+
+            <h3>6.2 Active Kanban columns</h3>
+            <pre class="ia-shell">Submitted → Under Review → Shortlisted → Interview Scheduled → Interview Completed → Offered → Hired</pre>
+            <p>Rejected and Withdrawn appear as separate tabs or filtered views.</p>
+
+            <h3>6.3 Business rules (summary)</h3>
+            <ul class="research-checklist">
+              <li><strong>Reject</strong> requires a reason.</li>
+              <li><strong>Withdraw</strong> requires a withdrawal source.</li>
+              <li><strong>Hired</strong> from <strong>Offered</strong> requires <code>offerAccepted: true</code>.</li>
+              <li><strong>Interview Scheduled</strong> requires an <code>application_interviews</code> row.</li>
+              <li>Transitions from <strong>Rejected</strong> use reopen endpoint, not standard PATCH.</li>
+              <li><strong>Hired</strong> and <strong>Withdrawn</strong> are terminal for normal PATCH.</li>
+              <li>Optimistic concurrency via optional <code>expectedUpdatedAt</code> (409 on conflict).</li>
+            </ul>
+          </section>
+
+          <!-- 7. Data model -->
+          <section class="ia-section" id="data">
+            <h2>7. Data model (summary)</h2>
+            <p>Canonical schema: <code>packages/db/prisma/schema.prisma</code>. Documented in <a href="db-schema.html">Database schema</a>.</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Domain</th><th>Key entities</th></tr></thead>
+                <tbody>
+                  <tr><td>Lookups</td><td><code>Company</code>, <code>Department</code>, <code>Location</code>, <code>EmploymentType</code>, <code>ExperienceLevel</code>, <code>Skill</code>, <code>Benefit</code>, <code>Tag</code></td></tr>
+                  <tr><td>Staff</td><td><code>User</code></td></tr>
+                  <tr><td>Jobs</td><td><code>JobPosting</code> + related content tables</td></tr>
+                  <tr><td>Candidates</td><td><code>CandidateAccount</code>, <code>CandidateProfile</code>, <code>CandidateCvParse</code>, education/experience, sessions, tokens</td></tr>
+                  <tr><td>Applications</td><td><code>Application</code>, <code>ApplicationStatusEvent</code>, <code>ApplicationInterview</code></td></tr>
+                  <tr><td>Engagement</td><td><code>Bookmark</code>, <code>CandidateCoverLetter</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 8. NFR -->
+          <section class="ia-section" id="nfr">
+            <h2>8. Non-functional requirements</h2>
+
+            <h3>8.1 Accessibility</h3>
+            <p>Target <strong>WCAG 2.2 Level AA</strong> for Next.js apps. See <a href="wcag-audit.html">WCAG 2.2 audit</a>. Known gaps: modal focus traps (TH-191), placeholder legal footer links (TH-192), pipeline live-region announcements.</p>
+
+            <h3>8.2 Privacy and data protection</h3>
+            <p>PDPA/GDPR-oriented audit: <a href="gdpr-pdpa-audit.html">GDPR / PDPA audit</a>. Candidate PII in profile, CV files, and application attachments. Staff sessions via httpOnly cookies; candidate tokens in localStorage (TH-193 HttpOnly migration).</p>
+
+            <h3>8.3 Security</h3>
+            <ul class="research-checklist">
+              <li>Password hashing (bcrypt) for staff and candidates.</li>
+              <li>Account lockout on failed login attempts (API).</li>
+              <li>Staff routes gated by middleware; candidate routes require Bearer JWT.</li>
+              <li>File upload type and size validation on CV endpoints.</li>
+            </ul>
+
+            <h3>8.4 Performance and scale</h3>
+            <p>Local/dev-oriented: filesystem storage, single PostgreSQL instance. Pipeline loads up to 500 applications server-side. No CDN, email queue, or horizontal scaling documented yet.</p>
+
+            <h3>8.5 Design system</h3>
+            <p>HTML catalog: <a href="../../docs/design-system/index.html">design-system/index.html</a>. Tokens, components, and layout templates aligned with <code>apps/*/src/styles</code>.</p>
+          </section>
+
+          <!-- 9. Journeys -->
+          <section class="ia-section" id="journeys">
+            <h2>9. User journeys (as-built)</h2>
+            <h3>9.1 Candidate: discover and apply</h3>
+            <pre class="ia-shell">Browse jobs (portal :3000)
+  → Register / login (my-applications :3002 + API :4000)
+  → Upload and parse CV
+  → Apply to job (select CV, optional cover letter, screening answers)
+  → Track status on dashboard</pre>
+
+            <h3>9.2 Staff: publish and hire</h3>
+            <pre class="ia-shell">Login (backoffice :3001)
+  → Create and publish job
+  → Review applications (list or Kanban)
+  → Move cards / PATCH status (with rules)
+  → Schedule interview when needed
+  → Progress to Offered → Hired (or Reject with reason)
+  → Download CV / cover letter from detail page</pre>
+
+            <h3>9.3 Admin: maintain reference data</h3>
+            <pre class="ia-shell">Login → Administration → CRUD on lookups (departments, skills, etc.)</pre>
+          </section>
+
+          <!-- 10. Gaps -->
+          <section class="ia-section" id="gaps">
+            <h2>10. Out of scope and known gaps</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Item</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>Central Hono jobs/applications/interviews API</td><td>Stubs; logic lives in Next BFFs</td></tr>
+                  <tr><td>Notifications service</td><td>No Prisma model; stub endpoint</td></tr>
+                  <tr><td>Backoffice Reports &amp; Settings</td><td>Placeholder UI only</td></tr>
+                  <tr><td>Candidate bookmarks</td><td>DB ready; no end-to-end flow</td></tr>
+                  <tr><td>Password reset UI (candidate)</td><td>API only</td></tr>
+                  <tr><td>Email delivery (OTP, status notifications)</td><td>Dev OTP hardcoded; <code>notifyCandidate</code> not wired</td></tr>
+                  <tr><td>Multi-tenant / multi-company isolation</td><td>Single-tenant assumptions</td></tr>
+                  <tr><td>Mobile-native apps</td><td>Responsive web only</td></tr>
+                  <tr><td>SSO / OAuth (Google, etc.)</td><td>Staff uses email/password</td></tr>
+                  <tr><td>Extract BFF to central API</td><td>Documented as future alignment step</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 11. Metrics -->
+          <section class="ia-section" id="metrics">
+            <h2>11. Success metrics (suggested)</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Metric</th><th>Definition</th><th>Baseline</th></tr></thead>
+                <tbody>
+                  <tr><td>Time to first triage</td><td>Staff opens application detail from pipeline</td><td>Qualitative — flow exists</td></tr>
+                  <tr><td>Apply completion rate</td><td>Started apply → submitted application</td><td>Not instrumented</td></tr>
+                  <tr><td>Invalid transition rate</td><td>PATCH rejected due to rules</td><td>Audit via <code>application_status_events</code></td></tr>
+                  <tr><td>CV parse success rate</td><td>Upload → confirmed profile</td><td>Not instrumented</td></tr>
+                  <tr><td>Accessibility defects</td><td>WCAG audit open items</td><td>See audit report</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="ia-note">Instrumentation and analytics are <strong>planned</strong>; no product analytics layer is implemented.</p>
+
+            <h3>12. Release and environment</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Environment</th><th>Command</th><th>Apps</th></tr></thead>
+                <tbody>
+                  <tr><td>Local dev</td><td><code>npm run dev:all</code></td><td>3000, 3001, 3002, 4000</td></tr>
+                  <tr><td>Database</td><td><code>npm run db:migrate</code></td><td>PostgreSQL via root <code>.env</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Related -->
+          <section class="ia-section" id="related">
+            <h2>13. Related documentation</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Document</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><a href="information-architecture.html">Information architecture</a></td><td>Route map and navigation model</td></tr>
+                  <tr><td><a href="user-stories-jtbd.html">User stories &amp; JTBD</a></td><td>Applications slice stories and jobs-to-be-done</td></tr>
+                  <tr><td><a href="wcag-audit.html">WCAG 2.2 audit</a></td><td>Accessibility review</td></tr>
+                  <tr><td><a href="gdpr-pdpa-audit.html">GDPR / PDPA audit</a></td><td>Privacy posture</td></tr>
+                  <tr><td><a href="development-process.html">Development process</a></td><td>Five-stage AI-assisted lifecycle</td></tr>
+                  <tr><td><a href="../../docs/PROJECT_STRUCTURE.md">PROJECT_STRUCTURE.md</a></td><td>Monorepo layout and scripts</td></tr>
+                  <tr><td><a href="api-dictionary.html">API dictionary</a></td><td>HTTP API entry point</td></tr>
+                  <tr><td><a href="db-schema.html">Database schema</a></td><td>Relational model</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="ia-note"><em>PRD v1.0 · 20 May 2026 · Describes what has been built and documented. For endpoint-level detail, prefer the API dictionary and module-specific specs.</em></p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">Product requirements · PRD v1.0 · May 2026</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="user-stories-jtbd.html">User stories</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

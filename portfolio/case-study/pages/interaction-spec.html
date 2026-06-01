@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interaction spec — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class=" active">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Interaction spec</span></nav>
+      <article class="prose"><h1>Interaction spec and handoff (designer → engineering)</h1>
+<p><em>Aligned with <a href="../../docs/specification/PRD.md">PRD §5.6–§6</a> and <a href="../../docs/specification/api/backoffice-applications.md">backoffice-applications.md</a>.</em></p>
+<h2>1. Applications hub</h2>
+<h3>Views</h3>
+<ul>
+<li><strong>Table view</strong> and <strong>Pipeline</strong> are mutually exclusive views on the same data set.</li>
+<li><strong>Default view:</strong> Pipeline (status-centric work).</li>
+<li><strong>Fullscreen:</strong> <code>bo-content--pipeline</code> modifier removes max-width and fills viewport below header.</li>
+</ul>
+<h3>Data volume</h3>
+<ul>
+<li>Initial list load capped at <strong>500</strong> applications — design note: surface “showing recent N” if pagination added later.</li>
+</ul>
+<hr>
+<h2>2. Pipeline — week logic</h2>
+<h3>Definition</h3>
+<ul>
+<li><strong>Week:</strong> UTC calendar week <strong>Monday 00:00</strong> through <strong>Sunday 23:59:59.999</strong>, implemented as <code>[weekStart, weekStart+7days)</code>.</li>
+<li><strong>Filter field:</strong> <code>appliedAt</code> on the application (submission time).</li>
+</ul>
+<h3>Controls</h3>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Previous week</td>
+<td>Decrements week offset by 1</td>
+</tr>
+<tr>
+<td>Next week</td>
+<td>Increments offset, <strong>capped at 0</strong> (cannot enter future week)</td>
+</tr>
+<tr>
+<td>This week</td>
+<td>Visible when <code>offset !== 0</code>; resets offset to <strong>0</strong></td>
+</tr>
+</tbody></table>
+<h3>Disabled state</h3>
+<ul>
+<li>When <code>offset &gt;= 0</code>, <strong>Next week</strong> is <strong>disabled</strong> with reduced opacity and <code>cursor: not-allowed</code>.</li>
+</ul>
+<h3>Copy</h3>
+<ul>
+<li>Pipeline subtitle: cohort by <strong>submitted</strong> week, UTC, Monday–Sunday; <strong>click</strong> card for details; <strong>drag</strong> to change status.</li>
+</ul>
+<hr>
+<h2>3. Pipeline cards — drag vs click</h2>
+<h3>Drag</h3>
+<ul>
+<li><code>draggable=true</code> except while that card’s status is <strong>patching</strong>.</li>
+<li>On drag start: set <code>text/plain</code> payload to <strong>application id</strong>.</li>
+<li>On drop on column: <code>PATCH</code> status to column’s status enum.</li>
+<li>Rollback on <code>409</code> / <code>400</code> with user-visible error.</li>
+</ul>
+<h3>Click</h3>
+<ul>
+<li>Navigate to <code>/applications/[id]</code>.</li>
+<li><strong>Guard:</strong> ignore click for ~200ms after drag end to avoid mis-navigation.</li>
+</ul>
+<h3>Keyboard</h3>
+<ul>
+<li>Card is focusable; <strong>Enter</strong> / <strong>Space</strong> opens detail (when not disabled).</li>
+</ul>
+<hr>
+<h2>4. Status update API</h2>
+<h3>PATCH <code>/api/backoffice/applications/{id}/status</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>When required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>status</code></td>
+<td>Always (snake_case enum)</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td>Required when <code>status</code> is <code>rejected</code></td>
+</tr>
+<tr>
+<td><code>withdrawalSource</code></td>
+<td>Required when <code>status</code> is <code>withdrawn</code></td>
+</tr>
+<tr>
+<td><code>offerAccepted</code></td>
+<td>Must be <code>true</code> when moving from <code>offered</code> → <code>hired</code></td>
+</tr>
+<tr>
+<td><code>expectedUpdatedAt</code></td>
+<td>Optional optimistic concurrency</td>
+</tr>
+</tbody></table>
+<h3>Special cases</h3>
+<ul>
+<li>From <strong>rejected:</strong> use <strong>reopen</strong> endpoint, not PATCH.</li>
+<li>From <strong>hired</strong> / <strong>withdrawn:</strong> terminal — PATCH blocked.</li>
+<li>To <strong>interview_scheduled:</strong> requires <code>application_interviews</code> row (<code>409 INTERVIEW_RECORD_REQUIRED</code>).</li>
+</ul>
+<h3>Undo / reopen</h3>
+<ul>
+<li><strong>POST</strong> <code>.../status/undo</code> — revert last change.</li>
+<li><strong>POST</strong> <code>.../reopen</code> — from rejected only; mandatory reason.</li>
+</ul>
+<p>Client: optimistic update; rollback on error. Each change writes <strong>ApplicationStatusEvent</strong>.</p>
+<hr>
+<h2>5. Active vs terminal pipeline</h2>
+<p><strong>Active columns:</strong> submitted → under_review → shortlisted → interview_scheduled → interview_completed → offered → hired.</p>
+<p><strong>Terminal:</strong> rejected, withdrawn — separate tabs or filtered views, not mixed into active board.</p>
+<hr>
+<h2>6. Navigation — <code>from=applications</code></h2>
+<h3>When</h3>
+<ul>
+<li>Links from <strong>Applications table</strong> candidate name to <strong><code>/candidates/[id]</code></strong> append <code>?from=applications</code>.</li>
+<li>Links from <strong>Application detail</strong> to candidate also use <code>?from=applications</code>.</li>
+</ul>
+<h3>Candidate page behaviour</h3>
+<ul>
+<li>If <code>from=applications</code>: back link → <code>/applications</code>, label “Back to applications”.</li>
+<li>Else: back → <code>/candidates/all</code>, label “Back to candidates”.</li>
+</ul>
+<p><strong>Security note:</strong> fixed literal comparison only — no open redirect from arbitrary query values.</p>
+<hr>
+<h2>7. Application detail — documents</h2>
+<h3>Submitted CV</h3>
+<ul>
+<li>Staff downloads via <strong><code>GET /api/backoffice/applications/[id]/attachments/cv</code></strong> (session required).</li>
+</ul>
+<h3>Cover letter file</h3>
+<ul>
+<li><strong><code>GET /api/backoffice/applications/[id]/attachments/cover-letter</code></strong> when application stores <code>cover_letter_id:{uuid}</code>.</li>
+</ul>
+<h3>Default CV (profile)</h3>
+<ul>
+<li>Uses <strong>my-applications</strong> base URL + profile <code>resumeUrl</code> path.</li>
+</ul>
+<h3>Empty states</h3>
+<ul>
+<li>Use em dash (—) in definition lists when missing.</li>
+</ul>
+<hr>
+<h2>8. Interview scheduling</h2>
+<ul>
+<li><strong>One</strong> <code>application_interviews</code> row per application.</li>
+<li>Modal on application detail: date/time, location/link, notes.</li>
+<li><strong>POST</strong> <code>/api/backoffice/applications/{id}/interviews</code>.</li>
+<li>Calendar page at <code>/interviews</code> reads scheduled rows.</li>
+</ul>
+<hr>
+<h2>9. AI relevance score <em>(partial)</em></h2>
+<ul>
+<li>When <code>OPENAI_API_KEY</code> configured, pipeline cards may show relevance score.</li>
+<li>Design states: loading, score displayed, unavailable — avoid blocking triage when AI absent.</li>
+</ul>
+<hr>
+<h2>10. Content formatting</h2>
+<ul>
+<li><strong>Dates in listings:</strong> UTC <code>Intl</code> formatting for hydration consistency.</li>
+<li><strong>Salary:</strong> formatted for display (confirm locale/currency with product owner).</li>
+</ul>
+<hr>
+<h2>Handoff checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Figma frames named to match routes in <code>14-screen-and-route-inventory.md</code></li>
+<li><input disabled="" type="checkbox"> Annotated edge cases: week navigation, disabled next, terminal states</li>
+<li><input disabled="" type="checkbox"> Annotated reject/reopen/undo modals and required fields</li>
+<li><input disabled="" type="checkbox"> Annotated interview schedule modal and validation gate</li>
+<li><input disabled="" type="checkbox"> Annotated empty states for documents</li>
+<li><input disabled="" type="checkbox"> Link to <a href="../../docs/design-system/index.html#layouts">design-system layout templates</a></li>
+<li><input disabled="" type="checkbox"> Link to <a href="../../docs/specification/PRD.md">PRD</a> for requirement IDs (BO-*)</li>
+</ul>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

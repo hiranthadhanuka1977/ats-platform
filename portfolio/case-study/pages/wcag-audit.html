@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WCAG 2.2 audit — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class=" active">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>WCAG 2.2 audit</span></nav>
+      <article class="prose"><h1>WCAG 2.2 Accessibility Audit — ATS Platform (Next.js)</h1>
+<p><strong>Audit date:</strong> 19 May 2026<br><strong>Last revised:</strong> 21 May 2026 (revision 1.1)<br><strong>Audited by:</strong> AI-assisted code review<br><strong>Conformance target:</strong> WCAG 2.2 Level AA<br><strong>Method:</strong> Source review of running apps (HTML/TSX, CSS, client behaviour). Assistive-technology and automated tool runs (axe, Lighthouse, NVDA/VoiceOver) are still recommended before production sign-off.</p>
+<p><strong>Ground truth:</strong> <a href="../specification/PRD.md#81-accessibility">PRD §8.1</a> · <a href="../specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG</a> (TH-190–TH-192) · <a href="../process-diagrams/ats-ai-development-process.md#4-validation--updates--compare-to-intent">Process stage ④</a></p>
+<hr>
+<h2>Scope</h2>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Package</th>
+<th>Port</th>
+<th>Primary surfaces audited</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Candidate portal</td>
+<td><code>apps/candidate-portal</code></td>
+<td>3000</td>
+<td>Job listing, job detail, header/footer</td>
+</tr>
+<tr>
+<td>My Applications</td>
+<td><code>apps/my-applications</code></td>
+<td>3002</td>
+<td>Login, register/OTP, dashboard, CV/screenshot import, apply flow</td>
+</tr>
+<tr>
+<td>Backoffice</td>
+<td><code>apps/backoffice</code></td>
+<td>3001</td>
+<td>Login, applications pipeline (Kanban), status modals (reject, withdraw, hire, reopen, <strong>cancel interview</strong>, missing interview), <strong>schedule interview</strong> (redesigned), <strong>AI relevance / bias notice</strong>, jobs form, interviews calendar, application detail</td>
+</tr>
+</tbody></table>
+<p><strong>Out of scope for this pass:</strong> <code>apps/api</code> (JSON only), static prototypes under <code>docs/markup/</code> (see <a href="#appendix-a-static-markup-prototypes">Appendix A</a>), portfolio wireframes (<code>portfolio/wireframes/png/</code> — design reference only).</p>
+<hr>
+<h2>Executive summary</h2>
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th>Count (unique issues)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Pass</strong></td>
+<td>34</td>
+</tr>
+<tr>
+<td><strong>Fail</strong></td>
+<td>17</td>
+</tr>
+<tr>
+<td><strong>Partial / warning</strong></td>
+<td>15</td>
+</tr>
+<tr>
+<td><strong>Not applicable</strong></td>
+<td>4</td>
+</tr>
+</tbody></table>
+<p><strong>Strengths across apps:</strong> <code>lang=&quot;en&quot;</code> on <code>&lt;html&gt;</code>, skip links to <code>#main-content</code>, semantic landmarks (<code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code>), decorative SVGs with <code>aria-hidden</code>, filter drawer Escape handling on candidate portal, job posting form with <code>aria-invalid</code> / <code>aria-describedby</code>, pipeline <strong>“Move to”</strong> menu as keyboard alternative to drag-and-drop, <code>aria-live</code> on results count and pipeline week label.</p>
+<p><strong>Improvements since audit v1.0 (May 2026):</strong> Redesigned <strong>Schedule interview</strong> modal (<code>bo-schedule-modal</code>) with <code>aria-labelledby</code>, Escape, initial focus, duration chip group (<code>aria-pressed</code>), and candidate time preview (<code>role=&quot;status&quot;</code>, <code>aria-live=&quot;polite&quot;</code>). <strong>AI bias awareness</strong> UI (<code>AiRelevanceBiasNotice.tsx</code>) with keyboard-focusable trigger, <code>aria-expanded</code>, and flyover content for human-review guidance on relevance scores (TH-129).</p>
+<p><strong>Highest-impact gaps (unchanged):</strong> placeholder footer legal links (<code>href=&quot;#&quot;</code>), inconsistent link <code>:focus-visible</code> on some surfaces, <strong>pipeline status modals</strong> (<code>ModalShell</code>) without focus trap/Escape, small pipeline card menu trigger, form errors not programmatically associated in auth and pipeline modals, backoffice Google Fonts CDN (also a privacy issue — see <a href="pdpa-gdpr-audit.md">pdpa-gdpr-audit.md</a>).</p>
+<p><strong>Backlog tracking:</strong> <a href="../specification/FEATURE_BACKLOG.md#12-non-functional--compliance">TH-190</a> (WCAG remediation) · <a href="../specification/FEATURE_BACKLOG.md#12-non-functional--compliance">TH-191</a> (modal focus trap) · <a href="../specification/FEATURE_BACKLOG.md#12-non-functional--compliance">TH-192</a> (legal footer pages).</p>
+<hr>
+<h2>Cross-app findings</h2>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3.1.1 Language of page</td>
+<td><strong>PASS</strong></td>
+<td><code>lang=&quot;en&quot;</code> in each app <code>layout.tsx</code></td>
+</tr>
+<tr>
+<td>2.4.1 Bypass blocks</td>
+<td><strong>PASS</strong></td>
+<td><code>SkipLink</code> → <code>#main-content</code> (candidate-portal, my-applications, backoffice shells)</td>
+</tr>
+<tr>
+<td>2.4.2 Page titled</td>
+<td><strong>PASS</strong></td>
+<td>Next.js <code>metadata</code> / per-page titles</td>
+</tr>
+<tr>
+<td>1.1.1 Non-text content</td>
+<td><strong>PARTIAL</strong></td>
+<td>Icons generally <code>aria-hidden</code>; job banners use <code>alt</code> where <code>&lt;img&gt;</code> exists in backoffice previews</td>
+</tr>
+<tr>
+<td>2.4.4 Link purpose (footer)</td>
+<td><strong>FAIL</strong></td>
+<td>Privacy / Terms / Accessibility use <code>href=&quot;#&quot;</code> in shared <code>SiteFooter</code> (candidate-portal + my-applications)</td>
+</tr>
+<tr>
+<td>2.4.7 Focus visible</td>
+<td><strong>PARTIAL</strong></td>
+<td>Buttons/inputs styled in CSS; not all text links have explicit <code>:focus-visible</code> on dark hero/footer</td>
+</tr>
+<tr>
+<td>2.4.11 Focus not obscured</td>
+<td><strong>WARNING</strong></td>
+<td>Sticky headers; limited <code>scroll-margin-top</code> on focused elements</td>
+</tr>
+<tr>
+<td>4.1.3 Status messages</td>
+<td><strong>PARTIAL</strong></td>
+<td>Some <code>aria-live</code> / <code>role=&quot;alert&quot;</code>; not all async updates announced</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>1. Candidate portal (<code>apps/candidate-portal</code>)</h2>
+<h3>1.1 Perceivable</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.3.1 Info and relationships</td>
+<td><strong>PASS</strong></td>
+<td><code>SiteHeader</code> <code>role=&quot;banner&quot;</code>; <code>main id=&quot;main-content&quot;</code>; job cards <code>role=&quot;list&quot;</code> / <code>listitem</code> (<code>JobCard.tsx</code>, listing <code>page.tsx</code>)</td>
+</tr>
+<tr>
+<td>1.3.1 Heading hierarchy</td>
+<td><strong>PASS</strong></td>
+<td>Single <code>h1</code> in hero; card titles <code>h3</code></td>
+</tr>
+<tr>
+<td>1.4.3 Contrast</td>
+<td><strong>PARTIAL</strong></td>
+<td>Tokens <code>#0f172a</code>, <code>#475569</code> on white generally OK; badge/ribbon combinations not all verified at 4.5:1</td>
+</tr>
+<tr>
+<td>1.4.11 Non-text contrast</td>
+<td><strong>PARTIAL</strong></td>
+<td>Light borders (<code>#e2e8f0</code>) on inputs may be below 3:1 — inherited from token set</td>
+</tr>
+</tbody></table>
+<h3>1.2 Operable</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.1.1 Keyboard</td>
+<td><strong>PASS</strong></td>
+<td>Links and buttons for navigation; no card-only mouse targets without link</td>
+</tr>
+<tr>
+<td>2.1.2 No keyboard trap</td>
+<td><strong>PASS</strong></td>
+<td>Filter drawer: Escape closes (<code>JobListingShell.tsx</code>)</td>
+</tr>
+<tr>
+<td>2.4.6 Headings and labels</td>
+<td><strong>PASS</strong></td>
+<td>Hero search <code>aria-label</code>; filter controls labeled</td>
+</tr>
+<tr>
+<td>2.5.8 Target size</td>
+<td><strong>PARTIAL</strong></td>
+<td>Icon-only controls rely on CSS; verify ≥24×24px on mobile</td>
+</tr>
+</tbody></table>
+<h3>1.3 Understandable &amp; robust</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4.1.3 Status messages</td>
+<td><strong>PASS</strong></td>
+<td>Results count <code>aria-live=&quot;polite&quot;</code> (<code>JobListToolbar.tsx</code>)</td>
+</tr>
+<tr>
+<td>4.1.2 Name, role, value</td>
+<td><strong>PASS</strong></td>
+<td>Remote toggle <code>role=&quot;switch&quot;</code> + <code>aria-checked</code> (if present in filter UI)</td>
+</tr>
+</tbody></table>
+<h3>1.4 Fonts (related to robust loading)</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Self-hosted fonts</td>
+<td><strong>PASS</strong></td>
+<td><code>next/font/google</code> in <code>layout.tsx</code> — no runtime request to <code>fonts.googleapis.com</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>2. My Applications (<code>apps/my-applications</code>)</h2>
+<h3>2.1 Perceivable &amp; understandable</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.3.1 Landmarks</td>
+<td><strong>PASS</strong></td>
+<td><code>MyAppsShell</code> skip link; sidebar <code>nav aria-label=&quot;Primary&quot;</code></td>
+</tr>
+<tr>
+<td>3.3.2 Labels</td>
+<td><strong>PARTIAL</strong></td>
+<td>Login/register: visible <code>&lt;label htmlFor=&quot;…&quot;&gt;</code> (<code>LoginForm.tsx</code>, <code>RegisterForm.tsx</code>)</td>
+</tr>
+<tr>
+<td>3.3.1 Error identification</td>
+<td><strong>FAIL</strong></td>
+<td>Field errors in <code>.form-error</code> without <code>aria-invalid</code> / <code>aria-describedby</code> on inputs (login, register, apply)</td>
+</tr>
+<tr>
+<td>4.1.3 Status messages</td>
+<td><strong>PARTIAL</strong></td>
+<td><code>CvAutofillProcessingOverlay</code>: <code>role=&quot;status&quot;</code>, <code>aria-live=&quot;polite&quot;</code>, <code>progressbar</code> (<code>CvAutofillProcessingOverlay.tsx</code>); form-level errors not always <code>role=&quot;alert&quot;</code></td>
+</tr>
+</tbody></table>
+<h3>2.2 Operable</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.1.1 Keyboard</td>
+<td><strong>PASS</strong></td>
+<td>Native controls; OAuth buttons disabled where not wired</td>
+</tr>
+<tr>
+<td>2.4.7 Focus visible</td>
+<td><strong>PARTIAL</strong></td>
+<td>Password toggle has <code>aria-label</code> + <code>aria-pressed</code> (<code>LoginForm.tsx</code>)</td>
+</tr>
+<tr>
+<td>2.5.3 Label in name</td>
+<td><strong>PASS</strong></td>
+<td>Visible labels match control names</td>
+</tr>
+</tbody></table>
+<h3>2.3 Forms — detail</h3>
+<p><strong>Login (<code>LoginForm.tsx</code>):</strong> Labels and <code>autocomplete</code> on email/password — good. Global error is plain <code>&lt;p class=&quot;form-error&quot;&gt;</code> without <code>role=&quot;alert&quot;</code>. Individual field errors not linked via <code>aria-describedby</code>.</p>
+<p><strong>Register (<code>RegisterForm.tsx</code>):</strong> Terms checkbox required; copy references “Terms of Service and Privacy Policy” as <strong>plain text</strong> (not links). OTP step needs same error-association pattern as login.</p>
+<p><strong>Apply flow (<code>ApplyJobPageClient.tsx</code>):</strong> Many labeled fields; validation summary should use <code>role=&quot;alert&quot;</code> and per-field <code>aria-invalid</code> when errors show.</p>
+<p><strong>CV / screenshot import:</strong> File inputs are native; processing overlay is accessible; no focus trap on overlay while processing.</p>
+<hr>
+<h2>3. Backoffice (<code>apps/backoffice</code>)</h2>
+<h3>3.1 Perceivable</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.3.1 Landmarks</td>
+<td><strong>PASS</strong></td>
+<td><code>BackOfficeShell</code> skip link; <code>Sidebar</code> <code>nav aria-label=&quot;Primary&quot;</code></td>
+</tr>
+<tr>
+<td>1.1.1 Images</td>
+<td><strong>PASS</strong></td>
+<td>Job preview images: meaningful or empty <code>alt</code> (<code>JobPostingReviewClient.tsx</code>, <code>JobPostingSavedPreview.tsx</code>)</td>
+</tr>
+<tr>
+<td>1.4.3 Contrast</td>
+<td><strong>PARTIAL</strong></td>
+<td><code>--color-muted: #6b7280</code> ~4.6:1 at 16px; danger actions <code>#b91c1c</code> — verify on all backgrounds</td>
+</tr>
+</tbody></table>
+<h3>3.2 Operable — pipeline &amp; modals</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.5.7 Dragging movements</td>
+<td><strong>PARTIAL</strong></td>
+<td>HTML5 DnD on pipeline (<code>ApplicationsPipelineBoard.tsx</code>, <code>PipelineApplicationCard.tsx</code>). <strong>Alternative:</strong> “Move to” submenu with <code>menuitem</code> buttons — satisfies intent if discoverable</td>
+</tr>
+<tr>
+<td>2.1.1 Keyboard</td>
+<td><strong>PARTIAL</strong></td>
+<td>Card <code>role=&quot;button&quot;</code> + Enter/Space on card; menu trigger very small (<code>backoffice.css</code> ~padding <code>0.15rem 0.35rem</code>) — <strong>FAIL</strong> 2.5.8</td>
+</tr>
+<tr>
+<td>2.1.2 No keyboard trap</td>
+<td><strong>PARTIAL</strong></td>
+<td><code>ScheduleInterviewModal</code>: Escape + initial focus + <code>tabIndex={-1}</code> on dialog (<code>ScheduleInterviewModal.tsx</code>). <strong>No roving focus trap</strong> (Tab can leave dialog). <code>ModalShell</code> in <code>PipelineStatusModals.tsx</code> (reject, withdraw, hire, reopen, <strong>cancel interview</strong>, missing interview): <strong>no Escape, no focus trap, no initial focus</strong></td>
+</tr>
+<tr>
+<td>2.4.3 Focus order</td>
+<td><strong>PASS</strong></td>
+<td>Logical DOM order on list/detail pages</td>
+</tr>
+</tbody></table>
+<p><strong>Modal comparison</strong></p>
+<table>
+<thead>
+<tr>
+<th>Modal</th>
+<th><code>role=&quot;dialog&quot;</code></th>
+<th>Escape</th>
+<th>Focus trap</th>
+<th>Field errors linked</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Schedule interview</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Initial focus only</td>
+<td>Partial (<code>role=&quot;alert&quot;</code> on submit error)</td>
+</tr>
+<tr>
+<td>Reject / withdraw / hired / reopen</td>
+<td>Yes</td>
+<td><strong>No</strong></td>
+<td><strong>No</strong></td>
+<td><strong>No</strong> (<code>PipelineStatusModals.tsx</code>)</td>
+</tr>
+<tr>
+<td>Cancel scheduled interview</td>
+<td>Yes</td>
+<td><strong>No</strong></td>
+<td><strong>No</strong></td>
+<td>N/A (checkbox only)</td>
+</tr>
+<tr>
+<td>Missing interview prompt</td>
+<td>Yes</td>
+<td><strong>No</strong></td>
+<td><strong>No</strong></td>
+<td>N/A</td>
+</tr>
+</tbody></table>
+<h3>3.3 Forms — jobs vs pipeline</h3>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Job posting form</td>
+<td><strong>PASS</strong></td>
+<td><code>aria-invalid</code>, <code>aria-describedby</code>, <code>role=&quot;alert&quot;</code> on errors (<code>JobPostingForm.tsx</code>)</td>
+</tr>
+<tr>
+<td>Pipeline status modals</td>
+<td><strong>FAIL</strong></td>
+<td>Wrapping <code>&lt;label&gt;</code> without stable <code>id</code>/<code>htmlFor</code>; errors not associated</td>
+</tr>
+<tr>
+<td>Login</td>
+<td><strong>PARTIAL</strong></td>
+<td>Sets session via <code>document.cookie</code> in client (<code>LoginForm.tsx</code>) — not a11y but see security audit</td>
+</tr>
+</tbody></table>
+<h3>3.4 Robust</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4.1.3 Status messages</td>
+<td><strong>PARTIAL</strong></td>
+<td>Pipeline week label <code>aria-live=&quot;polite&quot;</code> (<code>ApplicationsPipelineBoard.tsx</code>); schedule modal candidate preview <code>aria-live=&quot;polite&quot;</code>; board filter/status changes not globally announced</td>
+</tr>
+<tr>
+<td>Relevance score ring</td>
+<td><strong>PARTIAL</strong></td>
+<td><code>role=&quot;img&quot;</code> + <code>aria-label</code> including AI disclaimer; breakdown tooltip keyboard-accessible via bias trigger (<code>RelevanceScoreRing.tsx</code>, <code>AiRelevanceBiasNotice.tsx</code>)</td>
+</tr>
+<tr>
+<td>AI bias notice</td>
+<td><strong>PARTIAL</strong></td>
+<td><code>role=&quot;note&quot;</code> on pipeline banner; detail flyover via button with <code>aria-expanded</code>, focus/blur handlers — <strong>PASS</strong> keyboard access to guidance; flyover uses <code>role=&quot;tooltip&quot;</code> (extended content may need <code>role=&quot;dialog&quot;</code> for full AA on long copy)</td>
+</tr>
+</tbody></table>
+<h3>3.6 Schedule interview modal (redesigned — May 2026)</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.3.1 Labels</td>
+<td><strong>PASS</strong></td>
+<td>Visible labels for date, time, duration, timezone; duration as <code>role=&quot;group&quot;</code> + <code>aria-label</code></td>
+</tr>
+<tr>
+<td>2.1.1 Keyboard</td>
+<td><strong>PASS</strong></td>
+<td>Duration chips as buttons with <code>aria-pressed</code>; native date/time/select controls</td>
+</tr>
+<tr>
+<td>4.1.3 Preview</td>
+<td><strong>PASS</strong></td>
+<td>Candidate local time preview in <code>role=&quot;status&quot;</code> region with <code>aria-live=&quot;polite&quot;</code></td>
+</tr>
+<tr>
+<td>2.1.2 Focus trap</td>
+<td><strong>PARTIAL</strong></td>
+<td>Escape + focus on open; no Tab cycle containment</td>
+</tr>
+<tr>
+<td>3.3.1 Errors</td>
+<td><strong>PARTIAL</strong></td>
+<td>Submit validation message; not always <code>aria-describedby</code> on fields</td>
+</tr>
+</tbody></table>
+<p><strong>Data note:</strong> <code>schedulingTimeZone</code> (IANA) and optional <code>CandidateProfile.timeZone</code> power preview copy — no candidate timezone edit UI yet (TH-056).</p>
+<h3>3.5 Fonts</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Google Fonts CDN</td>
+<td><strong>FAIL</strong> (loading)</td>
+<td><code>globals.css</code> line 1: <code>@import url(&quot;https://fonts.googleapis.com/...&quot;)</code> — external request; prefer <code>next/font</code> like other apps</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Compliance scorecard (by principle)</h2>
+<table>
+<thead>
+<tr>
+<th>WCAG principle</th>
+<th>Pass</th>
+<th>Fail</th>
+<th>Partial</th>
+<th>N/A</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. Perceivable</td>
+<td>12</td>
+<td>2</td>
+<td>6</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2. Operable</td>
+<td>11</td>
+<td>4</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3. Understandable</td>
+<td>6</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>4. Robust</td>
+<td>5</td>
+<td>2</td>
+<td>5</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>WCAG 2.2 new (2.4.11, 2.5.7, 2.5.8)</strong></td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Priority remediation plan</h2>
+<h3>Critical (block AA sign-off)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Issue</th>
+<th>Apps</th>
+<th>Criterion</th>
+<th>Backlog</th>
+<th>Effort</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Functional privacy/terms/accessibility pages (replace <code>href=&quot;#&quot;</code>)</td>
+<td>candidate-portal, my-applications</td>
+<td>2.4.4</td>
+<td><strong>TH-192</strong></td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Focus trap + Escape on all <code>ModalShell</code> dialogs (incl. cancel interview)</td>
+<td>backoffice</td>
+<td>2.1.2, 2.4.3</td>
+<td><strong>TH-191</strong></td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>aria-invalid</code> + <code>aria-describedby</code> on auth/apply/pipeline forms</td>
+<td>my-applications, backoffice</td>
+<td>3.3.1, 4.1.2</td>
+<td><strong>TH-190</strong></td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Enlarge pipeline card menu trigger to ≥44×44px</td>
+<td>backoffice</td>
+<td>2.5.8</td>
+<td><strong>TH-190</strong></td>
+<td>Low</td>
+</tr>
+</tbody></table>
+<h3>High</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Issue</th>
+<th>Apps</th>
+<th>Criterion</th>
+<th>Effort</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5</td>
+<td>Global <code>a:focus-visible</code> (incl. dark header/footer)</td>
+<td>all</td>
+<td>2.4.7</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>scroll-margin-top</code> under sticky header</td>
+<td>all</td>
+<td>2.4.11</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Link Terms/Privacy in register checkbox</td>
+<td>my-applications</td>
+<td>3.3.2</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>role=&quot;alert&quot;</code> on form-level errors</td>
+<td>my-applications</td>
+<td>4.1.3</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Self-host backoffice fonts via <code>next/font</code></td>
+<td>backoffice</td>
+<td>—</td>
+<td>Low</td>
+</tr>
+</tbody></table>
+<h3>Medium</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Issue</th>
+<th>Apps</th>
+<th>Criterion</th>
+<th>Backlog</th>
+<th>Effort</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10</td>
+<td>Announce pipeline drag/status outcomes via live region</td>
+<td>backoffice</td>
+<td>4.1.3</td>
+<td><strong>TH-190</strong></td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Full focus trap on Schedule interview modal (Tab cycle)</td>
+<td>backoffice</td>
+<td>2.1.2</td>
+<td><strong>TH-191</strong></td>
+<td>Low</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Verify input border contrast (1.4.11)</td>
+<td>candidate-portal</td>
+<td>1.4.11</td>
+<td><strong>TH-190</strong></td>
+<td>Low</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Focus trap on CV processing overlay</td>
+<td>my-applications</td>
+<td>2.1.2</td>
+<td><strong>TH-190</strong></td>
+<td>Low</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>What is working well</h2>
+<ul>
+<li>Consistent <strong>skip navigation</strong> and <strong>landmark</strong> structure across three apps.</li>
+<li>Candidate portal <strong>list semantics</strong> and <strong>live results count</strong> (improvement over static markup audit).</li>
+<li><strong>Job posting form</strong> in backoffice is a strong reference for accessible forms in this codebase.</li>
+<li>Pipeline provides a <strong>non-drag</strong> status path (“Move to” menu) aligned with WCAG 2.2 <strong>2.5.7</strong>.</li>
+<li><strong>Schedule interview</strong> modal: duration chips, timezone select, live candidate preview — stronger form UX than prior modal.</li>
+<li><strong>AI bias awareness</strong> (<code>AiRelevanceBiasNotice</code>) — keyboard-reachable human-review guidance on AI relevance scores (product + partial a11y win).</li>
+<li>Candidate portal and my-applications use <strong><code>next/font</code></strong> (no third-party font IP leak on page load).</li>
+</ul>
+<hr>
+<h2>Process alignment</h2>
+<p>This audit is the <strong>Stage ④ validation</strong> artefact in the <a href="../process-diagrams/ats-ai-development-process.md">AI-assisted development process</a>. Re-run after each major UI increment or before portfolio / production sign-off.</p>
+<hr>
+<h2>Related documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="../specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a></td>
+<td>TH-190–TH-192 remediation tracking</td>
+</tr>
+<tr>
+<td><a href="pdpa-gdpr-audit.md">pdpa-gdpr-audit.md</a></td>
+<td>Privacy (footer links, fonts, consent)</td>
+</tr>
+<tr>
+<td><a href="../specification/PRD.md#81-accessibility">PRD §8.1</a></td>
+<td>Product accessibility target</td>
+</tr>
+<tr>
+<td><a href="../wireframes/README.md">portfolio/wireframes/</a></td>
+<td>Lo-fi screens for test scripts</td>
+</tr>
+<tr>
+<td><a href="implementation-alignment-2026.md">implementation-alignment-2026.md</a></td>
+<td>Spec vs code</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Recommended verification (not done in this audit)</h2>
+<ol>
+<li><strong>axe DevTools</strong> or <strong>Lighthouse</strong> on <code>/</code>, <code>/jobs/{slug}</code>, <code>/login</code>, <code>/register</code>, <code>/dashboard</code>, <code>/applications</code>, <code>/applications/{id}</code>.</li>
+<li><strong>Keyboard-only</strong> walkthrough: pipeline drag alternative, all modals (incl. cancel interview), schedule interview, AI bias flyover.</li>
+<li><strong>Screen readers:</strong> NVDA (Windows), VoiceOver (macOS/iOS) on reject modal and apply form errors.</li>
+<li><strong>200% zoom</strong> on pipeline board and mobile filter drawer.</li>
+</ol>
+<hr>
+<h2>Appendix A: Static markup prototypes</h2>
+<p><code>docs/markup/candidate-portal/</code> (HTML/CSS/JS) was audited on <strong>6 April 2026</strong> (previous version of this file). Many findings (muted text contrast, <code>href=&quot;#&quot;</code> footers, featured ribbon <code>role</code>, filter search <code>type</code>) may still apply to prototypes but are <strong>partially fixed</strong> in Next.js (e.g. <code>aria-live</code> on results count, <code>next/font</code> on portal). Treat static markup as design reference only; <strong>ship against the Next.js apps above</strong>.</p>
+<hr>
+<p><em>Revision 1.1 · 21 May 2026 — aligned with PRD, FEATURE_BACKLOG (TH-190–192), schedule interview redesign, AI bias notice, cancel-interview modal.</em></p>
+<p><em>Next review: after TH-191 modal focus-trap work and TH-192 legal pages, or before public launch.</em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

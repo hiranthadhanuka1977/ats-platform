@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wireframe index — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class=" active">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Wireframe index</span></nav>
+      <article class="prose"><h1>TalentHub — Screen wireframes (portfolio)</h1>
+<p>Low-fidelity wireframes aligned with the <strong>as-built</strong> implementation (May 2026). Use for case study slides, Figma trace-over, or usability test scripts.</p>
+<p><strong>Ground truth:</strong> <a href="../../docs/specification/PRD.md">PRD</a> · <a href="../product-designer-ats-backoffice/14-screen-and-route-inventory.md">Screen inventory</a></p>
+<hr>
+<h2>Wireframe index</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Screen</th>
+<th>App</th>
+<th>Route</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>01</td>
+<td>Staff dashboard</td>
+<td>Backoffice <code>:3001</code></td>
+<td><code>/</code></td>
+<td><a href="./01-backoffice-dashboard.md">01-backoffice-dashboard.md</a></td>
+</tr>
+<tr>
+<td>02</td>
+<td>Applications pipeline</td>
+<td>Backoffice</td>
+<td><code>/applications</code></td>
+<td><a href="./02-backoffice-applications-pipeline.md">02-backoffice-applications-pipeline.md</a></td>
+</tr>
+<tr>
+<td>03</td>
+<td>Application detail (packet)</td>
+<td>Backoffice</td>
+<td><code>/applications/[id]</code></td>
+<td><a href="./03-backoffice-application-detail.md">03-backoffice-application-detail.md</a></td>
+</tr>
+<tr>
+<td>04</td>
+<td>Job listing (careers)</td>
+<td>Candidate portal <code>:3000</code></td>
+<td><code>/</code></td>
+<td><a href="./04-candidate-portal-job-listing.md">04-candidate-portal-job-listing.md</a></td>
+</tr>
+<tr>
+<td>05</td>
+<td>Job detail</td>
+<td>Candidate portal</td>
+<td><code>/jobs/[slug]</code></td>
+<td><a href="./05-candidate-portal-job-detail.md">05-candidate-portal-job-detail.md</a></td>
+</tr>
+<tr>
+<td>06</td>
+<td>Candidate dashboard</td>
+<td>My Applications <code>:3002</code></td>
+<td><code>/dashboard</code></td>
+<td><a href="./06-my-applications-dashboard.md">06-my-applications-dashboard.md</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Conventions</h2>
+<ul>
+<li><strong>Frame width:</strong> Desktop 1280px reference; mobile notes where layout stacks.</li>
+<li><strong>Shell:</strong> Skip link → header/nav → <code>#main-content</code> → footer (portal/MA) or sidebar shell (backoffice).</li>
+<li><strong>Status vocabulary:</strong> Ten application statuses per PRD §6.</li>
+<li><strong>Annotations:</strong> <code>[A]</code> = aria label / live region; <code>→</code> = navigation; dashed = optional/conditional block.</li>
+</ul>
+<hr>
+<h2>Related portfolio artefacts</h2>
+<ul>
+<li><a href="../product-designer-ats-backoffice/06-wireframes-and-states.md">06-wireframes-and-states.md</a> — Figma frame titles and state list (backoffice applications slice)</li>
+<li><a href="../product-designer-ats-backoffice/04-information-architecture.md">04-information-architecture.md</a> — Sitemap and navigation</li>
+</ul>
+<hr>
+<p><em>Wireframes v1.0 · 19 May 2026</em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Market research summary — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class=" active">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Market research summary</span></nav>
+      <article class="prose"><h1>Market research summary — ATS landscape (for case study)</h1>
+<p><strong>Use in portfolio:</strong> Paste this section into <code>NOTION_CASE_STUDY.md</code> under <strong>Discover</strong> or <strong>Problem</strong>.<br><strong>Full report:</strong> <a href="./17-netnographic-ats-research.md">17-netnographic-ats-research.md</a><br><strong>Date:</strong> May 2026 · Secondary netnography (public reviews, recruiter blogs, candidate surveys)</p>
+<hr>
+<h2>Product intent — SME / SMB first</h2>
+<p><strong>TalentHub is designed primarily for small and medium organizations</strong> — lean hiring teams who must run recruitment reliably without enterprise cost, six-week implementations, or paying for CRM/analytics modules they will never use.</p>
+<table>
+<thead>
+<tr>
+<th>Design goal</th>
+<th>Research signal</th>
+<th>Product response</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Low cost</strong></td>
+<td>Enterprise ATS bands ~$4K–$25K+; opaque setup fees; “priced out” discourse</td>
+<td>Scope to core hiring loop; omit CRM, marketplace, tiered analytics</td>
+</tr>
+<tr>
+<td><strong>Good UX</strong></td>
+<td>“Too many clicks to the resume”; Excel as shadow ATS when UX fails</td>
+<td>Week-scoped pipeline, packet page, governed Kanban, contextual navigation</td>
+</tr>
+<tr>
+<td><strong>Reduced setup time</strong></td>
+<td>6+ week implementations; migration fear; first-time ATS buyers want speed to value</td>
+<td>Local-first monorepo, sensible defaults, focused backoffice slice</td>
+</tr>
+<tr>
+<td><strong>Right-sized depth</strong></td>
+<td>Budget tools too shallow; enterprise tools too heavy</td>
+<td>Mid-market workflow craft at SMB-appropriate scope</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Why this research mattered</h2>
+<p>Before designing the Applications slice, I needed to understand how recruiters and candidates <strong>actually talk about</strong> ATS products—not just feature lists on vendor sites. I synthesised recurring themes from review platforms (G2, TrustRadius), recruiter-authored blogs, HR press, and candidate surveys.</p>
+<p><strong>Headline finding:</strong> ATS tools are <strong>essential but resented</strong>. Recruiters complain about click-heavy UX and shallow automation; candidates describe hiring as an <strong>opaque black hole</strong> after apply. Only <strong>43%</strong> of HR professionals rate their TA tech stack “good or excellent” (HR.com, 2025–26)—high replacement intent, low forgiveness for bad workflow design.</p>
+<p><strong>SME-specific finding:</strong> Small and medium buyers sit in a <strong>squeeze</strong> — enterprise tools are <strong>too expensive and slow to implement</strong>; budget tools are <strong>too shallow</strong> once hiring volume grows. Discourse shows they need <strong>workflow honesty and triage speed</strong> without enterprise packaging.</p>
+<hr>
+<h2>Competitive snapshot</h2>
+<table>
+<thead>
+<tr>
+<th>Product</th>
+<th>Praised for</th>
+<th>Criticised for</th>
+<th>Typical buyer</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Greenhouse</strong></td>
+<td>Structure, scorecards, scheduling, integrations</td>
+<td>Cost, setup complexity, reporting/audit gaps</td>
+<td>Mid–large enterprise</td>
+</tr>
+<tr>
+<td><strong>Lever</strong></td>
+<td>CRM + nurture, sleek UI, sourcing</td>
+<td>Less reporting depth; mixed post-acquisition sentiment</td>
+<td>Sourcing-heavy teams</td>
+</tr>
+<tr>
+<td><strong>Ashby</strong></td>
+<td>Modern UX, analytics, fast setup</td>
+<td>Less enterprise compliance proof</td>
+<td>Startups / Series A–C</td>
+</tr>
+<tr>
+<td><strong>JazzHR / Workable</strong></td>
+<td>Price, simplicity</td>
+<td>Limited depth; outgrow quickly</td>
+<td>Very small teams</td>
+</tr>
+<tr>
+<td><strong>Workday / iCIMS / Bullhorn</strong></td>
+<td>Scale, HRIS unity</td>
+<td>“Clunky,” slow, dated UX</td>
+<td>Legacy enterprise / agency</td>
+</tr>
+<tr>
+<td><strong>TalentHub</strong></td>
+<td>Core loop focus, pipeline craft, honest state</td>
+<td>Not yet production SaaS; notifications/integrations TBD</td>
+<td><strong>SME / SMB (20–200 employees, lean TA)</strong></td>
+</tr>
+</tbody></table>
+<p><strong>Pattern:</strong> Leaders split on <strong>enterprise structure</strong> (Greenhouse) vs <strong>CRM + nurture</strong> (Lever) vs <strong>modern analytics</strong> (Ashby). Legacy suites are the negative benchmark. <strong>TalentHub targets the underserved middle</strong> — better workflow integrity than budget SMB tools, without enterprise cost and setup.</p>
+<hr>
+<h2>Top pain points</h2>
+<h3>Recruiters (staff)</h3>
+<ul>
+<li><strong>Too many clicks</strong> to reach a resume or contact info; slow load times push work back to <strong>Excel</strong></li>
+<li><strong>Search and ranking</strong> rely on keywords—rigid filters hide good candidates; duplicates clutter results</li>
+<li><strong>Automation overpromised</strong>—bulk reject exists; scheduling, follow-ups, and outreach stay manual</li>
+<li><strong>Pipeline noise</strong>—all-time boards with no cohort anchor; status can disagree with reality (e.g. “Interview Scheduled” with no interview)</li>
+<li><strong>Weak reporting and audit</strong>—exports and change history often require workarounds</li>
+</ul>
+<h3>Candidates</h3>
+<ul>
+<li><strong>Application black hole</strong>—~60% say not knowing if a human reviewed their resume is among the most exasperating parts of job search (Monster / HR Dive)</li>
+<li><strong>Form abandonment</strong>—~57–60% quit when apply flows are long or complex</li>
+<li><strong>Silence after submit</strong>—~65% rarely or never receive updates; ghosting tops frustration lists</li>
+<li><strong>Distrust of automation</strong>—many believe most applications are never seen by a recruiter</li>
+</ul>
+<h3>SME buyers (additional)</h3>
+<ul>
+<li><strong>Enterprise pricing out of reach</strong> — public cost bands and setup fees dominate first ATS purchase anxiety</li>
+<li><strong>Paying for unused modules</strong> — CRM, nurture, and analytics bundles sit idle after go-live</li>
+<li><strong>No dedicated TA ops</strong> — one recruiter plus hiring managers; the product must be self-explanatory</li>
+<li><strong>Wrong buy is costly</strong> — SMEs cannot afford a six-month redo when adoption fails</li>
+</ul>
+<hr>
+<h2>What users expect (2026)</h2>
+<table>
+<thead>
+<tr>
+<th>Audience</th>
+<th>Core expectations</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Recruiters</strong></td>
+<td>Table <strong>and</strong> board on same data · time-scoped pipeline · one <strong>packet page</strong> per application · governed status changes · in-product <strong>scheduling</strong> · fast document access</td>
+</tr>
+<tr>
+<td><strong>Candidates</strong></td>
+<td>Short mobile apply · reusable CV/profile · confirmation · <strong>status visibility</strong> (even automated)</td>
+</tr>
+<tr>
+<td><strong>Buyers</strong></td>
+<td>Adoption by hiring managers · verified integrations · RBAC + audit · honest TCO</td>
+</tr>
+<tr>
+<td><strong>SME buyers</strong></td>
+<td><strong>Low TCO</strong> · <strong>fast go-live</strong> · <strong>core loop only</strong> · usable without a TA ops admin</td>
+</tr>
+</tbody></table>
+<p><strong>Table stakes:</strong> calendar/email integrations, pipeline views, application detail—not differentiators on their own. <strong>Differentiators</strong> in discourse: cohort scoping, trustworthy pipeline rules, auditability, and candidate communication — delivered at a scope SMEs can actually adopt.</p>
+<hr>
+<h2>Design decisions informed by research</h2>
+<table>
+<thead>
+<tr>
+<th>Market pain</th>
+<th>Design response in TalentHub</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Enterprise cost / feature bloat</td>
+<td><strong>Scope to core loop</strong> — no CRM, marketplace, or tiered analytics in MVP</td>
+</tr>
+<tr>
+<td>Infinite pipeline noise</td>
+<td><strong>Week-scoped</strong> pipeline (past + current week only; no future weeks)</td>
+</tr>
+<tr>
+<td>Scattered packet review</td>
+<td><strong><code>/applications/[id]</code></strong> as single anchor for submission, documents, history</td>
+</tr>
+<tr>
+<td>Scan vs funnel conflict</td>
+<td><strong>Table + pipeline</strong> tabs on one hub (pipeline default)</td>
+</tr>
+<tr>
+<td>Invalid / untraceable status</td>
+<td><strong>Ten statuses</strong>, server-validated transitions, <strong>audit events</strong>, undo/reopen</td>
+</tr>
+<tr>
+<td>Status vs interview mismatch</td>
+<td><strong>Schedule interview</strong> on detail; gate before “Interview Scheduled”</td>
+</tr>
+<tr>
+<td>Lost navigation context</td>
+<td><strong><code>?from=applications</code></strong> back path from candidate profile</td>
+</tr>
+<tr>
+<td>Drag vs click accidents</td>
+<td>Interaction guard after drag (documented in spec)</td>
+</tr>
+<tr>
+<td>Resume not focal</td>
+<td>Documents + applicant summary prominent on detail page</td>
+</tr>
+<tr>
+<td>SME “Excel fallback”</td>
+<td>Fast triage surfaces so lean teams don’t maintain a shadow spreadsheet</td>
+</tr>
+</tbody></table>
+<p><strong>Honest gaps (not claimed in portfolio):</strong> enterprise CRM, deep analytics/reporting, email notifications to candidates, integration marketplace—these remain industry-wide or out of MVP scope. See <a href="../../docs/specification/PRD.md">PRD</a>.</p>
+<hr>
+<h2>Portfolio takeaway (one paragraph)</h2>
+<blockquote>
+<p>I designed TalentHub <strong>for small and medium organizations</strong> that need recruitment support at <strong>low cost</strong>, with <strong>good UX</strong> and <strong>reduced setup time</strong> — not a stripped-down enterprise clone. Netnographic research showed recruiters and candidates resent the same workflow failures whether the buyer is a 50-person company or a Fortune 500; SMEs simply <strong>cannot afford to mis-buy</strong>. I grounded the Applications workflow in that research — fast triage, honest pipeline state, a single packet surface — and scoped out enterprise CRM and analytics that inflate TCO without helping a lean TA team on day one.</p>
+</blockquote>
+<hr>
+<h2>Sources (selected)</h2>
+<ul>
+<li>NUROFILE — <a href="https://nurofile.ai/blog/problems-recruiters-face-with-ats/">Problems recruiters face with ATS</a></li>
+<li>TrustRadius — <a href="https://www.trustradius.com/compare-products/greenhouse-vs-lever">Greenhouse vs Lever</a></li>
+<li>HR Dive — <a href="https://www.hrdive.com/news/job-seekers-frustrated-by-opaque-impersonal-hiring-process/819898/">Opaque hiring process</a></li>
+<li>LiveCareer — <a href="https://www.livecareer.com/resources/job-search-frustration">Job search frustration</a></li>
+<li>Tracker RMS — <a href="https://www.tracker-rms.com/blog/essentials-to-consider-when-transitioning-to-a-new-ats/">Choosing an ATS</a></li>
+</ul>
+<p>Full bibliography: <a href="./17-netnographic-ats-research.md#13-sources">17-netnographic-ats-research.md §13</a></p>
+<hr>
+<p><em>Summary version 1.1 · 19 May 2026</em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

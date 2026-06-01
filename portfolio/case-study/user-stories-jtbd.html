@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Stories &amp; JTBD — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>User stories &amp; jobs-to-be-done</h1>
+        <p>Backoffice Applications slice — personas, implemented stories, JTBD framing, and design QA acceptance notes aligned to the PRD.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#personas">Personas</a></li>
+            <li><a href="#applications">Applications hub</a></li>
+            <li><a href="#status">Status workflow</a></li>
+            <li><a href="#interviews">Interviews</a></li>
+            <li><a href="#platform">Platform context</a></li>
+            <li><a href="#jtbd">Jobs-to-be-done</a></li>
+            <li><a href="#acceptance">Acceptance notes</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>Aligned with PRD §3–§5</span>
+            <span>May 2026 · As-built</span>
+            <span>Applications hub focus</span>
+          </div>
+
+          <p class="us-intro">Derived from product requirements and as-built behaviour. Full spec: <a href="product-requirements.html">Product requirements (PRD)</a> · Related research: <a href="netnographic-research.html">Netnographic synthesis</a>.</p>
+
+          <!-- Personas -->
+          <section class="ia-section" id="personas">
+            <h2>Personas</h2>
+            <div class="us-persona-grid">
+              <article class="us-persona-card">
+                <span class="us-persona-icon" aria-hidden="true">👤</span>
+                <h3>Staff recruiter</h3>
+                <p>Review and disposition applications quickly</p>
+                <span class="us-persona-ref">PRD §3.2</span>
+              </article>
+              <article class="us-persona-card">
+                <span class="us-persona-icon" aria-hidden="true">📋</span>
+                <h3>Hiring coordinator</h3>
+                <p>Ensure documents and answers are complete before scheduling</p>
+                <span class="us-persona-ref">PRD §3.2</span>
+              </article>
+              <article class="us-persona-card">
+                <span class="us-persona-icon" aria-hidden="true">✓</span>
+                <h3>Hiring manager</h3>
+                <p>Sanity-check a candidate packet before interview</p>
+                <span class="us-persona-ref">PRD §3.2 · occasional</span>
+              </article>
+              <article class="us-persona-card">
+                <span class="us-persona-icon" aria-hidden="true">⚙</span>
+                <h3>Administrator</h3>
+                <p>Maintain lookup data (departments, skills, etc.)</p>
+                <span class="us-persona-ref">PRD §3.3</span>
+              </article>
+            </div>
+          </section>
+
+          <!-- Applications hub -->
+          <section class="ia-section" id="applications">
+            <h2>User stories — Applications hub</h2>
+            <p class="us-section-meta"><span class="ia-badge">Implemented</span> 10 stories · table + pipeline · week scope · packet page</p>
+            <ol class="us-story-list">
+              <li class="us-story">
+                <span class="us-story-num">1</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to switch between a table and a pipeline view of applications <strong>so that</strong> I can either scan rows or work the funnel by status.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">2</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> the pipeline limited to applications submitted in a selected week <strong>so that</strong> I can focus on a cohort (e.g. this week’s intake).</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">3</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to move backward and forward by week <strong>so that</strong> I can compare last week to this week — without selecting a future week.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">4</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to click a pipeline card to open application details <strong>so that</strong> I can read the full packet in one place.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">5</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to drag a card between columns <strong>so that</strong> I can update application status in a spatial model — with server validation when a transition is invalid.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">6</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> a dedicated application detail page with applicant profile summary and links to CV and cover letter <strong>so that</strong> I don’t hunt across unrelated screens.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">7</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to open the candidate profile from the applications table <strong>so that</strong> I can see full history — and <strong>return to Applications</strong> when I arrived from there.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">8</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> a link from application detail to the job edit screen <strong>so that</strong> I can correct posting issues without losing application context.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">9</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to toggle fullscreen pipeline mode <strong>so that</strong> I can work the board without page chrome distraction.</p>
+              </li>
+              <li class="us-story us-story-partial">
+                <span class="us-story-num">10</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to see AI relevance scores on pipeline cards when available <strong>so that</strong> I can prioritise high-fit applications <em>(partial — requires OpenAI key)</em>.</p>
+              </li>
+            </ol>
+          </section>
+
+          <!-- Status workflow -->
+          <section class="ia-section" id="status">
+            <h2>User stories — Status workflow</h2>
+            <p class="us-section-meta"><span class="ia-badge">Implemented</span> 5 stories · governed transitions · audit trail</p>
+            <ol class="us-story-list">
+              <li class="us-story">
+                <span class="us-story-num">1</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> rejection to require a reason <strong>so that</strong> decisions are auditable.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">2</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to undo my last status change <strong>so that</strong> I can recover from mistakes without admin intervention.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">3</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to reopen a rejected application through a controlled action <strong>so that</strong> I can reconsider without bypassing business rules.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">4</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> status change history on the application <strong>so that</strong> I can see who moved whom and when.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">5</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> the system to block moving to Interview Scheduled without a scheduled interview <strong>so that</strong> pipeline state matches reality.</p>
+              </li>
+            </ol>
+          </section>
+
+          <!-- Interviews -->
+          <section class="ia-section" id="interviews">
+            <h2>User stories — Interviews</h2>
+            <p class="us-section-meta"><span class="ia-badge">Implemented</span> 2 stories</p>
+            <ol class="us-story-list">
+              <li class="us-story">
+                <span class="us-story-num">1</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to schedule an interview from application detail <strong>so that</strong> I can progress the candidate without leaving the packet.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-num">2</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> an interviews calendar page <strong>so that</strong> I can see upcoming sessions across applications.</p>
+              </li>
+            </ol>
+          </section>
+
+          <!-- Platform context -->
+          <section class="ia-section" id="platform">
+            <h2>User stories — Platform context</h2>
+            <p class="us-section-meta"><span class="ia-badge">Implemented</span> elsewhere in monorepo</p>
+            <ol class="us-story-list us-story-list-platform">
+              <li class="us-story">
+                <span class="us-story-role">Candidate</span>
+                <p><strong>As</strong> a candidate, <strong>I want</strong> to register, upload a CV, and apply <strong>so that</strong> staff receive a complete application packet <em>(my-applications — PRD §5.2)</em>.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-role">Staff</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> to create and publish job postings <strong>so that</strong> candidates can discover and apply <em>(backoffice jobs — PRD §5.5)</em>.</p>
+              </li>
+              <li class="us-story">
+                <span class="us-story-role">Staff</span>
+                <p><strong>As</strong> a staff user, <strong>I want</strong> a dashboard with pipeline health and recent activity <strong>so that</strong> I can orient at the start of the day <em>(PRD §5.4)</em>.</p>
+              </li>
+            </ol>
+          </section>
+
+          <!-- JTBD -->
+          <section class="ia-section" id="jtbd">
+            <h2>Jobs-to-be-done</h2>
+            <p>Outcome-focused framing behind the Applications hub stories — useful for usability test scripts and design critique.</p>
+
+            <div class="us-jtbd-grid">
+              <article class="us-jtbd-card">
+                <div class="us-jtbd-part">
+                  <span class="us-jtbd-label">When</span>
+                  <p>I start my day with a backlog of new applications,</p>
+                </div>
+                <div class="us-jtbd-part">
+                  <span class="us-jtbd-label">I want</span>
+                  <p>to see them grouped and filterable by time and status,</p>
+                </div>
+                <div class="us-jtbd-part us-jtbd-outcome">
+                  <span class="us-jtbd-label">So I can</span>
+                  <p>clear the queue without missing duplicates or wrong-job matches.</p>
+                </div>
+              </article>
+
+              <article class="us-jtbd-card">
+                <div class="us-jtbd-part">
+                  <span class="us-jtbd-label">When</span>
+                  <p>I’m ready to make a decision on one person,</p>
+                </div>
+                <div class="us-jtbd-part">
+                  <span class="us-jtbd-label">I want</span>
+                  <p>a single detail surface with documents, structured answers, and status history,</p>
+                </div>
+                <div class="us-jtbd-part us-jtbd-outcome">
+                  <span class="us-jtbd-label">So I can</span>
+                  <p>move to the next step (interview, reject, hold) with confidence.</p>
+                </div>
+              </article>
+
+              <article class="us-jtbd-card">
+                <div class="us-jtbd-part">
+                  <span class="us-jtbd-label">When</span>
+                  <p>I followed a link into a candidate profile from Applications,</p>
+                </div>
+                <div class="us-jtbd-part">
+                  <span class="us-jtbd-label">I want</span>
+                  <p>the primary back action to return me to Applications,</p>
+                </div>
+                <div class="us-jtbd-part us-jtbd-outcome">
+                  <span class="us-jtbd-label">So I can</span>
+                  <p>resume my list workflow without using the browser back button.</p>
+                </div>
+              </article>
+
+              <article class="us-jtbd-card">
+                <div class="us-jtbd-part">
+                  <span class="us-jtbd-label">When</span>
+                  <p>I need to schedule an interview before advancing status,</p>
+                </div>
+                <div class="us-jtbd-part">
+                  <span class="us-jtbd-label">I want</span>
+                  <p>the schedule action on the same page as the application packet,</p>
+                </div>
+                <div class="us-jtbd-part us-jtbd-outcome">
+                  <span class="us-jtbd-label">So I can</span>
+                  <p>keep context and satisfy validation rules in one pass.</p>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Acceptance -->
+          <section class="ia-section" id="acceptance">
+            <h2>Acceptance-style notes</h2>
+            <p>For design QA and usability test verification.</p>
+            <ul class="research-checklist us-checklist">
+              <li>Pipeline “Next week” is <strong>disabled</strong> when viewing the <strong>current</strong> week (no future weeks).</li>
+              <li>Clicking a pipeline card navigates to <code>/applications/[id]</code> without firing after a completed <strong>drag</strong> (no accidental navigation).</li>
+              <li>Application detail shows <strong>job title</strong>, <strong>status</strong>, <strong>applied/updated</strong> timestamps, <strong>submission fields</strong>, <strong>document</strong> actions, and <strong>status history</strong>.</li>
+              <li>Candidate name link from applications table includes <code>?from=applications</code> so back navigation targets Applications.</li>
+              <li>Empty week: user sees an explicit <strong>empty cohort</strong> message; columns may remain for discoverability of drop targets.</li>
+              <li>Reject modal requires <strong>reason</strong>; reopen from rejected requires <strong>controlled action</strong> (not drag-and-drop).</li>
+              <li>PATCH to <code>interview_scheduled</code> blocked until <strong>interview record</strong> exists.</li>
+              <li>Terminal columns <strong>Rejected</strong> and <strong>Withdrawn</strong> appear outside the active Kanban board.</li>
+            </ul>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">User stories &amp; JTBD · May 2026 · Applications hub</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="wireframes.html">Wireframes</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

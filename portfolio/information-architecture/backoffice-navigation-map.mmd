@@ -1,0 +1,84 @@
+%% TalentHub Backoffice — Navigation / IA map
+%% Render: npx @mermaid-js/mermaid-cli -i backoffice-navigation-map.mmd -o backoffice-navigation-map.png -b white -w 2800
+
+flowchart TB
+  classDef done fill:#EFF6FF,stroke:#2563EB,color:#1A1A1A
+  classDef placeholder fill:#F5F5F5,stroke:#999,color:#666
+  classDef auth fill:#FFF7ED,stroke:#EA580C,color:#1A1A1A
+  classDef detail fill:#F0FDF4,stroke:#16A34A,color:#1A1A1A
+  classDef modal fill:#FAFAFA,stroke:#CCC,stroke-dasharray: 4 4,color:#666
+
+  subgraph AUTH["Outside dashboard shell"]
+    LOGIN["/login<br/>Staff sign-in"]:::auth
+  end
+
+  subgraph SHELL["Dashboard shell — Sidebar primary nav"]
+    direction TB
+
+    DASH["① Dashboard<br/>/"]:::done
+
+    subgraph APPS["② Applications"]
+      APP_HUB["/applications<br/>Table · Pipeline default"]:::done
+      APP_PIPE["Pipeline · week scope<br/>Rejected · Withdrawn tabs"]:::done
+      APP_TABLE["Table · sort · filter"]:::done
+      APP_DETAIL["/applications/id<br/>Packet detail"]:::detail
+      APP_MODAL["Modals: status · schedule<br/>reject · cancel interview"]:::modal
+    end
+
+    INTV["③ Interviews<br/>/interviews<br/>Calendar"]:::done
+
+    subgraph JOBS["④ Jobs"]
+      JOB_LIST["/jobs<br/>List · search"]:::done
+      JOB_NEW["/jobs/new → review → success"]:::done
+      JOB_EDIT["/jobs/id/edit"]:::done
+      JOB_PREV["/jobs/id/preview<br/>separate layout"]:::done
+    end
+
+    subgraph CAND["⑤ Candidates"]
+      CAND_SUM["/candidates<br/>Summary"]:::done
+      CAND_ALL["/candidates/all<br/>Directory"]:::done
+      CAND_DET["/candidates/id<br/>Profile · applications"]:::detail
+      CAND_ED["/candidates/id/edit<br/>Account status"]:::done
+    end
+
+    REPORTS["⑥ Reports<br/>/reports"]:::placeholder
+    subgraph ADMIN["⑦ Administration"]
+      ADM_NAV["Section picker"]:::done
+      ADM_CRUD["/administration/section<br/>Companies · Depts · Locations<br/>Emp types · Exp levels<br/>Skills · Tags · Benefits"]:::done
+    end
+    SETTINGS["⑧ Settings<br/>/settings"]:::placeholder
+  end
+
+  LOGIN --> DASH
+
+  DASH --> APP_HUB
+  DASH --> INTV
+  DASH --> JOB_LIST
+  DASH --> CAND_SUM
+
+  APP_HUB --> APP_PIPE
+  APP_HUB --> APP_TABLE
+  APP_PIPE --> APP_DETAIL
+  APP_TABLE --> APP_DETAIL
+  APP_DETAIL --> APP_MODAL
+  APP_DETAIL --> CAND_DET
+  APP_DETAIL --> JOB_EDIT
+  APP_MODAL --> INTV
+
+  JOB_LIST --> JOB_NEW
+  JOB_LIST --> JOB_EDIT
+  JOB_LIST --> JOB_PREV
+
+  CAND_SUM --> CAND_ALL
+  CAND_ALL --> CAND_DET
+  CAND_DET --> CAND_ED
+  CAND_DET -. "from=applications" .-> APP_HUB
+
+  APP_DETAIL -. "from=applications" .-> APP_HUB
+
+  ADM_NAV --> ADM_CRUD
+
+  %% Sidebar order annotation
+  subgraph LEGEND["Sidebar order (top → bottom)"]
+    L1["Dashboard"] ~~~ L2["Applications"] ~~~ L3["Interviews"] ~~~ L4["Jobs"] ~~~ L5["Candidates"] ~~~ L6["Reports"] ~~~ L7["Administration"] ~~~ L8["Settings"]
+  end

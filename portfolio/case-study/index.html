@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="TalentHub ATS — Product design case study. SME hiring workflow, netnographic research, and AI-assisted delivery." />
+  <title>TalentHub ATS — Product Design Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a href="#top" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="#context">Context</a>
+        <a href="#research">Research</a>
+        <a href="#approach">Approach</a>
+        <a href="#solution">Solution</a>
+        <a href="#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Product Design · UX · AI-assisted build</p>
+          <h1>Hiring workflow craft for teams that can’t afford enterprise overhead</h1>
+          <p class="hero-lead">
+            TalentHub is an applicant tracking system for <strong>SME / SMB</strong> People teams—one to a few recruiters, no TA ops admin—who need mid-market triage quality without six-week implementations or $10K+ stacks.
+          </p>
+          <ul class="meta-row">
+            <li><span class="meta-label">Role</span> Product Designer, UX, Developer</li>
+            <li><span class="meta-label">Timeline</span> Apr 2026 — In progress</li>
+            <li><span class="meta-label">Scope</span> Platform IA + staff applications slice</li>
+          </ul>
+          <div class="hero-actions">
+            <a href="#solution" class="btn btn-primary">See the solution</a>
+            <a href="#research" class="btn btn-ghost">Research insight</a>
+          </div>
+        </div>
+        <figure class="hero-visual">
+          <div class="hero-anim" role="img" aria-label="Animated workflow: UX design research and wireframes, AI-assisted development, and human validation before shipping">
+            <div class="hero-anim-scene">
+              <div class="hero-anim-stage hero-anim-stage-design">
+                <span class="hero-anim-stage-label">UX Design</span>
+                <div class="hero-anim-wireframe">
+                  <div class="wf-line wf-line-title"></div>
+                  <div class="wf-grid">
+                    <div class="wf-block"></div>
+                    <div class="wf-block"></div>
+                    <div class="wf-block wf-block-wide"></div>
+                  </div>
+                  <div class="wf-line wf-line-sm"></div>
+                </div>
+              </div>
+
+              <div class="hero-anim-bridge" aria-hidden="true">
+                <svg class="hero-anim-flow" viewBox="0 0 80 48" fill="none">
+                  <path class="hero-flow-path" d="M4 24 H76" stroke="currentColor" stroke-width="2" stroke-dasharray="4 6" />
+                  <g class="hero-flow-dot hero-flow-dot-1"><circle cx="4" cy="24" r="4" /></g>
+                  <g class="hero-flow-dot hero-flow-dot-2"><circle cx="4" cy="24" r="3" /></g>
+                </svg>
+                <div class="hero-anim-core">
+                  <span class="hero-anim-spark" aria-hidden="true">✦</span>
+                  <span class="hero-anim-core-text">AI</span>
+                </div>
+              </div>
+
+              <div class="hero-anim-stage hero-anim-stage-build">
+                <span class="hero-anim-stage-label">Development</span>
+                <div class="hero-anim-ui">
+                  <div class="ui-bar"></div>
+                  <div class="ui-row">
+                    <div class="ui-card"><span class="ui-pill"></span><span class="ui-line"></span></div>
+                    <div class="ui-card"><span class="ui-pill"></span><span class="ui-line ui-line-short"></span></div>
+                  </div>
+                  <div class="hero-anim-code">
+                    <span class="code-line"><span class="code-kw">export</span> PipelineBoard</span>
+                    <span class="code-line"><span class="code-fn">validate</span>(status)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-anim-track" aria-hidden="true">
+              <span class="hero-anim-step hero-anim-step-1">Discovery</span>
+              <span class="hero-anim-step hero-anim-step-2">Define</span>
+              <span class="hero-anim-step hero-anim-step-3">Implement</span>
+              <span class="hero-anim-step hero-anim-step-4">Validate</span>
+              <span class="hero-anim-step hero-anim-step-5">Ship</span>
+            </div>
+
+            <div class="hero-anim-badge">
+              <span class="hero-anim-badge-icon" aria-hidden="true">✓</span>
+              Human-led discovery &amp; validation
+            </div>
+          </div>
+          <figcaption>Design the workflow · accelerate increments with AI · validate before ship</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Context -->
+    <section class="section" id="context">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">01 · Context</p>
+          <h2>The underserved middle of the ATS market</h2>
+          <p class="section-intro">Enterprise tools bring structure at the cost of setup and admin. Budget tools win on price but break on pipeline honesty. TalentHub targets the gap.</p>
+        </header>
+        <div class="three-up">
+          <article class="card card-accent">
+            <h3>Market squeeze</h3>
+            <p>Lean TA teams are pushed toward tools they <em>mis-buy</em> or <em>outgrow</em>—with no dedicated ops admin when either fails.</p>
+          </article>
+          <article class="card">
+            <h3>Design bet</h3>
+            <p>Mid-market workflow depth—cohort pipeline, governed status, packet page, scheduling—at SMB scope and complexity.</p>
+          </article>
+          <article class="card">
+            <h3>My focus</h3>
+            <p>Staff <strong>applications workflow</strong>: how recruiters scan volume, decide, and schedule without losing person, job, or document context.</p>
+          </article>
+        </div>
+        <div class="platform-strip">
+          <div class="platform-item"><strong>Candidate portal</strong><span>Discover jobs</span></div>
+          <div class="platform-item"><strong>My Applications</strong><span>Apply & track</span></div>
+          <div class="platform-item"><strong>Backoffice</strong><span>Triage & hire</span></div>
+          <div class="platform-item"><strong>Shared system</strong><span>One design language</span></div>
+        </div>
+        <p class="section-foot"><a href="problem-framing.html">Full problem framing →</a></p>
+      </div>
+    </section>
+
+    <!-- Research -->
+    <section class="section section-alt" id="research">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">02 · Research</p>
+          <h2>Essential but resented</h2>
+          <p class="section-intro">Netnographic synthesis of public recruiter and candidate discourse (May 2026)—directional, not statistically representative.</p>
+        </header>
+        <blockquote class="pull-quote">
+          <p>“Recruiters describe ATS products as click-heavy and designed without daily input. Candidates describe hiring as opaque, impersonal, and silent after apply.”</p>
+          <cite>Netnographic research · TalentHub</cite>
+        </blockquote>
+
+        <div class="research-stats-compact">
+          <div class="research-stats-compact-head">
+            <div>
+              <h3>Research signals</h3>
+              <p>Cited candidate surveys and netnographic theme severity · May 2026 · directional</p>
+            </div>
+            <div class="research-kpi-hero">
+              <strong>43%</strong>
+              <span>HR pros rate their TA stack “good or excellent”</span>
+            </div>
+          </div>
+
+          <div class="research-stats-compact-body">
+            <div class="research-stats-col">
+              <h4>Candidates</h4>
+              <ul class="research-mini-bars" role="list" aria-label="Candidate survey statistics">
+                <li class="research-mini-bar">
+                  <span class="research-mini-label">No updates after apply</span>
+                  <span class="research-mini-track"><span class="research-mini-fill" style="--pct: 65"></span></span>
+                  <span class="research-mini-val">65%</span>
+                </li>
+                <li class="research-mini-bar">
+                  <span class="research-mini-label">Unsure a human reviewed resume</span>
+                  <span class="research-mini-track"><span class="research-mini-fill" style="--pct: 60"></span></span>
+                  <span class="research-mini-val">60%</span>
+                </li>
+                <li class="research-mini-bar">
+                  <span class="research-mini-label">Abandon long apply forms</span>
+                  <span class="research-mini-track"><span class="research-mini-fill" style="--pct: 60"></span></span>
+                  <span class="research-mini-val">60%</span>
+                </li>
+                <li class="research-mini-bar">
+                  <span class="research-mini-label">Abandoned from frustration</span>
+                  <span class="research-mini-track"><span class="research-mini-fill" style="--pct: 57"></span></span>
+                  <span class="research-mini-val">57%</span>
+                </li>
+                <li class="research-mini-bar">
+                  <span class="research-mini-label">Favor ATS ban or heavy regulation</span>
+                  <span class="research-mini-track"><span class="research-mini-fill research-mini-fill-warn" style="--pct: 54"></span></span>
+                  <span class="research-mini-val">54%</span>
+                </li>
+                <li class="research-mini-bar">
+                  <span class="research-mini-label">Believe ≤25% of apps reviewed</span>
+                  <span class="research-mini-track"><span class="research-mini-fill" style="--pct: 41"></span></span>
+                  <span class="research-mini-val">41%</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="research-stats-col">
+              <h4>Recruiter &amp; buyer themes</h4>
+              <p class="research-stats-col-note">High / medium / critical counts from public discourse</p>
+              <ul class="research-severity-mini" role="list" aria-label="Recruiter pain theme severity by category">
+                <li class="severity-mini-row">
+                  <span class="severity-mini-label">UX &amp; workflow</span>
+                  <span class="severity-mini-stack"><span class="severity-seg severity-high" style="width:60%">3</span><span class="severity-seg severity-medium" style="width:40%">2</span></span>
+                </li>
+                <li class="severity-mini-row">
+                  <span class="severity-mini-label">Search &amp; matching</span>
+                  <span class="severity-mini-stack"><span class="severity-seg severity-high" style="width:75%">3</span><span class="severity-seg severity-medium" style="width:25%">1</span></span>
+                </li>
+                <li class="severity-mini-row">
+                  <span class="severity-mini-label">Automation</span>
+                  <span class="severity-mini-stack"><span class="severity-seg severity-high" style="width:50%">2</span><span class="severity-seg severity-medium" style="width:50%">2</span></span>
+                </li>
+                <li class="severity-mini-row">
+                  <span class="severity-mini-label">Pipeline integrity</span>
+                  <span class="severity-mini-stack"><span class="severity-seg severity-critical" style="width:25%">1</span><span class="severity-seg severity-medium" style="width:75%">3</span></span>
+                </li>
+                <li class="severity-mini-row">
+                  <span class="severity-mini-label">SME fit &amp; cost</span>
+                  <span class="severity-mini-stack"><span class="severity-seg severity-high" style="width:83%">5</span><span class="severity-seg severity-medium" style="width:17%">1</span></span>
+                </li>
+                <li class="severity-mini-row">
+                  <span class="severity-mini-label">Admin &amp; setup</span>
+                  <span class="severity-mini-stack"><span class="severity-seg severity-high" style="width:25%">1</span><span class="severity-seg severity-medium" style="width:75%">3</span></span>
+                </li>
+              </ul>
+              <div class="research-severity-legend research-severity-legend-inline">
+                <span><i class="severity-dot severity-dot-high"></i>High</span>
+                <span><i class="severity-dot severity-dot-medium"></i>Med</span>
+                <span><i class="severity-dot severity-dot-critical"></i>Crit</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="research-chart-source">Sources: HireFormly · LiveCareer · HR Dive · HR.com / Tracker RMS · <a href="netnographic-research.html">Full netnographic report →</a></p>
+        </div>
+
+        <div class="insight-grid">
+          <article class="insight">
+            <span class="insight-stat">High</span>
+            <h3>Excel as shadow ATS</h3>
+            <p>When UX fails, parallel spreadsheets persist—especially painful when there is no TA ops admin.</p>
+          </article>
+          <article class="insight">
+            <span class="insight-stat">High</span>
+            <h3>Pipeline dishonesty</h3>
+            <p>Status says “Interview scheduled” but no meeting exists—erodes trust in the funnel.</p>
+          </article>
+          <article class="insight">
+            <span class="insight-stat">High</span>
+            <h3>Application black hole</h3>
+            <p>Most candidates rarely hear back; silence drives more resentment than rejection.</p>
+          </article>
+        </div>
+        <p class="section-foot"><a href="netnographic-research.html">Full netnographic report →</a></p>
+      </div>
+    </section>
+
+    <!-- Approach -->
+    <section class="section" id="approach">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">03 · Approach</p>
+          <h2>Four design goals for SME hiring</h2>
+        </header>
+        <div class="principles">
+          <article class="principle">
+            <span class="principle-num">01</span>
+            <h3>Low cost</h3>
+            <p>Core loop only—apply, triage, interview, decide. No paid modules a 30-person company will never use.</p>
+          </article>
+          <article class="principle">
+            <span class="principle-num">02</span>
+            <h3>Optimized UX & workflows</h3>
+            <p>Resume and packet in one or two actions. Honest pipeline state. No “back to Excel” days.</p>
+          </article>
+          <article class="principle">
+            <span class="principle-num">03</span>
+            <h3>Reduced setup time</h3>
+            <p>Time-to-value in days or weeks—sensible defaults, minimal admin configuration.</p>
+          </article>
+          <article class="principle">
+            <span class="principle-num">04</span>
+            <h3>Right-sized depth</h3>
+            <p>Governed transitions and audit—not CRM nurture or reporting suites on day one.</p>
+          </article>
+        </div>
+        <div class="process-row">
+          <img src="assets/process/ats-feature-increment-loop.png" alt="Feature increment loop from PRD to ship" class="process-img" loading="lazy" />
+          <div class="process-copy">
+            <h3>AI-assisted, human-governed delivery</h3>
+            <p>Each increment: pick a backlog item → expand spec → implement → validate against WCAG and privacy intent → ship. Documentation and code stay aligned via a single PRD and TH-coded backlog.</p>
+            <p class="section-foot"><a href="development-process.html">Full development process →</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solution -->
+    <section class="section section-dark" id="solution">
+      <div class="container">
+        <header class="section-head section-head-light">
+          <p class="section-eyebrow">04 · Solution</p>
+          <h2>Three decisions that define the experience</h2>
+          <p class="section-intro">Samples from lo-fi wireframes and as-built UI. Full platform spans jobs, candidates, and administration—this case study centres the applications slice.</p>
+        </header>
+
+        <article class="showcase">
+          <div class="showcase-copy">
+            <span class="showcase-tag">Decision 01</span>
+            <h3>Week-scoped pipeline</h3>
+            <p class="showcase-problem"><strong>Problem:</strong> All-time Kanban creates ambient noise; recruiters can’t focus on this week’s cohort.</p>
+            <p><strong>Design:</strong> Pipeline filters by submission week (UTC). Past and current week only—future weeks disabled. Table view remains for all-time list work.</p>
+            <ul class="showcase-list">
+              <li>Dual mode: pipeline default for funnel, table for audit</li>
+              <li>Terminal tabs: Rejected · Withdrawn off the active board</li>
+              <li>Keyboard <em>Move to</em> menu as drag alternative</li>
+            </ul>
+          </div>
+          <figure class="showcase-figure">
+            <a href="wireframes.html#pipeline">
+              <img src="assets/wireframes/02-backoffice-applications-pipeline.svg" alt="Applications pipeline wireframe" loading="lazy" />
+            </a>
+            <figcaption>Applications pipeline · week toolbar · governed columns</figcaption>
+          </figure>
+        </article>
+
+        <article class="showcase showcase-reverse">
+          <div class="showcase-copy">
+            <span class="showcase-tag">Decision 02</span>
+            <h3>Application detail as the packet page</h3>
+            <p class="showcase-problem"><strong>Problem:</strong> Job, person, documents, and history live on disconnected surfaces.</p>
+            <p><strong>Design:</strong> One adjudication anchor—who, which role, submission answers, CV/cover letter, status timeline, schedule interview—with links out to candidate profile and job edit.</p>
+            <ul class="showcase-list">
+              <li>Reject requires reason · controlled reopen from rejected</li>
+              <li>Undo last move · full audit trail</li>
+              <li>Interview gate before “Interview scheduled” status</li>
+            </ul>
+          </div>
+          <figure class="showcase-figure">
+            <a href="wireframes.html#detail">
+              <img src="assets/wireframes/03-backoffice-application-detail.svg" alt="Application detail wireframe" loading="lazy" />
+            </a>
+            <figcaption>Application detail · documents · status history</figcaption>
+          </figure>
+        </article>
+
+        <article class="showcase">
+          <div class="showcase-copy">
+            <span class="showcase-tag">Decision 03</span>
+            <h3>Candidate path: discover → apply → track</h3>
+            <p class="showcase-problem"><strong>Problem:</strong> Application black hole and long apply friction.</p>
+            <p><strong>Design:</strong> Public portal for discovery; signed-in workspace for CV library, apply wizard, and status visibility—without duplicating auth on the marketing site.</p>
+            <ul class="showcase-list">
+              <li>CV reuse across applications</li>
+              <li>Status vocabulary matches recruiter pipeline</li>
+              <li>AI relevance advisory only—with human-review notice for staff</li>
+            </ul>
+          </div>
+          <figure class="showcase-figure showcase-duo">
+            <a href="wireframes.html#portal"><img src="assets/wireframes/04-candidate-portal-job-listing.svg" alt="Job listing wireframe" loading="lazy" /></a>
+            <a href="wireframes.html#dashboard"><img src="assets/wireframes/06-my-applications-dashboard.svg" alt="My Applications dashboard wireframe" loading="lazy" /></a>
+            <figcaption>Candidate portal listing · My Applications dashboard</figcaption>
+          </figure>
+        </article>
+
+        <div class="ia-sample">
+          <img src="assets/ia/backoffice-navigation-map.png" alt="Backoffice information architecture map" loading="lazy" />
+          <div>
+            <h3>Information architecture</h3>
+            <p>Application as unit of work—throughput on <code>/applications</code>, depth on packet page, person history via candidate profile with return paths preserved.</p>
+            <a href="information-architecture.html" class="text-link">Platform IA document →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Impact -->
+    <section class="section" id="impact">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">05 · Impact</p>
+          <h2>Design outcomes</h2>
+          <p class="section-intro">Qualitative signals from workflow redesign—replace with your metrics when available.</p>
+        </header>
+        <div class="impact-grid">
+          <div class="impact-card">
+            <span class="impact-before">Before</span>
+            <p>Multiple navigations to open a full application packet</p>
+            <span class="impact-after">After</span>
+            <p class="impact-highlight">Single packet page</p>
+          </div>
+          <div class="impact-card">
+            <span class="impact-before">Before</span>
+            <p>All-time pipeline mix</p>
+            <span class="impact-after">After</span>
+            <p class="impact-highlight">Week cohort focus</p>
+          </div>
+          <div class="impact-card">
+            <span class="impact-before">Before</span>
+            <p>Status vs calendar mismatch</p>
+            <span class="impact-after">After</span>
+            <p class="impact-highlight">Schedule gate + calendar</p>
+          </div>
+          <div class="impact-card">
+            <span class="impact-before">Before</span>
+            <p>Ad-hoc status changes</p>
+            <span class="impact-after">After</span>
+            <p class="impact-highlight">Audit + undo + rules</p>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div><strong>88</strong><span>features shipped</span></div>
+          <div><strong>10</strong><span>application statuses</span></div>
+          <div><strong>4</strong><span>runtime apps</span></div>
+          <div><strong>6</strong><span>wireframe screens</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reflection -->
+    <section class="section section-alt" id="reflection">
+      <div class="container">
+        <p class="section-eyebrow reflection-eyebrow">06 · Reflection</p>
+        <div class="two-col reflection-cols">
+          <div>
+            <h2 class="reflection-col-title">What worked</h2>
+            <ul class="bullet-list">
+              <li>Two list modes (table + pipeline) for different review rhythms</li>
+              <li>Time scope reduced ambient noise in triage</li>
+              <li>Packet page as anchor cut context switching</li>
+              <li>Validated transitions built ops trust</li>
+              <li>TH-coded backlog kept design, docs, and code traceable</li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="reflection-col-title">Tradeoffs &amp; next</h2>
+            <ul class="bullet-list">
+              <li>UTC weeks—may need local timezone for global teams</li>
+              <li>Drag vs click required interaction guard on cards</li>
+              <li>Email notify UI exists; delivery not wired yet</li>
+              <li>WCAG modal focus traps and legal pages still open</li>
+            </ul>
+            <p class="section-foot"><a href="reflection-tradeoffs.html">Full reflection →</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">Case study · May 2026 · Replace placeholders with Figma links and live metrics for your portfolio.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Artifacts">
+        <a href="appendix.html">Artifacts & docs</a>
+        <a href="wireframes.html">Wireframe gallery</a>
+        <a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system ↗</a>
+        <a href="../final-case-study.md">Full case study (markdown)</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

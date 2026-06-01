@@ -2,6 +2,8 @@
 
 Use these as **Figma frame titles** or **annotation specs**. Replace dimensions with your grid system.
 
+**ASCII wireframes (portfolio):** See [`../wireframes/`](../wireframes/README.md) for six implemented screens with desktop/mobile layouts — dashboard, pipeline, application detail, job listing, job detail, candidate dashboard.
+
 **Status vocabulary:** ten application statuses per [PRD §6](../../docs/specification/PRD.md). **Terminal:** Rejected, Withdrawn (separate from active Kanban columns).
 
 ---

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Database Schema — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>Database schema</h1>
+        <p>Complete PostgreSQL relational model — 29 tables, generated from <code>packages/db/prisma/schema.prisma</code>.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc ia-toc-wide" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#er-map">ER map</a></li>
+            <li><a href="#inventory">Table inventory</a></li>
+            <li><a href="#lookups">Lookups</a>
+              <ol><li><a href="#companies"><code>companies</code></a></li>
+<li><a href="#departments"><code>departments</code></a></li>
+<li><a href="#locations"><code>locations</code></a></li>
+<li><a href="#employment-types"><code>employment_types</code></a></li>
+<li><a href="#experience-levels"><code>experience_levels</code></a></li>
+<li><a href="#skills"><code>skills</code></a></li>
+<li><a href="#benefits"><code>benefits</code></a></li>
+<li><a href="#tags"><code>tags</code></a></li></ol>
+            </li>
+            <li><a href="#jobs">Jobs</a>
+              <ol><li><a href="#job-postings"><code>job_postings</code></a></li>
+<li><a href="#job-responsibilities"><code>job_responsibilities</code></a></li>
+<li><a href="#job-qualifications"><code>job_qualifications</code></a></li>
+<li><a href="#job-posting-skills"><code>job_posting_skills</code></a></li>
+<li><a href="#job-posting-benefits"><code>job_posting_benefits</code></a></li>
+<li><a href="#job-posting-tags"><code>job_posting_tags</code></a></li></ol>
+            </li>
+            <li><a href="#candidates">Candidates</a>
+              <ol><li><a href="#candidate-accounts"><code>candidate_accounts</code></a></li>
+<li><a href="#candidate-profiles"><code>candidate_profiles</code></a></li>
+<li><a href="#candidate-cv-parses"><code>candidate_cv_parses</code></a></li>
+<li><a href="#candidate-cv-educations"><code>candidate_cv_educations</code></a></li>
+<li><a href="#candidate-cv-experiences"><code>candidate_cv_experiences</code></a></li>
+<li><a href="#candidate-auth-providers"><code>candidate_auth_providers</code></a></li>
+<li><a href="#candidate-sessions"><code>candidate_sessions</code></a></li>
+<li><a href="#candidate-verification-tokens"><code>candidate_verification_tokens</code></a></li>
+<li><a href="#candidate-password-reset-tokens"><code>candidate_password_reset_tokens</code></a></li>
+<li><a href="#candidate-cover-letters"><code>candidate_cover_letters</code></a></li></ol>
+            </li>
+            <li><a href="#applications-domain">Applications</a>
+              <ol><li><a href="#applications"><code>applications</code></a></li>
+<li><a href="#application-status-events"><code>application_status_events</code></a></li>
+<li><a href="#application-interviews"><code>application_interviews</code></a></li></ol>
+            </li>
+            <li><a href="#users">Staff</a></li>
+            <li><a href="#bookmarks">Bookmarks</a></li>
+            <li><a href="#enums">Enums</a></li>
+            <li><a href="#indexes">Indexes &amp; constraints</a></li>
+            <li><a href="#ui-mapping">UI mapping</a></li>
+            <li><a href="#queries">Sample queries</a></li>
+            <li><a href="#prisma">Prisma notes</a></li>
+            <li><a href="#decisions">Design decisions</a></li>
+            <li><a href="#related">Related docs</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>db-schema v1.9 · 29 tables</span>
+            <span>19 May 2026 · As-built</span>
+            <span>@ats-platform/db</span>
+          </div>
+
+          <p class="db-intro">Canonical source: <code>packages/db/prisma/schema.prisma</code>. Human-readable companion: <a href="../../docs/specification/db-schema.md">db-schema.md</a>. Interactive ER: <a href="../../docs/specification/er-diagram.html">er-diagram.html</a>. Related: <a href="product-requirements.html">PRD</a> · <a href="api-dictionary.html">API dictionary</a>.</p>
+
+          <section class="ia-section" id="overview">
+            <h2>Overview</h2>
+            <p>TalentHub persists jobs, candidates, applications, and staff data in <strong>PostgreSQL</strong>. All runtime apps import the shared Prisma client from <code>@ats-platform/db</code>.</p>
+            <ul class="research-checklist">
+              <li>Migrations: <code>npm run db:migrate</code> from repo root</li>
+              <li>JSON API bodies use <strong>camelCase</strong>; columns map to snake_case via Prisma <code>@map</code></li>
+              <li>File uploads stored under <code>storage/cvs/{candidateAccountId}/</code> and <code>storage/cover-letters/{candidateAccountId}/</code></li>
+              <li>Legacy monolithic <code>candidates</code> table removed — use <code>candidate_accounts</code> + <code>candidate_profiles</code></li>
+            </ul>
+          </section>
+
+          <section class="ia-section" id="er-map">
+            <h2>Entity relationship map</h2>
+            <pre class="ia-shell db-er">companies ────────┐
+departments ──────┤
+locations ────────├──▶ job_postings
+employment_types ─┤         │
+experience_levels ┘         ├──▶ job_responsibilities / job_qualifications
+                            ├──▶ job_posting_skills ──▶ skills
+                            ├──▶ job_posting_benefits ──▶ benefits
+                            ├──▶ job_posting_tags ──▶ tags
+                            ├──▶ applications ◀── candidate_accounts
+                            └──▶ bookmarks ◀── candidate_accounts
+
+candidate_accounts ──▶ candidate_profiles
+                   ├──▶ auth providers / sessions / tokens
+                   ├──▶ candidate_cv_parses ──▶ educations &amp; experience
+                   ├──▶ candidate_cover_letters
+                   └──▶ applications ──▶ application_status_events
+                                      └──▶ application_interviews (1:1)
+
+users ──▶ job_postings (created_by)
+      └──▶ status events &amp; interviews (staff actions)</pre>
+            <p class="ia-note">Job detail poster: <code>job_postings.banner_image_url</code> + <code>banner_image_alt</code> → <code>.image-banner</code> on job detail.</p>
+          </section>
+
+          <section class="ia-section" id="inventory">
+            <h2>Table inventory</h2>
+            <div class="db-domain-grid">
+              <div class="db-domain-card"><h3>Lookups (8)</h3><p><code>companies</code>, <code>departments</code>, <code>locations</code>, <code>employment_types</code>, <code>experience_levels</code>, <code>skills</code>, <code>benefits</code>, <code>tags</code></p></div>
+              <div class="db-domain-card"><h3>Jobs (6)</h3><p><code>job_postings</code>, <code>job_responsibilities</code>, <code>job_qualifications</code>, <code>job_posting_skills</code>, <code>job_posting_benefits</code>, <code>job_posting_tags</code></p></div>
+              <div class="db-domain-card"><h3>Candidates (10)</h3><p><code>candidate_accounts</code>, <code>candidate_profiles</code>, <code>candidate_cv_parses</code>, <code>candidate_cv_educations</code>, <code>candidate_cv_experiences</code>, <code>candidate_auth_providers</code>, <code>candidate_sessions</code>, <code>candidate_verification_tokens</code>, <code>candidate_password_reset_tokens</code>, <code>candidate_cover_letters</code></p></div>
+              <div class="db-domain-card"><h3>Applications (3)</h3><p><code>applications</code>, <code>application_status_events</code>, <code>application_interviews</code></p></div>
+              <div class="db-domain-card"><h3>Staff (1)</h3><p><code>users</code></p></div>
+              <div class="db-domain-card"><h3>Engagement (1)</h3><p><code>bookmarks</code> — schema ready; end-to-end flow planned</p></div>
+            </div>
+          </section>
+
+          <section class="ia-section" id="lookups">
+            <h2>Lookup / reference tables</h2>
+            <p>Administration CRUD in backoffice. SERIAL primary keys unless noted.</p>
+            
+          <section class="db-table-block" id="companies">
+            <h3><code>companies</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>name</code></td><td>VARCHAR(200)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>logo_url</code></td><td>VARCHAR(500)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>website_url</code></td><td>VARCHAR(500)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="departments">
+            <h3><code>departments</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>name</code></td><td>VARCHAR(100)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>slug</code></td><td>VARCHAR(100)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="locations">
+            <h3><code>locations</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>city</code></td><td>VARCHAR(100)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>country</code></td><td>VARCHAR(100)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>slug</code></td><td>VARCHAR(100)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="employment-types">
+            <h3><code>employment_types</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>name</code></td><td>VARCHAR(50)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>slug</code></td><td>VARCHAR(50)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="experience-levels">
+            <h3><code>experience_levels</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>name</code></td><td>VARCHAR(50)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>slug</code></td><td>VARCHAR(50)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>min_years</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="skills">
+            <h3><code>skills</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>name</code></td><td>VARCHAR(100)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="benefits">
+            <h3><code>benefits</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>description</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="tags">
+            <h3><code>tags</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>name</code></td><td>VARCHAR(50)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>variant</code></td><td>VARCHAR(20)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+          </section>
+
+          <section class="ia-section" id="jobs">
+            <h2>Job postings</h2>
+            <p>Central <code>job_postings</code> with ordered child tables and M:N junctions for skills, benefits, and tags.</p>
+            
+          <section class="db-table-block" id="job-postings">
+            <h3><code>job_postings</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_postings_status_posted</code>, <code>idx_postings_company</code>, <code>idx_postings_department</code>, <code>idx_postings_location</code>, <code>idx_postings_emp_type</code>, <code>idx_postings_experience</code>, <code>isRemote</code>, <code>isFeatured</code>, <code>idx_postings_slug</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>title</code></td><td>VARCHAR(200)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>slug</code></td><td>VARCHAR(220)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>company_id</code></td><td>INT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>department_id</code></td><td>INT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>location_id</code></td><td>INT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>employment_type_id</code></td><td>INT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>experience_level_id</code></td><td>INT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>summary</code></td><td>VARCHAR(500)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>overview</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>role_summary</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>application_info</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>salary_min</code></td><td>DECIMAL(12, 2)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>salary_max</code></td><td>DECIMAL(12, 2)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>salary_currency</code></td><td>CHAR(3)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>salary_period</code></td><td>SalaryPeriod</td><td>DEFAULT annual</td><td>enum: <code>annual</code>, <code>monthly</code></td></tr>
+<tr><td><code>is_salary_visible</code></td><td>BOOLEAN</td><td>DEFAULT false</td><td>—</td></tr>
+<tr><td><code>is_remote</code></td><td>BOOLEAN</td><td>DEFAULT false</td><td>—</td></tr>
+<tr><td><code>is_featured</code></td><td>BOOLEAN</td><td>DEFAULT false</td><td>—</td></tr>
+<tr><td><code>status</code></td><td>JobPostingStatus</td><td>DEFAULT draft</td><td>enum: <code>draft</code>, <code>published</code>, <code>closed</code>, <code>archived</code></td></tr>
+<tr><td><code>posted_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>expires_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr>
+<tr><td><code>updated_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW(), @updatedAt</td><td>—</td></tr>
+<tr><td><code>created_by</code></td><td>UUID</td><td>NULL</td><td>UUID; NULL</td></tr>
+<tr><td><code>banner_image_url</code></td><td>VARCHAR(500)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>banner_image_alt</code></td><td>VARCHAR(255)</td><td>NULL</td><td>NULL</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="job-responsibilities">
+            <h3><code>job_responsibilities</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>job_posting_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>description</code></td><td>TEXT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="job-qualifications">
+            <h3><code>job_qualifications</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>INT</td><td>PK, autoincrement</td><td>—</td></tr>
+<tr><td><code>job_posting_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>description</code></td><td>TEXT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>type</code></td><td>QualificationType</td><td>DEFAULT required</td><td>enum: <code>required</code>, <code>preferred</code></td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="job-posting-skills">
+            <h3><code>job_posting_skills</code></h3>
+            <p class="db-table-meta"><strong>Composite PK:</strong> @@id([jobPostingId, skillId])</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>job_posting_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>skill_id</code></td><td>INT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="job-posting-benefits">
+            <h3><code>job_posting_benefits</code></h3>
+            <p class="db-table-meta"><strong>Composite PK:</strong> @@id([jobPostingId, benefitId])</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>job_posting_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>benefit_id</code></td><td>INT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="job-posting-tags">
+            <h3><code>job_posting_tags</code></h3>
+            <p class="db-table-meta"><strong>Composite PK:</strong> @@id([jobPostingId, tagId])</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>job_posting_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>tag_id</code></td><td>INT</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>sort_order</code></td><td>SMALLINT</td><td>DEFAULT 0</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+          </section>
+
+          <section class="ia-section" id="candidates">
+            <h2>Candidate domain</h2>
+            <p>Split model — auth identity separate from profile, CV parse pipeline, and cover letter library.</p>
+            
+          <section class="db-table-block" id="candidate-accounts">
+            <h3><code>candidate_accounts</code></h3>
+            <p class="db-table-meta"><strong>Unique:</strong> <code>UNIQUE (email)</code>, <code>candidate_accounts_email_normalized_key</code></p><p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_accounts_status</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>email</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>email_normalized</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>password_hash</code></td><td>VARCHAR(255)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>status</code></td><td>CandidateAccountStatus</td><td>DEFAULT pending_verification</td><td>enum: <code>pending_verification</code>, <code>active</code>, <code>locked</code>, <code>disabled</code></td></tr>
+<tr><td><code>email_verified_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>last_login_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>failed_login_attempts</code></td><td>INT</td><td>DEFAULT 0</td><td>—</td></tr>
+<tr><td><code>locked_until</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr>
+<tr><td><code>updated_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW(), @updatedAt</td><td>—</td></tr>
+<tr><td><code>profile</code></td><td>CandidateProfile</td><td>NULL</td><td>NULL</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-profiles">
+            <h3><code>candidate_profiles</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>candidate_account_id</code></td><td>UUID</td><td>PK</td><td>UUID</td></tr>
+<tr><td><code>first_name</code></td><td>VARCHAR(100)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>last_name</code></td><td>VARCHAR(100)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>avatar_url</code></td><td>VARCHAR(500)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>phone</code></td><td>VARCHAR(30)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>resume_url</code></td><td>VARCHAR(500)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>location</code></td><td>VARCHAR(200)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>current_title</code></td><td>VARCHAR(200)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>time_zone</code></td><td>VARCHAR(64)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr>
+<tr><td><code>updated_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW(), @updatedAt</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-cv-parses">
+            <h3><code>candidate_cv_parses</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_cv_parses_account</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>original_filename</code></td><td>VARCHAR(500)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>stored_path</code></td><td>VARCHAR(1000)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>mime_type</code></td><td>VARCHAR(100)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>extracted_text</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>parsed_json</code></td><td>JSONB</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>status</code></td><td>CandidateCvParseStatus</td><td>DEFAULT draft</td><td>enum: <code>draft</code>, <code>confirmed</code></td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr>
+<tr><td><code>updated_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW(), @updatedAt</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-cv-educations">
+            <h3><code>candidate_cv_educations</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_cv_education_account</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>qualification</code></td><td>VARCHAR(400)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>institution</code></td><td>VARCHAR(400)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>start_date</code></td><td>VARCHAR(80)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>end_date</code></td><td>VARCHAR(80)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-cv-experiences">
+            <h3><code>candidate_cv_experiences</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_cv_experience_account</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>company</code></td><td>VARCHAR(300)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>role</code></td><td>VARCHAR(300)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>start_date</code></td><td>VARCHAR(80)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>end_date</code></td><td>VARCHAR(80)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-auth-providers">
+            <h3><code>candidate_auth_providers</code></h3>
+            <p class="db-table-meta"><strong>Unique:</strong> <code>candidate_auth_providers_provider_provider_user_id_key</code></p><p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_auth_providers_account</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>provider</code></td><td>CandidateAuthProviderType</td><td>NOT NULL</td><td>enum: <code>google</code>, <code>linkedin</code></td></tr>
+<tr><td><code>provider_user_id</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-sessions">
+            <h3><code>candidate_sessions</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_sessions_account_expires</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>refresh_token_hash</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>user_agent</code></td><td>VARCHAR(512)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>ip_address</code></td><td>VARCHAR(64)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>expires_at</code></td><td>TIMESTAMPTZ(6)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>revoked_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-verification-tokens">
+            <h3><code>candidate_verification_tokens</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_verification_tokens_account</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>token_hash</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>expires_at</code></td><td>TIMESTAMPTZ(6)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>used_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-password-reset-tokens">
+            <h3><code>candidate_password_reset_tokens</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_password_reset_tokens_account</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>token_hash</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>expires_at</code></td><td>TIMESTAMPTZ(6)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>used_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="candidate-cover-letters">
+            <h3><code>candidate_cover_letters</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_candidate_cover_letters_candidate_created</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>mode</code></td><td>CandidateCoverLetterMode</td><td>NOT NULL</td><td>enum: <code>file</code>, <code>text</code></td></tr>
+<tr><td><code>body</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>file_url</code></td><td>VARCHAR(500)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>file_name</code></td><td>VARCHAR(255)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+          </section>
+
+          <section class="ia-section" id="applications-domain">
+            <h2>Applications &amp; pipeline</h2>
+            <p>Application as unit of work — links candidate, job, screening fields, AI relevance, audit events, and one interview row.</p>
+            
+          <section class="db-table-block" id="applications">
+            <h3><code>applications</code></h3>
+            <p class="db-table-meta"><strong>Unique:</strong> <code>idx_applications_unique</code></p><p class="db-table-meta"><strong>Indexes:</strong> <code>idx_applications_status</code>, <code>idx_applications_job</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>job_posting_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>status</code></td><td>ApplicationStatus</td><td>DEFAULT submitted</td><td>enum: <code>submitted</code>, <code>under_review</code>, <code>shortlisted</code>, <code>interview</code>, <code>interview_scheduled</code>, <code>interview_completed</code>, <code>offered</code>, <code>hired</code>, <code>rejected</code>, <code>withdrawn</code></td></tr>
+<tr><td><code>cover_letter</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>resume_url</code></td><td>VARCHAR(500)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>experience_years</code></td><td>INT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>experience_months</code></td><td>INT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>has_domain_experience</code></td><td>BOOLEAN</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>notice_periods</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>salary_expectation_annual</code></td><td>DECIMAL(12, 2)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>willing_to_relocate</code></td><td>BOOLEAN</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>is_legally_authorized_to_work</code></td><td>BOOLEAN</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>work_mode_preference</code></td><td>VARCHAR(50)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>short_motivation</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>relevance_score</code></td><td>SMALLINT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>relevance_breakdown</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>relevance_scored_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>relevance_input_hash</code></td><td>VARCHAR(64)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>applied_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr>
+<tr><td><code>updated_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW(), @updatedAt</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="application-status-events">
+            <h3><code>application_status_events</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_application_status_events_app_time</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>application_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>from_status</code></td><td>ApplicationStatus</td><td>NULL</td><td>enum: <code>submitted</code>, <code>under_review</code>, <code>shortlisted</code>, <code>interview</code>, <code>interview_scheduled</code>, <code>interview_completed</code>, <code>offered</code>, <code>hired</code>, <code>rejected</code>, <code>withdrawn</code>; NULL</td></tr>
+<tr><td><code>to_status</code></td><td>ApplicationStatus</td><td>NOT NULL</td><td>enum: <code>submitted</code>, <code>under_review</code>, <code>shortlisted</code>, <code>interview</code>, <code>interview_scheduled</code>, <code>interview_completed</code>, <code>offered</code>, <code>hired</code>, <code>rejected</code>, <code>withdrawn</code></td></tr>
+<tr><td><code>reason</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>note</code></td><td>TEXT</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>change_source</code></td><td>VARCHAR(50)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>changed_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr>
+<tr><td><code>changed_by_staff_id</code></td><td>UUID</td><td>NULL</td><td>UUID; NULL</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="db-table-block" id="application-interviews">
+            <h3><code>application_interviews</code></h3>
+            <p class="db-table-meta"><strong>Indexes:</strong> <code>idx_application_interviews_starts_at</code></p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>application_id</code></td><td>UUID</td><td>UNIQUE</td><td>UUID</td></tr>
+<tr><td><code>starts_at</code></td><td>TIMESTAMPTZ(6)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>ends_at</code></td><td>TIMESTAMPTZ(6)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>scheduling_time_zone</code></td><td>VARCHAR(64)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>notify_candidate_email</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>notification_sent_at</code></td><td>TIMESTAMPTZ(6)</td><td>NULL</td><td>NULL</td></tr>
+<tr><td><code>scheduled_by_staff_id</code></td><td>UUID</td><td>NULL</td><td>UUID; NULL</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr>
+<tr><td><code>updated_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW(), @updatedAt</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+            <h3>Active pipeline statuses</h3>
+            <pre class="ia-shell">Submitted → Under Review → Shortlisted → Interview Scheduled → Interview Completed → Offered → Hired
+
+Terminal: rejected (controlled reopen), withdrawn</pre>
+          </section>
+
+          <section class="ia-section" id="users">
+            <h2>Staff — <code>users</code></h2>
+            <p>Internal backoffice accounts. Phase-1 RBAC via <code>role</code> enum — evolvable to roles/permissions tables later.</p>
+            
+          <section class="db-table-block" id="users">
+            <h3><code>users</code></h3>
+            
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>UUID</td><td>PK, DEFAULT gen_random_uuid()</td><td>UUID</td></tr>
+<tr><td><code>email</code></td><td>VARCHAR(255)</td><td>UNIQUE</td><td>—</td></tr>
+<tr><td><code>name</code></td><td>VARCHAR(200)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>password_hash</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>—</td></tr>
+<tr><td><code>role</code></td><td>UserRole</td><td>DEFAULT recruiter</td><td>enum: <code>admin</code>, <code>recruiter</code>, <code>hiring_manager</code></td></tr>
+<tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT true</td><td>—</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+          </section>
+
+          <section class="ia-section" id="bookmarks">
+            <h2>Bookmarks</h2>
+            
+          <section class="db-table-block" id="bookmarks">
+            <h3><code>bookmarks</code></h3>
+            <p class="db-table-meta"><strong>Composite PK:</strong> @@id([candidateAccountId, jobPostingId])</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table db-schema-table">
+                <thead><tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr></thead>
+                <tbody><tr><td><code>candidate_account_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>job_posting_id</code></td><td>UUID</td><td>NOT NULL</td><td>UUID</td></tr>
+<tr><td><code>created_at</code></td><td>TIMESTAMPTZ(6)</td><td>DEFAULT NOW()</td><td>—</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+          </section>
+
+          <section class="ia-section" id="enums">
+            <h2>Prisma enums</h2>
+            <p>PostgreSQL enum types after migrate. JSON API strings match these values.</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Enum</th><th>Values</th></tr></thead>
+                <tbody><tr><td><code>JobPostingStatus</code></td><td><code>draft</code>, <code>published</code>, <code>closed</code>, <code>archived</code></td></tr>
+<tr><td><code>SalaryPeriod</code></td><td><code>annual</code>, <code>monthly</code></td></tr>
+<tr><td><code>QualificationType</code></td><td><code>required</code>, <code>preferred</code></td></tr>
+<tr><td><code>ApplicationStatus</code></td><td><code>submitted</code>, <code>under_review</code>, <code>shortlisted</code>, <code>interview</code>, <code>interview_scheduled</code>, <code>interview_completed</code>, <code>offered</code>, <code>hired</code>, <code>rejected</code>, <code>withdrawn</code></td></tr>
+<tr><td><code>CandidateCoverLetterMode</code></td><td><code>file</code>, <code>text</code></td></tr>
+<tr><td><code>UserRole</code></td><td><code>admin</code>, <code>recruiter</code>, <code>hiring_manager</code></td></tr>
+<tr><td><code>CandidateAccountStatus</code></td><td><code>pending_verification</code>, <code>active</code>, <code>locked</code>, <code>disabled</code></td></tr>
+<tr><td><code>CandidateAuthProviderType</code></td><td><code>google</code>, <code>linkedin</code></td></tr>
+<tr><td><code>CandidateCvParseStatus</code></td><td><code>draft</code>, <code>confirmed</code></td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="ia-section" id="indexes">
+            <h2>Indexes &amp; constraints</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Topic</th><th>Definition</th></tr></thead>
+                <tbody>
+                  <tr><td><code>idx_applications_unique</code></td><td>UNIQUE (<code>candidate_account_id</code>, <code>job_posting_id</code>)</td></tr>
+                  <tr><td><code>idx_applications_status</code></td><td>INDEX on <code>applications.status</code></td></tr>
+                  <tr><td><code>idx_applications_job</code></td><td>INDEX (<code>job_posting_id</code>, <code>applied_at DESC</code>)</td></tr>
+                  <tr><td><code>idx_application_status_events_app_time</code></td><td>INDEX (<code>application_id</code>, <code>changed_at DESC</code>)</td></tr>
+                  <tr><td><code>application_interviews.application_id</code></td><td>UNIQUE — at most one interview per application</td></tr>
+                  <tr><td><code>idx_postings_status_posted</code></td><td>INDEX (<code>status</code>, <code>posted_at DESC</code>)</td></tr>
+                  <tr><td><code>idx_postings_fulltext</code></td><td>GIN on title + summary + overview — add via raw SQL migration (not in Prisma file)</td></tr>
+                  <tr><td><code>idx_postings_remote</code> / <code>idx_postings_featured</code></td><td>Partial indexes in §5 DDL; Prisma emits full B-tree unless raw SQL added</td></tr>
+                  <tr><td><code>chk_salary</code></td><td><code>salary_min &lt;= salary_max</code> — enforce in app or raw migration</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="ia-section" id="ui-mapping">
+            <h2>UI → schema mapping</h2>
+            <h3>Job listing card</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>UI element</th><th>Source</th></tr></thead>
+                <tbody>
+                  <tr><td>Title, summary, posted date, featured</td><td><code>job_postings</code></td></tr>
+                  <tr><td>Department, location, employment, experience</td><td>Lookup joins</td></tr>
+                  <tr><td>Tags (badges)</td><td><code>tags</code> via <code>job_posting_tags</code></td></tr>
+                  <tr><td>"New" badge</td><td><code>posted_at &gt; NOW() - 7 days</code></td></tr>
+                  <tr><td>Bookmark state</td><td><code>bookmarks</code> (if authenticated)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <h3>Job detail page</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>UI section</th><th>Source</th></tr></thead>
+                <tbody>
+                  <tr><td>Poster banner</td><td><code>banner_image_url</code>, <code>banner_image_alt</code></td></tr>
+                  <tr><td>Overview / role summary</td><td><code>overview</code>, <code>role_summary</code></td></tr>
+                  <tr><td>Responsibilities</td><td><code>job_responsibilities</code> ordered</td></tr>
+                  <tr><td>Qualifications</td><td><code>job_qualifications</code> by <code>type</code></td></tr>
+                  <tr><td>Skills, benefits</td><td>Junction tables</td></tr>
+                  <tr><td>Apply Now</td><td>Creates <code>applications</code> row</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <h3>Backoffice application detail</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>UI section</th><th>Source</th></tr></thead>
+                <tbody>
+                  <tr><td>Applicant summary</td><td><code>candidate_profiles</code> + account email</td></tr>
+                  <tr><td>Screening answers</td><td><code>applications</code> screening columns</td></tr>
+                  <tr><td>Documents</td><td><code>resume_url</code>, cover letter; CV library tables</td></tr>
+                  <tr><td>Status history</td><td><code>application_status_events</code></td></tr>
+                  <tr><td>Interview</td><td><code>application_interviews</code></td></tr>
+                  <tr><td>AI relevance</td><td><code>relevance_score</code>, <code>relevance_breakdown</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="ia-section" id="queries">
+            <h2>Sample queries</h2>
+            <h3>Published job listing</h3>
+            <pre class="ia-shell db-sql">SELECT jp.id, jp.title, jp.slug, jp.summary, jp.posted_at, jp.is_featured,
+       d.name AS department_name,
+       l.city || ', ' || l.country AS location_display,
+       et.name AS employment_type, el.name AS experience_level
+FROM job_postings jp
+JOIN departments d ON d.id = jp.department_id
+JOIN locations l ON l.id = jp.location_id
+JOIN employment_types et ON et.id = jp.employment_type_id
+JOIN experience_levels el ON el.id = jp.experience_level_id
+WHERE jp.status = 'published'
+  AND (jp.expires_at IS NULL OR jp.expires_at &gt; NOW())
+ORDER BY jp.is_featured DESC, jp.posted_at DESC
+LIMIT 15;</pre>
+            <h3>Application packet (staff)</h3>
+            <pre class="ia-shell db-sql">SELECT a.*, cp.first_name, cp.last_name, ca.email,
+       jp.title AS job_title
+FROM applications a
+JOIN candidate_accounts ca ON ca.id = a.candidate_account_id
+JOIN candidate_profiles cp ON cp.candidate_account_id = ca.id
+JOIN job_postings jp ON jp.id = a.job_posting_id
+WHERE a.id = :application_id;</pre>
+          </section>
+
+          <section class="ia-section" id="prisma">
+            <h2>Prisma notes</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Topic</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>Canonical file</td><td><code>packages/db/prisma/schema.prisma</code></td></tr>
+                  <tr><td>Migrate / generate</td><td><code>npm run db:migrate</code>, <code>npm run db:generate</code></td></tr>
+                  <tr><td>§5 hand-written DDL</td><td>Reference draft only — may show legacy <code>candidates</code>; prefer Prisma</td></tr>
+                  <tr><td>GIN full-text</td><td><code>idx_postings_fulltext</code> — raw SQL migration</td></tr>
+                  <tr><td>Partial indexes</td><td>Remote/featured — raw SQL for <code>WHERE</code> parity</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="ia-section" id="decisions">
+            <h2>Design decisions</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Decision</th><th>Rationale</th></tr></thead>
+                <tbody>
+                  <tr><td>UUID for jobs, candidates, applications</td><td>Non-guessable IDs; safe for URLs</td></tr>
+                  <tr><td>SERIAL for lookups</td><td>Small cardinality; efficient joins</td></tr>
+                  <tr><td><code>companies</code> lookup</td><td>Employer branding on postings</td></tr>
+                  <tr><td>Split candidate auth/profile</td><td>OTP, lockout, OAuth without overloading profile</td></tr>
+                  <tr><td>CV parse draft → confirmed</td><td>Human review before profile overwrite</td></tr>
+                  <tr><td>Junction tables</td><td>Normalised M:N for skills, benefits, tags</td></tr>
+                  <tr><td>Status event audit log</td><td>Governed transitions, undo, compliance</td></tr>
+                  <tr><td>One interview per application</td><td>Schedule-before-status business rule</td></tr>
+                  <tr><td><code>users.role</code> RBAC</td><td>Phase-1 simplicity; evolvable later</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="ia-section" id="related">
+            <h2>Related documentation</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Document</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><a href="../../docs/specification/db-schema.md">db-schema.md</a></td><td>Full spec with §5 DDL reference</td></tr>
+                  <tr><td><a href="../../docs/specification/er-diagram.html">er-diagram.html</a></td><td>Interactive pannable ER diagram</td></tr>
+                  <tr><td><a href="product-requirements.html">Product requirements</a></td><td>Feature scope aligned to schema</td></tr>
+                  <tr><td><a href="api-dictionary.html">API dictionary</a></td><td>HTTP endpoints reading/writing these tables</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="ia-note"><em>Generated from schema.prisma · db-schema v1.9 · 19 May 2026</em></p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">Database schema · v1.9 · 29 tables</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="api-dictionary.html">API dictionary</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

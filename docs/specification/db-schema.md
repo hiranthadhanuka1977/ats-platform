@@ -1,11 +1,16 @@
-# Database Schema — Candidate Portal
+# Database Schema — TalentHub ATS Platform
 
-**Version:** 1.8  
+**Version:** 1.9  
 **Date:** 19 May 2026  
+**Status:** As-built — aligned with [`schema.prisma`](../../packages/db/prisma/schema.prisma) in `@ats-platform/db`
 
+**v1.9:** Full platform alignment — `companies` lookup; `job_postings.company_id` and `salary_period`; CV import tables (`candidate_cv_parses`, `candidate_cv_educations`, `candidate_cv_experiences`); `candidate_cover_letters`; extended `candidate_profiles`; `application_interviews.scheduling_time_zone`; updated ER quick reference and Mermaid diagram (removed legacy monolithic `candidates` table).  
 **v1.8:** Application pipeline — full `ApplicationStatus` enum, application screening/relevance columns, `application_status_events`, `application_interviews` (one interview per application).
-**Derived From:** `docs/markup/candidate-portal/job-listing.html`, `job-detail.html`, `Job_Posting_Templates.md`  
-**Database:** PostgreSQL (compatible with MySQL / SQL Server with minor adjustments)
+
+**Canonical source of truth:** [`packages/db/prisma/schema.prisma`](../../packages/db/prisma/schema.prisma). This document is the human-readable companion. Hand-written SQL in §5 is a **reference draft** — see §5.1 for differences.
+
+**Derived from:** Static markup (`docs/markup/candidate-portal/`), [`PRD.md`](PRD.md), and live monorepo implementation.  
+**Database:** PostgreSQL (Prisma migrations)
 
 **v1.7:** Updated candidate domain to the split-account model used in code: `candidate_accounts`, `candidate_profiles`, `candidate_auth_providers`, `candidate_sessions`, `candidate_verification_tokens`, and `candidate_password_reset_tokens`.
 
@@ -30,34 +35,59 @@
 ### Quick Reference
 
 ```
-departments ─────┐
-                  ├──▶ job_postings ◀── locations
-employment_types ─┘         │
-                            ├──▶ job_responsibilities
-                            ├──▶ job_qualifications
+companies ────────┐
+departments ──────┤
+locations ────────├──▶ job_postings
+employment_types ─┤         │
+experience_levels ┘         ├──▶ job_responsibilities / job_qualifications
                             ├──▶ job_posting_skills ──▶ skills
                             ├──▶ job_posting_benefits ──▶ benefits
                             ├──▶ job_posting_tags ──▶ tags
                             ├──▶ applications ◀── candidate_accounts
                             └──▶ bookmarks ◀── candidate_accounts
+
+candidate_accounts ──▶ candidate_profiles
+                   ├──▶ candidate_auth_providers / sessions / tokens
+                   ├──▶ candidate_cv_parses ──▶ cv educations & experience
+                   ├──▶ candidate_cover_letters
+                   └──▶ applications ──▶ application_status_events
+                                      └──▶ application_interviews (1:1)
+
+users ──▶ job_postings (created_by)
+      └──▶ application_status_events / application_interviews (staff actions)
 ```
 
 *Job detail poster:* `job_postings.banner_image_url` and `banner_image_alt` power the horizontal image banner above “Job Overview” (see `job-detail.html` `.image-banner`).
 
+### Model inventory (Prisma)
+
+| Domain | Tables / models |
+|--------|-------------------|
+| Lookups | `companies`, `departments`, `locations`, `employment_types`, `experience_levels`, `skills`, `benefits`, `tags` |
+| Staff | `users` |
+| Jobs | `job_postings`, `job_responsibilities`, `job_qualifications`, `job_posting_skills`, `job_posting_benefits`, `job_posting_tags` |
+| Candidates | `candidate_accounts`, `candidate_profiles`, `candidate_auth_providers`, `candidate_sessions`, `candidate_verification_tokens`, `candidate_password_reset_tokens`, `candidate_cv_parses`, `candidate_cv_educations`, `candidate_cv_experiences`, `candidate_cover_letters` |
+| Applications | `applications`, `application_status_events`, `application_interviews` |
+| Engagement | `bookmarks` |
+
 ### ER Diagram (Mermaid)
 
-The following diagram is a high-level reference. For candidate-domain naming, treat §3 and [`schema.prisma`](../../packages/db/prisma/schema.prisma) as the source of truth (`candidate_accounts` split model).
+The following diagram is a high-level reference. For naming and columns, treat §3 and [`schema.prisma`](../../packages/db/prisma/schema.prisma) as source of truth (`candidate_accounts` split model — **not** the legacy monolithic `candidates` table in §5 DDL).
 
 ```mermaid
 erDiagram
+
+    companies {
+        SERIAL id PK
+        VARCHAR name
+        VARCHAR logo_url
+        BOOLEAN is_active
+    }
 
     departments {
         SERIAL id PK
         VARCHAR name
         VARCHAR slug
-        BOOLEAN is_active
-        SMALLINT sort_order
-        TIMESTAMPTZ created_at
     }
 
     locations {
@@ -65,178 +95,104 @@ erDiagram
         VARCHAR city
         VARCHAR country
         VARCHAR slug
-        BOOLEAN is_active
-        SMALLINT sort_order
-        TIMESTAMPTZ created_at
-    }
-
-    employment_types {
-        SERIAL id PK
-        VARCHAR name
-        VARCHAR slug
-        SMALLINT sort_order
-    }
-
-    experience_levels {
-        SERIAL id PK
-        VARCHAR name
-        VARCHAR slug
-        SMALLINT min_years
-        SMALLINT sort_order
-    }
-
-    skills {
-        SERIAL id PK
-        VARCHAR name
-        TIMESTAMPTZ created_at
-    }
-
-    benefits {
-        SERIAL id PK
-        VARCHAR description
-        SMALLINT sort_order
-    }
-
-    tags {
-        SERIAL id PK
-        VARCHAR name
-        VARCHAR variant
-        SMALLINT sort_order
-    }
-
-    users {
-        UUID id PK
-        VARCHAR email
-        VARCHAR name
-        VARCHAR password_hash
-        VARCHAR role
-        BOOLEAN is_active
-        TIMESTAMPTZ created_at
     }
 
     job_postings {
         UUID id PK
         VARCHAR title
         VARCHAR slug
+        INT company_id FK
         INT department_id FK
         INT location_id FK
-        INT employment_type_id FK
-        INT experience_level_id FK
-        VARCHAR summary
-        TEXT overview
-        TEXT role_summary
-        TEXT application_info
-        DECIMAL salary_min
-        DECIMAL salary_max
-        CHAR salary_currency
-        BOOLEAN is_salary_visible
-        BOOLEAN is_remote
-        BOOLEAN is_featured
         VARCHAR status
         TIMESTAMPTZ posted_at
-        TIMESTAMPTZ expires_at
-        TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
-        UUID created_by FK
         VARCHAR banner_image_url
-        VARCHAR banner_image_alt
     }
 
-    job_responsibilities {
-        SERIAL id PK
-        UUID job_posting_id FK
-        TEXT description
-        SMALLINT sort_order
-    }
-
-    job_qualifications {
-        SERIAL id PK
-        UUID job_posting_id FK
-        TEXT description
-        VARCHAR type
-        SMALLINT sort_order
-    }
-
-    job_posting_skills {
-        UUID job_posting_id PK
-        INT skill_id PK
-        SMALLINT sort_order
-    }
-
-    job_posting_benefits {
-        UUID job_posting_id PK
-        INT benefit_id PK
-        SMALLINT sort_order
-    }
-
-    job_posting_tags {
-        UUID job_posting_id PK
-        INT tag_id PK
-        SMALLINT sort_order
-    }
-
-    candidates {
+    users {
         UUID id PK
         VARCHAR email
-        VARCHAR first_name
-        VARCHAR last_name
-        VARCHAR password_hash
-        VARCHAR auth_provider
-        VARCHAR auth_provider_id
-        VARCHAR avatar_url
-        VARCHAR phone
-        VARCHAR resume_url
-        BOOLEAN is_active
-        TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
+        VARCHAR name
+        VARCHAR role
+    }
+
+    candidate_accounts {
+        UUID id PK
+        VARCHAR email_normalized
+        VARCHAR status
         TIMESTAMPTZ last_login_at
     }
 
-    bookmarks {
-        UUID candidate_id PK
-        UUID job_posting_id PK
-        TIMESTAMPTZ created_at
+    candidate_profiles {
+        UUID candidate_account_id PK
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR current_title
     }
 
     applications {
         UUID id PK
-        UUID candidate_id FK
+        UUID candidate_account_id FK
         UUID job_posting_id FK
         VARCHAR status
-        TEXT cover_letter
-        VARCHAR resume_url
+        SMALLINT relevance_score
         TIMESTAMPTZ applied_at
-        TIMESTAMPTZ updated_at
     }
 
+    application_status_events {
+        UUID id PK
+        UUID application_id FK
+        VARCHAR to_status
+        TIMESTAMPTZ changed_at
+    }
+
+    application_interviews {
+        UUID id PK
+        UUID application_id FK
+        TIMESTAMPTZ starts_at
+        TIMESTAMPTZ ends_at
+    }
+
+    candidate_cv_parses {
+        UUID id PK
+        UUID candidate_account_id FK
+        VARCHAR stored_path
+        VARCHAR status
+    }
+
+    companies ||--o{ job_postings : "employer"
     departments ||--o{ job_postings : "categorises"
     locations ||--o{ job_postings : "locates"
-    employment_types ||--o{ job_postings : "classifies"
-    experience_levels ||--o{ job_postings : "levels"
     users ||--o{ job_postings : "creates"
 
-    job_postings ||--o{ job_responsibilities : "lists"
-    job_postings ||--o{ job_qualifications : "requires"
-
-    job_postings ||--o{ job_posting_skills : "needs"
-    skills ||--o{ job_posting_skills : "applied_to"
-
-    job_postings ||--o{ job_posting_benefits : "offers"
-    benefits ||--o{ job_posting_benefits : "included_in"
-
-    job_postings ||--o{ job_posting_tags : "tagged_with"
-    tags ||--o{ job_posting_tags : "labels"
-
-    job_postings ||--o{ bookmarks : "saved_as"
-    candidates ||--o{ bookmarks : "saves"
-
     job_postings ||--o{ applications : "receives"
-    candidates ||--o{ applications : "submits"
+    candidate_accounts ||--o{ applications : "submits"
+    candidate_accounts ||--|| candidate_profiles : "has"
+    candidate_accounts ||--o{ candidate_cv_parses : "uploads"
+
+    applications ||--o{ application_status_events : "audit"
+    applications ||--o| application_interviews : "schedules"
 ```
 
 ---
 
 ## 1. Lookup / Reference Tables
+
+### 1.0 `companies`
+
+Employer branding on job postings (backoffice Administration CRUD).
+
+| Column | Type | Constraints | Example |
+|--------|------|-------------|---------|
+| `id` | `SERIAL` | PK | 1 |
+| `name` | `VARCHAR(200)` | NOT NULL, UNIQUE | IdeaHub |
+| `logo_url` | `VARCHAR(500)` | NULL | CDN URL |
+| `website_url` | `VARCHAR(500)` | NULL | https://example.com |
+| `is_active` | `BOOLEAN` | DEFAULT TRUE | true |
+| `sort_order` | `SMALLINT` | DEFAULT 0 | 1 |
+| `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() | |
+
+---
 
 ### 1.1 `departments`
 
@@ -354,6 +310,7 @@ The central table storing each job opening.
 | `id` | `UUID` | PK, DEFAULT gen_random_uuid() | a1b2c3d4-... |
 | `title` | `VARCHAR(200)` | NOT NULL | Senior Business Analyst |
 | `slug` | `VARCHAR(220)` | NOT NULL, UNIQUE | senior-business-analyst |
+| `company_id` | `INT` | FK → companies.id, NOT NULL | 1 |
 | `department_id` | `INT` | FK → departments.id, NOT NULL | 2 |
 | `location_id` | `INT` | FK → locations.id, NOT NULL | 1 |
 | `employment_type_id` | `INT` | FK → employment_types.id, NOT NULL | 1 |
@@ -365,6 +322,7 @@ The central table storing each job opening.
 | `salary_min` | `DECIMAL(12,2)` | NULL | 80000.00 |
 | `salary_max` | `DECIMAL(12,2)` | NULL | 120000.00 |
 | `salary_currency` | `CHAR(3)` | NULL | USD |
+| `salary_period` | `SalaryPeriod` enum (Prisma) | DEFAULT `annual` | annual, monthly |
 | `is_salary_visible` | `BOOLEAN` | DEFAULT FALSE | false |
 | `is_remote` | `BOOLEAN` | DEFAULT FALSE | false |
 | `is_featured` | `BOOLEAN` | DEFAULT FALSE | true |
@@ -504,6 +462,9 @@ Candidate profile data separated from auth identity (1:1 with `candidate_account
 | `avatar_url` | `VARCHAR(500)` | NULL |
 | `phone` | `VARCHAR(30)` | NULL |
 | `resume_url` | `VARCHAR(500)` | NULL |
+| `location` | `VARCHAR(200)` | NULL |
+| `current_title` | `VARCHAR(200)` | NULL |
+| `time_zone` | `VARCHAR(64)` | NULL | IANA e.g. `Asia/Colombo` |
 | `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
 | `updated_at` | `TIMESTAMPTZ` | DEFAULT NOW() |
 
@@ -645,6 +606,7 @@ At most **one** scheduled interview per application (`application_id` UNIQUE).
 | `application_id` | `UUID` | FK → applications.id, UNIQUE | One row per application |
 | `starts_at` | `TIMESTAMPTZ` | NOT NULL | |
 | `ends_at` | `TIMESTAMPTZ` | NOT NULL | Must be after `starts_at` |
+| `scheduling_time_zone` | `VARCHAR(64)` | DEFAULT `UTC` | IANA zone for display |
 | `notify_candidate_email` | `BOOLEAN` | DEFAULT true | |
 | `notification_sent_at` | `TIMESTAMPTZ` | NULL | Set when notification queued |
 | `scheduled_by_staff_id` | `UUID` | FK → users.id, NULL | |
@@ -656,6 +618,48 @@ CREATE INDEX idx_application_interviews_starts_at ON application_interviews (sta
 ```
 
 API: [api/backoffice-applications.md](api/backoffice-applications.md). Transition rules require an interview row before `interview_scheduled` via PATCH when no schedule POST has run.
+
+---
+
+### 3.11 `candidate_cv_parses`
+
+CV upload and parse pipeline (My Applications).
+
+| Column | Type | Constraints | Notes |
+|--------|------|-------------|-------|
+| `id` | `UUID` | PK | |
+| `candidate_account_id` | `UUID` | FK → candidate_accounts.id | |
+| `original_filename` | `VARCHAR(500)` | NOT NULL | |
+| `stored_path` | `VARCHAR(1000)` | NOT NULL | Under `storage/cvs/{accountId}/` |
+| `mime_type` | `VARCHAR(100)` | NOT NULL | PDF or Word |
+| `extracted_text` | `TEXT` | NULL | After text extraction |
+| `parsed_json` | `JSONB` | NULL | Structured parse draft |
+| `status` | `CandidateCvParseStatus` | DEFAULT `draft` | `draft`, `confirmed` |
+| `created_at` / `updated_at` | `TIMESTAMPTZ` | | |
+
+### 3.12 `candidate_cv_educations` / `candidate_cv_experiences`
+
+Structured rows saved from confirmed CV parse or screenshot import.
+
+| Table | Key columns |
+|-------|-------------|
+| `candidate_cv_educations` | `qualification`, `institution`, `start_date`, `end_date` |
+| `candidate_cv_experiences` | `company`, `role`, `start_date`, `end_date` |
+
+Both FK → `candidate_accounts.id` ON DELETE CASCADE.
+
+### 3.13 `candidate_cover_letters`
+
+Cover letter library (file or text mode) for apply flow.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | `UUID` | PK |
+| `candidate_account_id` | `UUID` | FK |
+| `mode` | `CandidateCoverLetterMode` | `file` or `text` |
+| `body` | `TEXT` | Text mode content |
+| `file_url` / `file_name` | `VARCHAR` | File mode reference |
+| `created_at` | `TIMESTAMPTZ` | |
 
 ---
 
@@ -897,11 +901,14 @@ For current implementation, [`schema.prisma`](../../packages/db/prisma/schema.pr
 
 | Topic | §5 DDL | `schema.prisma` |
 |-------|--------|-----------------|
-| **Constrained columns** | `VARCHAR` + `CHECK` | Native Prisma / PostgreSQL **ENUM** types (`JobPostingStatus`, `UserRole`, `QualificationType`, `ApplicationStatus`) |
-| **`idx_postings_remote` / `idx_postings_featured`** | Partial indexes (`WHERE …`) | Prisma declares **non-partial** indexes on `is_remote` / `is_featured` (default names). Drop/replace with §5 definitions in a raw migration if you need exact parity. |
-| **`idx_candidates_provider`** | Partial index | Prisma declares a **full** composite index on `(auth_provider, auth_provider_id)`; replace with partial SQL if required. |
-| **`idx_postings_fulltext`** | GIN | Not in Prisma file — add via raw SQL. |
-| **`chk_salary`** | `salary_min <= salary_max` | Enforce in application code or raw migration. |
+| **Legacy `candidates` table** | Still shown in §5 SQL below | **Removed** — use `candidate_accounts` + `candidate_profiles` (since v1.7) |
+| **`companies`** | Not in §5 SQL | Implemented — required FK on `job_postings` |
+| **CV / cover letter tables** | Not in §5 SQL | `candidate_cv_parses`, educations, experiences, `candidate_cover_letters` |
+| **Constrained columns** | `VARCHAR` + `CHECK` | Native Prisma / PostgreSQL **ENUM** types |
+| **`idx_postings_remote` / `idx_postings_featured`** | Partial indexes (`WHERE …`) | Prisma declares **non-partial** indexes — add raw migration for parity |
+| **`idx_candidates_provider`** | Partial index on legacy table | N/A — use `candidate_auth_providers` composite unique |
+| **`idx_postings_fulltext`** | GIN | Not in Prisma file — add via raw SQL |
+| **`chk_salary`** | `salary_min <= salary_max` | Enforce in application code or raw migration |
 
 ---
 
@@ -975,7 +982,7 @@ SELECT
     CASE WHEN jp.posted_at >= NOW() - INTERVAL '7 days' THEN TRUE ELSE FALSE END AS is_new,
     EXISTS (
         SELECT 1 FROM bookmarks b
-        WHERE b.job_posting_id = jp.id AND b.candidate_id = :candidate_id
+        WHERE b.job_posting_id = jp.id AND b.candidate_account_id = :candidate_account_id
     ) AS is_bookmarked,
     ARRAY(
         SELECT jsonb_build_object('name', t.name, 'variant', t.variant)
@@ -1035,6 +1042,10 @@ Render rule: if `banner_image_url` IS NULL, do not output the `.image-banner` se
 |----------|-----------|
 | UUID for `job_postings`, `candidate_accounts`, `applications` | Safe for distributed systems, non-guessable in URLs |
 | SERIAL for lookup tables | Small cardinality, efficient joins and indexing |
+| `companies` lookup | Employer branding on postings; Administration CRUD |
+| Separate candidate auth/profile tables | Email login, OTP, lockout, OAuth links without overloading profile rows |
+| CV parse + education/experience tables | File import pipeline with draft → confirmed lifecycle |
+| `candidate_cover_letters` | Reusable file or text cover letters on apply |
 | Separate `job_responsibilities` / `job_qualifications` tables | Ordered lists that vary per posting; avoids JSON blobs |
 | Junction tables for skills, benefits, tags | Normalised many-to-many; enables filtering and reuse |
 | `slug` on postings | SEO-friendly URLs (`/jobs/senior-business-analyst`) |
@@ -1043,9 +1054,10 @@ Render rule: if `banner_image_url` IS NULL, do not output the `.image-banner` se
 | `is_featured` flag | Drives homepage/listing featured badge |
 | `posted_at` vs `created_at` | Decouples publication date from record creation (drafts) |
 | Full-text index (GIN) | Powers the hero search and filter keyword search |
-| Separate candidate auth/provider tables | Supports email login, account lock/verification, and OAuth links without overloading profile rows |
 | `banner_image_url` + `banner_image_alt` on postings | Maps to the job detail poster strip (`.image-banner`); alt supports WCAG-compliant non-decorative imagery |
 | `users.role` | Phase-1 RBAC; DDL uses `VARCHAR(30)`; Prisma uses `UserRole` enum — see §5.1 |
+| `application_status_events` | Audit trail for pipeline moves; supports undo and compliance |
+| One `application_interviews` row per application | Enforces schedule-before-status business rule |
 
 ---
 
@@ -1065,6 +1077,19 @@ The SQL DDL in §5 is **Prisma-ready**: [`schema.prisma`](../../packages/db/pris
 | **GIN full-text index** | `idx_postings_fulltext` | Not expressible in `schema.prisma`; add via `prisma migrate` SQL or `prisma db execute` |
 | **Partial indexes** | `WHERE is_remote`, `WHERE is_featured` | Prisma emits **full** B-tree indexes (no `WHERE`); see §5.1. Same logical columns; different physical index definitions unless you add raw SQL. |
 
+### Prisma enums (API string values)
+
+| Enum | Values |
+|------|--------|
+| `JobPostingStatus` | `draft`, `published`, `closed`, `archived` |
+| `ApplicationStatus` | `submitted`, `under_review`, `shortlisted`, `interview`, `interview_scheduled`, `interview_completed`, `offered`, `hired`, `rejected`, `withdrawn` |
+| `UserRole` | `admin`, `recruiter`, `hiring_manager` |
+| `CandidateAccountStatus` | `pending_verification`, `active`, `locked`, `disabled` |
+| `CandidateCvParseStatus` | `draft`, `confirmed` |
+| `CandidateCoverLetterMode` | `file`, `text` |
+| `SalaryPeriod` | `annual`, `monthly` |
+| `QualificationType` | `required`, `preferred` |
+
 ### Commands (from repo root)
 
 Validated with **Prisma 6** (Prisma 7 moves `DATABASE_URL` to `prisma.config.ts` — see [Prisma Config](https://www.prisma.io/docs/orm/reference/prisma-config-reference)):
@@ -1082,4 +1107,4 @@ The **`@ats-platform/db`** workspace package sets `"prisma": { "schema": "prisma
 
 ## 10. HTTP API (REST dictionary)
 
-REST-style endpoints are documented separately: **[API_Dictionary.md](API_Dictionary.md)** (index) and **[api/](api/)** — candidate auth and jobs, [api/my-applications-routes.md](api/my-applications-routes.md), and staff application pipeline [api/backoffice-applications.md](api/backoffice-applications.md).
+REST-style endpoints are documented separately: **[API_Dictionary.md](API_Dictionary.md)** (index), portfolio **[api-dictionary.html](../../portfolio/case-study/api-dictionary.html)**, and **[api/](api/)** — candidate auth, [api/my-applications-routes.md](api/my-applications-routes.md), and staff pipeline [api/backoffice-applications.md](api/backoffice-applications.md).

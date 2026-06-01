@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User stories (TH codes) — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class=" active">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>User stories (TH codes)</span></nav>
+      <article class="prose"><h1>TalentHub — Feature Backlog: User Stories</h1>
+<p><strong>Companion to:</strong> <a href="./FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a><br><strong>Version:</strong> 2.0 · 21 May 2026</p>
+<p>Plain-language <strong>user stories</strong> for every <strong>TH-</strong> feature in the backlog. Use for product planning, case studies, stakeholder reviews, and sprint backlogs. For technical implementation detail, see <a href="./FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a> and <a href="./PRD.md">PRD.md</a>.</p>
+<hr>
+<h2>How to use</h2>
+<ol>
+<li>Find a feature code in <a href="./FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a> (e.g. <strong>TH-043</strong>).</li>
+<li>Read the <strong>user story</strong> and <strong>acceptance criteria</strong> below that code.</li>
+<li>For <strong>Done</strong> items, stories describe expected behaviour today — use for QA checklists or regression testing in plain language.</li>
+<li>For <strong>Partial</strong> or <strong>Planned</strong> items, stories define what remains from the user&#39;s perspective.</li>
+<li>For <strong>Out of scope</strong> items, stories explain why the capability is deferred.</li>
+</ol>
+<h3>Status legend</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Story intent</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Done</strong></td>
+<td>Describes behaviour candidates and recruiters should experience today</td>
+</tr>
+<tr>
+<td><strong>Partial</strong></td>
+<td>Core journey exists; acceptance criteria include the known gap</td>
+</tr>
+<tr>
+<td><strong>Planned</strong></td>
+<td>Future capability — not yet fully delivered</td>
+</tr>
+<tr>
+<td><strong>Out of scope</strong></td>
+<td>Explicitly deferred for the current SME product phase</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>1. Platform &amp; infrastructure</h2>
+<h4>TH-001 — Unified product platform</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Platform</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>product team member</strong>, I want <strong>all parts of TalentHub (job site, candidate workspace, staff tools, and shared services) to run from one coordinated codebase</strong>, so that <strong>we can develop, test, and release features consistently without duplicate setup</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>All four product areas start together for local development</li>
+<li>Shared building blocks are reused across apps</li>
+<li>There is only one place to manage database structure</li>
+</ul>
+<h4>TH-002 — Single source of truth for hiring data</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Platform</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>product team member</strong>, I want <strong>one shared database schema for all hiring data</strong>, so that <strong>candidates, jobs, and applications stay in sync everywhere</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Job and application data is consistent across all apps</li>
+<li>Database changes are applied in one place</li>
+</ul>
+<h4>TH-003 — Secure document storage (local)</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Platform</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>candidate</strong>, I want <strong>my CV and cover letters stored safely when I upload them</strong>, so that <strong>recruiters can review my documents and I can reuse them on future applications</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Uploaded CVs and cover letters are saved and retrievable</li>
+<li>Staff can download documents they are authorised to view</li>
+<li>Unsupported or oversized files are rejected with a clear message</li>
+</ul>
+<h4>TH-004 — Consistent data validation</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Platform</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>product team member</strong>, I want <strong>the same rules applied when forms are submitted across the product</strong>, so that <strong>users see predictable errors and data quality stays high</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Application status changes, interview scheduling, and sign-up follow shared validation rules</li>
+<li>Invalid submissions are blocked before they reach the database</li>
+</ul>
+<h4>TH-005 — Clear application status rules</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Platform</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>only valid status moves allowed when I progress a candidate</strong>, so that <strong>the hiring pipeline stays trustworthy and auditable</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Illegal status jumps are prevented</li>
+<li>Staff UI and server agree on the ten statuses and allowed transitions</li>
+</ul>
+<h4>TH-006 — Shared UI building blocks</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Platform</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>candidate and recruiter</strong>, I want <strong>familiar buttons, forms, and patterns across TalentHub apps</strong>, so that <strong>the product feels cohesive and is easier to learn</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Common interface elements are reused where both candidate and staff apps need them</li>
+</ul>
+<h4>TH-007 — Clear setup guide for new developers</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Platform</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>product team member</strong>, I want <strong>accurate documentation for running TalentHub locally</strong>, so that <strong>new contributors can start without guesswork</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Environment variables and startup steps match how the product actually runs</li>
+<li>A new developer can follow the guide end-to-end</li>
+</ul>
+<h4>TH-008 — Cloud file storage for production</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Platform · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>organisation admin</strong>, I want <strong>CVs and attachments stored in cloud storage when we deploy live</strong>, so that <strong>uploads remain reliable as we scale beyond a single server</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Local development still works as today</li>
+<li>Production can use cloud storage without breaking existing file links</li>
+<li>Upload and download behaviour stays the same for users</li>
+</ul>
+<h4>TH-009 — Email delivery for hiring notifications</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Platform · <strong>Priority:</strong> P0</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>candidate and recruiter</strong>, I want <strong>TalentHub to send real emails for verification, status updates, and interviews</strong>, so that <strong>candidates stay informed and recruiters&#39; notify choices actually reach people</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Verification codes can be sent by email in staging/production</li>
+<li>Status and interview notifications send when staff opt in</li>
+<li>If email is unavailable, the app still saves the hiring action and logs the failure</li>
+</ul>
+<h4>TH-010 — Product success metrics</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Platform · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>hiring manager</strong>, I want <strong>insight into how well our hiring funnel performs</strong>, so that <strong>we can improve apply completion, triage speed, and CV parsing success</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Key events (apply completed, application opened by staff) can be measured</li>
+<li>Metrics respect privacy settings and work without third-party tools in dev</li>
+</ul>
+<h4>TH-011 — Multi-company data isolation</h4>
+<p><strong>Status:</strong> Out of scope · <strong>Audience:</strong> Platform</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>enterprise buyer</strong>, I want <strong>strict separation between different companies&#39; data on one platform</strong>, so that <strong>each tenant&#39;s jobs and candidates would never mix</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Not planned for the current SME release — TalentHub targets single-organisation use</li>
+<li>Only reconsider if product scope explicitly expands to multi-tenant</li>
+</ul>
+<h4>TH-012 — Production scaling guidance</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Platform · <strong>Priority:</strong> P3</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>technical stakeholder</strong>, I want <strong>a documented path for scaling TalentHub in production</strong>, so that <strong>we can grow without redesigning from scratch</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Architecture guidance covers hosting, storage, email, and optional job queues</li>
+<li>No forced infrastructure build unless specifically requested</li>
+</ul>
+<h2>2. Candidate portal</h2>
+<h4>TH-020 — Browse open jobs with pages</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to browse published job listings page by page</strong>, so that <strong>I can explore opportunities without seeing draft or internal roles</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Only published jobs appear</li>
+<li>I can move between pages when many jobs exist</li>
+<li>An empty state appears when no jobs match</li>
+</ul>
+<h4>TH-021 — Filter jobs</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to filter jobs by department, location, type, experience, and remote options</strong>, so that <strong>I quickly find roles that fit my situation</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Each filter updates results and can be shared via the URL</li>
+<li>Browser back/forward restores my filter choices</li>
+<li>Filters can be combined</li>
+</ul>
+<h4>TH-022 — Search jobs by keyword</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to search jobs by title or summary keywords</strong>, so that <strong>I find relevant roles without reading every listing</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Search matches title and summary text</li>
+<li>Clearing search shows all jobs again</li>
+<li>Result count updates when search changes</li>
+</ul>
+<h4>TH-023 — Read full job details</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to read the full job description before applying</strong>, so that <strong>I understand responsibilities, requirements, and benefits</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Overview, responsibilities, qualifications, skills, benefits, and tags all display</li>
+<li>Invalid job links show a helpful not-found page</li>
+</ul>
+<h4>TH-024 — See salary when employer allows</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to see salary information only when the employer chose to show it</strong>, so that <strong>I can compare compensation fairly without hidden surprises</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Salary is hidden when the employer turned visibility off</li>
+<li>When visible, salary range displays in a readable format</li>
+</ul>
+<h4>TH-025 — Spot featured jobs</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>featured roles to stand out in the listing</strong>, so that <strong>I notice priority openings the employer wants to highlight</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Featured jobs have distinct visual treatment</li>
+<li>Non-featured jobs look unchanged</li>
+</ul>
+<h4>TH-026 — See job banner image</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>a banner image on job pages when provided</strong>, so that <strong>I get a richer sense of the employer and role</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Image shows with descriptive alt text when provided</li>
+<li>Layout stays stable when no banner exists</li>
+</ul>
+<h4>TH-027 — Apply via My Applications</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>Apply to take me to my candidate workspace to sign in and submit</strong>, so that <strong>I complete applications in one secure place built for that purpose</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Apply does not open a form on the public job site</li>
+<li>I am directed to the candidate workspace to continue</li>
+</ul>
+<h4>TH-028 — Accessible public job site</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker with disabilities</strong>, I want <strong>an accessible layout with skip navigation and clear structure</strong>, so that <strong>I can browse jobs using keyboard and assistive technology</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Skip link jumps to main content</li>
+<li>Header, navigation, and footer are clearly structured</li>
+<li>Legal footer links still need real destinations (see TH-192)</li>
+</ul>
+<h4>TH-029 — Save jobs for later (portal)</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Candidate portal · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to bookmark jobs while browsing</strong>, so that <strong>I can return and apply when I am ready</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Signed-in candidates can save and unsave jobs</li>
+<li>Duplicate saves are prevented</li>
+<li>Saved jobs appear in my candidate workspace</li>
+</ul>
+<h4>TH-030 — Sign in on the public job site</h4>
+<p><strong>Status:</strong> Out of scope · <strong>Audience:</strong> Candidate portal</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>not to manage account and apply on two different sites</strong>, so that <strong>my login and applications stay in one dedicated workspace</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Public job site stays browse-only</li>
+<li>Apply always routes to the candidate workspace (TH-027)</li>
+</ul>
+<h2>3. My Applications</h2>
+<h4>TH-040 — Create a candidate account</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to register with email and password</strong>, so that <strong>I can save my profile and track applications</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Registration creates my account</li>
+<li>Password rules are enforced with clear errors</li>
+</ul>
+<h4>TH-041 — Verify my email</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to confirm my email with a one-time code</strong>, so that <strong>the employer knows my contact details are valid</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I enter a verification code after registering</li>
+<li>I can request a new code if needed</li>
+<li>Unverified accounts cannot apply</li>
+</ul>
+<h4>TH-042 — Stay signed in securely</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to sign in, stay active, and sign out safely</strong>, so that <strong>my account stays protected on shared devices</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I can log in and out</li>
+<li>Long idle periods sign me out automatically</li>
+<li>Protected pages require me to be signed in</li>
+</ul>
+<h4>TH-043 — Reset a forgotten password</h4>
+<p><strong>Status:</strong> Partial · <strong>Audience:</strong> My Applications · <strong>Priority:</strong> P1</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to reset my password if I forget it</strong>, so that <strong>I can regain access without contacting support</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I can request a reset link from a forgot-password page</li>
+<li>I can set a new password from the link</li>
+<li>Success and error messages are easy to understand</li>
+</ul>
+<h4>TH-044 — See my hiring dashboard</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>a dashboard showing my next steps and recent applications</strong>, so that <strong>I know what to do to complete my profile and apply</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>New users see guided onboarding steps</li>
+<li>Returning users see recent application statuses</li>
+</ul>
+<h4>TH-045 — Search jobs in my workspace</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to search open jobs while signed in</strong>, so that <strong>I can apply without leaving my account area</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Only published jobs appear</li>
+<li>I can open job details and start apply from here</li>
+</ul>
+<h4>TH-046 — Apply to a job</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to submit an application with my CV and optional cover letter</strong>, so that <strong>the employer receives a complete application packet</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I must attach a CV to apply</li>
+<li>I can add a cover letter and answer screening questions</li>
+<li>I see confirmation after a successful submit</li>
+<li>I cannot apply twice to the same job</li>
+</ul>
+<h4>TH-047 — Track my application statuses</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to see where each application stands</strong>, so that <strong>I know if I am under review, shortlisted, or rejected</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Statuses use the same words recruiters see</li>
+<li>Applications sort by most recent</li>
+<li>Empty state shows when I have not applied yet</li>
+</ul>
+<h4>TH-048 — Upload my CV</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to upload PDF or Word CVs up to 10 MB</strong>, so that <strong>recruiters receive a professional document</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Supported file types upload successfully</li>
+<li>Oversized or wrong file types are rejected with guidance</li>
+</ul>
+<h4>TH-049 — Auto-fill profile from my CV</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>TalentHub to suggest profile details from my CV</strong>, so that <strong>I spend less time retyping experience and education</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Parsed fields populate my profile when AI is available</li>
+<li>I can review and edit before saving</li>
+<li>If parsing fails, I can still enter details manually</li>
+</ul>
+<h4>TH-050 — Manage multiple CVs</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to keep several CVs and choose a default</strong>, so that <strong>I can tailor documents for different roles</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I can list, download, and delete CVs</li>
+<li>One CV can be marked default for quick apply</li>
+</ul>
+<h4>TH-051 — Manage cover letters</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to save cover letters as files or text</strong>, so that <strong>I reuse strong letters across applications</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I can create, edit, and attach library cover letters when applying</li>
+</ul>
+<h4>TH-052 — Answer employer screening questions</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to answer job-specific questions on the apply form</strong>, so that <strong>recruiters get answers they need before reviewing me</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Required questions block submit until answered</li>
+<li>Staff can see my answers on the application</li>
+</ul>
+<h4>TH-053 — Import profile from a screenshot</h4>
+<p><strong>Status:</strong> Partial · <strong>Audience:</strong> My Applications · <strong>Priority:</strong> P3</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to optionally import profile details from a LinkedIn-style screenshot</strong>, so that <strong>I can speed up profile setup from an existing profile</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I am asked before any data is sent for extraction</li>
+<li>I confirm before changes merge into my profile</li>
+<li>Or the feature remains clearly marked as experimental</li>
+</ul>
+<h4>TH-054 — Save jobs for later (workspace)</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> My Applications · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>a saved jobs list in my dashboard</strong>, so that <strong>I return to interesting roles when I am ready to apply</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I can save and remove bookmarks for published jobs only</li>
+<li>Saved jobs appear in a dedicated section</li>
+</ul>
+<h4>TH-055 — Withdraw my application</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> My Applications · <strong>Priority:</strong> P1</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to withdraw an application I no longer want pursued</strong>, so that <strong>employers know I am no longer interested</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I confirm before withdrawing</li>
+<li>Withdrawn applications move to the employer&#39;s withdrawn list</li>
+<li>I cannot withdraw after being hired</li>
+</ul>
+<h4>TH-056 — Set my time zone</h4>
+<p><strong>Status:</strong> Partial · <strong>Audience:</strong> My Applications · <strong>Priority:</strong> P1</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to set my time zone on my profile</strong>, so that <strong>interview times shown to recruiters match my local time</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I can pick my time zone from a standard list</li>
+<li>Recruiters scheduling interviews see an accurate local preview when set</li>
+</ul>
+<h4>TH-057 — Apply easily on my phone</h4>
+<p><strong>Status:</strong> Partial · <strong>Audience:</strong> My Applications · <strong>Priority:</strong> P1</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker on mobile</strong>, I want <strong>the apply flow to work comfortably on a small screen</strong>, so that <strong>I can apply without pinching, scrolling sideways, or missing buttons</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Apply form is usable at phone widths</li>
+<li>Tap targets are large enough</li>
+<li>File upload works on mobile browsers</li>
+</ul>
+<h4>TH-058 — Receive real verification emails</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> My Applications · <strong>Priority:</strong> P0 · <strong>Depends on:</strong> TH-009</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>to receive my verification code by email in production</strong>, so that <strong>I can verify my account without a developer-only shortcut</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Registration sends a real OTP email when email is configured</li>
+<li>Development workflow remains documented for local testing</li>
+</ul>
+<h2>4. Backoffice — authentication &amp; shell</h2>
+<h4>TH-070 — Staff sign-in</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to sign in to the hiring workspace securely</strong>, so that <strong>only authorised staff access candidate data</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Successful login opens the dashboard</li>
+<li>Sign-out ends my session</li>
+<li>Session cookies are protected from casual script access</li>
+</ul>
+<h4>TH-071 — Role-based access</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>recruiters, hiring managers, and admins to have appropriate access</strong>, so that <strong>sensitive settings are limited to the right people</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>User roles exist and protect admin areas where required</li>
+</ul>
+<h4>TH-072 — Navigate the hiring workspace</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>clear navigation on desktop and mobile</strong>, so that <strong>I reach jobs, applications, candidates, and settings quickly</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Sidebar and mobile menu link to all main areas</li>
+<li>Current page is visually indicated</li>
+</ul>
+<h4>TH-073 — Skip to main content</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter using assistive technology</strong>, I want <strong>a skip link and sensible session behaviour</strong>, so that <strong>I can work efficiently without tabbing through chrome</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Skip link focuses main content</li>
+<li>Session activity follows product idle rules</li>
+</ul>
+<h4>TH-074 — Protected staff pages</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>hiring data hidden until I sign in</strong>, so that <strong>candidate information is not exposed publicly</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Dashboard routes require authentication</li>
+<li>Unauthenticated users are redirected to login</li>
+</ul>
+<h4>TH-075 — Sign in with Google or Microsoft</h4>
+<p><strong>Status:</strong> Out of scope · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>enterprise single sign-on</strong>, so that <strong>I would use my company identity provider</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Not planned for SME MVP — email and password is sufficient</li>
+<li>Only add SSO if product scope changes</li>
+</ul>
+<h2>5. Backoffice — dashboard</h2>
+<h4>TH-080 — See hiring KPIs at a glance</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>hiring manager</strong>, I want <strong>key counts like open jobs and applications on my dashboard</strong>, so that <strong>I understand workload without running reports</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Stats reflect current database counts</li>
+<li>Loading and error states are handled gracefully</li>
+</ul>
+<h4>TH-081 — See pipeline health</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>hiring manager</strong>, I want <strong>a snapshot of how applications are distributed across stages</strong>, so that <strong>I spot bottlenecks early</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Snapshot matches application statuses</li>
+<li>I can jump to applications when offered</li>
+</ul>
+<h4>TH-082 — See recent hiring activity</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>a feed of recent status changes</strong>, so that <strong>I stay aware of team actions without opening every record</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Recent changes show with readable timestamps</li>
+<li>Empty state appears when nothing recent exists</li>
+</ul>
+<h4>TH-083 — See efficiency insight</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>hiring manager</strong>, I want <strong>an efficiency score or summary on the dashboard</strong>, so that <strong>I have a simple signal of how smoothly hiring is running</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Card renders without errors</li>
+<li>Metric meaning is understandable</li>
+</ul>
+<h4>TH-084 — Spot stalled interviews</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to be alerted when interviews sit too long without progress</strong>, so that <strong>candidates are not left waiting</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Insight highlights overdue interview-scheduled applications</li>
+<li>I can navigate to relevant records</li>
+</ul>
+<h2>6. Backoffice — job posting</h2>
+<h4>TH-090 — Browse and search our job postings</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to search and filter our job list</strong>, so that <strong>I find postings to edit or review quickly</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Search by title or summary works</li>
+<li>Draft and published jobs can be filtered</li>
+<li>Pagination handles large lists</li>
+</ul>
+<h4>TH-091 — Create a new job posting</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to create a job through a guided multi-section form</strong>, so that <strong>published roles are complete and consistent</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Required fields are validated before save</li>
+<li>I can save as draft</li>
+</ul>
+<h4>TH-092 — Edit an existing job</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to update a job and all its related sections</strong>, so that <strong>live listings stay accurate</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>All sections load and save together without losing related content</li>
+</ul>
+<h4>TH-093 — Review before publishing</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to review the full posting before it goes live</strong>, so that <strong>I catch mistakes before candidates see them</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Review shows what candidates will see</li>
+<li>I can go back to edit without losing data</li>
+</ul>
+<h4>TH-094 — Publish or keep as draft</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to control whether a job is visible to candidates</strong>, so that <strong>unfinished roles stay internal</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Published jobs appear on the public site and candidate workspace</li>
+<li>Draft jobs stay hidden</li>
+</ul>
+<h4>TH-095 — Preview as a candidate</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to preview how a job will look to applicants</strong>, so that <strong>I verify formatting before publish</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Preview matches the public job page layout</li>
+</ul>
+<h4>TH-096 — Rich job content sections</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to add responsibilities, qualifications, skills, benefits, and tags</strong>, so that <strong>candidates get a complete picture of the role</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>All sections save in order</li>
+<li>Skills and tags use managed lookup values</li>
+</ul>
+<h4>TH-097 — Salary range and visibility</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to set salary range and choose whether candidates see it</strong>, so that <strong>we control compensation transparency per role</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Salary visibility toggle controls public display (TH-024)</li>
+</ul>
+<h4>TH-098 — Remote and featured flags</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to mark jobs as remote or featured</strong>, so that <strong>candidates can filter remote roles and see highlighted openings</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Remote filter on public site matches the flag</li>
+<li>Featured styling appears when enabled</li>
+</ul>
+<h4>TH-099 — Job banner image</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to add a banner image and alt text</strong>, so that <strong>job pages look polished and accessible</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Alt text is required or warned when an image URL is provided</li>
+</ul>
+<h2>7. Backoffice — applications &amp; pipeline</h2>
+<h4>TH-110 — Applications table view</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>a sortable, filterable table of applications</strong>, so that <strong>I triage in spreadsheet style when I prefer lists</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Sort and filters match pipeline data</li>
+</ul>
+<h4>TH-111 — Kanban pipeline view</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to move candidates across stages on a visual board</strong>, so that <strong>I see funnel health and progress at a glance</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Drag-and-drop triggers valid status changes only</li>
+<li>Invalid moves show feedback</li>
+</ul>
+<h4>TH-112 — Switch list and pipeline views</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to toggle between table and pipeline and use fullscreen pipeline</strong>, so that <strong>I choose the view that fits my task</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>View toggle works</li>
+<li>Fullscreen pipeline focuses on triage</li>
+</ul>
+<h4>TH-113 — Week-based pipeline</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>the pipeline scoped to past and current weeks only</strong>, so that <strong>I focus on actionable work, not future planning noise</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Future weeks cannot be selected</li>
+<li>Week label updates accessibly when I navigate weeks</li>
+</ul>
+<h4>TH-114 — Ten hiring stages</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>a clear set of application stages with enforced rules</strong>, so that <strong>everyone follows the same hiring process</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Ten statuses display correctly</li>
+<li>Illegal stage jumps are blocked</li>
+</ul>
+<h4>TH-115 — Record why status changed</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to add reasons and notes when changing status</strong>, so that <strong>the team has context for decisions</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Rejections require a reason</li>
+<li>Simultaneous edits warn me if someone else changed the record first</li>
+</ul>
+<h4>TH-116 — Undo a status change</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to undo my last status change quickly</strong>, so that <strong>I fix mistakes without support</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Undo appears after a change</li>
+<li>Undo restores the previous stage once and is logged</li>
+</ul>
+<h4>TH-117 — Reopen a rejected candidate</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to reopen a rejected application with a documented reason</strong>, so that <strong>strong candidates can re-enter the process fairly</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Reopen requires a reason</li>
+<li>Candidate returns to an active review stage</li>
+</ul>
+<h4>TH-118 — Application detail page</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>one page with applicant, job, submission, files, and history</strong>, so that <strong>I decide without hunting across screens</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Who, which job, when, answers, documents, and timeline are on one page</li>
+</ul>
+<h4>TH-119 — Download candidate documents</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to download CV and cover letter securely</strong>, so that <strong>I can review offline or share with hiring managers</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Only signed-in staff can download</li>
+<li>Files open with correct type</li>
+</ul>
+<h4>TH-120 — Schedule an interview</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to schedule one interview per application</strong>, so that <strong>the team aligns on when to meet the candidate</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Schedule modal saves interview details</li>
+<li>One interview record per application</li>
+</ul>
+<h4>TH-121 — Pick date, time, and duration</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to choose interview date, start time, and length</strong>, so that <strong>calendar holds are accurate</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Duration options from 15 to 120 minutes</li>
+<li>Invalid date/time combinations are blocked</li>
+</ul>
+<h4>TH-122 — Schedule in the right time zone</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to set scheduling time zone and see the candidate&#39;s local time</strong>, so that <strong>we avoid timezone confusion</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I pick a standard time zone</li>
+<li>Preview shows candidate local time when their profile time zone is set</li>
+</ul>
+<h4>TH-123 — Require interview before interview stage</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>the system to require a scheduled interview before marking interview scheduled</strong>, so that <strong>pipeline stages reflect reality</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Cannot move to interview scheduled without scheduling first</li>
+<li>Clear message tells me to schedule</li>
+</ul>
+<h4>TH-124 — Cancel interview when moving back</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to cancel a scheduled interview when moving a candidate to an earlier stage</strong>, so that <strong>outdated interviews are not left on the calendar</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Prompt asks if I want to cancel the interview</li>
+<li>Optional notify candidate checkbox</li>
+<li>Interview is removed on confirm</li>
+</ul>
+<h4>TH-125 — Audit trail of status changes</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>hiring manager</strong>, I want <strong>a history of who changed status, when, and why</strong>, so that <strong>we have accountability and compliance evidence</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Timeline shows from/to status, actor, reason, and timestamp</li>
+</ul>
+<h4>TH-126 — Rejected and withdrawn lists</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>rejected and withdrawn applications separated from the active board</strong>, so that <strong>the active pipeline stays focused</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Terminal applications appear in dedicated areas, not mixed with active triage</li>
+</ul>
+<h4>TH-127 — Move candidate without dragging</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter using keyboard</strong>, I want <strong>a Move to menu on each card</strong>, so that <strong>I can triage without a mouse</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Menu lists only valid next stages</li>
+<li>Same outcome as drag-and-drop</li>
+</ul>
+<h4>TH-128 — AI relevance hint on applications</h4>
+<p><strong>Status:</strong> Partial · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>an optional AI-generated relevance hint for each application</strong>, so that <strong>I prioritise review when volume is high</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Scoring is advisory only</li>
+<li>Pipeline still works when AI is unavailable</li>
+<li>Errors and loading states are handled</li>
+</ul>
+<h4>TH-129 — Human review reminder for AI scores</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>a clear reminder that AI scores require human judgment</strong>, so that <strong>we avoid biased or automated hiring decisions</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Notice appears on relevance scores in pipeline and detail views</li>
+<li>Message states human review is required</li>
+</ul>
+<h4>TH-130 — Email candidate on status change</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P0 · <strong>Depends on:</strong> TH-009</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>candidates emailed when I choose to notify them of a status change</strong>, so that <strong>applicants are not left wondering</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Notify checkbox sends a real email when email service is configured</li>
+<li>No email sent when I leave notify off</li>
+</ul>
+<h4>TH-131 — Email candidate when interview scheduled</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P0 · <strong>Depends on:</strong> TH-009</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>candidates emailed when I schedule an interview and opt to notify</strong>, so that <strong>they receive date, time, and time zone details</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Email includes interview details when notify is checked</li>
+<li>System records when notification was sent</li>
+</ul>
+<h4>TH-132 — Reschedule an interview</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to change interview date or time without cancel and recreate</strong>, so that <strong>last-minute changes are less error-prone</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>I can edit scheduled interviews from application detail</li>
+<li>Optional notify on reschedule</li>
+</ul>
+<h4>TH-133 — Quick view from pipeline card</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P3</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>a side panel summary when I click a pipeline card</strong>, so that <strong>I scan details without leaving the board</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Click opens quick view; drag does not</li>
+<li>Full detail page remains available</li>
+<li>Escape closes the panel</li>
+</ul>
+<h2>8. Backoffice — candidates</h2>
+<h4>TH-140 — Candidates overview</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>a summary dashboard for candidates</strong>, so that <strong>I see pool size before diving into records</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Counts match reality</li>
+<li>Link to full candidate list works</li>
+</ul>
+<h4>TH-141 — Search all candidates</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to search candidates by name or email</strong>, so that <strong>I find people quickly across applications</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Search and pagination work</li>
+<li>Rows link to candidate detail</li>
+</ul>
+<h4>TH-142 — Candidate profile and history</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>one place for profile, CV history, and applications</strong>, so that <strong>I understand a person beyond a single application</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Profile, CVs, and application list display</li>
+<li>I can download CVs</li>
+</ul>
+<h4>TH-143 — Update candidate account status</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>to activate or deactivate a candidate account</strong>, so that <strong>we control access when needed</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Valid status changes save with clear feedback</li>
+</ul>
+<h4>TH-144 — Return to applications after viewing candidate</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to return to the applications list I came from</strong>, so that <strong>I do not lose my triage context</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Back navigation returns to applications when I arrived from there</li>
+</ul>
+<h4>TH-145 — Protect candidate admin actions</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P1</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>only signed-in staff to change candidate account status</strong>, so that <strong>candidate records cannot be altered by unauthorised requests</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Unauthenticated or unauthorised requests are rejected</li>
+</ul>
+<h2>9. Backoffice — interviews</h2>
+<h4>TH-150 — Interviews calendar</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>a calendar of scheduled interviews</strong>, so that <strong>I see my week at a glance</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Times respect time zones</li>
+<li>Entries link to the related application</li>
+</ul>
+<h4>TH-151 — Schedule from application page</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>to schedule interviews from the application detail page</strong>, so that <strong>I do not context-switch while reviewing a candidate</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Schedule opens from application detail and refreshes after save</li>
+</ul>
+<h4>TH-152 — Sync interviews to Google or Outlook</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>scheduled interviews on my personal work calendar</strong>, so that <strong>I avoid double-booking and missing interviews</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Minimum: download calendar file</li>
+<li>Or full sync if OAuth scope is approved</li>
+</ul>
+<h2>10. Backoffice — administration</h2>
+<h4>TH-160 — Manage companies</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>to add and edit companies</strong>, so that <strong>job data stays organised by organisation</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Create, edit, delete with validation messages</li>
+</ul>
+<h4>TH-161 — Manage departments and locations</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>to maintain departments and locations</strong>, so that <strong>job postings and filters stay accurate</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>New values appear in job forms and filters</li>
+</ul>
+<h4>TH-162 — Manage employment types and experience levels</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>to maintain employment types and experience levels</strong>, so that <strong>candidates filter jobs meaningfully</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Lookups update job form and public filters</li>
+</ul>
+<h4>TH-163 — Manage skills, tags, and benefits</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>to maintain skills, tags, and benefits lists</strong>, so that <strong>job content stays consistent</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Job postings can assign newly created values</li>
+</ul>
+<h4>TH-164 — Manage staff users</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P1</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>to add and manage recruiter accounts</strong>, so that <strong>the right people have access without developer help</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Only admins access user management</li>
+<li>I can assign roles and deactivate users</li>
+<li>Passwords are stored securely</li>
+</ul>
+<h4>TH-165 — Hiring reports</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>hiring manager</strong>, I want <strong>reports on applications and time-to-hire</strong>, so that <strong>I measure team performance</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Reports show real data with date filters</li>
+<li>Empty state when no data exists</li>
+</ul>
+<h4>TH-166 — Workspace settings</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>to configure company name, default time zone, and email sender</strong>, so that <strong>TalentHub reflects our organisation in emails and scheduling</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Settings persist and affect defaults where documented</li>
+</ul>
+<h2>11. Central API</h2>
+<h4>TH-170 — Service health check</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Central API</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>operations</strong>, I want <strong>a health endpoint for monitoring</strong>, so that <strong>we know the auth service is up during deploys</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Health check returns OK with documented response</li>
+</ul>
+<h4>TH-171 — Sign in staff and candidates via API</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Central API</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker and recruiter</strong>, I want <strong>secure login that knows whether I am staff or candidate</strong>, so that <strong>each app gets the right access</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Staff and candidate logins issue appropriate credentials</li>
+<li>Wrong account type is rejected</li>
+</ul>
+<h4>TH-172 — Session refresh and logout</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Central API</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>my session to refresh and end cleanly</strong>, so that <strong>I stay signed in during active use and can log out safely</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Refresh extends session</li>
+<li>Logout ends access</li>
+</ul>
+<h4>TH-173 — Registration and verification API</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Central API</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>registration and OTP verification handled reliably</strong>, so that <strong>my account is created and verified through standard steps</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Register, verify, and resend OTP work as documented</li>
+</ul>
+<h4>TH-174 — Password reset API</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Central API</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>password reset handled securely on the server</strong>, so that <strong>reset links work once and expire appropriately</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Reset tokens are single-use and time-limited</li>
+<li>Responses do not reveal whether an email exists</li>
+</ul>
+<h4>TH-175 — Public jobs API</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Central API · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>integrator</strong>, I want <strong>a standard API for listing and reading jobs</strong>, so that <strong>external tools and future apps can consume job data</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>List and detail endpoints match documented contract</li>
+<li>Replaces placeholder stub</li>
+</ul>
+<h4>TH-176 — Applications API</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Central API · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>integrator</strong>, I want <strong>a standard API for application data</strong>, so that <strong>integrations can sync hiring records</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Staff-authenticated list, detail, and status match backoffice behaviour</li>
+</ul>
+<h4>TH-177 — Interviews API</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Central API · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>integrator</strong>, I want <strong>a standard API for interview records</strong>, so that <strong>calendar and HR tools can connect</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Interview CRUD aligned with in-product scheduling</li>
+</ul>
+<h4>TH-178 — Staff users API</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Central API · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>admin</strong>, I want <strong>API access to manage staff users</strong>, so that <strong>user provisioning can be automated</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Admin-only user endpoints documented and functional</li>
+</ul>
+<h4>TH-179 — In-app notification inbox</h4>
+<p><strong>Status:</strong> Out of scope · <strong>Audience:</strong> Central API</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter</strong>, I want <strong>a notification centre inside TalentHub</strong>, so that <strong>I would see alerts without email</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Not planned — transactional email covers MVP (TH-009)</li>
+<li>No notification inbox unless product adds a data model</li>
+</ul>
+<h4>TH-180 — Unified backend services</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Central API · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>product team</strong>, I want <strong>hiring logic moved into the central API over time</strong>, so that <strong>one backend serves web apps and future clients</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Phased migration plan documented</li>
+<li>No single risky big-bang rewrite</li>
+</ul>
+<h2>12. Non-functional &amp; compliance</h2>
+<h4>TH-190 — Accessible experience (WCAG 2.2 AA)</h4>
+<p><strong>Status:</strong> Partial · <strong>Audience:</strong> All apps · <strong>Priority:</strong> P1</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker and recruiter with disabilities</strong>, I want <strong>TalentHub to meet WCAG 2.2 Level AA on critical paths</strong>, so that <strong>everyone can apply and hire without barriers</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Accessibility audit failures are reduced on login, apply, and pipeline</li>
+<li>Keyboard and screen reader smoke tests pass on critical flows</li>
+</ul>
+<h4>TH-191 — Accessible dialogs on pipeline</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Backoffice · <strong>Priority:</strong> P1</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>recruiter using keyboard</strong>, I want <strong>modals that trap focus and close with Escape</strong>, so that <strong>I can confirm status changes without getting lost in the page</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Tab stays inside open dialogs</li>
+<li>Escape closes and focus returns to the button I used</li>
+</ul>
+<h4>TH-192 — Privacy, terms, and accessibility pages</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> Candidate portal, My Applications · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>working footer links to privacy, terms, and accessibility information</strong>, so that <strong>I understand my rights before I register or apply</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Footer links open real pages on public and candidate sites</li>
+<li>Accessibility page states our target and contact</li>
+</ul>
+<h4>TH-193 — Stronger candidate session security</h4>
+<p><strong>Status:</strong> Planned · <strong>Audience:</strong> My Applications · <strong>Priority:</strong> P2</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>my login session protected like staff sessions</strong>, so that <strong>my account is harder to steal if a page is compromised</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Approach documented with tradeoffs</li>
+<li>If implemented, session tokens are not readable by page scripts</li>
+</ul>
+<h4>TH-194 — Secure passwords</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Central API</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker and recruiter</strong>, I want <strong>passwords stored and login attempts limited</strong>, so that <strong>accounts resist brute-force attacks</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Passwords are never stored in plain text</li>
+<li>Repeated failed logins trigger lockout</li>
+</ul>
+<h4>TH-195 — Protected routes</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> Backoffice, My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker and recruiter</strong>, I want <strong>private pages blocked until I sign in</strong>, so that <strong>my data and hiring tools are not public</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Unauthenticated access returns appropriate errors or redirects</li>
+</ul>
+<h4>TH-196 — Safe file uploads</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> My Applications</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker</strong>, I want <strong>only safe CV file types accepted</strong>, so that <strong>malicious files cannot be uploaded as documents</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Wrong types and oversized files rejected</li>
+<li>Stored filenames are safe</li>
+</ul>
+<h4>TH-197 — Living design system catalog</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> All apps</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>designer and developer</strong>, I want <strong>a visual catalog that matches shipped UI</strong>, so that <strong>new screens stay consistent</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Catalog updated when tokens or layouts change</li>
+</ul>
+<h4>TH-198 — Works on phone and tablet</h4>
+<p><strong>Status:</strong> Done · <strong>Audience:</strong> All apps</p>
+<p><strong>User story</strong></p>
+<blockquote>
+<p>As a <strong>job seeker and recruiter on mobile</strong>, I want <strong>responsive web layouts without a native app</strong>, so that <strong>I can hire or apply from any device</strong>.</p>
+</blockquote>
+<p><strong>Acceptance criteria</strong></p>
+<ul>
+<li>Critical flows usable at phone width</li>
+<li>Remaining mobile gaps tracked under TH-057</li>
+</ul>
+<hr>
+<h2>Quick reference — open work stories</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Section</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-009</td>
+<td>§1</td>
+<td>Real email delivery for hiring notifications</td>
+</tr>
+<tr>
+<td>TH-043</td>
+<td>§3</td>
+<td>Forgot / reset password for candidates</td>
+</tr>
+<tr>
+<td>TH-055</td>
+<td>§3</td>
+<td>Candidate withdraw application</td>
+</tr>
+<tr>
+<td>TH-056</td>
+<td>§3</td>
+<td>Set time zone on profile</td>
+</tr>
+<tr>
+<td>TH-058</td>
+<td>§3</td>
+<td>Real verification emails</td>
+</tr>
+<tr>
+<td>TH-130</td>
+<td>§7</td>
+<td>Email on status change</td>
+</tr>
+<tr>
+<td>TH-131</td>
+<td>§7</td>
+<td>Email on interview schedule</td>
+</tr>
+<tr>
+<td>TH-145</td>
+<td>§8</td>
+<td>Protect candidate admin actions</td>
+</tr>
+<tr>
+<td>TH-164</td>
+<td>§10</td>
+<td>Manage staff users</td>
+</tr>
+<tr>
+<td>TH-190</td>
+<td>§12</td>
+<td>WCAG 2.2 AA accessibility</td>
+</tr>
+<tr>
+<td>TH-191</td>
+<td>§12</td>
+<td>Accessible pipeline dialogs</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>User stories v2.0 · 21 May 2026 · Sync with <a href="./FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a></em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

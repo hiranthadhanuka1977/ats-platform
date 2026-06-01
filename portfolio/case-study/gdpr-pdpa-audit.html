@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GDPR / PDPA Audit — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>GDPR / PDPA privacy audit</h1>
+        <p>Front-end UX, API routes, auth patterns, and third-party integrations — Stage ④ validation alongside the WCAG audit.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#scope">Scope</a></li>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#inventory">Data inventory</a></li>
+            <li><a href="#critical">Critical findings</a></li>
+            <li><a href="#high">High findings</a></li>
+            <li><a href="#medium">Medium findings</a></li>
+            <li><a href="#informational">Informational</a></li>
+            <li><a href="#scorecard">Compliance scorecard</a></li>
+            <li><a href="#remediation">Next steps</a></li>
+            <li><a href="#appendix">Appendix</a></li>
+            <li><a href="#related">Related docs</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>Audit date · 19 May 2026</span>
+            <span>Revision 1.1 · 21 May 2026</span>
+            <span>PDPA (Sri Lanka) · GDPR (EU)</span>
+            <span>Method · AI-assisted code review</span>
+          </div>
+
+          <p class="audit-intro">Organizational policies, DPAs, and infrastructure reviews are out of scope but required for full compliance. Ground truth: <a href="../../docs/specification/PRD.md#82-privacy-and-data-protection">PRD §8.2</a> · <a href="../../docs/specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG</a> (TH-009, TH-130–131, TH-192–193) · <a href="development-process.html#validation">Process stage ④</a>.</p>
+
+          <!-- Scope -->
+          <section class="ia-section" id="scope">
+            <h2>Scope</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>App</th><th>Port</th><th>Data subjects</th><th>Key processing</th></tr></thead>
+                <tbody>
+                  <tr><td><code>candidate-portal</code></td><td>3000</td><td>Visitors, applicants (browse)</td><td>Job search (URL/query); no account on this app</td></tr>
+                  <tr><td><code>my-applications</code></td><td>3002</td><td>Candidates</td><td>Registration, login, profile, CV/screenshot import, applications</td></tr>
+                  <tr><td><code>backoffice</code></td><td>3001</td><td>Staff</td><td>Candidate/application data, status changes, interviews, AI relevance scoring</td></tr>
+                  <tr><td><code>api</code></td><td>4000</td><td>Candidates (auth)</td><td>Register, OTP, password reset, email delivery</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p><strong>Storage:</strong> <code>storage/cvs/{candidateAccountId}/</code>, <code>storage/cover-letters/{candidateAccountId}/</code></p>
+            <p><strong>Out of scope:</strong> Static HTML under <code>docs/markup/</code> (superseded by Next.js apps).</p>
+          </section>
+
+          <!-- Executive summary -->
+          <section class="ia-section" id="summary">
+            <h2>Executive summary</h2>
+
+            <div class="audit-summary-panel privacy-summary-panel">
+              <div class="audit-summary-head privacy-summary-head">
+                <div class="audit-summary-score">
+                  <span class="audit-summary-total">24</span>
+                  <span class="audit-summary-total-label">Findings</span>
+                  <p class="audit-summary-verdict">PDPA · GDPR readiness<br><strong>Not compliance ready</strong> — 6 critical open</p>
+                </div>
+                <div class="audit-summary-chart">
+                  <p class="audit-summary-chart-label">Severity distribution</p>
+                  <div class="audit-summary-bar" role="img" aria-label="6 critical, 7 high, 6 medium, 5 informational">
+                    <span class="audit-bar-seg audit-bar-critical" style="width:25%"></span>
+                    <span class="audit-bar-seg audit-bar-high" style="width:29.2%"></span>
+                    <span class="audit-bar-seg audit-bar-medium" style="width:25%"></span>
+                    <span class="audit-bar-seg audit-bar-info" style="width:20.8%"></span>
+                  </div>
+                  <ul class="audit-summary-legend">
+                    <li><span class="audit-legend-dot audit-legend-critical"></span><strong>6</strong> Critical</li>
+                    <li><span class="audit-legend-dot audit-legend-high"></span><strong>7</strong> High</li>
+                    <li><span class="audit-legend-dot audit-legend-medium"></span><strong>6</strong> Medium</li>
+                    <li><span class="audit-legend-dot audit-legend-info"></span><strong>5</strong> Info</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="audit-summary-grid">
+                <article class="audit-summary-card audit-summary-good">
+                  <h3>Improved since April 2026</h3>
+                  <ul>
+                    <li>Portal &amp; my-applications use <code>next/font</code> — no Google CDN</li>
+                    <li>Registration includes terms checkbox</li>
+                    <li>CV upload — server-side type/size limits</li>
+                  </ul>
+                </article>
+
+                <article class="audit-summary-card audit-summary-improved">
+                  <h3>Since audit v1.0</h3>
+                  <ul>
+                    <li>Schedule interview — timezone + notify flag</li>
+                    <li>Cancel interview flow on pipeline rollback</li>
+                    <li><code>AiRelevanceBiasNotice</code> — partial Art. 22 UX transparency</li>
+                  </ul>
+                </article>
+
+                <article class="audit-summary-card audit-summary-gap">
+                  <h3>Still blocking readiness</h3>
+                  <ul>
+                    <li>No privacy policy or cookie consent</li>
+                    <li>OpenAI &amp; email without in-product notice</li>
+                    <li>Email delivery not wired (TH-009, TH-130, TH-131)</li>
+                    <li>Candidate JWT in browser storage (TH-193)</li>
+                    <li>Backoffice Google Fonts CDN · footer <code>href="#"</code> (TH-192)</li>
+                  </ul>
+                </article>
+              </div>
+
+              <footer class="audit-summary-backlog">
+                <span class="audit-summary-backlog-label">Backlog</span>
+                <a class="audit-backlog-pill" href="../../docs/specification/FEATURE_BACKLOG.md">TH-192 · Legal pages</a>
+                <a class="audit-backlog-pill" href="../../docs/specification/FEATURE_BACKLOG.md">TH-193 · HttpOnly tokens</a>
+                <a class="audit-backlog-pill" href="../../docs/specification/FEATURE_BACKLOG.md">TH-009 · Email delivery</a>
+                <a class="audit-backlog-pill" href="../../docs/specification/FEATURE_BACKLOG.md">TH-130 · TH-131 · Notifications</a>
+              </footer>
+            </div>
+          </section>
+
+          <!-- Data inventory -->
+          <section class="ia-section" id="inventory">
+            <h2>Data inventory</h2>
+
+            <h3>Candidate personal data</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Category</th><th>Examples</th><th>Where collected</th><th>Retention in UI</th></tr></thead>
+                <tbody>
+                  <tr><td>Identity &amp; contact</td><td>Email, name, phone</td><td>Register, profile, apply</td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                  <tr><td>Credentials</td><td>Password hash (server)</td><td>Register</td><td><span class="audit-result na">N/A</span></td></tr>
+                  <tr><td>Employment</td><td>CV, experience, education, motivation</td><td>Apply, CV import, screenshot import</td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                  <tr><td>Preferences</td><td>Salary, notice, relocation, work auth, time zone</td><td>Apply form, profile (partial)</td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                  <tr><td>Behavioural</td><td>Search/filter (portal URL), dashboard usage</td><td>Portal, dashboard</td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                  <tr><td>Auth tokens</td><td>JWT access/refresh</td><td>Login → <code>localStorage</code> / <code>sessionStorage</code></td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Staff / recruitment data</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Category</th><th>Examples</th><th>Where</th></tr></thead>
+                <tbody>
+                  <tr><td>Candidate PII in recruitment</td><td>Name, email on pipeline cards</td><td>Backoffice applications</td></tr>
+                  <tr><td>Application decisions</td><td>Status, rejection reason, notes</td><td>Status PATCH, modals</td></tr>
+                  <tr><td>Interview</td><td>Start/end, scheduling timezone, duration, notify flag</td><td>ScheduleInterviewModal, pipeline cancel modal</td></tr>
+                  <tr><td>AI scoring</td><td>Relevance score, breakdown; bias notice in UI</td><td>Relevance API, OpenAI, AiRelevanceBiasNotice</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Subprocessors &amp; third parties</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Processor</th><th>Purpose</th><th>Apps</th><th>Disclosed in UI?</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>OpenAI</strong></td><td>CV parse, screenshot extract, relevance scoring</td><td>my-applications, backoffice</td><td><span class="audit-result partial">Partial</span> — bias notice only</td></tr>
+                  <tr><td><strong>Email (SMTP/API)</strong></td><td>OTP, password reset, interview/reject notifications</td><td>api, backoffice modals</td><td><span class="audit-result fail">No</span> — flags queue only</td></tr>
+                  <tr><td><strong>Google Fonts CDN</strong></td><td>Web fonts</td><td>backoffice</td><td><span class="audit-result fail">No</span> — IP transfer on load</td></tr>
+                  <tr><td><strong>PostgreSQL</strong></td><td>Primary datastore</td><td>All server routes</td><td><span class="audit-result na">Infrastructure</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Critical -->
+          <section class="ia-section" id="critical">
+            <h2>Critical findings</h2>
+
+            <article class="privacy-finding">
+              <header class="privacy-finding-head">
+                <span class="privacy-finding-id severity-critical">C1</span>
+                <div>
+                  <h3>No functional privacy policy or terms</h3>
+                  <p class="privacy-finding-refs">GDPR Art. 13–14 · PDPA S.7–8</p>
+                </div>
+              </header>
+              <p><code>SiteFooter.tsx</code> in candidate-portal and my-applications uses <code>href="#"</code> for Privacy, Terms, and Accessibility. Register requires agreeing to policies but they are not linked in <code>RegisterForm.tsx</code>.</p>
+              <p><strong>Risk:</strong> Processing without accessible privacy information before collection.</p>
+              <footer><strong>Remediation:</strong> Publish <code>/privacy</code> and <code>/terms</code> — <a href="../../docs/specification/FEATURE_BACKLOG.md">TH-192</a>; link from footer, registration, and apply flow.</footer>
+            </article>
+
+            <article class="privacy-finding">
+              <header class="privacy-finding-head">
+                <span class="privacy-finding-id severity-critical">C2</span>
+                <div>
+                  <h3>No cookie / consent mechanism</h3>
+                  <p class="privacy-finding-refs">GDPR Art. 6(1)(a), Art. 7 · PDPA S.6–7</p>
+                </div>
+              </header>
+              <p>No consent banner or preference centre in any Next.js app. Non-essential cookies, analytics, or third-party requests should be blocked until consent.</p>
+              <footer><strong>Remediation:</strong> Implement consent UI; default-deny non-essential scripts; document essential vs optional cookies.</footer>
+            </article>
+
+            <article class="privacy-finding">
+              <header class="privacy-finding-head">
+                <span class="privacy-finding-id severity-critical">C3</span>
+                <div>
+                  <h3>Backoffice loads Google Fonts from CDN</h3>
+                  <p class="privacy-finding-refs">GDPR Art. 44–49 · PDPA S.25</p>
+                </div>
+              </header>
+              <p><code>backoffice/src/app/globals.css</code> imports <code>fonts.googleapis.com</code>. Each page load can send visitor IP to Google (US) without notice or consent. Portal and my-applications use <code>next/font</code>.</p>
+              <footer><strong>Remediation:</strong> Mirror candidate-portal layout — self-host via <code>next/font/google</code>.</footer>
+            </article>
+
+            <article class="privacy-finding">
+              <header class="privacy-finding-head">
+                <span class="privacy-finding-id severity-critical">C4</span>
+                <div>
+                  <h3>OpenAI processing without privacy notice or consent</h3>
+                  <p class="privacy-finding-refs">GDPR Art. 13(1)(e), Art. 28, Art. 9 · PDPA S.8(1)(d), S.5</p>
+                </div>
+              </header>
+              <p>CV parse, screenshot extract, and relevance scoring routes send content to OpenAI. <code>AiRelevanceBiasNotice</code> is product transparency only — not Art. 13/22 legal disclosure. No privacy policy or opt-in before sending CV/screenshot content.</p>
+              <footer><strong>Remediation:</strong> Name OpenAI in privacy policy; lawful basis; explicit checkbox before AI-assisted import/scoring; DPA with OpenAI; data minimization.</footer>
+            </article>
+
+            <article class="privacy-finding">
+              <header class="privacy-finding-head">
+                <span class="privacy-finding-id severity-critical">C5</span>
+                <div>
+                  <h3>Candidate session tokens in browser storage</h3>
+                  <p class="privacy-finding-refs">GDPR Art. 32 · PDPA S.18</p>
+                </div>
+              </header>
+              <p><code>auth-storage.ts</code> — JWT in <code>localStorage</code> / <code>sessionStorage</code>. Any XSS can exfiltrate tokens.</p>
+              <footer><strong>Remediation:</strong> HttpOnly cookies from BFF or API — <a href="../../docs/specification/FEATURE_BACKLOG.md">TH-193</a>; shorten TTL; CSP hardening.</footer>
+            </article>
+
+            <article class="privacy-finding">
+              <header class="privacy-finding-head">
+                <span class="privacy-finding-id severity-critical">C6</span>
+                <div>
+                  <h3>Apply / registration without layered consent</h3>
+                  <p class="privacy-finding-refs">GDPR Art. 6(1)(a), Art. 7, Art. 9 · PDPA S.6</p>
+                </div>
+              </header>
+              <p>Apply flow collects extensive PII (CV, cover letter, salary, work authorization) without just-in-time notice or separate consent for recruitment pool / AI / marketing.</p>
+              <footer><strong>Remediation:</strong> Before submit: purpose, categories, retention, recipients, privacy policy link, required checkbox(es).</footer>
+            </article>
+          </section>
+
+          <!-- High -->
+          <section class="ia-section" id="high">
+            <h2>High findings</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>ID</th><th>Finding</th><th>Regulation</th><th>Remediation</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="privacy-tag severity-high">H1</span></td><td>No data controller identification in UI — footer shows “TalentHub” only</td><td>GDPR Art. 13(1)(a) · PDPA S.8(1)(a)</td><td>Controller block in footer and privacy policy</td></tr>
+                  <tr><td><span class="privacy-tag severity-high">H2</span></td><td>No data subject rights information (access, erasure, portability, objection)</td><td>GDPR Art. 15–22 · PDPA S.9–17</td><td>“Your rights” in privacy policy + summary at register/apply</td></tr>
+                  <tr><td><span class="privacy-tag severity-high">H3</span></td><td>No retention periods disclosed</td><td>GDPR Art. 5(1)(e) · PDPA S.5(1)(e)</td><td>Define retention schedule; show at collection; deletion jobs</td></tr>
+                  <tr><td><span class="privacy-tag severity-high">H4</span></td><td>Cross-border transfers not explained (OpenAI, Google fonts)</td><td>GDPR Art. 13(1)(f), Art. 44–49 · PDPA S.25–27</td><td>Privacy policy transfer section; map subprocessor regions</td></tr>
+                  <tr><td><span class="privacy-tag severity-high">H5</span></td><td>No legal basis stated for recruitment processing</td><td>GDPR Art. 6 · PDPA S.5</td><td>State basis per activity in privacy policy</td></tr>
+                  <tr><td><span class="privacy-tag severity-high">H6</span></td><td>Staff auth: HttpOnly cookies bypassed — <code>LoginForm.tsx</code> also sets <code>document.cookie</code></td><td>GDPR Art. 32</td><td>Use POST to <code>/api/auth/login</code> only; remove client cookie writes</td></tr>
+                  <tr><td><span class="privacy-tag severity-high">H7</span></td><td>Email notifications without transparency or delivery — UI flags only</td><td>GDPR Art. 13 · fairness</td><td>Wire email service (TH-009, TH-130, TH-131); disclose provider; confirm before “sent” UX</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Medium -->
+          <section class="ia-section" id="medium">
+            <h2>Medium findings</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>ID</th><th>Finding</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="privacy-tag severity-medium">M1</span></td><td>Terms checkbox without linkable policies</td><td>Fails informed consent under Art. 7</td></tr>
+                  <tr><td><span class="privacy-tag severity-medium">M2</span></td><td>OAuth / social login in product copy</td><td>Verify email/password remains available; disclose OAuth fields</td></tr>
+                  <tr><td><span class="privacy-tag severity-medium">M3</span></td><td>File uploads — partial technical controls</td><td>CV MIME/size checks good; need privacy notice on storage/access</td></tr>
+                  <tr><td><span class="privacy-tag severity-medium">M4</span></td><td>Candidate status PATCH without staff auth guard</td><td>Security/privacy risk — <a href="../../docs/specification/FEATURE_BACKLOG.md">TH-145</a></td></tr>
+                  <tr><td><span class="privacy-tag severity-medium">M5</span></td><td>Search and dashboard behaviour</td><td>Disclose account-linked processing in privacy policy</td></tr>
+                  <tr><td><span class="privacy-tag severity-medium">M6</span></td><td>Interview timezone without collection notice</td><td>Disclose timezone use; candidate profile edit — <a href="../../docs/specification/FEATURE_BACKLOG.md">TH-056</a></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Informational -->
+          <section class="ia-section" id="informational">
+            <h2>Informational</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>ID</th><th>Topic</th></tr></thead>
+                <tbody>
+                  <tr><td>I1</td><td>No DPIA reference in UI — may be required (GDPR Art. 35, PDPA S.21) for AI + recruitment at scale</td></tr>
+                  <tr><td>I2</td><td>No breach notification contact in UI</td></tr>
+                  <tr><td>I3</td><td>Backoffice has no footer legal links (staff-facing; internal policy may suffice)</td></tr>
+                  <tr><td>I4</td><td><code>localStorage</code> for jobs view preference in backoffice — low risk; classify in cookie policy</td></tr>
+                  <tr><td>I5</td><td>AI bias notice — good UX for human-in-the-loop; map to Art. 22 in privacy policy at scale</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Scorecard -->
+          <section class="ia-section" id="scorecard">
+            <h2>Compliance readiness scorecard</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Area</th><th>GDPR</th><th>PDPA</th><th>Status (May 2026)</th></tr></thead>
+                <tbody>
+                  <tr><td>Privacy notice</td><td>Art. 13–14</td><td>S.7–8</td><td><span class="audit-result fail">Not implemented</span></td></tr>
+                  <tr><td>Cookie consent</td><td>Art. 6–7</td><td>S.6–7</td><td><span class="audit-result fail">Not implemented</span></td></tr>
+                  <tr><td>Legal basis</td><td>Art. 6</td><td>S.5</td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                  <tr><td>Data subject rights</td><td>Art. 15–22</td><td>S.9–17</td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                  <tr><td>Controller identity</td><td>Art. 13(1)(a)</td><td>S.8(1)(a)</td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                  <tr><td>Retention</td><td>Art. 5(1)(e)</td><td>S.5(1)(e)</td><td><span class="audit-result fail">Not disclosed</span></td></tr>
+                  <tr><td>Cross-border transfers</td><td>Art. 44–49</td><td>S.25–27</td><td><span class="audit-result partial">Partial fail</span></td></tr>
+                  <tr><td>Consent at collection</td><td>Art. 6–7</td><td>S.6</td><td><span class="audit-result partial">Partial</span></td></tr>
+                  <tr><td>Processor transparency</td><td>Art. 13(1)(e), 28</td><td>S.8(1)(d)</td><td><span class="audit-result fail">Fail</span></td></tr>
+                  <tr><td>Automated decision-making</td><td>Art. 22</td><td>—</td><td><span class="audit-result partial">Partial UX</span></td></tr>
+                  <tr><td>Security</td><td>Art. 32</td><td>S.18</td><td><span class="audit-result partial">Partial</span></td></tr>
+                  <tr><td>Data minimization</td><td>Art. 5(1)(c)</td><td>S.5(1)(c)</td><td><span class="audit-result pass">Reasonable</span></td></tr>
+                  <tr><td>Self-hosted fonts (portal)</td><td>—</td><td>—</td><td><span class="audit-result pass">Pass</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Remediation -->
+          <section class="ia-section" id="remediation">
+            <h2>Recommended next steps</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Priority</th><th>Action</th><th>Backlog</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Privacy policy + terms — real pages and footer/register/apply links (C1, H1, H2)</td><td><strong>TH-192</strong></td></tr>
+                  <tr><td>2</td><td>Cookie consent — block non-essential until accepted (C2)</td><td>—</td></tr>
+                  <tr><td>3</td><td>Backoffice fonts — <code>next/font</code>, remove Google <code>@import</code> (C3)</td><td>—</td></tr>
+                  <tr><td>4</td><td>OpenAI &amp; email — privacy policy + consent before CV/screenshot/relevance (C4)</td><td>—</td></tr>
+                  <tr><td>5</td><td>Email delivery — wire OTP, status, interview notifications (H7)</td><td><strong>TH-009</strong>, TH-130, TH-131</td></tr>
+                  <tr><td>6</td><td>Candidate auth — HttpOnly session cookies (C5)</td><td><strong>TH-193</strong></td></tr>
+                  <tr><td>7</td><td>Staff auth — HttpOnly login route only (H6)</td><td>—</td></tr>
+                  <tr><td>8</td><td>Apply flow notice — just-in-time disclosure + retention (C6, H3)</td><td>—</td></tr>
+                  <tr><td>9</td><td>Retention &amp; deletion — policy + purge job for old applications/CV files</td><td>—</td></tr>
+                  <tr><td>10</td><td>DPAs — OpenAI, email provider, hosting</td><td>—</td></tr>
+                  <tr><td>11</td><td>Secure candidate status API — staff auth on PATCH (M4)</td><td><strong>TH-145</strong></td></tr>
+                  <tr><td>12</td><td>Timezone disclosure — profile edit + privacy notice (M6)</td><td><strong>TH-056</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>This audit is the <strong>Stage ④ validation</strong> artefact alongside <a href="wcag-audit.html">WCAG 2.2 audit</a> in the <a href="development-process.html">AI-assisted development process</a>. Re-run after TH-009, TH-192, TH-193, or major AI/scheduling changes.</p>
+          </section>
+
+          <!-- Appendix -->
+          <section class="ia-section" id="appendix">
+            <h2>Appendix — static markup vs implementation</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Topic</th><th>Static markup (Apr 2026)</th><th>Next.js (May 2026, rev 1.1)</th></tr></thead>
+                <tbody>
+                  <tr><td>Google Fonts CDN</td><td><span class="audit-result fail">Fail</span></td><td><span class="audit-result partial">Pass</span> portal &amp; my-applications; <span class="audit-result fail">Fail</span> backoffice</td></tr>
+                  <tr><td>Privacy link</td><td><code>href="#"</code></td><td>Still <code>href="#"</code> — TH-192</td></tr>
+                  <tr><td>Cookie banner</td><td>None</td><td>None</td></tr>
+                  <tr><td>Registration consent</td><td>N/A</td><td>Terms checkbox (unlinked)</td></tr>
+                  <tr><td>CV / AI</td><td>N/A</td><td>OpenAI integrations — new compliance surface</td></tr>
+                  <tr><td>AI transparency</td><td>N/A</td><td><span class="audit-result partial">Partial</span> — AiRelevanceBiasNotice</td></tr>
+                  <tr><td>Interview data</td><td>N/A</td><td>Timezone + notify flags; cancel on rollback</td></tr>
+                  <tr><td>Email to candidates</td><td>N/A</td><td>UI flags only — no delivery (TH-009)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Related -->
+          <section class="ia-section" id="related">
+            <h2>Related documentation</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Document</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><a href="../../docs/specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a></td><td>TH-009, TH-130–131, TH-192–193 remediation</td></tr>
+                  <tr><td><a href="../../docs/reports/implementation-alignment-2026.md">implementation-alignment-2026.md</a></td><td>Which app implements which API</td></tr>
+                  <tr><td><a href="wcag-audit.html">WCAG 2.2 audit</a></td><td>Accessibility (legal links, fonts, modals)</td></tr>
+                  <tr><td><a href="development-process.html">Development process</a></td><td>Stage ④ compliance validation</td></tr>
+                  <tr><td><a href="../../docs/specification/PRD.md#82-privacy-and-data-protection">PRD §8.2</a></td><td>Product privacy target</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="audit-footer-note">Revision 1.1 · 21 May 2026 — aligned with PRD, FEATURE_BACKLOG, schedule/cancel interview flows, AI bias notice, email flag gaps. Legal review by qualified counsel is required before claiming GDPR/PDPA compliance.</p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">GDPR / PDPA audit v1.1 · May 2026 · AI-assisted code review</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="wcag-audit.html">WCAG audit</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

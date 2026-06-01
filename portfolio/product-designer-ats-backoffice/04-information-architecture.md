@@ -17,8 +17,14 @@ This portfolio slice focuses on **`apps/backoffice`** applications workflow and 
 
 ## Backoffice — primary navigation
 
+Order matches `Sidebar.tsx` (Applications before Interviews).
+
 ```
 Dashboard (home)                    ← KPIs, pipeline health, recent activity [Done]
+├── Applications                    ← portfolio slice focus
+│   ├── /applications (table | pipeline) [Done]
+│   └── /applications/[id] (detail) [Done]
+├── Interviews                      [Done]
 ├── Jobs
 │   ├── List                        [Done]
 │   ├── New → Review → Success      [Done]
@@ -27,14 +33,12 @@ Dashboard (home)                    ← KPIs, pipeline health, recent activity [
 ├── Candidates
 │   ├── Summary + All (list)        [Done]
 │   └── [id] / Detail (+ edit status) [Done]
-├── Applications                    ← portfolio slice focus
-│   ├── /applications (table | pipeline) [Done]
-│   └── /applications/[id] (detail) [Done]
-├── Interviews                      [Done]
 ├── Reports                         [Placeholder]
 ├── Administration                  [Done — lookup CRUD]
 └── Settings                        [Placeholder]
 ```
+
+**Visual IA map (PNG + Mermaid):** [portfolio/information-architecture/backoffice-navigation-map.md](../information-architecture/backoffice-navigation-map.md)
 
 ---
 

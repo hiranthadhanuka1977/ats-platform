@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Netnographic Research — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>Netnographic research</h1>
+        <p>Public discourse synthesis on applicant tracking systems — recruiter and candidate pain themes, competitive landscape, and implications for SME-first hiring workflow design.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#intent">Product intent</a></li>
+            <li><a href="#method">Methodology</a></li>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#landscape">Competitor landscape</a></li>
+            <li><a href="#communities">User communities</a></li>
+            <li><a href="#recruiter-pain">Recruiter pain</a></li>
+            <li><a href="#candidate-pain">Candidate pain</a></li>
+            <li><a href="#expectations">Expectations</a></li>
+            <li><a href="#matrix">Feature matrix</a></li>
+            <li><a href="#anti-patterns">Anti-patterns</a></li>
+            <li><a href="#checklist">Synthesis</a></li>
+            <li><a href="#implications">TalentHub implications</a></li>
+            <li><a href="#limitations">Limitations</a></li>
+            <li><a href="#sources">Sources</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>Secondary netnography</span>
+            <span>21 May 2026</span>
+            <span>SME / SMB focus</span>
+            <span>Directional, not statistical</span>
+          </div>
+
+          <!-- Product intent -->
+          <section class="ia-section" id="intent">
+            <h2>Product intent — why SME / SMB</h2>
+            <p>TalentHub is designed primarily for <strong>small and medium organizations</strong> — lean People/TA teams (often one to a few recruiters) who must run hiring reliably but cannot justify a full enterprise ATS stack.</p>
+
+            <h3>Design goals for this segment</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead>
+                  <tr><th>Goal</th><th>In practice</th><th>Why netnography matters</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Low cost</strong></td>
+                    <td>Avoid enterprise license bands (~$4K–$25K+), setup fees, unused CRM/analytics modules</td>
+                    <td>Buyer discourse shows TCO shock and feature bloat as top regrets</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Optimized UX</strong></td>
+                    <td>Resume in one or two actions; honest pipeline state; no "back to Excel" days</td>
+                    <td>Click load and slow UX are daily pain — acute without a TA ops admin</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Reduced setup time</strong></td>
+                    <td>Time-to-value in days or weeks; sensible defaults; minimal admin</td>
+                    <td>Startup/ops discourse prioritises speed to value; migration fear on legacy suites</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Right-sized depth</strong></td>
+                    <td>Core loop: apply → triage → interview → hire/reject</td>
+                    <td>SMB tools win on simplicity but outgrow; enterprise tools overwhelm</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>The SME gap in the market</h3>
+            <div class="ia-principles">
+              <div class="ia-principle">
+                <strong>Enterprise mid-market</strong>
+                <p>Greenhouse, Lever, Workday — praised for structure, criticised for cost, setup, and admin overhead. Poor fit when the TA team is one person.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>Budget SMB</strong>
+                <p>JazzHR, Breezy, Zoho Recruit — praised for price and simplicity, criticised for shallow workflow and weak pipeline integrity.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>Growth startup</strong>
+                <p>Ashby — praised for modern UX and fast setup; pricing and compliance proof skew toward Series A–C tech buyers.</p>
+              </div>
+            </div>
+            <div class="research-callout">
+              <strong>TalentHub design bet:</strong> deliver mid-market workflow craft (cohort pipeline, governed status, packet page, in-product scheduling) at SMB-appropriate scope — without enterprise packaging.
+            </div>
+          </section>
+
+          <!-- Methodology -->
+          <section class="ia-section" id="method">
+            <h2>Methodology</h2>
+            <p>This document synthesizes <strong>publicly observable user discourse</strong> — review platforms, recruiter blogs, HR press, vendor reports, and comparison articles — using a netnographic lens: recurring themes, vocabulary, frustrations, and expectations.</p>
+            <p>It is <strong>not</strong> primary ethnography (no moderated interviews in this pass). Findings are directional for product and design strategy, not statistically representative.</p>
+
+            <h3>Sources observed (May 2026)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Source type</th><th>Examples</th><th>Reveals</th></tr></thead>
+                <tbody>
+                  <tr><td>Review platforms</td><td>G2, TrustRadius</td><td>Head-to-head verdicts, usability, renewal intent</td></tr>
+                  <tr><td>Recruiter blogs</td><td>NUROFILE, Tracker RMS, Lever</td><td>Pain vocabulary, workflow complaints</td></tr>
+                  <tr><td>HR / talent press</td><td>HR Dive, People Matters</td><td>Candidate experience, compliance incidents</td></tr>
+                  <tr><td>Candidate surveys</td><td>LiveCareer, Monster, Greenhouse</td><td>Apply abandonment, ghosting, opacity</td></tr>
+                  <tr><td>Buyer guides</td><td>Index.dev, StackScored</td><td>Feature tradeoffs, pricing, implementation risk</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Products in the competitive set</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Tier</th><th>Products</th><th>Typical buyer</th></tr></thead>
+                <tbody>
+                  <tr><td>Enterprise / mid-market</td><td>Greenhouse, Lever, Workday, iCIMS, SmartRecruiters</td><td>50–5000+ employees</td></tr>
+                  <tr><td>Growth / startup</td><td>Ashby, Gem, Workable</td><td>Series A–C, tech hiring</td></tr>
+                  <tr><td>SMB / budget</td><td>JazzHR, Breezy, Zoho Recruit</td><td>Small teams, limited admin</td></tr>
+                  <tr><td>Staffing agency</td><td>Bullhorn, JobDiva, Tracker RMS</td><td>High-volume, CRM + ATS</td></tr>
+                  <tr><td>Reference</td><td><strong>TalentHub</strong></td><td>SME/SMB-first — this project</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Executive summary -->
+          <section class="ia-section" id="summary">
+            <h2>Executive summary</h2>
+            <div class="research-lead">
+              <p>Across public discourse, ATS products are essential but resented. Recruiters describe them as slow, click-heavy, and designed without daily recruiter input. Candidates describe hiring as opaque, impersonal, and silent after apply.</p>
+            </div>
+            <p>For small and medium organizations, the resentment is compounded: they need software that works on day one, but the market pushes them toward either expensive enterprise tools they cannot afford to mis-buy, or cheap tools they outgrow within a year.</p>
+
+            <div class="ia-principles">
+              <div class="ia-principle">
+                <strong>Recruiter pain themes</strong>
+                <p>Poor UX and load times, weak search/ranking, shallow automation, clunky integrations, reporting gaps, permission friction.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>Candidate pain themes</strong>
+                <p>Application black hole, long forms, no status updates, ghosting, skepticism that a human reviewed the resume.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>2026 expectations</strong>
+                <p>Fast triage, trustworthy pipeline state, calendar-native scheduling, AI-assisted matching (with bias awareness), mobile apply, integrations as table stakes, auditability.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>Market split</strong>
+                <p>Greenhouse wins structure; Lever wins CRM nurture; Ashby wins modern analytics; legacy suites accumulate "clunky" reputation; SMB tools trade depth for simplicity.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Competitor landscape -->
+          <section class="ia-section" id="landscape">
+            <h2>Competitor landscape</h2>
+            <h3>Positioning map (discourse-based)</h3>
+            <pre class="research-positioning">                High customization / enterprise
+                              |
+         Greenhouse *         |         * Workday Recruiting
+                              |
+    --------------------------+---------------------------
+    Legacy / clunky           |           Modern UX
+                              |
+         iCIMS *  Bullhorn *  |    * Ashby
+                              |         * Lever (CRM strength)
+                              |
+                Low setup friction / startup</pre>
+
+            <h3>Competitor snapshots</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Product</th><th>Strengths</th><th>Weaknesses</th><th>Best fit</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Greenhouse</strong></td>
+                    <td>Structured hiring, scorecards, scheduling, integrations</td>
+                    <td>Expensive, steep setup, reporting limits, manual permissions</td>
+                    <td>Mid-large orgs, regulated hiring</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Lever</strong></td>
+                    <td>Sleek UI, CRM + nurture, email tracking</td>
+                    <td>Post-acquisition stagnation narrative, less enterprise reporting</td>
+                    <td>Sourcing-heavy teams</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Ashby</strong></td>
+                    <td>Modern design, analytics, startup-friendly setup</td>
+                    <td>Less enterprise compliance proof at very large scale</td>
+                    <td>Series A–C, data-driven TA</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Workday</strong></td>
+                    <td>HRIS unity when already on Workday</td>
+                    <td>Slow, complex, recruiter-hostile UX</td>
+                    <td>Existing Workday customers</td>
+                  </tr>
+                  <tr>
+                    <td><strong>JazzHR / Workable</strong></td>
+                    <td>Price, simplicity</td>
+                    <td>Limited depth, outgrow quickly</td>
+                    <td>Very small teams</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Pricing signals (public guides, 2025–2026)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Product</th><th>Typical annual band</th></tr></thead>
+                <tbody>
+                  <tr><td>Greenhouse</td><td>~$4K–$25K+</td></tr>
+                  <tr><td>Lever</td><td>~$4K–$20K</td></tr>
+                  <tr><td>Ashby</td><td>~$6K–$15K</td></tr>
+                  <tr><td>JazzHR / SMB</td><td>Lower entry, fewer seats</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>Opaque pricing and mandatory setup fees are themselves a buyer pain point in transition guides.</p>
+          </section>
+
+          <!-- Communities -->
+          <section class="ia-section" id="communities">
+            <h2>Observed user communities</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Community</th><th>Voice</th><th>ATS topics</th></tr></thead>
+                <tbody>
+                  <tr><td>Recruiters on review sites</td><td>Practitioners post-RFP</td><td>UX, scheduling, reporting, support</td></tr>
+                  <tr><td>Recruiter blogs</td><td>Power users venting</td><td>Search, automation, Excel workarounds</td></tr>
+                  <tr><td>Hiring managers</td><td>Occasional users</td><td>Feedback forms, calendar friction</td></tr>
+                  <tr><td>Candidates</td><td>Job seekers</td><td>Black hole, form length, ghosting</td></tr>
+                  <tr><td>HR ops / People teams</td><td>Buyers & admins</td><td>Migration, permissions, compliance</td></tr>
+                  <tr><td>SME People generalists</td><td>First ATS buyer at 20–200 employees</td><td>Low TCO, minimal setup, no CRM bloat</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="research-callout">
+              Recruiter discourse is <strong>workflow-intimate</strong> ("clicks to resume," "Excel again"). Candidate discourse is <strong>trust-intimate</strong> ("did anyone read this?"). SME buyer discourse is <strong>economics-intimate</strong> ("priced out," "still on spreadsheets after go-live").
+            </div>
+          </section>
+
+          <!-- Recruiter pain -->
+          <section class="ia-section" id="recruiter-pain">
+            <h2>Pain points — recruiters &amp; hiring staff</h2>
+            <p>Themes ranked by frequency and emotional intensity in public discourse.</p>
+
+            <h3>UX and cognitive load</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Pain</th><th>Discourse signal</th><th>Severity</th></tr></thead>
+                <tbody>
+                  <tr><td>Too many clicks to resume</td><td>"Resume isn't even the focal point of the profile"</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                  <tr><td>Slow load times</td><td>"Off-days where things are incredibly slow… back to Excel"</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                  <tr><td>Reporting hard to export</td><td>"If you want to pull reports… good luck!"</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                  <tr><td>Designed without recruiters</td><td>"Someone who has never recruited…"</td><td><span class="ia-badge severity-medium">Medium</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Search, filter, and ranking</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Pain</th><th>Signal</th><th>Severity</th></tr></thead>
+                <tbody>
+                  <tr><td>Boolean/keyword-only search</td><td>Misses semantic fit; keyword stuffing</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                  <tr><td>Rigid filters hide candidates</td><td>"Excellent candidate hiding behind years filter"</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                  <tr><td>No true ranking</td><td>Binary filters vs comparative fit</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Pipeline and process integrity</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Pain</th><th>Signal</th><th>Severity</th></tr></thead>
+                <tbody>
+                  <tr><td>Status doesn't match reality</td><td>Interview not scheduled but stage says scheduled</td><td><span class="ia-badge severity-medium">Medium</span></td></tr>
+                  <tr><td>Invalid transitions</td><td>Setup typos auto-reject qualified cohorts</td><td><span class="ia-badge severity-critical">Critical</span></td></tr>
+                  <tr><td>No cohort/time scoping</td><td>All-time pipeline noise</td><td><span class="ia-badge severity-medium">Medium</span></td></tr>
+                  <tr><td>Excel as shadow ATS</td><td>Parallel spreadsheet when UX fails</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>SME-specific pain</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Pain</th><th>Signal</th><th>Severity</th></tr></thead>
+                <tbody>
+                  <tr><td>No TA ops admin</td><td>One recruiter + hiring managers; tool must be self-explanatory</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                  <tr><td>Long implementation</td><td>6+ weeks delays first hire</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                  <tr><td>Wrong buy is catastrophic</td><td>43% already unhappy with TA stack; SMEs cannot afford a redo</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                  <tr><td>Enterprise pricing out SME</td><td>Public bands ~$4K–$25K+; opaque quotes</td><td><span class="ia-badge severity-high">High</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Candidate pain -->
+          <section class="ia-section" id="candidate-pain">
+            <h2>Pain points — candidates</h2>
+            <p>Synthesized from LiveCareer, HR Dive (Monster data), Greenhouse job-hunting report, and application UX surveys.</p>
+
+            <div class="research-stats">
+              <div class="research-stat">
+                <strong>60%</strong>
+                <span>Exasperated by not knowing if a human reviewed their resume</span>
+              </div>
+              <div class="research-stat">
+                <strong>41%</strong>
+                <span>Believe only 0–25% of applications are reviewed</span>
+              </div>
+              <div class="research-stat">
+                <strong>65%</strong>
+                <span>Rarely or never receive updates after applying</span>
+              </div>
+            </div>
+
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Theme</th><th>Signal</th></tr></thead>
+                <tbody>
+                  <tr><td>Application black hole</td><td>Ghosting and ghost jobs top candidate challenge lists</td></tr>
+                  <tr><td>Long/complex forms</td><td>57% abandoned due to frustration; 60% abandon when forms too long</td></tr>
+                  <tr><td>Opaque process</td><td>Candidates want clarity and human signal</td></tr>
+                  <tr><td>Keyword games</td><td>Resume optimization distrust; AI tools to "beat" ATS</td></tr>
+                  <tr><td>Automated rejection skepticism</td><td>54% favor heavy regulation or banning ATS (HR Dive)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Expectations -->
+          <section class="ia-section" id="expectations">
+            <h2>Expectations — what users look for</h2>
+
+            <h3>Recruiter jobs to be done</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Job</th><th>Expectation</th><th>Market pattern</th></tr></thead>
+                <tbody>
+                  <tr><td>Triage new volume</td><td>See who applied, for which role, when, with documents — fast</td><td>Table + board; week/cohort filters</td></tr>
+                  <tr><td>Progress decisions</td><td>Valid stage changes, audit trail, undo/reopen</td><td>Kanban + governed transitions</td></tr>
+                  <tr><td>Schedule interviews</td><td>Calendar-native, minimal back-and-forth</td><td>Built-in scheduling (Greenhouse/Ashby)</td></tr>
+                  <tr><td>Prove process</td><td>Reporting, DEI, compliance exports</td><td>Enterprise differentiator</td></tr>
+                  <tr><td>Reduce admin</td><td>Automation that actually runs</td><td>Top unmet expectation</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Candidate expectations</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Expectation</th><th>Discourse</th></tr></thead>
+                <tbody>
+                  <tr><td>Short, mobile-friendly apply</td><td>Abandonment data</td></tr>
+                  <tr><td>Confirmation + status visibility</td><td>"Did anyone see this?"</td></tr>
+                  <tr><td>Timely communication</td><td>Even rejection preferred to silence</td></tr>
+                  <tr><td>One profile, reuse CV</td><td>My Applications / talent pool pattern</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Buyer pass/fail criteria</h3>
+            <ul class="research-checklist">
+              <li>UX and adoption (recruiters and hiring managers)</li>
+              <li>Verified integrations — documentation, not demo claims</li>
+              <li>Scalability without admin explosion</li>
+              <li>Automation tied to real workflows</li>
+              <li>Candidate experience (mobile, length, comms)</li>
+              <li>Compliance: RBAC, audit trail, retention</li>
+              <li>Total cost of ownership (migration + training + licenses)</li>
+            </ul>
+            <p><strong>Industry benchmark:</strong> Only 43% of HR professionals rate their TA tech stack "good or excellent" — high replacement intent.</p>
+          </section>
+
+          <!-- Feature matrix -->
+          <section class="ia-section" id="matrix">
+            <h2>Feature expectation matrix</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Feature</th><th>Recruiter</th><th>Candidate</th><th>Common gap</th></tr></thead>
+                <tbody>
+                  <tr><td>Pipeline / Kanban</td><td>Standard</td><td>N/A</td><td>All-time noise without cohort filters</td></tr>
+                  <tr><td>Application packet page</td><td>High</td><td>N/A</td><td>Scattered across modules</td></tr>
+                  <tr><td>Status notifications</td><td>Medium</td><td><strong>High</strong></td><td>Often missing or generic</td></tr>
+                  <tr><td>Interview scheduling</td><td><strong>High</strong></td><td>Medium</td><td>Still manual in many installs</td></tr>
+                  <tr><td>AI matching</td><td>Rising (High in 2026)</td><td>Low visibility</td><td>Optional add-on, opaque</td></tr>
+                  <tr><td>Mobile apply</td><td>Medium</td><td><strong>High</strong></td><td>Often neglected</td></tr>
+                  <tr><td>Audit / history</td><td>Medium (enterprise High)</td><td>Low</td><td>Frequently weak</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Anti-patterns -->
+          <section class="ia-section" id="anti-patterns">
+            <h2>Anti-patterns &amp; cautionary tales</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Anti-pattern</th><th>Why it hurts</th><th>Discourse example</th></tr></thead>
+                <tbody>
+                  <tr><td>Infinite undifferentiated pipeline</td><td>Cognitive overload</td><td>Addressed by week scope in TalentHub</td></tr>
+                  <tr><td>Keyword auto-reject misconfiguration</td><td>Mass false negatives, reputational damage</td><td>Wrong keyword rejected entire qualified pool</td></tr>
+                  <tr><td>Click-drag ambiguity</td><td>Accidental navigation or wrong status</td><td>Kanban UX debates</td></tr>
+                  <tr><td>Ghost jobs / stale postings</td><td>Candidate trust collapse</td><td>Greenhouse job-hunting report</td></tr>
+                  <tr><td>AI ranking without governance</td><td>Bias, gaming, legal exposure</td><td>Buyer guides warn on AI bias</td></tr>
+                  <tr><td>Orphan navigation</td><td>Lost context returning from profile</td><td><code>?from=applications</code> in TalentHub</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Synthesis -->
+          <section class="ia-section aff-section" id="checklist">
+            <h2>Synthesis</h2>
+            <p>Affinity map from netnographic themes — grouped by audience for discovery, usability tests, and roadmap prioritization.</p>
+
+            <div class="aff-board">
+              <div class="aff-board-label">Synthesis output · affinity map</div>
+
+              <div class="aff-zones">
+                <article class="aff-zone aff-zone-r">
+                  <header class="aff-zone-head">
+                    <div class="aff-zone-badge">R</div>
+                    <div class="aff-zone-meta">
+                      <h3>Recruiters</h3>
+                      <p>"Too many clicks to the resume — when it's slow, we're back to Excel."</p>
+                    </div>
+                  </header>
+                  <div class="aff-notes">
+                    <div class="aff-note">Resume 1–2 clicks away</div>
+                    <div class="aff-note">No Excel fallback</div>
+                    <div class="aff-note">Table + board views</div>
+                    <div class="aff-note">Week-scoped pipeline</div>
+                    <div class="aff-note">Valid status rules</div>
+                    <div class="aff-note">Audit &amp; undo</div>
+                    <div class="aff-note">In-product scheduling</div>
+                    <div class="aff-note">Optional AI relevance</div>
+                    <div class="aff-note">Navigation context</div>
+                  </div>
+                </article>
+
+                <article class="aff-zone aff-zone-c">
+                  <header class="aff-zone-head">
+                    <div class="aff-zone-badge">C</div>
+                    <div class="aff-zone-meta">
+                      <h3>Candidates</h3>
+                      <p>"Did anyone read my application? Silence is worse than rejection."</p>
+                    </div>
+                  </header>
+                  <div class="aff-notes">
+                    <div class="aff-note">Short mobile apply</div>
+                    <div class="aff-note">Reuse CV &amp; profile</div>
+                    <div class="aff-note">Instant confirmation</div>
+                    <div class="aff-note">Status updates</div>
+                    <div class="aff-note aff-note-hot">No black hole</div>
+                  </div>
+                </article>
+
+                <article class="aff-zone aff-zone-b">
+                  <header class="aff-zone-head">
+                    <div class="aff-zone-badge">B</div>
+                    <div class="aff-zone-meta">
+                      <h3>SME / SMB buyers</h3>
+                      <p>"Priced out of enterprise — or still on spreadsheets after go-live."</p>
+                    </div>
+                  </header>
+                  <div class="aff-notes">
+                    <div class="aff-note">Predictable low TCO</div>
+                    <div class="aff-note">Days/weeks go-live</div>
+                    <div class="aff-note">Core loop only</div>
+                    <div class="aff-note">No TA ops admin</div>
+                    <div class="aff-note">Grow without lock-in</div>
+                  </div>
+                </article>
+              </div>
+
+              <div class="aff-converge" aria-hidden="true">
+                <svg viewBox="0 0 800 48" preserveAspectRatio="none">
+                  <path d="M133 4 C133 28 400 28 400 28 C400 28 667 28 667 4" fill="none" stroke="#cbd5e1" stroke-width="1.5"/>
+                  <circle cx="133" cy="4" r="4" fill="#2563eb"/>
+                  <circle cx="400" cy="28" r="5" fill="#1e3a8a"/>
+                  <circle cx="667" cy="4" r="4" fill="#d97706"/>
+                </svg>
+              </div>
+
+              <footer class="aff-outcome">
+                <span class="aff-outcome-label">Design lens</span>
+                <strong>TalentHub for SME hiring</strong>
+                <span class="aff-outcome-sep" aria-hidden="true">·</span>
+                <span>Low cost</span>
+                <span>Optimized UX</span>
+                <span>Reduced setup</span>
+                <span>Right-sized depth</span>
+              </footer>
+            </div>
+          </section>
+
+          <!-- Implications -->
+          <section class="ia-section" id="implications">
+            <h2>Implications for TalentHub</h2>
+            <p><strong>Primary audience:</strong> small and medium organizations that need recruitment at low cost, with optimized UX and reduced setup time, while avoiding enterprise bloat.</p>
+
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Market pain / expectation</th><th>TalentHub response</th><th>Gap vs commercial ATS</th></tr></thead>
+                <tbody>
+                  <tr><td>Enterprise cost / TCO</td><td>Scoped MVP — no CRM or tiered analytics</td><td>Honest SME positioning</td></tr>
+                  <tr><td>Dual table + pipeline</td><td><span class="ia-badge">Done</span> Applications hub</td><td>Aligned with Greenhouse/Lever</td></tr>
+                  <tr><td>Week-scoped cohort</td><td><span class="ia-badge">Done</span> UTC week toolbar</td><td>Differentiator vs infinite pipeline</td></tr>
+                  <tr><td>Application packet page</td><td><span class="ia-badge">Done</span> <code>/applications/[id]</code></td><td>Aligned</td></tr>
+                  <tr><td>Governed transitions + audit</td><td><span class="ia-badge">Done</span> Events, undo, reopen</td><td>Stronger than many SMB tools</td></tr>
+                  <tr><td>Interview scheduling</td><td><span class="ia-badge">Done</span> Modal + calendar</td><td>Matches mid-market expectation</td></tr>
+                  <tr><td>Contextual back navigation</td><td><span class="ia-badge">Done</span> <code>from=applications</code></td><td>Explicit UX craft</td></tr>
+                  <tr><td>Email/status notifications</td><td><span class="ia-badge placeholder">Planned</span> Field exists, not wired</td><td>Major candidate pain still open</td></tr>
+                  <tr><td>Semantic search / CRM</td><td>Not built</td><td>Intentionally out of SME scope</td></tr>
+                  <tr><td>Enterprise reporting</td><td><span class="ia-badge placeholder">Placeholder</span> Reports page</td><td>Greenhouse enterprise gap remains</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="research-callout">
+              <strong>Portfolio positioning:</strong> TalentHub is an SME-first ATS — opinionated craft on the highest-friction recruiter surfaces (triage, pipeline honesty, packet review, navigation), while deliberately omitting enterprise CRM, deep analytics, and integration marketplaces that inflate cost for small and medium teams.
+            </div>
+          </section>
+
+          <!-- Limitations -->
+          <section class="ia-section" id="limitations">
+            <h2>Research limitations</h2>
+            <ul class="research-checklist">
+              <li>No direct observation of private Slack/Discord recruiter communities in this pass</li>
+              <li>Review sites skew toward vocal extremes and incentivized reviews</li>
+              <li>Vendor-published statistics are directional, not independent</li>
+              <li>Regional variation (EU PDPA, APAC) underrepresented</li>
+              <li>TalentHub is not compared via user reviews — internal reference only</li>
+            </ul>
+            <p><strong>Recommended next research:</strong> 5–8 moderated recruiter interviews; 3–5 candidate think-aloud on apply flow; usability run using the usability test plan.</p>
+          </section>
+
+          <!-- Sources -->
+          <section class="ia-section" id="sources">
+            <h2>Sources</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>#</th><th>Source</th><th>Used for</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><a href="https://nurofile.ai/blog/problems-recruiters-face-with-ats/" target="_blank" rel="noopener">NUROFILE — Problems recruiters face with ATS</a></td><td>Recruiter pain themes</td></tr>
+                  <tr><td>2</td><td><a href="https://www.trustradius.com/compare-products/greenhouse-vs-lever" target="_blank" rel="noopener">TrustRadius — Greenhouse vs Lever</a></td><td>Head-to-head discourse</td></tr>
+                  <tr><td>3</td><td><a href="https://www.index.dev/blog/greenhouse-vs-lever-vs-ashby-ats-comparison" target="_blank" rel="noopener">Index.dev — ATS comparison 2026</a></td><td>Competitor matrix</td></tr>
+                  <tr><td>4</td><td><a href="https://www.tracker-rms.com/blog/essentials-to-consider-when-transitioning-to-a-new-ats/" target="_blank" rel="noopener">Tracker RMS — Choosing an ATS</a></td><td>Buyer criteria</td></tr>
+                  <tr><td>5</td><td><a href="https://www.hrdive.com/news/job-seekers-frustrated-by-opaque-impersonal-hiring-process/819898/" target="_blank" rel="noopener">HR Dive — Opaque hiring process</a></td><td>Candidate black hole</td></tr>
+                  <tr><td>6</td><td><a href="https://www.livecareer.com/resources/job-search-frustration" target="_blank" rel="noopener">LiveCareer — Job search frustration</a></td><td>Abandonment stats</td></tr>
+                  <tr><td>7</td><td><a href="https://www.greenhouse.com/blog/greenhouse-2024-state-of-job-hunting-report" target="_blank" rel="noopener">Greenhouse — State of Job Hunting 2024</a></td><td>Ghosting, candidate challenges</td></tr>
+                  <tr><td>8</td><td><a href="../../docs/specification/PRD.md">TalentHub PRD</a></td><td>As-built mapping</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Related documentation</h3>
+            <div class="ia-related">
+              <a href="index.html#research">Case study research section</a>
+              <a href="information-architecture.html">Information architecture</a>
+              <a href="../../docs/specification/PRD.md">Product requirements (PRD)</a>
+            </div>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">Netnographic research v1.1 · May 2026 · Directional synthesis</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="information-architecture.html">Information architecture</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

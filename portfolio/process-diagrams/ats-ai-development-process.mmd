@@ -1,0 +1,76 @@
+%% TalentHub ATS — AI-assisted development process (portfolio hero)
+%% Render: npx @mermaid-js/mermaid-cli -i ats-ai-development-process.mmd -o ats-ai-development-process.png -b white -w 3200
+
+flowchart TB
+  classDef human fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#1E1B4B
+  classDef hybrid fill:#ECFDF5,stroke:#059669,stroke-width:2px,color:#064E3B
+  classDef validate fill:#FFFBEB,stroke:#D97706,stroke-width:2px,color:#78350F
+  classDef ship fill:#F0FDF4,stroke:#16A34A,stroke-width:3px,color:#14532D
+  classDef sub fill:#FFFFFF,stroke:#CBD5E1,stroke-width:1px,color:#334155
+
+  START([New ATS initiative / milestone]):::sub
+
+  subgraph S1["① DISCOVERY — Human-led"]
+    direction TB
+    D1["Problem framing<br/>& use-case identification"]:::human
+    D2["Competitor analysis<br/><small>patterns · anti-patterns</small>"]:::sub
+    D3["Netnographic research<br/><small>recruiter & candidate discourse</small>"]:::sub
+    D1 --> D2
+    D1 --> D3
+  end
+
+  subgraph S2["② DEFINE — Human-led + AI-assisted"]
+    direction TB
+    DF0["Scope · context · design foundation"]:::human
+    DF1["PRD creation & validation<br/><small>AI draft → manual review rounds</small>"]:::hybrid
+    DF2["Technical / dev stack<br/><small>AI-assisted finalization</small>"]:::hybrid
+    DF3["Usability & design specification"]:::human
+    DF4["Accessibility specification<br/><small>WCAG 2.2 target</small>"]:::human
+    DF5["Architecture decisions<br/><small>monorepo · BFF · shared packages</small>"]:::human
+    DF6["GDPR & PDPA compliance spec"]:::human
+    DF7["Base design system & markup libraries<br/><small>AI-assisted code generation</small>"]:::hybrid
+    DF8["Prototype & navigation model<br/><small>IA · wireframes · routes</small>"]:::human
+    DF0 --> DF1 --> DF2
+    DF0 --> DF3 --> DF4
+    DF0 --> DF5 --> DF6
+    DF0 --> DF7 --> DF8
+  end
+
+  subgraph S3["③ IMPLEMENT — Incremental · AI-assisted"]
+    direction TB
+    I0["PRD backlog"]:::sub
+    I1["Pick a feature"]:::human
+    I2["Expand specification<br/>Compose Cursor prompt"]:::hybrid
+    I3["Implement in codebase<br/><small>UI · API · DB · validators</small>"]:::hybrid
+    I0 --> I1 --> I2 --> I3
+  end
+
+  subgraph S4["④ VALIDATE & UPDATE — Compare to intent"]
+    direction TB
+    V0["Run product · test behaviour"]:::human
+    V1["WCAG 2.2 audit & updates"]:::validate
+    V2["GDPR & PDPA audit & updates"]:::validate
+    V3["Design system audit & updates<br/><small>continuous AI-assisted / manual</small>"]:::hybrid
+    V4["IA & documentation updates"]:::human
+    V5["Update PRD status<br/><small>Done · Partial · Planned</small>"]:::human
+    V6["Update Git repository"]:::human
+    V0 --> V1 --> V2
+    V0 --> V3 --> V4
+    V0 --> V5 --> V6
+  end
+
+  S5["⑤ SHIP<br/>Increment complete · feature delivered"]:::ship
+
+  MORE{More PRD<br/>features?}:::sub
+
+  START --> S1
+  S1 --> S2
+  S2 --> S3
+  S3 --> S4
+  S4 -->|Pass| S5
+  S4 -->|Fail / gaps| S3
+  S5 --> MORE
+  MORE -->|Yes| I1
+  MORE -->|No — milestone done| END([Release / case study complete]):::ship
+
+  S2 -.->|living docs| S4

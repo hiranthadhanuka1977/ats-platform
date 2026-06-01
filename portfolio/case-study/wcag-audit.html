@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WCAG 2.2 Audit — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>WCAG 2.2 accessibility audit</h1>
+        <p>Source review of the three Next.js apps against Level AA — Stage ④ validation artefact in the AI-assisted development process.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#scope">Scope</a></li>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#cross-app">Cross-app findings</a></li>
+            <li><a href="#candidate-portal">Candidate portal</a></li>
+            <li><a href="#my-applications">My Applications</a></li>
+            <li><a href="#backoffice">Backoffice</a></li>
+            <li><a href="#scorecard">Scorecard</a></li>
+            <li><a href="#remediation">Remediation plan</a></li>
+            <li><a href="#working-well">What works well</a></li>
+            <li><a href="#verification">Recommended verification</a></li>
+            <li><a href="#related">Related docs</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>Audit date · 19 May 2026</span>
+            <span>Revision 1.1 · 21 May 2026</span>
+            <span>Target · WCAG 2.2 AA</span>
+            <span>Method · AI-assisted code review</span>
+          </div>
+
+          <p class="audit-intro">Assistive-technology and automated tool runs (axe, Lighthouse, NVDA/VoiceOver) are still recommended before production sign-off. Ground truth: <a href="../../docs/specification/PRD.md#81-accessibility">PRD §8.1</a> · <a href="../../docs/specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG</a> (TH-190–TH-192) · <a href="../process-diagrams/ats-ai-development-process.md#4-validation--updates--compare-to-intent">Process stage ④</a>.</p>
+
+          <!-- Scope -->
+          <section class="ia-section" id="scope">
+            <h2>Scope</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>App</th><th>Package</th><th>Port</th><th>Primary surfaces audited</th></tr></thead>
+                <tbody>
+                  <tr><td>Candidate portal</td><td><code>apps/candidate-portal</code></td><td>3000</td><td>Job listing, job detail, header/footer</td></tr>
+                  <tr><td>My Applications</td><td><code>apps/my-applications</code></td><td>3002</td><td>Login, register/OTP, dashboard, CV import, apply flow</td></tr>
+                  <tr><td>Backoffice</td><td><code>apps/backoffice</code></td><td>3001</td><td>Login, pipeline (Kanban), status modals, schedule interview, AI relevance notice, jobs form, interviews calendar, application detail</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p><strong>Out of scope:</strong> <code>apps/api</code> (JSON only), static prototypes under <code>docs/markup/</code>, portfolio wireframes (design reference only).</p>
+          </section>
+
+          <!-- Executive summary -->
+          <section class="ia-section" id="summary">
+            <h2>Executive summary</h2>
+
+            <div class="audit-summary-panel">
+              <div class="audit-summary-head">
+                <div class="audit-summary-score">
+                  <span class="audit-summary-total">70</span>
+                  <span class="audit-summary-total-label">Unique findings</span>
+                  <p class="audit-summary-verdict">Target · WCAG 2.2 Level AA<br><strong>Not sign-off ready</strong> — 17 fails open</p>
+                </div>
+                <div class="audit-summary-chart">
+                  <p class="audit-summary-chart-label">Result distribution</p>
+                  <div class="audit-summary-bar" role="img" aria-label="34 pass, 17 fail, 15 partial, 4 not applicable">
+                    <span class="audit-bar-seg audit-bar-pass" style="width:48.6%"></span>
+                    <span class="audit-bar-seg audit-bar-fail" style="width:24.3%"></span>
+                    <span class="audit-bar-seg audit-bar-partial" style="width:21.4%"></span>
+                    <span class="audit-bar-seg audit-bar-na" style="width:5.7%"></span>
+                  </div>
+                  <ul class="audit-summary-legend">
+                    <li><span class="audit-legend-dot audit-legend-pass"></span><strong>34</strong> Pass</li>
+                    <li><span class="audit-legend-dot audit-legend-fail"></span><strong>17</strong> Fail</li>
+                    <li><span class="audit-legend-dot audit-legend-partial"></span><strong>15</strong> Partial</li>
+                    <li><span class="audit-legend-dot audit-legend-na"></span><strong>4</strong> N/A</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="audit-summary-grid">
+                <article class="audit-summary-card audit-summary-good">
+                  <h3>Strengths</h3>
+                  <ul>
+                    <li><code>lang="en"</code> and skip links on all apps</li>
+                    <li>Semantic landmarks across shells</li>
+                    <li>Job posting form — reference pattern for errors</li>
+                    <li>Pipeline “Move to” keyboard alternative</li>
+                    <li><code>aria-live</code> on results count &amp; week label</li>
+                  </ul>
+                </article>
+
+                <article class="audit-summary-card audit-summary-improved">
+                  <h3>Since v1.0</h3>
+                  <ul>
+                    <li>Schedule interview modal — labels, Escape, focus, duration chips</li>
+                    <li>Candidate time preview with <code>aria-live="polite"</code></li>
+                    <li>AI bias notice — keyboard trigger &amp; <code>aria-expanded</code> (TH-129)</li>
+                  </ul>
+                </article>
+
+                <article class="audit-summary-card audit-summary-gap">
+                  <h3>Highest-impact gaps</h3>
+                  <ul>
+                    <li>Footer legal links still <code>href="#"</code></li>
+                    <li>Pipeline modals — no focus trap or Escape</li>
+                    <li>Form errors not linked in auth &amp; pipeline flows</li>
+                    <li>Pipeline menu trigger below 44×44px</li>
+                    <li>Backoffice fonts loaded from Google CDN</li>
+                  </ul>
+                </article>
+              </div>
+
+              <footer class="audit-summary-backlog">
+                <span class="audit-summary-backlog-label">Backlog</span>
+                <a class="audit-backlog-pill" href="../../docs/specification/FEATURE_BACKLOG.md#12-non-functional--compliance">TH-190 · WCAG remediation</a>
+                <a class="audit-backlog-pill" href="../../docs/specification/FEATURE_BACKLOG.md#12-non-functional--compliance">TH-191 · Modal focus trap</a>
+                <a class="audit-backlog-pill" href="../../docs/specification/FEATURE_BACKLOG.md#12-non-functional--compliance">TH-192 · Legal footer pages</a>
+              </footer>
+            </div>
+          </section>
+
+          <!-- Cross-app -->
+          <section class="ia-section" id="cross-app">
+            <h2>Cross-app findings</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Criterion</th><th>Result</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>3.1.1 Language of page</td><td><span class="audit-result pass">Pass</span></td><td><code>lang="en"</code> in each app <code>layout.tsx</code></td></tr>
+                  <tr><td>2.4.1 Bypass blocks</td><td><span class="audit-result pass">Pass</span></td><td><code>SkipLink</code> → <code>#main-content</code></td></tr>
+                  <tr><td>2.4.2 Page titled</td><td><span class="audit-result pass">Pass</span></td><td>Next.js <code>metadata</code> / per-page titles</td></tr>
+                  <tr><td>1.1.1 Non-text content</td><td><span class="audit-result partial">Partial</span></td><td>Icons generally <code>aria-hidden</code>; job banners use <code>alt</code> where <code>&lt;img&gt;</code> exists</td></tr>
+                  <tr><td>2.4.4 Link purpose (footer)</td><td><span class="audit-result fail">Fail</span></td><td>Privacy / Terms / Accessibility use <code>href="#"</code> in shared <code>SiteFooter</code></td></tr>
+                  <tr><td>2.4.7 Focus visible</td><td><span class="audit-result partial">Partial</span></td><td>Buttons/inputs styled; not all text links have explicit <code>:focus-visible</code></td></tr>
+                  <tr><td>2.4.11 Focus not obscured</td><td><span class="audit-result warn">Warning</span></td><td>Sticky headers; limited <code>scroll-margin-top</code></td></tr>
+                  <tr><td>4.1.3 Status messages</td><td><span class="audit-result partial">Partial</span></td><td>Some <code>aria-live</code> / <code>role="alert"</code>; not all async updates announced</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Candidate portal -->
+          <section class="ia-section" id="candidate-portal">
+            <h2>Candidate portal</h2>
+            <p class="audit-app-label"><code>apps/candidate-portal</code> · port 3000</p>
+
+            <h3>Perceivable</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Criterion</th><th>Result</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td>1.3.1 Info and relationships</td><td><span class="audit-result pass">Pass</span></td><td><code>SiteHeader</code> <code>role="banner"</code>; <code>main id="main-content"</code>; job cards <code>role="list"</code></td></tr>
+                  <tr><td>1.3.1 Heading hierarchy</td><td><span class="audit-result pass">Pass</span></td><td>Single <code>h1</code> in hero; card titles <code>h3</code></td></tr>
+                  <tr><td>1.4.3 Contrast</td><td><span class="audit-result partial">Partial</span></td><td>Tokens generally OK; badge/ribbon combinations not all verified at 4.5:1</td></tr>
+                  <tr><td>1.4.11 Non-text contrast</td><td><span class="audit-result partial">Partial</span></td><td>Light borders on inputs may be below 3:1</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Operable &amp; robust</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Criterion</th><th>Result</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td>2.1.1 Keyboard</td><td><span class="audit-result pass">Pass</span></td><td>Links and buttons; no card-only mouse targets</td></tr>
+                  <tr><td>2.1.2 No keyboard trap</td><td><span class="audit-result pass">Pass</span></td><td>Filter drawer: Escape closes</td></tr>
+                  <tr><td>2.4.6 Headings and labels</td><td><span class="audit-result pass">Pass</span></td><td>Hero search <code>aria-label</code>; filter controls labeled</td></tr>
+                  <tr><td>2.5.8 Target size</td><td><span class="audit-result partial">Partial</span></td><td>Verify ≥24×24px on mobile icon controls</td></tr>
+                  <tr><td>4.1.3 Status messages</td><td><span class="audit-result pass">Pass</span></td><td>Results count <code>aria-live="polite"</code></td></tr>
+                  <tr><td>Self-hosted fonts</td><td><span class="audit-result pass">Pass</span></td><td><code>next/font/google</code> — no runtime CDN request</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- My Applications -->
+          <section class="ia-section" id="my-applications">
+            <h2>My Applications</h2>
+            <p class="audit-app-label"><code>apps/my-applications</code> · port 3002</p>
+
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Criterion</th><th>Result</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td>1.3.1 Landmarks</td><td><span class="audit-result pass">Pass</span></td><td><code>MyAppsShell</code> skip link; sidebar <code>nav aria-label="Primary"</code></td></tr>
+                  <tr><td>3.3.2 Labels</td><td><span class="audit-result partial">Partial</span></td><td>Login/register: visible <code>&lt;label htmlFor&gt;</code></td></tr>
+                  <tr><td>3.3.1 Error identification</td><td><span class="audit-result fail">Fail</span></td><td>Field errors without <code>aria-invalid</code> / <code>aria-describedby</code></td></tr>
+                  <tr><td>4.1.3 Status messages</td><td><span class="audit-result partial">Partial</span></td><td>CV overlay has <code>role="status"</code>; form-level errors not always <code>role="alert"</code></td></tr>
+                  <tr><td>2.1.1 Keyboard</td><td><span class="audit-result pass">Pass</span></td><td>Native controls; OAuth buttons disabled where not wired</td></tr>
+                  <tr><td>2.4.7 Focus visible</td><td><span class="audit-result partial">Partial</span></td><td>Password toggle has <code>aria-label</code> + <code>aria-pressed</code></td></tr>
+                  <tr><td>2.5.3 Label in name</td><td><span class="audit-result pass">Pass</span></td><td>Visible labels match control names</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Form detail</h3>
+            <ul class="research-checklist">
+              <li><strong>Login:</strong> Labels and <code>autocomplete</code> good; global error lacks <code>role="alert"</code>; field errors not linked via <code>aria-describedby</code>.</li>
+              <li><strong>Register:</strong> Terms checkbox required; Privacy/Terms referenced as plain text, not links.</li>
+              <li><strong>Apply flow:</strong> Many labeled fields; validation summary should use <code>role="alert"</code> and per-field <code>aria-invalid</code>.</li>
+              <li><strong>CV import:</strong> Processing overlay accessible; no focus trap while processing.</li>
+            </ul>
+          </section>
+
+          <!-- Backoffice -->
+          <section class="ia-section" id="backoffice">
+            <h2>Backoffice</h2>
+            <p class="audit-app-label"><code>apps/backoffice</code> · port 3001</p>
+
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Criterion</th><th>Result</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td>1.3.1 Landmarks</td><td><span class="audit-result pass">Pass</span></td><td><code>BackOfficeShell</code> skip link; sidebar <code>nav aria-label="Primary"</code></td></tr>
+                  <tr><td>1.1.1 Images</td><td><span class="audit-result pass">Pass</span></td><td>Job preview images: meaningful or empty <code>alt</code></td></tr>
+                  <tr><td>1.4.3 Contrast</td><td><span class="audit-result partial">Partial</span></td><td>Muted text ~4.6:1; danger actions — verify on all backgrounds</td></tr>
+                  <tr><td>2.5.7 Dragging movements</td><td><span class="audit-result partial">Partial</span></td><td>HTML5 DnD on pipeline; “Move to” submenu satisfies intent if discoverable</td></tr>
+                  <tr><td>2.1.1 Keyboard</td><td><span class="audit-result partial">Partial</span></td><td>Card <code>role="button"</code> + Enter/Space; menu trigger very small — <span class="audit-result fail">Fail</span> 2.5.8</td></tr>
+                  <tr><td>2.1.2 No keyboard trap</td><td><span class="audit-result partial">Partial</span></td><td>Schedule interview: Escape + initial focus; no Tab cycle. <code>ModalShell</code> status modals: no Escape, no focus trap</td></tr>
+                  <tr><td>Job posting form</td><td><span class="audit-result pass">Pass</span></td><td><code>aria-invalid</code>, <code>aria-describedby</code>, <code>role="alert"</code> on errors</td></tr>
+                  <tr><td>Pipeline status modals</td><td><span class="audit-result fail">Fail</span></td><td>Errors not associated; wrapping <code>&lt;label&gt;</code> without stable <code>id</code>/<code>htmlFor</code></td></tr>
+                  <tr><td>Google Fonts CDN</td><td><span class="audit-result fail">Fail</span></td><td><code>@import</code> to <code>fonts.googleapis.com</code> in <code>globals.css</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Modal comparison</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Modal</th><th><code>role="dialog"</code></th><th>Escape</th><th>Focus trap</th><th>Field errors linked</th></tr></thead>
+                <tbody>
+                  <tr><td>Schedule interview</td><td><span class="audit-result pass">Yes</span></td><td><span class="audit-result pass">Yes</span></td><td><span class="audit-result partial">Initial only</span></td><td><span class="audit-result partial">Partial</span></td></tr>
+                  <tr><td>Reject / withdraw / hired / reopen</td><td><span class="audit-result pass">Yes</span></td><td><span class="audit-result fail">No</span></td><td><span class="audit-result fail">No</span></td><td><span class="audit-result fail">No</span></td></tr>
+                  <tr><td>Cancel scheduled interview</td><td><span class="audit-result pass">Yes</span></td><td><span class="audit-result fail">No</span></td><td><span class="audit-result fail">No</span></td><td><span class="audit-result na">N/A</span></td></tr>
+                  <tr><td>Missing interview prompt</td><td><span class="audit-result pass">Yes</span></td><td><span class="audit-result fail">No</span></td><td><span class="audit-result fail">No</span></td><td><span class="audit-result na">N/A</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Schedule interview modal (May 2026 redesign)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>Criterion</th><th>Result</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td>1.3.1 Labels</td><td><span class="audit-result pass">Pass</span></td><td>Visible labels; duration as <code>role="group"</code> + <code>aria-label</code></td></tr>
+                  <tr><td>2.1.1 Keyboard</td><td><span class="audit-result pass">Pass</span></td><td>Duration chips with <code>aria-pressed</code>; native date/time/select</td></tr>
+                  <tr><td>4.1.3 Preview</td><td><span class="audit-result pass">Pass</span></td><td>Candidate local time in <code>role="status"</code> + <code>aria-live="polite"</code></td></tr>
+                  <tr><td>2.1.2 Focus trap</td><td><span class="audit-result partial">Partial</span></td><td>Escape + focus on open; no Tab cycle containment</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Scorecard -->
+          <section class="ia-section" id="scorecard">
+            <h2>Compliance scorecard</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>WCAG principle</th><th>Pass</th><th>Fail</th><th>Partial</th><th>N/A</th></tr></thead>
+                <tbody>
+                  <tr><td>1. Perceivable</td><td>12</td><td>2</td><td>6</td><td>0</td></tr>
+                  <tr><td>2. Operable</td><td>11</td><td>4</td><td>5</td><td>1</td></tr>
+                  <tr><td>3. Understandable</td><td>6</td><td>3</td><td>2</td><td>1</td></tr>
+                  <tr><td>4. Robust</td><td>5</td><td>2</td><td>5</td><td>0</td></tr>
+                  <tr><td><strong>WCAG 2.2 new (2.4.11, 2.5.7, 2.5.8)</strong></td><td>1</td><td>1</td><td>2</td><td>0</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Remediation -->
+          <section class="ia-section" id="remediation">
+            <h2>Priority remediation plan</h2>
+
+            <h3 class="audit-priority-head">Critical — block AA sign-off</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>#</th><th>Issue</th><th>Apps</th><th>Criterion</th><th>Backlog</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Functional privacy/terms/accessibility pages (replace <code>href="#"</code>)</td><td>candidate-portal, my-applications</td><td>2.4.4</td><td><strong>TH-192</strong></td></tr>
+                  <tr><td>2</td><td>Focus trap + Escape on all <code>ModalShell</code> dialogs</td><td>backoffice</td><td>2.1.2, 2.4.3</td><td><strong>TH-191</strong></td></tr>
+                  <tr><td>3</td><td><code>aria-invalid</code> + <code>aria-describedby</code> on auth/apply/pipeline forms</td><td>my-applications, backoffice</td><td>3.3.1, 4.1.2</td><td><strong>TH-190</strong></td></tr>
+                  <tr><td>4</td><td>Enlarge pipeline card menu trigger to ≥44×44px</td><td>backoffice</td><td>2.5.8</td><td><strong>TH-190</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="audit-priority-head">High</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>#</th><th>Issue</th><th>Apps</th><th>Criterion</th></tr></thead>
+                <tbody>
+                  <tr><td>5</td><td>Global <code>a:focus-visible</code> (incl. dark header/footer)</td><td>all</td><td>2.4.7</td></tr>
+                  <tr><td>6</td><td><code>scroll-margin-top</code> under sticky header</td><td>all</td><td>2.4.11</td></tr>
+                  <tr><td>7</td><td>Link Terms/Privacy in register checkbox</td><td>my-applications</td><td>3.3.2</td></tr>
+                  <tr><td>8</td><td><code>role="alert"</code> on form-level errors</td><td>my-applications</td><td>4.1.3</td></tr>
+                  <tr><td>9</td><td>Self-host backoffice fonts via <code>next/font</code></td><td>backoffice</td><td>—</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="audit-priority-head">Medium</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table audit-table">
+                <thead><tr><th>#</th><th>Issue</th><th>Apps</th><th>Backlog</th></tr></thead>
+                <tbody>
+                  <tr><td>10</td><td>Announce pipeline drag/status outcomes via live region</td><td>backoffice</td><td>TH-190</td></tr>
+                  <tr><td>11</td><td>Full focus trap on Schedule interview modal (Tab cycle)</td><td>backoffice</td><td>TH-191</td></tr>
+                  <tr><td>12</td><td>Verify input border contrast (1.4.11)</td><td>candidate-portal</td><td>TH-190</td></tr>
+                  <tr><td>13</td><td>Focus trap on CV processing overlay</td><td>my-applications</td><td>TH-190</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Working well -->
+          <section class="ia-section" id="working-well">
+            <h2>What is working well</h2>
+            <ul class="research-checklist">
+              <li>Consistent skip navigation and landmark structure across three apps</li>
+              <li>Candidate portal list semantics and live results count</li>
+              <li>Job posting form in backoffice — strong reference for accessible forms</li>
+              <li>Pipeline “Move to” menu — non-drag status path aligned with WCAG 2.2 §2.5.7</li>
+              <li>Schedule interview modal — duration chips, timezone select, live candidate preview</li>
+              <li>AI bias awareness — keyboard-reachable human-review guidance on relevance scores</li>
+              <li>Candidate portal and my-applications use <code>next/font</code> (no third-party font leak)</li>
+            </ul>
+            <p>This audit is the <strong>Stage ④ validation</strong> artefact in the <a href="../process-diagrams/ats-ai-development-process.md">AI-assisted development process</a>. Re-run after each major UI increment or before portfolio / production sign-off.</p>
+          </section>
+
+          <!-- Verification -->
+          <section class="ia-section" id="verification">
+            <h2>Recommended verification</h2>
+            <p>Not done in this audit pass:</p>
+            <ol class="audit-steps">
+              <li><strong>axe DevTools</strong> or <strong>Lighthouse</strong> on <code>/</code>, <code>/jobs/{slug}</code>, <code>/login</code>, <code>/register</code>, <code>/dashboard</code>, <code>/applications</code>, <code>/applications/{id}</code></li>
+              <li><strong>Keyboard-only</strong> walkthrough: pipeline drag alternative, all modals, schedule interview, AI bias flyover</li>
+              <li><strong>Screen readers:</strong> NVDA (Windows), VoiceOver (macOS/iOS) on reject modal and apply form errors</li>
+              <li><strong>200% zoom</strong> on pipeline board and mobile filter drawer</li>
+            </ol>
+          </section>
+
+          <!-- Related -->
+          <section class="ia-section" id="related">
+            <h2>Related documentation</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Document</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><a href="../../docs/specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a></td><td>TH-190–TH-192 remediation tracking</td></tr>
+                  <tr><td><a href="gdpr-pdpa-audit.html">GDPR / PDPA audit</a></td><td>Privacy (footer links, fonts, consent)</td></tr>
+                  <tr><td><a href="../../docs/specification/PRD.md#81-accessibility">PRD §8.1</a></td><td>Product accessibility target</td></tr>
+                  <tr><td><a href="wireframes.html">Wireframe gallery</a></td><td>Lo-fi screens for test scripts</td></tr>
+                  <tr><td><a href="../../docs/reports/implementation-alignment-2026.md">implementation-alignment-2026.md</a></td><td>Spec vs code</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="audit-footer-note">Revision 1.1 · 21 May 2026 — aligned with PRD, FEATURE_BACKLOG (TH-190–192), schedule interview redesign, AI bias notice, cancel-interview modal. Next review: after TH-191 modal focus-trap work and TH-192 legal pages.</p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">WCAG 2.2 audit v1.1 · May 2026 · AI-assisted code review</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="information-architecture.html">Information architecture</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 450" role="img" aria-label="Application detail wireframe">
+  <rect width="720" height="450" fill="#f8fafc"/>
+  <rect x="0" y="0" width="128" height="450" fill="#e2e8f0"/>
+  <rect x="152" y="18" width="120" height="8" rx="2" fill="#2563eb" opacity="0.35"/>
+  <rect x="152" y="36" width="200" height="14" rx="3" fill="#0f172a" opacity="0.14"/>
+  <rect x="152" y="56" width="260" height="8" rx="2" fill="#94a3b8" opacity="0.4"/>
+  <rect x="152" y="80" width="268" height="108" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="164" y="94" width="88" height="8" rx="2" fill="#64748b"/>
+  <rect x="164" y="110" width="120" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="164" y="124" width="100" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="164" y="138" width="110" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="164" y="158" width="96" height="18" rx="4" fill="#eff6ff"/>
+  <rect x="432" y="80" width="272" height="108" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="444" y="94" width="72" height="8" rx="2" fill="#64748b"/>
+  <rect x="444" y="110" width="140" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="444" y="124" width="120" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="444" y="148" width="128" height="18" rx="4" fill="#f1f5f9"/>
+  <rect x="152" y="200" width="552" height="72" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="164" y="214" width="100" height="8" rx="2" fill="#64748b"/>
+  <rect x="164" y="230" width="520" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="164" y="244" width="480" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="164" y="258" width="420" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="152" y="284" width="268" height="108" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="164" y="298" width="72" height="8" rx="2" fill="#64748b"/>
+  <rect x="164" y="314" width="240" height="22" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="164" y="344" width="240" height="22" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="432" y="284" width="272" height="108" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="444" y="298" width="96" height="8" rx="2" fill="#64748b"/>
+  <rect x="444" y="318" width="160" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="444" y="340" width="120" height="24" rx="6" fill="#2563eb" opacity="0.25"/>
+  <rect x="152" y="404" width="120" height="24" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+  <rect x="280" y="404" width="120" height="24" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="408" y="404" width="140" height="24" rx="6" fill="#2563eb" opacity="0.25"/>
+  <text x="360" y="442" text-anchor="middle" fill="#64748b" font-family="Arial,sans-serif" font-size="11">Application detail - packet page</text>
+</svg>

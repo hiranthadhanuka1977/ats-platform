@@ -25,7 +25,15 @@
 ### Slide 3 — Problem
 
 - Volume + funnel + documents + orientation + invalid status risk  
+- **Audience:** SME / SMB teams — lean TA, low TCO, fast setup (see [19-netnographic-deck-slides.md](./19-netnographic-deck-slides.md))  
 - Visual: before sketch (undifferentiated pipeline)  
+
+---
+
+### Slide 3b–3h — Research & SME intent *(optional insert)*
+
+- See [19-netnographic-deck-slides.md § Insert pack](./19-netnographic-deck-slides.md#insert-pack--main-case-study-deck)  
+- Visual: stat callouts (43%, 60%) + research → design table  
 
 ---
 

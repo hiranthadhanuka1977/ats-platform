@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reflection & tradeoffs — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class=" active">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Reflection & tradeoffs</span></nav>
+      <article class="prose"><h1>Reflection — tradeoffs and next iteration</h1>
+<p><em>Updated against <a href="../../docs/specification/PRD.md">PRD §10–§11</a> — May 2026.</em></p>
+<h2>What I would defend in a design critique</h2>
+<ol>
+<li><strong>Week-scoped pipeline</strong> answers a real ops rhythm (“this week’s applications”) without a complex filter builder for MVP.</li>
+<li><strong>Application detail page</strong> is the correct <strong>anchor object</strong> for adjudication; candidate profile remains the anchor for <strong>person-centric</strong> history.</li>
+<li><strong>Disabling future weeks</strong> is better UX than showing an empty future pipeline—avoids “is the system broken?” moments.</li>
+<li><strong><code>from=applications</code></strong> is a minimal, auditable navigation hint—better than overloading browser history for a multi-app system.</li>
+<li><strong>Validated status transitions</strong> with audit events trade flexibility for trust—appropriate for hiring compliance.</li>
+<li><strong>Interview gate before status</strong> keeps pipeline honest; schedule action lives on the packet page to reduce context switching.</li>
+</ol>
+<hr>
+<h2>Tradeoffs (be honest in portfolio)</h2>
+<table>
+<thead>
+<tr>
+<th>Tradeoff</th>
+<th>Why we accepted it</th>
+<th>Future mitigation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>UTC weeks</strong> vs local</td>
+<td>Consistent with timestamps and simpler cross-timezone engineering</td>
+<td>Timezone selector or org locale</td>
+</tr>
+<tr>
+<td><strong>Drag + click</strong> same surface</td>
+<td>Familiar kanban pattern</td>
+<td>Separate drag handle vs click target; user testing</td>
+</tr>
+<tr>
+<td><strong>Salary in GBP</strong> in UI copy</td>
+<td>Placeholder locale for demo</td>
+<td>Configurable currency / locale</td>
+</tr>
+<tr>
+<td><strong>500-row cap</strong></td>
+<td>Performance guardrail</td>
+<td>Pagination + filters</td>
+</tr>
+<tr>
+<td><strong>Staff download endpoints</strong></td>
+<td>Security / session model</td>
+<td>Centralised files service with audit log</td>
+</tr>
+<tr>
+<td><strong>BFF in Next.js</strong> vs central API</td>
+<td>Faster iteration; auth API separate</td>
+<td>Extract to Hono when integrations need it (PRD §10)</td>
+</tr>
+<tr>
+<td><strong>AI relevance optional</strong></td>
+<td>Depends on OpenAI key</td>
+<td>Graceful degradation already in UI</td>
+</tr>
+<tr>
+<td><strong>Candidate JWT in localStorage</strong></td>
+<td>Current my-applications pattern</td>
+<td>HttpOnly cookies (audit recommendation)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Shipped since early portfolio drafts</h2>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>PRD ref</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Status audit history on application detail</td>
+<td>BO-42</td>
+</tr>
+<tr>
+<td>Undo and reopen flows</td>
+<td>BO-36, BO-37</td>
+</tr>
+<tr>
+<td>Interview schedule + calendar</td>
+<td>BO-40, BO-60</td>
+</tr>
+<tr>
+<td>Dashboard with pipeline health</td>
+<td>BO-10–14</td>
+</tr>
+<tr>
+<td>Full jobs CRUD + preview</td>
+<td>BO-20–25</td>
+</tr>
+<tr>
+<td>Administration lookup CRUD</td>
+<td>BO-70–73</td>
+</tr>
+<tr>
+<td>HTML design system + layout templates</td>
+<td>PRD §8.5</td>
+</tr>
+<tr>
+<td>Formal PRD document</td>
+<td><a href="../../docs/specification/PRD.md">PRD.md</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Collaboration notes (for “how you work” interviews)</h2>
+<ul>
+<li>Wrote <strong>acceptance-style</strong> criteria before visual polish so engineers could implement incrementally.</li>
+<li>Paired on <strong>edge cases</strong>: hydration-safe dates, enum normalization, optimistic UI rollback, interview validation.</li>
+<li>Used <strong>shared types</strong> package for <strong>status language</strong> and <strong>transition map</strong>—reduces design drift.</li>
+<li>Maintained <strong>implementation-aligned</strong> docs (PRD, API dictionary, design system) alongside portfolio artefacts.</li>
+</ul>
+<hr>
+<h2>What I’d do next (roadmap — PRD gaps)</h2>
+<ol>
+<li><strong>Inline PDF preview</strong> in application detail (reduce tab thrash).</li>
+<li><strong>Saved views</strong>: “My open reqs”, “This hiring manager’s roles”.</li>
+<li><strong>Email notifications</strong> when <code>notifyCandidate</code> is set (field exists; delivery TBD).</li>
+<li><strong>Accessibility pass</strong> on horizontal pipeline scroll and modal focus traps (see WCAG audit).</li>
+<li><strong>Breadcrumb</strong> component across backoffice (job edit → back to application).</li>
+<li><strong>Reports and Settings</strong> — replace placeholders with real surfaces.</li>
+<li><strong>Candidate bookmarks</strong> — end-to-end flow (schema exists).</li>
+<li><strong>Password reset UI</strong> for my-applications (API exists).</li>
+</ol>
+<hr>
+<h2>Personal growth (fill in 2 sentences)</h2>
+<ul>
+<li><em>[What you learned about recruiting domain]</em></li>
+<li><em>[What you learned about designing for internal power users across a multi-app platform]</em></li>
+</ul>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

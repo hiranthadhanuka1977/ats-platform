@@ -328,14 +328,15 @@ Canonical schema: `packages/db/prisma/schema.prisma`. Documented in [db-schema.m
 ### 8.1 Accessibility
 
 - Target **WCAG 2.2 Level AA** for Next.js apps.
-- Audits: [wcag22-audit.md](../reports/wcag22-audit.md) (updated May 2026).
-- Known gaps: modal focus traps, some backoffice pipeline interactions — tracked in audit.
+- Audits: [wcag22-audit.md](../reports/wcag22-audit.md) (revision 1.1, May 2026).
+- Known gaps: modal focus traps (**TH-191**), placeholder legal footer links (**TH-192**), pipeline live-region announcements — tracked in audit and [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md) (TH-190–TH-192).
 
 ### 8.2 Privacy and data protection
 
-- PDPA/GDPR-oriented audit: [pdpa-gdpr-audit.md](../reports/pdpa-gdpr-audit.md).
+- PDPA/GDPR-oriented audit: [pdpa-gdpr-audit.md](../reports/pdpa-gdpr-audit.md) (revision 1.1, May 2026).
 - Candidate PII in profile, CV files, and application attachments.
-- Staff sessions via httpOnly cookies; candidate tokens in localStorage (audit notes HttpOnly migration as recommendation).
+- Staff sessions via httpOnly cookies; candidate tokens in localStorage (**TH-193** HttpOnly migration).
+- AI relevance scoring with in-app human-review notice; email notify flags without delivery (**TH-009**, **TH-130**, **TH-131**).
 
 ### 8.3 Security
 
@@ -449,6 +450,8 @@ See [ATS_Local_Environment_Specification.md](ATS_Local_Environment_Specification
 | [api/backoffice-applications.md](api/backoffice-applications.md) | Staff BFF contract |
 | [api/my-applications-routes.md](api/my-applications-routes.md) | Candidate BFF contract |
 | [implementation-alignment-2026.md](../reports/implementation-alignment-2026.md) | Spec vs code alignment |
+| [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md) | TH-coded feature backlog (done / partial / planned) |
+| [FEATURE_BACKLOG_CURSOR_PROMPTS.md](./FEATURE_BACKLOG_CURSOR_PROMPTS.md) | Copy-paste Cursor Agent prompt per TH feature |
 | [design-system/README.md](../design-system/README.md) | UI tokens and layouts |
 
 ---

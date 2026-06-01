@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product requirements (PRD) — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class=" active">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Product requirements (PRD)</span></nav>
+      <article class="prose"><h1>Product Requirements Document — TalentHub ATS Platform</h1>
+<p><strong>Product:</strong> TalentHub (ATS Platform)<br><strong>Document version:</strong> 1.0<br><strong>Date:</strong> 20 May 2026<br><strong>Status:</strong> As-built — reflects implementation in the <code>ats-platform</code> monorepo as of May 2026  </p>
+<hr>
+<h2>1. Executive summary</h2>
+<p>TalentHub is an applicant tracking system (ATS) delivered as an npm monorepo with four runtime applications:</p>
+<table>
+<thead>
+<tr>
+<th>Application</th>
+<th>Port</th>
+<th>Audience</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Candidate portal</strong></td>
+<td>3000</td>
+<td>Public job seekers browsing open roles</td>
+</tr>
+<tr>
+<td><strong>My Applications</strong></td>
+<td>3002</td>
+<td>Registered candidates managing profile, CV, and applications</td>
+</tr>
+<tr>
+<td><strong>Backoffice</strong></td>
+<td>3001</td>
+<td>Internal recruiters and hiring staff</td>
+</tr>
+<tr>
+<td><strong>Central API</strong></td>
+<td>4000</td>
+<td>Shared authentication and candidate account services</td>
+</tr>
+</tbody></table>
+<p>The platform supports the full core hiring loop: <strong>publish jobs → discover and apply → triage in a Kanban pipeline → progress through interview and offer stages → hire or reject</strong>. Job data, applications, and staff workflows are persisted in PostgreSQL via Prisma. Most domain logic runs in Next.js route handlers (BFF pattern); the central Hono API handles auth and candidate registration only.</p>
+<p>This PRD consolidates product intent from specifications, static markup, and the live codebase. It distinguishes <strong>implemented</strong>, <strong>partial</strong>, and <strong>planned</strong> capabilities so stakeholders can align on what exists today versus what remains.</p>
+<hr>
+<h2>2. Vision and objectives</h2>
+<h3>2.1 Vision</h3>
+<p>Give hiring teams a focused backoffice to triage and progress applications efficiently, while giving candidates a clear path from job discovery to application tracking — without fragmenting context across jobs, candidates, and pipeline views.</p>
+<h3>2.2 Product objectives</h3>
+<ol>
+<li><strong>Reduce time-to-triage</strong> — Staff can review who applied, for which job, when, with what documents, from a single applications hub (list and Kanban views).</li>
+<li><strong>Enforce valid hiring workflow</strong> — Application status changes follow a defined transition matrix with audit logging, terminal-state rules, and controlled reopen flows.</li>
+<li><strong>Enable self-service candidate onboarding</strong> — Candidates register, verify email, upload a CV, and apply without staff intervention.</li>
+<li><strong>Maintain a single source of truth</strong> — One PostgreSQL schema (<code>@ats-platform/db</code>) shared across all apps; shared validators and types in workspace packages.</li>
+<li><strong>Support local-first development</strong> — File uploads to disk, optional OpenAI for CV parsing and relevance scoring, documented environment setup.</li>
+</ol>
+<h3>2.3 Design principles</h3>
+<ul>
+<li><strong>Progressive disclosure</strong> — Summary in list/pipeline; depth on application and candidate detail pages.</li>
+<li><strong>Application as unit of work</strong> — Candidate and job are linked contexts, not separate workflows.</li>
+<li><strong>Honest system state</strong> — Disable or block impossible transitions rather than failing silently after the fact.</li>
+<li><strong>Implementation-aligned documentation</strong> — Specs, API dictionary, design system, and audits track the Next.js apps, not legacy static markup alone.</li>
+</ul>
+<hr>
+<h2>3. Users and personas</h2>
+<h3>3.1 Candidate (external)</h3>
+<ul>
+<li>Browses published jobs on the public portal.</li>
+<li>Registers and logs in via My Applications.</li>
+<li>Uploads CV, optionally attaches cover letters, submits applications with screening answers.</li>
+<li>Tracks application status on a personal dashboard.</li>
+</ul>
+<h3>3.2 Recruiter / hiring manager (internal)</h3>
+<ul>
+<li>Logs into backoffice with staff credentials (<code>users</code> table).</li>
+<li>Creates and publishes job postings.</li>
+<li>Reviews applications in list or Kanban pipeline; changes status, schedules interviews, downloads attachments.</li>
+<li>Manages candidate records and lookup data (departments, locations, skills, etc.).</li>
+</ul>
+<h3>3.3 Administrator (internal)</h3>
+<ul>
+<li>Same backoffice access with admin role.</li>
+<li>Maintains reference data via Administration CRUD screens.</li>
+<li>(Future) User management, reports, system settings — UI placeholders exist today.</li>
+</ul>
+<hr>
+<h2>4. Product architecture</h2>
+<h3>4.1 High-level system diagram</h3>
+<pre><code class="language-text">┌─────────────────────┐     ┌─────────────────────┐
+│  candidate-portal   │     │   my-applications   │
+│  (public browse)    │────▶│  (auth + apply)     │
+└──────────┬──────────┘     └──────────┬──────────┘
+           │                           │
+           │         ┌─────────────────┼─────────────────┐
+           │         │                 │                 │
+           ▼         ▼                 ▼                 ▼
+    ┌──────────────────────────────────────────────────────────┐
+    │              PostgreSQL (@ats-platform/db)               │
+    └──────────────────────────────────────────────────────────┘
+           ▲                 ▲
+           │                 │
+┌──────────┴──────────┐     │     ┌─────────────────────┐
+│     backoffice      │─────┘     │    apps/api         │
+│  (staff BFF + UI)   │           │  auth + candidates  │
+└─────────────────────┘           └─────────────────────┘
+</code></pre>
+<h3>4.2 Request routing pattern</h3>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Where implemented</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Staff session (httpOnly cookies)</td>
+<td><code>apps/backoffice</code> — <code>/api/auth/*</code>, <code>/api/backoffice/*</code>, <code>/api/admin/*</code></td>
+</tr>
+<tr>
+<td>Candidate JWT (Bearer + refresh)</td>
+<td><code>apps/api</code> — <code>/api/v1/auth/*</code>; consumed by <code>apps/my-applications</code></td>
+</tr>
+<tr>
+<td>Candidate registration / OTP</td>
+<td><code>apps/api</code> — <code>/api/v1/candidates/*</code></td>
+</tr>
+<tr>
+<td>Public job listing</td>
+<td><code>apps/candidate-portal</code> — Prisma in server components (<code>src/lib/jobs.ts</code>)</td>
+</tr>
+<tr>
+<td>CV upload, apply, profile</td>
+<td><code>apps/my-applications</code> — <code>/api/my-applications/*</code></td>
+</tr>
+<tr>
+<td>Jobs CRUD, pipeline, interviews</td>
+<td><code>apps/backoffice</code> — Next.js route handlers</td>
+</tr>
+<tr>
+<td>Central domain API</td>
+<td><strong>Stubs</strong> — <code>/api/v1/jobs</code>, <code>/applications</code>, <code>/interviews</code>, <code>/users</code>, <code>/notifications</code></td>
+</tr>
+</tbody></table>
+<h3>4.3 Shared packages</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@ats-platform/db</code></td>
+<td>Prisma schema, migrations, client</td>
+</tr>
+<tr>
+<td><code>@ats-platform/validators</code></td>
+<td>Zod schemas for API and BFF payloads</td>
+</tr>
+<tr>
+<td><code>@ats-platform/types</code></td>
+<td>DTOs, <code>APPLICATION_STATUS_TRANSITIONS</code></td>
+</tr>
+<tr>
+<td><code>@ats-platform/ui</code></td>
+<td>Shared React primitives (where used)</td>
+</tr>
+<tr>
+<td><code>@ats-platform/auth</code></td>
+<td>Session/JWT abstractions</td>
+</tr>
+</tbody></table>
+<h3>4.4 File storage</h3>
+<p>Local filesystem under <code>UPLOAD_ROOT</code> (default <code>./storage</code> at repo root):</p>
+<ul>
+<li><code>storage/cvs/{candidateAccountId}/</code></li>
+<li><code>storage/cover-letters/{candidateAccountId}/</code></li>
+</ul>
+<hr>
+<h2>5. Functional requirements</h2>
+<p>Each requirement uses status: <strong>Done</strong> | <strong>Partial</strong> | <strong>Planned</strong> | <strong>Out of scope</strong>.</p>
+<h3>5.1 Public job discovery (candidate-portal)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CP-01</td>
+<td>Display published job listings with pagination</td>
+<td><strong>Done</strong></td>
+<td>Server-side Prisma query</td>
+</tr>
+<tr>
+<td>CP-02</td>
+<td>Filter by department, location, employment type, experience, remote</td>
+<td><strong>Done</strong></td>
+<td>URL-driven search params</td>
+</tr>
+<tr>
+<td>CP-03</td>
+<td>Full-text search on job title/summary</td>
+<td><strong>Done</strong></td>
+<td><code>q</code> parameter</td>
+</tr>
+<tr>
+<td>CP-04</td>
+<td>Job detail page with overview, responsibilities, qualifications, skills, benefits, tags</td>
+<td><strong>Done</strong></td>
+<td><code>/jobs/[slug]</code></td>
+</tr>
+<tr>
+<td>CP-05</td>
+<td>Salary display when <code>is_salary_visible</code></td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>CP-06</td>
+<td>Featured job highlighting</td>
+<td><strong>Done</strong></td>
+<td><code>is_featured</code> flag</td>
+</tr>
+<tr>
+<td>CP-07</td>
+<td>Banner image on job detail</td>
+<td><strong>Done</strong></td>
+<td><code>banner_image_url</code>, <code>banner_image_alt</code></td>
+</tr>
+<tr>
+<td>CP-08</td>
+<td>Apply CTA links to My Applications login</td>
+<td><strong>Done</strong></td>
+<td>No in-portal apply</td>
+</tr>
+<tr>
+<td>CP-09</td>
+<td>Skip link, sticky header, accessible footer</td>
+<td><strong>Done</strong></td>
+<td>WCAG-oriented markup</td>
+</tr>
+<tr>
+<td>CP-10</td>
+<td>Candidate auth, apply, bookmarks in portal</td>
+<td><strong>Out of scope</strong></td>
+<td>Redirects to port 3002</td>
+</tr>
+<tr>
+<td>CP-11</td>
+<td>Bookmark jobs</td>
+<td><strong>Planned</strong></td>
+<td>DB model exists; no API in portal</td>
+</tr>
+</tbody></table>
+<h3>5.2 Candidate account and workspace (my-applications)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MA-01</td>
+<td>Register with email and password</td>
+<td><strong>Done</strong></td>
+<td>Central API</td>
+</tr>
+<tr>
+<td>MA-02</td>
+<td>Email verification via OTP</td>
+<td><strong>Done</strong></td>
+<td>Dev OTP <code>111111</code> documented</td>
+</tr>
+<tr>
+<td>MA-03</td>
+<td>Login / logout / session refresh</td>
+<td><strong>Done</strong></td>
+<td>Bearer JWT; 15m idle logout in UI</td>
+</tr>
+<tr>
+<td>MA-04</td>
+<td>Forgot / reset password</td>
+<td><strong>Partial</strong></td>
+<td>API exists; <strong>no UI</strong></td>
+</tr>
+<tr>
+<td>MA-05</td>
+<td>Dashboard with onboarding journey and recent applications</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>MA-06</td>
+<td>Job search (published jobs)</td>
+<td><strong>Done</strong></td>
+<td>Simpler filters than portal</td>
+</tr>
+<tr>
+<td>MA-07</td>
+<td>Job detail and apply flow</td>
+<td><strong>Done</strong></td>
+<td>CV required; optional cover letter</td>
+</tr>
+<tr>
+<td>MA-08</td>
+<td>Application list with status</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>MA-09</td>
+<td>CV upload (PDF, DOC, DOCX)</td>
+<td><strong>Done</strong></td>
+<td>Max 10 MB</td>
+</tr>
+<tr>
+<td>MA-10</td>
+<td>CV parse and structured save to profile</td>
+<td><strong>Done</strong></td>
+<td>Text extraction + OpenAI</td>
+</tr>
+<tr>
+<td>MA-11</td>
+<td>CV library: list, default, download, delete</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>MA-12</td>
+<td>Cover letter library (file + text modes)</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>MA-13</td>
+<td>Screening questions on apply</td>
+<td><strong>Done</strong></td>
+<td>Per-application fields</td>
+</tr>
+<tr>
+<td>MA-14</td>
+<td>Profile screenshot import (LinkedIn-style)</td>
+<td><strong>Partial</strong></td>
+<td>Prototype on <code>/my-profile</code></td>
+</tr>
+<tr>
+<td>MA-15</td>
+<td>Bookmark jobs</td>
+<td><strong>Planned</strong></td>
+<td>Schema only</td>
+</tr>
+<tr>
+<td>MA-16</td>
+<td>Withdraw application</td>
+<td><strong>Planned</strong></td>
+<td>Status exists in pipeline; candidate UI TBD</td>
+</tr>
+</tbody></table>
+<h3>5.3 Staff authentication and shell (backoffice)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BO-01</td>
+<td>Staff login with httpOnly session cookies</td>
+<td><strong>Done</strong></td>
+<td>Prisma <code>users</code> table</td>
+</tr>
+<tr>
+<td>BO-02</td>
+<td>Role-based staff accounts (admin, recruiter, hiring_manager)</td>
+<td><strong>Done</strong></td>
+<td>Enum on <code>User</code></td>
+</tr>
+<tr>
+<td>BO-03</td>
+<td>Sidebar navigation, top bar, mobile nav</td>
+<td><strong>Done</strong></td>
+<td><code>BackOfficeShell</code></td>
+</tr>
+<tr>
+<td>BO-04</td>
+<td>Skip link and session activity tracking</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-05</td>
+<td>Middleware protection on dashboard routes</td>
+<td><strong>Done</strong></td>
+<td>Cookie <code>bo_access</code></td>
+</tr>
+</tbody></table>
+<h3>5.4 Dashboard (backoffice)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BO-10</td>
+<td>KPI stat row (open jobs, applications, etc.)</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-11</td>
+<td>Pipeline health snapshot</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-12</td>
+<td>Recent activity feed</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-13</td>
+<td>Efficiency score card</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-14</td>
+<td>Curator insight (stalled interviews)</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3>5.5 Job posting management (backoffice)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BO-20</td>
+<td>List jobs with search, filters, pagination</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-21</td>
+<td>Create job (multi-section form)</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-22</td>
+<td>Edit existing job</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-23</td>
+<td>Review step before publish</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-24</td>
+<td>Publish / draft status</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-25</td>
+<td>Job preview (candidate-facing layout)</td>
+<td><strong>Done</strong></td>
+<td><code>/jobs/[id]/preview</code></td>
+</tr>
+<tr>
+<td>BO-26</td>
+<td>Relational content: responsibilities, qualifications, skills, benefits, tags</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-27</td>
+<td>Salary range and visibility toggle</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-28</td>
+<td>Remote and featured flags</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-29</td>
+<td>Banner image URL and alt text</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3>5.6 Applications hub and pipeline (backoffice)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BO-30</td>
+<td>Applications list view with sorting and filters</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-31</td>
+<td>Kanban pipeline view (default)</td>
+<td><strong>Done</strong></td>
+<td>Drag-and-drop status changes</td>
+</tr>
+<tr>
+<td>BO-32</td>
+<td>Toggle list ↔ pipeline; fullscreen pipeline mode</td>
+<td><strong>Done</strong></td>
+<td><code>bo-content--pipeline</code></td>
+</tr>
+<tr>
+<td>BO-33</td>
+<td>Week-scoped pipeline browsing</td>
+<td><strong>Done</strong></td>
+<td>Past and current week</td>
+</tr>
+<tr>
+<td>BO-34</td>
+<td>Ten application statuses with transition validation</td>
+<td><strong>Done</strong></td>
+<td>See §6</td>
+</tr>
+<tr>
+<td>BO-35</td>
+<td>Status PATCH with reason, notes, optimistic concurrency</td>
+<td><strong>Done</strong></td>
+<td><code>/api/backoffice/applications/{id}/status</code></td>
+</tr>
+<tr>
+<td>BO-36</td>
+<td>Undo last status change</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-37</td>
+<td>Reopen from rejected (controlled action)</td>
+<td><strong>Done</strong></td>
+<td>Mandatory reason</td>
+</tr>
+<tr>
+<td>BO-38</td>
+<td>Application detail: applicant, job link, submission, documents</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-39</td>
+<td>Download CV and cover letter (staff)</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-40</td>
+<td>Schedule interview (one per application)</td>
+<td><strong>Done</strong></td>
+<td><code>application_interviews</code></td>
+</tr>
+<tr>
+<td>BO-41</td>
+<td>AI relevance score on applications</td>
+<td><strong>Partial</strong></td>
+<td>Requires <code>OPENAI_API_KEY</code></td>
+</tr>
+<tr>
+<td>BO-42</td>
+<td>Status change audit log</td>
+<td><strong>Done</strong></td>
+<td><code>application_status_events</code></td>
+</tr>
+<tr>
+<td>BO-43</td>
+<td>Terminal columns: Rejected, Withdrawn</td>
+<td><strong>Done</strong></td>
+<td>Separate from active board</td>
+</tr>
+<tr>
+<td>BO-44</td>
+<td>Email notification on status change</td>
+<td><strong>Planned</strong></td>
+<td><code>notifyCandidate</code> field exists; delivery TBD</td>
+</tr>
+</tbody></table>
+<h3>5.7 Candidates (backoffice)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BO-50</td>
+<td>Candidates summary dashboard</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-51</td>
+<td>Searchable candidates table</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-52</td>
+<td>Candidate detail: profile, CV history, applications</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-53</td>
+<td>Edit candidate account status</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-54</td>
+<td>Return navigation from candidate → applications context</td>
+<td><strong>Done</strong></td>
+<td>Context preserved where specified</td>
+</tr>
+</tbody></table>
+<h3>5.8 Interviews (backoffice)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BO-60</td>
+<td>Interviews calendar page</td>
+<td><strong>Done</strong></td>
+<td><code>/interviews</code></td>
+</tr>
+<tr>
+<td>BO-61</td>
+<td>Schedule from application detail</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-62</td>
+<td>Interview required before <code>interview_scheduled</code> status</td>
+<td><strong>Done</strong></td>
+<td>API validation</td>
+</tr>
+</tbody></table>
+<h3>5.9 Administration (backoffice)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BO-70</td>
+<td>CRUD for companies</td>
+<td><strong>Done</strong></td>
+<td><code>/administration/companies</code></td>
+</tr>
+<tr>
+<td>BO-71</td>
+<td>CRUD for departments, locations</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-72</td>
+<td>CRUD for employment types, experience levels</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-73</td>
+<td>CRUD for skills, tags, benefits</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-74</td>
+<td>Staff user management UI</td>
+<td><strong>Planned</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>BO-75</td>
+<td>Reports</td>
+<td><strong>Planned</strong></td>
+<td>Placeholder page</td>
+</tr>
+<tr>
+<td>BO-76</td>
+<td>Settings</td>
+<td><strong>Planned</strong></td>
+<td>Placeholder page</td>
+</tr>
+</tbody></table>
+<h3>5.10 Central API (apps/api)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>API-01</td>
+<td>Health probe</td>
+<td><strong>Done</strong></td>
+<td><code>/health</code></td>
+</tr>
+<tr>
+<td>API-02</td>
+<td>Staff and candidate login</td>
+<td><strong>Done</strong></td>
+<td>Audience-aware JWT</td>
+</tr>
+<tr>
+<td>API-03</td>
+<td><code>/auth/me</code>, logout, refresh</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>API-04</td>
+<td>Candidate register, verify, resend OTP</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>API-05</td>
+<td>Forgot / reset password</td>
+<td><strong>Done</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>API-06</td>
+<td>Jobs REST API</td>
+<td><strong>Planned</strong></td>
+<td>Stub only</td>
+</tr>
+<tr>
+<td>API-07</td>
+<td>Applications REST API</td>
+<td><strong>Planned</strong></td>
+<td>Stub only</td>
+</tr>
+<tr>
+<td>API-08</td>
+<td>Interviews REST API</td>
+<td><strong>Planned</strong></td>
+<td>Stub only</td>
+</tr>
+<tr>
+<td>API-09</td>
+<td>Notifications</td>
+<td><strong>Out of scope</strong></td>
+<td>Stub; no DB model</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>6. Application lifecycle</h2>
+<h3>6.1 Status enum (10 values)</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Pipeline column</th>
+<th>Terminal</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>submitted</code></td>
+<td>Submitted</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>under_review</code></td>
+<td>Under Review</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>shortlisted</code></td>
+<td>Shortlisted</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>interview_scheduled</code></td>
+<td>Interview Scheduled</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>interview_completed</code></td>
+<td>Interview Completed</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>offered</code></td>
+<td>Offered</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>hired</code></td>
+<td>Hired</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>rejected</code></td>
+<td>Rejected</td>
+<td>Yes*</td>
+</tr>
+<tr>
+<td><code>withdrawn</code></td>
+<td>Withdrawn</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<p>* Rejected allows controlled <strong>reopen</strong> to <code>under_review</code> or <code>shortlisted</code> only.</p>
+<h3>6.2 Active Kanban columns</h3>
+<pre><code class="language-text">Submitted → Under Review → Shortlisted → Interview Scheduled → Interview Completed → Offered → Hired
+</code></pre>
+<p>Rejected and Withdrawn appear as separate tabs or filtered views.</p>
+<h3>6.3 Business rules (summary)</h3>
+<ul>
+<li><strong>Reject</strong> requires a reason.</li>
+<li><strong>Withdraw</strong> requires a withdrawal source.</li>
+<li><strong>Hired</strong> from <strong>Offered</strong> requires <code>offerAccepted: true</code>.</li>
+<li><strong>Interview Scheduled</strong> requires an <code>application_interviews</code> row.</li>
+<li>Transitions from <strong>Rejected</strong> use reopen endpoint, not standard PATCH.</li>
+<li><strong>Hired</strong> and <strong>Withdrawn</strong> are terminal for normal PATCH.</li>
+<li>Optimistic concurrency via optional <code>expectedUpdatedAt</code> (409 on conflict).</li>
+</ul>
+<p>Full matrix and payloads: <a href="ATS_Application_State_UI_API_Requirements.md">ATS_Application_State_UI_API_Requirements.md</a>, <a href="api/backoffice-applications.md">api/backoffice-applications.md</a>.</p>
+<hr>
+<h2>7. Data model (summary)</h2>
+<p>Canonical schema: <code>packages/db/prisma/schema.prisma</code>. Documented in <a href="db-schema.md">db-schema.md</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Key entities</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Lookups</td>
+<td><code>Company</code>, <code>Department</code>, <code>Location</code>, <code>EmploymentType</code>, <code>ExperienceLevel</code>, <code>Skill</code>, <code>Benefit</code>, <code>Tag</code></td>
+</tr>
+<tr>
+<td>Staff</td>
+<td><code>User</code></td>
+</tr>
+<tr>
+<td>Jobs</td>
+<td><code>JobPosting</code> + related content tables</td>
+</tr>
+<tr>
+<td>Candidates</td>
+<td><code>CandidateAccount</code>, <code>CandidateProfile</code>, <code>CandidateCvParse</code>, education/experience, sessions, tokens</td>
+</tr>
+<tr>
+<td>Applications</td>
+<td><code>Application</code>, <code>ApplicationStatusEvent</code>, <code>ApplicationInterview</code></td>
+</tr>
+<tr>
+<td>Engagement</td>
+<td><code>Bookmark</code>, <code>CandidateCoverLetter</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>8. Non-functional requirements</h2>
+<h3>8.1 Accessibility</h3>
+<ul>
+<li>Target <strong>WCAG 2.2 Level AA</strong> for Next.js apps.</li>
+<li>Audits: <a href="../reports/wcag22-audit.md">wcag22-audit.md</a> (revision 1.1, May 2026).</li>
+<li>Known gaps: modal focus traps (<strong>TH-191</strong>), placeholder legal footer links (<strong>TH-192</strong>), pipeline live-region announcements — tracked in audit and <a href="./FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a> (TH-190–TH-192).</li>
+</ul>
+<h3>8.2 Privacy and data protection</h3>
+<ul>
+<li>PDPA/GDPR-oriented audit: <a href="../reports/pdpa-gdpr-audit.md">pdpa-gdpr-audit.md</a> (revision 1.1, May 2026).</li>
+<li>Candidate PII in profile, CV files, and application attachments.</li>
+<li>Staff sessions via httpOnly cookies; candidate tokens in localStorage (<strong>TH-193</strong> HttpOnly migration).</li>
+<li>AI relevance scoring with in-app human-review notice; email notify flags without delivery (<strong>TH-009</strong>, <strong>TH-130</strong>, <strong>TH-131</strong>).</li>
+</ul>
+<h3>8.3 Security</h3>
+<ul>
+<li>Password hashing (bcrypt) for staff and candidates.</li>
+<li>Account lockout on failed login attempts (API).</li>
+<li>Staff routes gated by middleware; candidate routes require Bearer JWT.</li>
+<li>File upload type and size validation on CV endpoints.</li>
+</ul>
+<h3>8.4 Performance and scale (current assumptions)</h3>
+<ul>
+<li>Local/dev-oriented: filesystem storage, single PostgreSQL instance.</li>
+<li>Pipeline loads up to 500 applications server-side (backoffice).</li>
+<li>No CDN, email queue, or horizontal scaling documented yet.</li>
+</ul>
+<h3>8.5 Design system</h3>
+<ul>
+<li>HTML catalog: <a href="../design-system/index.html">design-system/index.html</a>.</li>
+<li>Tokens, components, and <strong>layout templates</strong> (portal shell, job listing, auth split, dashboard shell, pipeline viewport).</li>
+<li>Source-aligned with <code>apps/*/src/styles</code>.</li>
+</ul>
+<hr>
+<h2>9. User journeys (as-built)</h2>
+<h3>9.1 Candidate: discover and apply</h3>
+<pre><code class="language-text">Browse jobs (portal :3000)
+  → Register / login (my-applications :3002 + API :4000)
+  → Upload and parse CV
+  → Apply to job (select CV, optional cover letter, screening answers)
+  → Track status on dashboard
+</code></pre>
+<h3>9.2 Staff: publish and hire</h3>
+<pre><code class="language-text">Login (backoffice :3001)
+  → Create and publish job
+  → Review applications (list or Kanban)
+  → Move cards / PATCH status (with rules)
+  → Schedule interview when needed
+  → Progress to Offered → Hired (or Reject with reason)
+  → Download CV / cover letter from detail page
+</code></pre>
+<h3>9.3 Admin: maintain reference data</h3>
+<pre><code class="language-text">Login → Administration → CRUD on lookups (departments, skills, etc.)
+</code></pre>
+<hr>
+<h2>10. Out of scope and known gaps</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Central Hono jobs/applications/interviews API</td>
+<td>Stubs; logic lives in Next BFFs</td>
+</tr>
+<tr>
+<td>Notifications service</td>
+<td>No Prisma model; stub endpoint</td>
+</tr>
+<tr>
+<td>Backoffice Reports &amp; Settings</td>
+<td>Placeholder UI only</td>
+</tr>
+<tr>
+<td>Candidate bookmarks</td>
+<td>DB ready; no end-to-end flow</td>
+</tr>
+<tr>
+<td>Password reset UI (candidate)</td>
+<td>API only</td>
+</tr>
+<tr>
+<td>Email delivery (OTP, status notifications)</td>
+<td>Dev OTP hardcoded; <code>notifyCandidate</code> not wired</td>
+</tr>
+<tr>
+<td>Multi-tenant / multi-company isolation</td>
+<td>Single-tenant assumptions</td>
+</tr>
+<tr>
+<td>Mobile-native apps</td>
+<td>Responsive web only</td>
+</tr>
+<tr>
+<td>SSO / OAuth (Google, etc.)</td>
+<td>Staff uses email/password</td>
+</tr>
+<tr>
+<td>Extract BFF to central API</td>
+<td>Documented as future alignment step</td>
+</tr>
+</tbody></table>
+<p>Recommended follow-ups from <a href="../reports/implementation-alignment-2026.md">implementation-alignment-2026.md</a>:</p>
+<ol>
+<li>Harden staff auth on candidate status PATCH if exposed broadly.</li>
+<li>Re-audit accessibility on pipeline and my-applications flows after changes.</li>
+<li>Implement or formally defer central <code>/api/v1/jobs</code> and <code>/api/v1/applications</code>.</li>
+</ol>
+<hr>
+<h2>11. Success metrics (suggested)</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Definition</th>
+<th>Baseline</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Time to first triage</td>
+<td>Staff opens application detail from pipeline</td>
+<td>Qualitative — flow exists</td>
+</tr>
+<tr>
+<td>Apply completion rate</td>
+<td>Started apply → submitted application</td>
+<td>Not instrumented</td>
+</tr>
+<tr>
+<td>Invalid transition rate</td>
+<td>PATCH rejected due to rules</td>
+<td>Audit via <code>application_status_events</code></td>
+</tr>
+<tr>
+<td>CV parse success rate</td>
+<td>Upload → confirmed profile</td>
+<td>Not instrumented</td>
+</tr>
+<tr>
+<td>Accessibility defects</td>
+<td>WCAG audit open items</td>
+<td>See audit report</td>
+</tr>
+</tbody></table>
+<p>Instrumentation and analytics are <strong>planned</strong>; no product analytics layer is implemented.</p>
+<hr>
+<h2>12. Release and environment</h2>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Command</th>
+<th>Apps</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Local dev</td>
+<td><code>npm run dev:all</code></td>
+<td>3000, 3001, 3002, 4000</td>
+</tr>
+<tr>
+<td>Database</td>
+<td><code>npm run db:migrate</code></td>
+<td>PostgreSQL via root <code>.env</code></td>
+</tr>
+</tbody></table>
+<p>See <a href="ATS_Local_Environment_Specification.md">ATS_Local_Environment_Specification.md</a> for env vars (<code>DATABASE_URL</code>, <code>JWT_SECRET</code>, <code>OPENAI_API_KEY</code>, <code>UPLOAD_ROOT</code>).</p>
+<hr>
+<h2>13. Related documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="../PROJECT_STRUCTURE.md">PROJECT_STRUCTURE.md</a></td>
+<td>Monorepo layout and scripts</td>
+</tr>
+<tr>
+<td><a href="API_Dictionary.md">API_Dictionary.md</a></td>
+<td>HTTP API entry point</td>
+</tr>
+<tr>
+<td><a href="db-schema.md">db-schema.md</a></td>
+<td>Relational model</td>
+</tr>
+<tr>
+<td><a href="ATS_Application_State_UI_API_Requirements.md">ATS_Application_State_UI_API_Requirements.md</a></td>
+<td>Pipeline product spec</td>
+</tr>
+<tr>
+<td><a href="api/backoffice-applications.md">api/backoffice-applications.md</a></td>
+<td>Staff BFF contract</td>
+</tr>
+<tr>
+<td><a href="api/my-applications-routes.md">api/my-applications-routes.md</a></td>
+<td>Candidate BFF contract</td>
+</tr>
+<tr>
+<td><a href="../reports/implementation-alignment-2026.md">implementation-alignment-2026.md</a></td>
+<td>Spec vs code alignment</td>
+</tr>
+<tr>
+<td><a href="./FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a></td>
+<td>TH-coded feature backlog (done / partial / planned)</td>
+</tr>
+<tr>
+<td><a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md">FEATURE_BACKLOG_CURSOR_PROMPTS.md</a></td>
+<td>Copy-paste Cursor Agent prompt per TH feature</td>
+</tr>
+<tr>
+<td><a href="../design-system/README.md">design-system/README.md</a></td>
+<td>UI tokens and layouts</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>14. Document history</h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.0</td>
+<td>20 May 2026</td>
+<td>—</td>
+<td>Initial PRD synthesized from specs and as-built implementation</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>This PRD describes what has been built and documented. For endpoint-level detail, prefer the API dictionary and module-specific specs over this summary.</em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

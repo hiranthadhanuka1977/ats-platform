@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>5-stage development process — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class=" active">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>5-stage development process</span></nav>
+      <article class="prose"><h1>TalentHub ATS — AI-assisted development process</h1>
+<p><strong>Use in:</strong> Portfolio case study · Notion · slide deck · LinkedIn featured project<br><strong>Product:</strong> TalentHub (<code>ats-platform</code> monorepo)<br><strong>Date:</strong> May 2026</p>
+<p>This diagram documents the <strong>end-to-end process</strong> used to design and build an ATS with <strong>AI-assisted implementation</strong> and <strong>human-led product judgment</strong>.</p>
+<hr>
+<h2>Process overview (5 stages)</h2>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Name</th>
+<th>Mode</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1</strong></td>
+<td>Discovery</td>
+<td>Human-led</td>
+<td>Problem framing, market evidence</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Define scope &amp; specification</td>
+<td>Human-led + AI-assisted</td>
+<td>PRD, specs, design system, IA</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Implementation</td>
+<td>AI-assisted + human review</td>
+<td>Working increment in repo</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>Validation &amp; updates</td>
+<td>Human-led + AI-assisted audit</td>
+<td>Audits, docs, PRD status, Git</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>Ship</td>
+<td>Milestone</td>
+<td>Feature delivered</td>
+</tr>
+</tbody></table>
+<p>After <strong>Ship</strong>, the cycle returns to <strong>Stage 3</strong> for the next PRD feature until the release scope is complete.</p>
+<hr>
+<h2>Visual diagrams</h2>
+<h3>Figure 1 — End-to-end process (portfolio hero)</h3>
+<p><img src="./ats-ai-development-process.png" alt="ATS AI development process"></p>
+<p><strong>Source:</strong> <a href="./ats-ai-development-process.mmd">ats-ai-development-process.mmd</a></p>
+<h3>Figure 2 — Feature increment loop (inset)</h3>
+<p><img src="./ats-feature-increment-loop.png" alt="Feature increment loop"></p>
+<p><strong>Source:</strong> <a href="./ats-feature-increment-loop.mmd">ats-feature-increment-loop.mmd</a></p>
+<hr>
+<h2>Stage detail (case study copy)</h2>
+<h3>1. Discovery</h3>
+<p><em>Problem framing and use-case identification.</em></p>
+<ul>
+<li><strong>Competitor analysis</strong> — patterns from Greenhouse, Lever, Ashby, SMB tools; what to adopt vs avoid (<a href="../product-designer-ats-backoffice/03-competitive-and-pattern-notes.md">03-competitive-and-pattern-notes.md</a>)</li>
+<li><strong>Netnographic research</strong> — public discourse on recruiter and candidate pain (<a href="../product-designer-ats-backoffice/17-netnographic-ats-research.md">17-netnographic-ats-research.md</a>)</li>
+</ul>
+<p><strong>Outcome:</strong> Evidence-backed problem statement; SME-first positioning (low cost, good UX, fast setup).</p>
+<hr>
+<h3>2. Define scope / specification / context / design</h3>
+<p><em>Establish the contract before code.</em></p>
+<table>
+<thead>
+<tr>
+<th>Workstream</th>
+<th>Approach</th>
+<th>Artefacts</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PRD</td>
+<td>AI-generated drafts + manual review rounds</td>
+<td><a href="../../docs/specification/PRD.md">PRD.md</a></td>
+</tr>
+<tr>
+<td>Dev stack</td>
+<td>AI-assisted research + decision</td>
+<td>npm monorepo, Next.js, Hono, Prisma, PostgreSQL</td>
+</tr>
+<tr>
+<td>Usability &amp; interaction spec</td>
+<td>Human-led</td>
+<td>Task flows, interaction handoff, state requirements</td>
+</tr>
+<tr>
+<td>Accessibility spec</td>
+<td>Human-led target</td>
+<td>WCAG 2.2 AA intent</td>
+</tr>
+<tr>
+<td>Architecture</td>
+<td>Human decision</td>
+<td>Monorepo, BFF pattern, shared packages</td>
+</tr>
+<tr>
+<td>Data protection</td>
+<td>Human-led spec</td>
+<td>GDPR / PDPA audit criteria</td>
+</tr>
+<tr>
+<td>Design system &amp; markup</td>
+<td>AI-assisted codegen</td>
+<td><a href="../../docs/design-system/index.html">design-system</a>, static markup libraries</td>
+</tr>
+<tr>
+<td>Prototype &amp; navigation</td>
+<td>Human-led IA</td>
+<td><a href="../information-architecture/backoffice-navigation-map.md">backoffice-navigation-map.md</a></td>
+</tr>
+</tbody></table>
+<p><strong>Outcome:</strong> Shared source of truth — specs, tokens, and navigation model — that AI sessions must follow.</p>
+<hr>
+<h3>3. Implementation</h3>
+<p><em>Always incremental against the PRD.</em></p>
+<pre><code class="language-text">PRD → Pick a feature → Expand specification / compose Cursor prompt → Implement
+</code></pre>
+<ul>
+<li>Features tracked with <strong>TH-</strong> codes (<a href="../../docs/specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a>)</li>
+<li>Prompts pre-written per feature (<a href="../../docs/specification/FEATURE_BACKLOG_CURSOR_PROMPTS.md">FEATURE_BACKLOG_CURSOR_PROMPTS.md</a>)</li>
+<li>AI generates React, API routes, validators, migrations; <strong>human edits</strong> for business rules and cohesion</li>
+</ul>
+<hr>
+<h3>4. Validation &amp; updates</h3>
+<p><em>Compare running product to intent.</em></p>
+<ul>
+<li><strong>WCAG 2.2</strong> audit and remediation (<a href="../../docs/reports/wcag22-audit.md">wcag22-audit.md</a> — rev 1.1)</li>
+<li><strong>GDPR &amp; PDPA</strong> audit and remediation (<a href="../../docs/reports/pdpa-gdpr-audit.md">pdpa-gdpr-audit.md</a> — rev 1.1)</li>
+<li><strong>Design system</strong> — update catalog when new components ship (continuous AI-assisted / manual audit)</li>
+<li><strong>Information architecture</strong> — keep navigation docs aligned with routes</li>
+<li><strong>PRD</strong> — mark Done / Partial / Planned per feature</li>
+<li><strong>Git</strong> — commit increments; repo as single source of implementation truth</li>
+</ul>
+<p>If validation fails → return to <strong>Stage 3</strong> (fix / extend implementation).</p>
+<hr>
+<h3>5. Ship — increment complete</h3>
+<p>Feature is <strong>delivered</strong>: behaviour matches spec, docs updated, code merged.</p>
+<p>→ Pick <strong>next PRD feature</strong> and re-enter the increment loop until milestone or release scope is met.</p>
+<hr>
+<h2>Caption (paste under diagram in portfolio)</h2>
+<blockquote>
+<p><strong>Figure — AI-assisted ATS delivery process.</strong> Discovery and definition are human-led and evidence-backed (competitor and netnographic research). Implementation is incremental: each PRD feature is expanded into a specification and Cursor prompt before AI-assisted coding. Validation compares the running product to intent—accessibility, privacy, design system, IA, and PRD status—before an increment ships. Product judgment, domain rules, and QA remain explicitly human-owned; AI accelerates specification drafting, codegen, and audit passes.</p>
+</blockquote>
+<hr>
+<h2>Related portfolio artefacts</h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="../product-designer-ats-backoffice/15-ai-workflow-design-and-development.md">15-ai-workflow-design-and-development.md</a></td>
+<td>Narrative writeup</td>
+</tr>
+<tr>
+<td><a href="../product-designer-ats-backoffice/16-ai-workflow-process-diagram.md">16-ai-workflow-process-diagram.md</a></td>
+<td>Earlier diagram set</td>
+</tr>
+<tr>
+<td><a href="../product-designer-ats-backoffice/diagrams/README.md">diagrams/</a></td>
+<td>Supplementary PNGs (iteration loop, human vs AI)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Regenerate PNGs</h2>
+<p>From repo root:</p>
+<pre><code class="language-bash">npx @mermaid-js/mermaid-cli -i portfolio/process-diagrams/ats-ai-development-process.mmd -o portfolio/process-diagrams/ats-ai-development-process.png -b white -w 3200
+npx @mermaid-js/mermaid-cli -i portfolio/process-diagrams/ats-feature-increment-loop.mmd -o portfolio/process-diagrams/ats-feature-increment-loop.png -b white -w 2400
+</code></pre>
+<hr>
+<p><em>Process diagram v1.0 · May 2026</em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

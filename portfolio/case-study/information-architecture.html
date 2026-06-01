@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Information Architecture — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>Information architecture</h1>
+        <p>How the three candidate- and staff-facing web apps are organised: primary navigation, route trees, secondary controls, and cross-app links.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#overview">Platform overview</a></li>
+            <li><a href="#shells">Shell models</a></li>
+            <li><a href="#portal">Candidate portal</a></li>
+            <li><a href="#my-apps">My Applications</a></li>
+            <li><a href="#backoffice">Backoffice</a></li>
+            <li><a href="#cross-app">Cross-app map</a></li>
+            <li><a href="#principles">IA principles</a></li>
+            <li><a href="#summary">Route summary</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>TalentHub ATS</span>
+            <span>May 2026 · As-built</span>
+            <span>Next.js App Router</span>
+          </div>
+
+          <!-- Overview -->
+          <section class="ia-section" id="overview">
+            <h2>Platform overview</h2>
+            <p>TalentHub splits hiring into <strong>three Next.js apps</strong> plus a central auth API. Each app has a distinct audience and navigation model.</p>
+
+            <div class="ia-app-grid">
+              <div class="ia-app-card">
+                <strong>Candidate portal</strong>
+                <span>Port 3000 · Anonymous</span>
+                <p>Public job discovery — browse, search, read job details.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>My Applications</strong>
+                <span>Port 3002 · Signed in</span>
+                <p>Account, profile, CV library, apply wizard, track status.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>Backoffice</strong>
+                <span>Port 3001 · Staff</span>
+                <p>Jobs, pipeline, candidates, interviews, administration.</p>
+              </div>
+              <div class="ia-app-card">
+                <strong>Central API</strong>
+                <span>Port 4000 · Server</span>
+                <p>Registration, login, OTP, password reset — no UI.</p>
+              </div>
+            </div>
+
+            <div class="ia-flow" role="img" aria-label="Cross-app flow overview">
+              <div class="ia-flow-node">Candidate portal<small>/ · /jobs/slug</small></div>
+              <span class="ia-flow-arrow" aria-hidden="true">→</span>
+              <div class="ia-flow-node">My Applications<small>Login · Apply · Track</small></div>
+              <span class="ia-flow-arrow" aria-hidden="true">↔</span>
+              <div class="ia-flow-node">Backoffice<small>Pipeline · Jobs · Admin</small></div>
+            </div>
+
+            <h3>Responsibility split</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead>
+                  <tr>
+                    <th>Capability</th>
+                    <th>Portal</th>
+                    <th>My Applications</th>
+                    <th>Backoffice</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Browse published jobs</td><td>Yes</td><td>Yes (signed-in search)</td><td>No</td></tr>
+                  <tr><td>Job detail</td><td>Yes</td><td>Yes</td><td>Preview only</td></tr>
+                  <tr><td>Register / login</td><td>Redirect → MA</td><td>Yes</td><td>Staff login only</td></tr>
+                  <tr><td>Apply to job</td><td>Redirect → MA</td><td>Yes</td><td>No</td></tr>
+                  <tr><td>CV / cover letter</td><td>No</td><td>Yes</td><td>Download on packet page</td></tr>
+                  <tr><td>Application pipeline</td><td>No</td><td>Status list only</td><td>Full Kanban + table</td></tr>
+                  <tr><td>Job posting CRUD</td><td>No</td><td>No</td><td>Yes</td></tr>
+                  <tr><td>Lookup data</td><td>No</td><td>No</td><td>Administration</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Shell models -->
+          <section class="ia-section" id="shells">
+            <h2>Shell models</h2>
+            <p>Each app uses a different chrome pattern — header, sidebar, and auth gate.</p>
+
+            <h3>Candidate portal — marketing shell</h3>
+            <pre class="ia-shell">┌─────────────────────────────────────────────────────────────┐
+│  Skip link → #main-content                                  │
+├─────────────────────────────────────────────────────────────┤
+│  HEADER — Logo (/) · Candidate Login → My Applications      │
+├─────────────────────────────────────────────────────────────┤
+│  MAIN (#main-content)                                       │
+│  · Hero / filters / job cards  OR  job detail sections      │
+├─────────────────────────────────────────────────────────────┤
+│  FOOTER — Privacy · Terms · Accessibility (placeholders)    │
+└─────────────────────────────────────────────────────────────┘</pre>
+            <p>No sidebar. No session in this app. <code>/login</code>, <code>/register</code>, <code>/dashboard</code> are redirect stubs to My Applications.</p>
+
+            <h3>My Applications — dashboard shell</h3>
+            <pre class="ia-shell">┌─────────────────────────────────────────────────────────────┐
+│  Skip link → #main-content                                  │
+├──────────────┬──────────────────────────────────────────────┤
+│  SIDEBAR     │  TOP BAR — product label · user menu         │
+│  (primary)   ├──────────────────────────────────────────────┤
+│              │  PAGE CONTENT (#main-content)                │
+└──────────────┴──────────────────────────────────────────────┘</pre>
+            <p>Session enforced client-side in <code>DashboardRouteLayout</code> (Bearer JWT). Unauthenticated access redirects to <code>/login</code>.</p>
+
+            <h3>Backoffice — staff dashboard shell</h3>
+            <pre class="ia-shell">┌─────────────────────────────────────────────────────────────┐
+│  Skip link → #main-content                                  │
+├──────────────┬──────────────────────────────────────────────┤
+│  SIDEBAR     │  TOP BAR — session · user · logout           │
+│  (primary)   ├──────────────────────────────────────────────┤
+│              │  PAGE CONTENT — kicker / H1 · secondary nav  │
+└──────────────┴──────────────────────────────────────────────┘</pre>
+            <p>Session uses httpOnly cookies (<code>bo_access</code>) and server middleware on dashboard routes.</p>
+          </section>
+
+          <!-- Candidate portal -->
+          <section class="ia-section" id="portal">
+            <h2>1. Candidate portal</h2>
+            <p><code>apps/candidate-portal</code> · Port 3000 · Source: <code>SiteHeader.tsx</code>, <code>SiteFooter.tsx</code></p>
+
+            <h3>Primary navigation</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Control</th><th>Target</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>Logo "TalentHub"</td><td><code>/</code></td><td>In-app</td></tr>
+                  <tr><td>Candidate Login</td><td>My Applications <code>/login</code></td><td>External link (port 3002)</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Site map</h3>
+            <pre class="ia-sitemap">Candidate Portal (:3000)
+│
+├── /                              Job listing (home)
+│   └── Query: q, department, location, employmentType,
+│       experience, remote, postedWithin, sort, page
+│
+├── /jobs/[slug]                   Published job detail
+├── /login                         → redirect My Applications /login
+├── /register                      → redirect My Applications /register
+└── /dashboard                     → redirect My Applications /dashboard
+
+Substantive pages: 2 · Redirect stubs: 3</pre>
+
+            <h3>Filter state (virtual IA on /)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Param</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><code>q</code></td><td>Keyword search (title, summary)</td></tr>
+                  <tr><td><code>department</code></td><td>Department filter</td></tr>
+                  <tr><td><code>location</code></td><td>Location filter</td></tr>
+                  <tr><td><code>employmentType</code></td><td>Employment type</td></tr>
+                  <tr><td><code>experience</code></td><td>Experience level</td></tr>
+                  <tr><td><code>remote</code></td><td>Remote roles</td></tr>
+                  <tr><td><code>postedWithin</code></td><td>24h · 7d · 30d</td></tr>
+                  <tr><td><code>sort</code></td><td>recent · az</td></tr>
+                  <tr><td><code>page</code></td><td>Pagination</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- My Applications -->
+          <section class="ia-section" id="my-apps">
+            <h2>2. My Applications</h2>
+            <p><code>apps/my-applications</code> · Port 3002 · Source: <code>MyAppsSidebar.tsx</code>, <code>DashboardRouteLayout.tsx</code></p>
+
+            <h3>Primary navigation (sidebar)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>#</th><th>Label</th><th>Route</th><th>Active when</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Dashboard</td><td><code>/dashboard</code></td><td>path starts with /dashboard</td></tr>
+                  <tr><td>2</td><td>My Applications</td><td><code>/my-applications</code></td><td>path starts with /my-applications</td></tr>
+                  <tr><td>3</td><td>My Profile</td><td><code>/my-profile</code></td><td>path starts with /my-profile</td></tr>
+                  <tr><td>4</td><td>Upload CV</td><td><code>/cv-upload</code></td><td>path starts with /cv-upload</td></tr>
+                  <tr><td>5</td><td>Cover Letters</td><td><code>/cover-letters</code></td><td>path starts with /cover-letters</td></tr>
+                  <tr><td>6</td><td>Job search</td><td><code>/job-search</code></td><td>path starts with /job</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Site map</h3>
+            <pre class="ia-sitemap">My Applications (:3002)
+│
+├── /                              → redirect /login
+├── /login                         Sign in (standalone layout)
+├── /register                      Create account (header + footer)
+│
+└── (dashboard)/                   [Sidebar + top bar — auth required]
+    ├── /dashboard                 Onboarding · recent applications
+    ├── /my-applications           Submitted applications · status list
+    ├── /my-profile                Profile editor
+    ├── /cv-upload                 CV library · ?returnTo=…
+    ├── /cover-letters             Cover letter library
+    ├── /job-search                Published jobs (filters · pagination)
+    └── /jobs/[slug]               Job detail · Apply CTA
+        └── /jobs/[slug]/apply     4-step wizard
+            Step 1 CV → 2 Cover letter → 3 Questions → 4 Review</pre>
+
+            <h3>Key user flows</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Flow</th><th>Path</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>Onboarding</td><td>Dashboard journey cards</td><td>CV → profile → cover letters → job search</td></tr>
+                  <tr><td>Apply</td><td>/job-search → /jobs/{slug} → /jobs/{slug}/apply</td><td>CV required; redirects to /cv-upload?returnTo=… if none</td></tr>
+                  <tr><td>Track status</td><td>/my-applications</td><td>Links back to /jobs/{slug}</td></tr>
+                  <tr><td>Session</td><td>15 min idle logout</td><td>Client-side guard on (dashboard) routes</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Backoffice -->
+          <section class="ia-section" id="backoffice">
+            <h2>3. Backoffice</h2>
+            <p><code>apps/backoffice</code> · Port 3001 · Source: <code>Sidebar.tsx</code>, <code>AdministrationNav.tsx</code></p>
+
+            <figure class="ia-diagram">
+              <img src="assets/ia/backoffice-navigation-map.png" alt="Backoffice navigation map showing sidebar items and route hierarchy" width="960" height="540" />
+              <figcaption>Backoffice navigation map — application as unit of work</figcaption>
+            </figure>
+
+            <h3>Primary navigation (sidebar)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>#</th><th>Label</th><th>Route</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Dashboard</td><td><code>/</code></td><td><span class="ia-badge">Done</span></td></tr>
+                  <tr><td>2</td><td>Applications</td><td><code>/applications</code></td><td><span class="ia-badge">Done</span></td></tr>
+                  <tr><td>3</td><td>Interviews</td><td><code>/interviews</code></td><td><span class="ia-badge">Done</span></td></tr>
+                  <tr><td>4</td><td>Jobs</td><td><code>/jobs</code></td><td><span class="ia-badge">Done</span></td></tr>
+                  <tr><td>5</td><td>Candidates</td><td><code>/candidates</code></td><td><span class="ia-badge">Done</span></td></tr>
+                  <tr><td>6</td><td>Reports</td><td><code>/reports</code></td><td><span class="ia-badge placeholder">Placeholder</span></td></tr>
+                  <tr><td>7</td><td>Administration</td><td><code>/administration</code></td><td><span class="ia-badge">Done</span></td></tr>
+                  <tr><td>8</td><td>Settings</td><td><code>/settings</code></td><td><span class="ia-badge placeholder">Placeholder</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Site map</h3>
+            <pre class="ia-sitemap">TalentHub Back Office (:3001)
+│
+├── /login                          [auth] Staff sign-in
+├── /                               Dashboard — KPIs, pipeline health
+│
+├── /applications                   Applications hub
+│   ├── (view) Pipeline             Kanban · week scope · terminal tabs
+│   ├── (view) Table                Sortable list · same URL
+│   └── /applications/[id]          Application detail (packet page)
+│
+├── /interviews                     Interview calendar
+├── /jobs                           Job list
+│   ├── /jobs/new                   Create job
+│   └── /jobs/[id]/edit             Edit job
+├── /jobs/[id]/preview              Candidate-facing preview (no sidebar)
+│
+├── /candidates                     Summary dashboard
+│   ├── /candidates/all             Searchable directory
+│   └── /candidates/[id]            Profile · CV history · applications
+│
+├── /administration                 → redirect /administration/departments
+│   └── 8 lookup tables (departments, locations, skills, …)
+│
+├── /reports                        Placeholder (TH-165)
+└── /settings                       Placeholder (TH-166)</pre>
+
+            <h3>Secondary navigation</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Area</th><th>Control</th><th>Behaviour</th></tr></thead>
+                <tbody>
+                  <tr><td>Applications</td><td>View tablist</td><td>Table view · Pipeline (default)</td></tr>
+                  <tr><td>Pipeline</td><td>Week toolbar</td><td>Prev week · Next week · This week</td></tr>
+                  <tr><td>Pipeline</td><td>Terminal tabs</td><td>Rejected · Withdrawn</td></tr>
+                  <tr><td>Pipeline</td><td>Card menu</td><td>Move to… (keyboard alternative to drag)</td></tr>
+                  <tr><td>Administration</td><td>Section select</td><td>8 lookup tables</td></tr>
+                  <tr><td>Candidates</td><td>Tabs</td><td>Summary · All Candidates</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Cross-links (context preservation)</h3>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>From</th><th>Control</th><th>To</th><th>Note</th></tr></thead>
+                <tbody>
+                  <tr><td>Applications table</td><td>Candidate name</td><td><code>/candidates/[id]</code></td><td>?from=applications</td></tr>
+                  <tr><td>Application detail</td><td>Applicant link</td><td><code>/candidates/[id]</code></td><td>?from=applications</td></tr>
+                  <tr><td>Application detail</td><td>Edit job</td><td><code>/jobs/[id]/edit</code></td><td>—</td></tr>
+                  <tr><td>Candidate detail</td><td>Back</td><td><code>/applications</code></td><td>When from applications</td></tr>
+                  <tr><td>Dashboard</td><td>Pipeline health</td><td><code>/applications</code></td><td>Default pipeline view</td></tr>
+                  <tr><td>Jobs list</td><td>Preview</td><td><code>/jobs/[id]/preview</code></td><td>Separate layout</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Cross-app -->
+          <section class="ia-section" id="cross-app">
+            <h2>Cross-app navigation map</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>User action</th><th>From</th><th>To</th></tr></thead>
+                <tbody>
+                  <tr><td>Browse jobs (public)</td><td>—</td><td>Candidate portal <code>/</code></td></tr>
+                  <tr><td>Sign in / register</td><td>Portal header or /login stub</td><td>My Applications</td></tr>
+                  <tr><td>Apply to job</td><td>Portal job detail</td><td>My Applications login then apply flow</td></tr>
+                  <tr><td>Staff sign in</td><td>—</td><td>Backoffice <code>/login</code></td></tr>
+                  <tr><td>Preview job as candidate</td><td>Backoffice jobs</td><td><code>/jobs/[id]/preview</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>Both candidate apps read <strong>published jobs</strong> from the shared database. Backoffice <strong>publishes</strong> jobs that appear on portal and My Applications job search.</p>
+          </section>
+
+          <!-- Principles -->
+          <section class="ia-section" id="principles">
+            <h2>IA principles</h2>
+            <div class="ia-principles">
+              <div class="ia-principle">
+                <strong>1. Separation of audiences</strong>
+                <p>Public browse, authenticated candidate workspace, and staff operations are separate apps with clear entry points.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>2. Application as staff unit of work</strong>
+                <p><code>/applications/[id]</code> is the adjudication anchor; candidate and job are linked hops, not parallel hierarchies.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>3. Throughput vs depth</strong>
+                <p>Pipeline and table for volume; detail pages for decisions; candidate profile when person-level history matters.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>4. Honest placeholders</strong>
+                <p>Reports, Settings, and footer legal links appear in nav but may surface "coming soon" until shipped.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>5. URL-driven discovery state</strong>
+                <p>Job filters use query params so results are shareable and bookmarkable on portal and My Applications.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>6. Time-scoped pipeline</strong>
+                <p>Backoffice week navigation reduces noise; table view remains all-time.</p>
+              </div>
+              <div class="ia-principle">
+                <strong>7. Administration as reference data</strong>
+                <p>Lookup tables grouped under one nav item with in-page section picker, not eight top-level items.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Summary -->
+          <section class="ia-section" id="summary">
+            <h2>Route counts</h2>
+            <div class="ia-summary-row">
+              <div class="ia-summary-stat">
+                <strong>2+3</strong>
+                <span>Candidate portal<br>2 pages + 3 redirects</span>
+              </div>
+              <div class="ia-summary-stat">
+                <strong>11</strong>
+                <span>My Applications<br>6 sidebar items</span>
+              </div>
+              <div class="ia-summary-stat">
+                <strong>19</strong>
+                <span>Backoffice<br>8 sidebar items</span>
+              </div>
+            </div>
+
+            <h3>Related documentation</h3>
+            <div class="ia-related">
+              <a href="wireframes.html">Wireframe gallery</a>
+              <a href="index.html#solution">Case study solution</a>
+              <a href="../../docs/specification/PRD.md">Product requirements (PRD)</a>
+              <a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system ↗</a>
+            </div>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">Information architecture v1.0 · May 2026 · As-built routes</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="wireframes.html">Wireframes</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feature backlog — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class=" active">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Feature backlog</span></nav>
+      <article class="prose"><h1>TalentHub — Feature Backlog</h1>
+<p><strong>Product:</strong> TalentHub ATS<br><strong>Document version:</strong> 1.1<br><strong>Date:</strong> 19 May 2026<br><strong>Ground truth:</strong> <a href="./PRD.md">PRD.md</a> · as-built codebase (May 2026)</p>
+<p>This backlog lists platform capabilities with <strong>TH-</strong> feature codes. It reflects what is <strong>implemented today</strong>, what is <strong>partial</strong>, and what remains <strong>planned</strong> or <strong>out of scope</strong> for the SME-first product direction.</p>
+<p><strong>User stories:</strong> Every feature has a plain-language <strong>user story</strong> in <strong><a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md">FEATURE_BACKLOG_CURSOR_PROMPTS.md</a></strong> — search for <code>#### TH-XXX</code> or use the <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#quick-reference--open-work-stories">quick reference</a> for open work.</p>
+<hr>
+<h2>Legend</h2>
+<h3>Status</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Done</strong></td>
+<td>Shipped and usable in local/dev as-built</td>
+</tr>
+<tr>
+<td><strong>Partial</strong></td>
+<td>Core exists; gaps noted in Description</td>
+</tr>
+<tr>
+<td><strong>Planned</strong></td>
+<td>Specified or stubbed; not fully delivered</td>
+</tr>
+<tr>
+<td><strong>Out of scope</strong></td>
+<td>Explicitly deferred for current product phase</td>
+</tr>
+</tbody></table>
+<h3>Priority (planned / partial items only)</h3>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>P0</strong></td>
+<td>Blocks core hiring loop or trust</td>
+</tr>
+<tr>
+<td><strong>P1</strong></td>
+<td>High value for SME adoption; near-term</td>
+</tr>
+<tr>
+<td><strong>P2</strong></td>
+<td>Important; medium-term</td>
+</tr>
+<tr>
+<td><strong>P3</strong></td>
+<td>Nice-to-have / enterprise stretch</td>
+</tr>
+</tbody></table>
+<h3>Apps</h3>
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Application</th>
+<th>Port</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>CP</strong></td>
+<td>candidate-portal</td>
+<td>3000</td>
+</tr>
+<tr>
+<td><strong>MA</strong></td>
+<td>my-applications</td>
+<td>3002</td>
+</tr>
+<tr>
+<td><strong>BO</strong></td>
+<td>backoffice</td>
+<td>3001</td>
+</tr>
+<tr>
+<td><strong>API</strong></td>
+<td>apps/api (Hono)</td>
+<td>4000</td>
+</tr>
+<tr>
+<td><strong>PKG</strong></td>
+<td>packages/*</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h3>PRD cross-reference</h3>
+<p>Where applicable, <strong>PRD ID</strong> maps to requirement rows in <a href="./PRD.md#5-functional-requirements">PRD §5</a>.</p>
+<h3>User stories</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>How to read the story</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Done</strong></td>
+<td>Describes behaviour users should experience today — use for QA checklists</td>
+</tr>
+<tr>
+<td><strong>Partial</strong></td>
+<td>Core journey exists; acceptance criteria include the known gap</td>
+</tr>
+<tr>
+<td><strong>Planned</strong></td>
+<td>Future capability from the user&#39;s perspective</td>
+</tr>
+<tr>
+<td><strong>Out of scope</strong></td>
+<td>Explains why the capability is deferred</td>
+</tr>
+</tbody></table>
+<p>Stories live in <strong><a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md">FEATURE_BACKLOG_CURSOR_PROMPTS.md</a></strong>.</p>
+<hr>
+<h2>Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th align="right">Count</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Done</td>
+<td align="right">88</td>
+</tr>
+<tr>
+<td>Partial</td>
+<td align="right">6</td>
+</tr>
+<tr>
+<td>Planned</td>
+<td align="right">25</td>
+</tr>
+<tr>
+<td>Out of scope</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td align="right"><strong>123</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>1. Platform &amp; infrastructure</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-001</td>
+<td>npm monorepo (four runtime apps + shared packages)</td>
+<td>PKG</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td><code>npm run dev:all</code></td>
+</tr>
+<tr>
+<td>TH-002</td>
+<td>Single PostgreSQL schema via <code>@ats-platform/db</code></td>
+<td>PKG</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td>Prisma migrations at repo root</td>
+</tr>
+<tr>
+<td>TH-003</td>
+<td>Local filesystem upload storage (<code>UPLOAD_ROOT</code>)</td>
+<td>PKG</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td><code>storage/cvs/</code>, <code>storage/cover-letters/</code></td>
+</tr>
+<tr>
+<td>TH-004</td>
+<td>Shared Zod validators (<code>@ats-platform/validators</code>)</td>
+<td>PKG</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td>BFF + API payloads</td>
+</tr>
+<tr>
+<td>TH-005</td>
+<td>Shared types and status transition matrix</td>
+<td>PKG</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td><code>@ats-platform/types</code></td>
+</tr>
+<tr>
+<td>TH-006</td>
+<td>Shared UI primitives (<code>@ats-platform/ui</code>)</td>
+<td>PKG</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td>Used where cross-app</td>
+</tr>
+<tr>
+<td>TH-007</td>
+<td>Local-first dev environment spec</td>
+<td>PKG</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td>See <a href="./ATS_Local_Environment_Specification.md">ATS_Local_Environment_Specification.md</a></td>
+</tr>
+<tr>
+<td>TH-008</td>
+<td>Cloud object storage (S3-compatible)</td>
+<td>PKG</td>
+<td>Planned</td>
+<td>—</td>
+<td>P2</td>
+<td>Replace local disk for production</td>
+</tr>
+<tr>
+<td>TH-009</td>
+<td>Email delivery service (OTP, status, interview)</td>
+<td>PKG</td>
+<td>Planned</td>
+<td>—</td>
+<td>P0</td>
+<td>Dev OTP hardcoded; <code>notifyCandidate*</code> not wired</td>
+</tr>
+<tr>
+<td>TH-010</td>
+<td>Product analytics / success metrics instrumentation</td>
+<td>PKG</td>
+<td>Planned</td>
+<td>PRD §11</td>
+<td>P2</td>
+<td>Apply completion, triage time, parse rate</td>
+</tr>
+<tr>
+<td>TH-011</td>
+<td>Multi-tenant / per-company data isolation</td>
+<td>PKG</td>
+<td>Out of scope</td>
+<td>PRD §10</td>
+<td>—</td>
+<td>Single-tenant assumptions today</td>
+</tr>
+<tr>
+<td>TH-012</td>
+<td>Horizontal scaling / CDN / job queue</td>
+<td>PKG</td>
+<td>Planned</td>
+<td>PRD §8.4</td>
+<td>P3</td>
+<td>Dev-oriented architecture</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#1-platform--infrastructure">§1 Platform</a> (TH-001–TH-012)</em></p>
+<hr>
+<h2>2. Candidate portal (public discovery)</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-020</td>
+<td>Published job listings with pagination</td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-01</td>
+<td>—</td>
+<td>Server-side Prisma</td>
+</tr>
+<tr>
+<td>TH-021</td>
+<td>Filters: department, location, employment type, experience, remote</td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-02</td>
+<td>—</td>
+<td>URL search params</td>
+</tr>
+<tr>
+<td>TH-022</td>
+<td>Full-text search on title/summary</td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-03</td>
+<td>—</td>
+<td><code>q</code> parameter</td>
+</tr>
+<tr>
+<td>TH-023</td>
+<td>Job detail: overview, responsibilities, qualifications, skills, benefits, tags</td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-04</td>
+<td>—</td>
+<td><code>/jobs/[slug]</code></td>
+</tr>
+<tr>
+<td>TH-024</td>
+<td>Salary display when <code>is_salary_visible</code></td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-05</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-025</td>
+<td>Featured job highlighting</td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-06</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-026</td>
+<td>Banner image on job detail</td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-07</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-027</td>
+<td>Apply CTA redirects to My Applications</td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-08</td>
+<td>—</td>
+<td>No in-portal apply</td>
+</tr>
+<tr>
+<td>TH-028</td>
+<td>Accessible shell (skip link, sticky header, footer)</td>
+<td>CP</td>
+<td>Done</td>
+<td>CP-09</td>
+<td>—</td>
+<td>WCAG-oriented</td>
+</tr>
+<tr>
+<td>TH-029</td>
+<td>Bookmark jobs</td>
+<td>CP</td>
+<td>Planned</td>
+<td>CP-11</td>
+<td>P2</td>
+<td><code>bookmarks</code> table exists; no portal API/UI</td>
+</tr>
+<tr>
+<td>TH-030</td>
+<td>Candidate auth / apply inside portal</td>
+<td>CP</td>
+<td>Out of scope</td>
+<td>CP-10</td>
+<td>—</td>
+<td>Port 3002 owns auth + apply</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#2-candidate-portal">§2 Candidate portal</a> (TH-020–TH-030)</em></p>
+<hr>
+<h2>3. My Applications (candidate workspace)</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-040</td>
+<td>Register with email and password</td>
+<td>MA, API</td>
+<td>Done</td>
+<td>MA-01</td>
+<td>—</td>
+<td>Central API</td>
+</tr>
+<tr>
+<td>TH-041</td>
+<td>Email verification via OTP</td>
+<td>MA, API</td>
+<td>Done</td>
+<td>MA-02</td>
+<td>—</td>
+<td>Dev OTP <code>111111</code></td>
+</tr>
+<tr>
+<td>TH-042</td>
+<td>Login, logout, session refresh</td>
+<td>MA, API</td>
+<td>Done</td>
+<td>MA-03</td>
+<td>—</td>
+<td>Bearer JWT; 15m idle logout</td>
+</tr>
+<tr>
+<td>TH-043</td>
+<td>Forgot / reset password UI</td>
+<td>MA</td>
+<td>Partial</td>
+<td>MA-04</td>
+<td>P1</td>
+<td>API exists; no candidate UI</td>
+</tr>
+<tr>
+<td>TH-044</td>
+<td>Dashboard with onboarding journey and recent applications</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-05</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-045</td>
+<td>Job search (published jobs)</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-06</td>
+<td>—</td>
+<td>Simpler filters than portal</td>
+</tr>
+<tr>
+<td>TH-046</td>
+<td>Job detail and apply flow</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-07</td>
+<td>—</td>
+<td>CV required; optional cover letter</td>
+</tr>
+<tr>
+<td>TH-047</td>
+<td>Application list with status</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-08</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-048</td>
+<td>CV upload (PDF, DOC, DOCX, max 10 MB)</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-09</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-049</td>
+<td>CV text extraction + OpenAI parse → structured profile</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-10</td>
+<td>—</td>
+<td>Requires <code>OPENAI_API_KEY</code></td>
+</tr>
+<tr>
+<td>TH-050</td>
+<td>CV library: list, default, download, delete</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-11</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-051</td>
+<td>Cover letter library (file + text modes)</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-12</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-052</td>
+<td>Screening questions on apply</td>
+<td>MA</td>
+<td>Done</td>
+<td>MA-13</td>
+<td>—</td>
+<td>Per-application fields</td>
+</tr>
+<tr>
+<td>TH-053</td>
+<td>Profile screenshot import (LinkedIn-style)</td>
+<td>MA</td>
+<td>Partial</td>
+<td>MA-14</td>
+<td>P3</td>
+<td>Prototype on <code>/my-profile</code></td>
+</tr>
+<tr>
+<td>TH-054</td>
+<td>Bookmark jobs</td>
+<td>MA</td>
+<td>Planned</td>
+<td>MA-15</td>
+<td>P2</td>
+<td>Schema only</td>
+</tr>
+<tr>
+<td>TH-055</td>
+<td>Withdraw application (candidate-initiated)</td>
+<td>MA</td>
+<td>Planned</td>
+<td>MA-16</td>
+<td>P1</td>
+<td><code>withdrawn</code> status in pipeline; candidate UI TBD</td>
+</tr>
+<tr>
+<td>TH-056</td>
+<td>Candidate timezone on profile</td>
+<td>MA</td>
+<td>Partial</td>
+<td>—</td>
+<td>P1</td>
+<td>DB field <code>timeZone</code>; no edit UI; used in interview preview</td>
+</tr>
+<tr>
+<td>TH-057</td>
+<td>Mobile-optimised apply flow</td>
+<td>MA</td>
+<td>Partial</td>
+<td>—</td>
+<td>P1</td>
+<td>Responsive web; audit gaps on small targets</td>
+</tr>
+<tr>
+<td>TH-058</td>
+<td>Production email OTP (replace dev code)</td>
+<td>MA, API</td>
+<td>Planned</td>
+<td>—</td>
+<td>P0</td>
+<td>Depends on TH-009</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#3-my-applications">§3 My Applications</a> (TH-040–TH-058)</em></p>
+<hr>
+<h2>4. Backoffice — authentication &amp; shell</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-070</td>
+<td>Staff login with httpOnly session cookies</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-01</td>
+<td>—</td>
+<td>Prisma <code>users</code></td>
+</tr>
+<tr>
+<td>TH-071</td>
+<td>Staff roles: admin, recruiter, hiring_manager</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-02</td>
+<td>—</td>
+<td>Enum on <code>User</code></td>
+</tr>
+<tr>
+<td>TH-072</td>
+<td>Sidebar, top bar, mobile navigation shell</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-03</td>
+<td>—</td>
+<td><code>BackOfficeShell</code></td>
+</tr>
+<tr>
+<td>TH-073</td>
+<td>Skip link and session activity tracking</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-04</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-074</td>
+<td>Middleware protection on dashboard routes</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-05</td>
+<td>—</td>
+<td>Cookie <code>bo_access</code></td>
+</tr>
+<tr>
+<td>TH-075</td>
+<td>SSO / OAuth staff login</td>
+<td>BO</td>
+<td>Out of scope</td>
+<td>PRD §10</td>
+<td>—</td>
+<td>Email/password only</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#4-backoffice--auth--shell">§4 Backoffice auth</a> (TH-070–TH-075)</em></p>
+<hr>
+<h2>5. Backoffice — dashboard</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-080</td>
+<td>KPI stat row (open jobs, applications, etc.)</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-10</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-081</td>
+<td>Pipeline health snapshot</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-11</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-082</td>
+<td>Recent activity feed</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-12</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-083</td>
+<td>Efficiency score card</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-13</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-084</td>
+<td>Curator insight (stalled interviews)</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-14</td>
+<td>—</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#5-backoffice--dashboard">§5 Dashboard</a> (TH-080–TH-084)</em></p>
+<hr>
+<h2>6. Backoffice — job posting</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-090</td>
+<td>Jobs list with search, filters, pagination</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-20</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-091</td>
+<td>Create job (multi-section form)</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-21</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-092</td>
+<td>Edit existing job</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-22</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-093</td>
+<td>Review step before publish</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-23</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-094</td>
+<td>Publish / draft status</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-24</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-095</td>
+<td>Candidate-facing job preview</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-25</td>
+<td>—</td>
+<td><code>/jobs/[id]/preview</code></td>
+</tr>
+<tr>
+<td>TH-096</td>
+<td>Relational content: responsibilities, qualifications, skills, benefits, tags</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-26</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-097</td>
+<td>Salary range and visibility toggle</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-27</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-098</td>
+<td>Remote and featured flags</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-28</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-099</td>
+<td>Banner image URL and alt text</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-29</td>
+<td>—</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#6-backoffice--jobs">§6 Jobs</a> (TH-090–TH-099)</em></p>
+<hr>
+<h2>7. Backoffice — applications &amp; pipeline</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-110</td>
+<td>Applications table view with sort and filters</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-30</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-111</td>
+<td>Kanban pipeline view (default)</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-31</td>
+<td>—</td>
+<td>Drag-and-drop status changes</td>
+</tr>
+<tr>
+<td>TH-112</td>
+<td>Toggle list ↔ pipeline; fullscreen pipeline mode</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-32</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-113</td>
+<td>Week-scoped pipeline (past + current week only)</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-33</td>
+<td>—</td>
+<td>No future weeks</td>
+</tr>
+<tr>
+<td>TH-114</td>
+<td>Ten application statuses with server-validated transitions</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-34</td>
+<td>—</td>
+<td>See PRD §6</td>
+</tr>
+<tr>
+<td>TH-115</td>
+<td>Status PATCH with reason, notes, optimistic concurrency</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-35</td>
+<td>—</td>
+<td>409 on conflict</td>
+</tr>
+<tr>
+<td>TH-116</td>
+<td>Undo last status change</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-36</td>
+<td>—</td>
+<td>Inline undo in banner</td>
+</tr>
+<tr>
+<td>TH-117</td>
+<td>Reopen from rejected (controlled action)</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-37</td>
+<td>—</td>
+<td>Mandatory reason</td>
+</tr>
+<tr>
+<td>TH-118</td>
+<td>Application detail packet page</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-38</td>
+<td>—</td>
+<td><code>/applications/[id]</code></td>
+</tr>
+<tr>
+<td>TH-119</td>
+<td>Download CV and cover letter (staff)</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-39</td>
+<td>—</td>
+<td>Authenticated BFF</td>
+</tr>
+<tr>
+<td>TH-120</td>
+<td>Schedule interview (one row per application)</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-40</td>
+<td>—</td>
+<td><code>application_interviews</code></td>
+</tr>
+<tr>
+<td>TH-121</td>
+<td>Interview form: date, start time, duration (15–120 min)</td>
+<td>BO</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td>Schedule modal</td>
+</tr>
+<tr>
+<td>TH-122</td>
+<td>Interview scheduling timezone (IANA) + candidate time preview</td>
+<td>BO</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td><code>schedulingTimeZone</code> on interview</td>
+</tr>
+<tr>
+<td>TH-123</td>
+<td>Gate: interview required before <code>interview_scheduled</code> status</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-62</td>
+<td>—</td>
+<td>API validation</td>
+</tr>
+<tr>
+<td>TH-124</td>
+<td>Cancel scheduled interview on backward pipeline move</td>
+<td>BO</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td>Modal + <code>cancelInterview</code> payload</td>
+</tr>
+<tr>
+<td>TH-125</td>
+<td>Status change audit log</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-42</td>
+<td>—</td>
+<td><code>application_status_events</code></td>
+</tr>
+<tr>
+<td>TH-126</td>
+<td>Terminal columns: Rejected, Withdrawn</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-43</td>
+<td>—</td>
+<td>Separate from active board</td>
+</tr>
+<tr>
+<td>TH-127</td>
+<td>Pipeline keyboard “Move to” menu (drag alternative)</td>
+<td>BO</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td>Accessibility</td>
+</tr>
+<tr>
+<td>TH-128</td>
+<td>AI relevance score on applications</td>
+<td>BO</td>
+<td>Partial</td>
+<td>BO-41</td>
+<td>P2</td>
+<td>Requires <code>OPENAI_API_KEY</code>; optional</td>
+</tr>
+<tr>
+<td>TH-129</td>
+<td>AI bias awareness notice on relevance UI</td>
+<td>BO</td>
+<td>Done</td>
+<td>—</td>
+<td>—</td>
+<td>Flyover + Kanban tooltips</td>
+</tr>
+<tr>
+<td>TH-130</td>
+<td>Email notification on status change</td>
+<td>BO</td>
+<td>Planned</td>
+<td>BO-44</td>
+<td>P0</td>
+<td><code>notifyCandidate</code> field; delivery TBD</td>
+</tr>
+<tr>
+<td>TH-131</td>
+<td>Email notification on interview schedule</td>
+<td>BO</td>
+<td>Planned</td>
+<td>—</td>
+<td>P0</td>
+<td><code>notifyCandidateEmail</code> queued flag only</td>
+</tr>
+<tr>
+<td>TH-132</td>
+<td>Reschedule interview (PATCH)</td>
+<td>BO</td>
+<td>Planned</td>
+<td>—</td>
+<td>P2</td>
+<td>Not implemented; cancel + recreate workaround</td>
+</tr>
+<tr>
+<td>TH-133</td>
+<td>Side drawer quick-view on pipeline card</td>
+<td>BO</td>
+<td>Planned</td>
+<td>—</td>
+<td>P3</td>
+<td>Spec mentioned; full page used today</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#7-backoffice--applications--pipeline">§7 Applications &amp; pipeline</a> (TH-110–TH-133)</em></p>
+<hr>
+<h2>8. Backoffice — candidates</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-140</td>
+<td>Candidates summary dashboard</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-50</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-141</td>
+<td>Searchable candidates table</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-51</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-142</td>
+<td>Candidate detail: profile, CV history, applications</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-52</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-143</td>
+<td>Edit candidate account status</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-53</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-144</td>
+<td>Return navigation from candidate → applications context</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-54</td>
+<td>—</td>
+<td><code>?from=applications</code></td>
+</tr>
+<tr>
+<td>TH-145</td>
+<td>Harden staff auth on candidate status PATCH</td>
+<td>BO</td>
+<td>Planned</td>
+<td>—</td>
+<td>P1</td>
+<td>Alignment report follow-up</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#8-backoffice--candidates">§8 Candidates</a> (TH-140–TH-145)</em></p>
+<hr>
+<h2>9. Backoffice — interviews</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-150</td>
+<td>Interviews calendar page</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-60</td>
+<td>—</td>
+<td><code>/interviews</code></td>
+</tr>
+<tr>
+<td>TH-151</td>
+<td>Schedule from application detail</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-61</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-152</td>
+<td>Calendar sync (Google / Outlook)</td>
+<td>BO</td>
+<td>Planned</td>
+<td>—</td>
+<td>P2</td>
+<td>In-product scheduling only today</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#9-backoffice--interviews">§9 Interviews</a> (TH-150–TH-152)</em></p>
+<hr>
+<h2>10. Backoffice — administration</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-160</td>
+<td>CRUD companies</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-70</td>
+<td>—</td>
+<td><code>/administration/companies</code></td>
+</tr>
+<tr>
+<td>TH-161</td>
+<td>CRUD departments and locations</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-71</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-162</td>
+<td>CRUD employment types and experience levels</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-72</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-163</td>
+<td>CRUD skills, tags, benefits</td>
+<td>BO</td>
+<td>Done</td>
+<td>BO-73</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-164</td>
+<td>Staff user management UI</td>
+<td>BO</td>
+<td>Planned</td>
+<td>BO-74</td>
+<td>P1</td>
+<td>No admin CRUD for <code>users</code> yet</td>
+</tr>
+<tr>
+<td>TH-165</td>
+<td>Reports and analytics</td>
+<td>BO</td>
+<td>Planned</td>
+<td>BO-75</td>
+<td>P2</td>
+<td>Placeholder page only</td>
+</tr>
+<tr>
+<td>TH-166</td>
+<td>System settings</td>
+<td>BO</td>
+<td>Planned</td>
+<td>BO-76</td>
+<td>P2</td>
+<td>Placeholder page only</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#10-backoffice--administration">§10 Administration</a> (TH-160–TH-166)</em></p>
+<hr>
+<h2>11. Central API (Hono)</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-170</td>
+<td>Health probe</td>
+<td>API</td>
+<td>Done</td>
+<td>API-01</td>
+<td>—</td>
+<td><code>/health</code></td>
+</tr>
+<tr>
+<td>TH-171</td>
+<td>Staff and candidate login (audience-aware JWT)</td>
+<td>API</td>
+<td>Done</td>
+<td>API-02</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-172</td>
+<td><code>/auth/me</code>, logout, refresh</td>
+<td>API</td>
+<td>Done</td>
+<td>API-03</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-173</td>
+<td>Candidate register, verify, resend OTP</td>
+<td>API</td>
+<td>Done</td>
+<td>API-04</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-174</td>
+<td>Forgot / reset password API</td>
+<td>API</td>
+<td>Done</td>
+<td>API-05</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-175</td>
+<td>Jobs REST API (<code>/api/v1/jobs</code>)</td>
+<td>API</td>
+<td>Planned</td>
+<td>API-06</td>
+<td>P2</td>
+<td>Stub only; logic in Next BFFs</td>
+</tr>
+<tr>
+<td>TH-176</td>
+<td>Applications REST API</td>
+<td>API</td>
+<td>Planned</td>
+<td>API-07</td>
+<td>P2</td>
+<td>Stub only</td>
+</tr>
+<tr>
+<td>TH-177</td>
+<td>Interviews REST API</td>
+<td>API</td>
+<td>Planned</td>
+<td>API-08</td>
+<td>P2</td>
+<td>Stub only</td>
+</tr>
+<tr>
+<td>TH-178</td>
+<td>Users REST API</td>
+<td>API</td>
+<td>Planned</td>
+<td>—</td>
+<td>P2</td>
+<td>Stub only</td>
+</tr>
+<tr>
+<td>TH-179</td>
+<td>Notifications service</td>
+<td>API</td>
+<td>Out of scope</td>
+<td>API-09</td>
+<td>—</td>
+<td>Stub; no Prisma model</td>
+</tr>
+<tr>
+<td>TH-180</td>
+<td>Migrate backoffice BFF logic to Hono modules</td>
+<td>API, BO</td>
+<td>Planned</td>
+<td>PRD §10</td>
+<td>P2</td>
+<td>Documented alignment step</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#11-central-api-hono">§11 Central API</a> (TH-170–TH-180)</em></p>
+<hr>
+<h2>12. Non-functional &amp; compliance</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Status</th>
+<th>PRD</th>
+<th>Priority</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-190</td>
+<td>WCAG 2.2 Level AA target</td>
+<td>All</td>
+<td>Partial</td>
+<td>PRD §8.1</td>
+<td>P1</td>
+<td><a href="../reports/wcag22-audit.md">wcag22-audit.md</a> rev 1.1 — 17 fails</td>
+</tr>
+<tr>
+<td>TH-191</td>
+<td>Pipeline / status modal focus trap and Escape</td>
+<td>BO</td>
+<td>Planned</td>
+<td>—</td>
+<td>P1</td>
+<td>Audit gap</td>
+</tr>
+<tr>
+<td>TH-192</td>
+<td>Footer legal pages (Privacy, Terms, Accessibility)</td>
+<td>CP, MA</td>
+<td>Planned</td>
+<td>—</td>
+<td>P2</td>
+<td>Currently <code>href=&quot;#&quot;</code></td>
+</tr>
+<tr>
+<td>TH-193</td>
+<td>PDPA/GDPR hardening (HttpOnly candidate tokens)</td>
+<td>MA</td>
+<td>Planned</td>
+<td>PRD §8.2</td>
+<td>P2</td>
+<td><a href="../reports/pdpa-gdpr-audit.md">pdpa-gdpr-audit.md</a></td>
+</tr>
+<tr>
+<td>TH-194</td>
+<td>Password hashing and account lockout</td>
+<td>API</td>
+<td>Done</td>
+<td>PRD §8.3</td>
+<td>—</td>
+<td>bcrypt</td>
+</tr>
+<tr>
+<td>TH-195</td>
+<td>Staff route middleware; candidate Bearer JWT</td>
+<td>BO, MA</td>
+<td>Done</td>
+<td>PRD §8.3</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>TH-196</td>
+<td>File upload type and size validation</td>
+<td>MA</td>
+<td>Done</td>
+<td>PRD §8.3</td>
+<td>—</td>
+<td>CV endpoints</td>
+</tr>
+<tr>
+<td>TH-197</td>
+<td>HTML design system catalog</td>
+<td>All</td>
+<td>Done</td>
+<td>PRD §8.5</td>
+<td>—</td>
+<td><a href="../design-system/index.html">design-system/index.html</a></td>
+</tr>
+<tr>
+<td>TH-198</td>
+<td>Responsive web (no native apps)</td>
+<td>All</td>
+<td>Done</td>
+<td>PRD §10</td>
+<td>—</td>
+<td>Mobile gaps tracked in audits</td>
+</tr>
+</tbody></table>
+<p><em>User stories: <a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md#12-non-functional--compliance">§12 Non-functional</a> (TH-190–TH-198)</em></p>
+<hr>
+<h2>Prioritized backlog — open work</h2>
+<p>Items with status <strong>Partial</strong> or <strong>Planned</strong>, ordered by priority.</p>
+<h3>P0 — Core loop / trust</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Effort hint</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-009</td>
+<td>Email delivery service</td>
+<td>PKG</td>
+<td>Large</td>
+</tr>
+<tr>
+<td>TH-058</td>
+<td>Production email OTP</td>
+<td>MA, API</td>
+<td>Medium (depends TH-009)</td>
+</tr>
+<tr>
+<td>TH-130</td>
+<td>Status change email to candidate</td>
+<td>BO</td>
+<td>Medium (depends TH-009)</td>
+</tr>
+<tr>
+<td>TH-131</td>
+<td>Interview schedule email to candidate</td>
+<td>BO</td>
+<td>Medium (depends TH-009)</td>
+</tr>
+</tbody></table>
+<h3>P1 — SME adoption</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Effort hint</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-043</td>
+<td>Forgot / reset password UI</td>
+<td>MA</td>
+<td>Small</td>
+</tr>
+<tr>
+<td>TH-055</td>
+<td>Withdraw application (candidate)</td>
+<td>MA</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-056</td>
+<td>Candidate timezone edit on profile</td>
+<td>MA</td>
+<td>Small</td>
+</tr>
+<tr>
+<td>TH-057</td>
+<td>Mobile apply UX hardening</td>
+<td>MA</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-145</td>
+<td>Staff auth on candidate status PATCH</td>
+<td>BO</td>
+<td>Small</td>
+</tr>
+<tr>
+<td>TH-164</td>
+<td>Staff user management UI</td>
+<td>BO</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-190</td>
+<td>WCAG remediation (critical paths)</td>
+<td>All</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-191</td>
+<td>Pipeline modal focus trap</td>
+<td>BO</td>
+<td>Small</td>
+</tr>
+</tbody></table>
+<h3>P2 — Growth &amp; platform</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Effort hint</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-008</td>
+<td>Cloud object storage</td>
+<td>PKG</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-010</td>
+<td>Product analytics</td>
+<td>PKG</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-029</td>
+<td>Bookmark jobs (portal)</td>
+<td>CP</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-054</td>
+<td>Bookmark jobs (workspace)</td>
+<td>MA</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-128</td>
+<td>AI relevance scoring (production-ready)</td>
+<td>BO</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-132</td>
+<td>Reschedule interview</td>
+<td>BO</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-150</td>
+<td>Calendar sync (Google/Outlook)</td>
+<td>BO</td>
+<td>Large</td>
+</tr>
+<tr>
+<td>TH-165</td>
+<td>Reports and analytics</td>
+<td>BO</td>
+<td>Large</td>
+</tr>
+<tr>
+<td>TH-166</td>
+<td>System settings</td>
+<td>BO</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-175</td>
+<td>Jobs REST API</td>
+<td>API</td>
+<td>Large</td>
+</tr>
+<tr>
+<td>TH-176</td>
+<td>Applications REST API</td>
+<td>API</td>
+<td>Large</td>
+</tr>
+<tr>
+<td>TH-177</td>
+<td>Interviews REST API</td>
+<td>API</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-178</td>
+<td>Users REST API</td>
+<td>API</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-180</td>
+<td>BFF → Hono migration</td>
+<td>API, BO</td>
+<td>Large</td>
+</tr>
+<tr>
+<td>TH-192</td>
+<td>Footer legal pages</td>
+<td>CP, MA</td>
+<td>Small</td>
+</tr>
+<tr>
+<td>TH-193</td>
+<td>HttpOnly candidate token migration</td>
+<td>MA</td>
+<td>Medium</td>
+</tr>
+</tbody></table>
+<h3>P3 — Stretch</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>App</th>
+<th>Effort hint</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-012</td>
+<td>Horizontal scaling / CDN</td>
+<td>PKG</td>
+<td>Large</td>
+</tr>
+<tr>
+<td>TH-053</td>
+<td>Profile screenshot import (production)</td>
+<td>MA</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TH-133</td>
+<td>Pipeline side drawer quick-view</td>
+<td>BO</td>
+<td>Medium</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Out of scope (current phase)</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Feature</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TH-011</td>
+<td>Multi-tenant isolation</td>
+<td>Single-tenant SME MVP</td>
+</tr>
+<tr>
+<td>TH-030</td>
+<td>Candidate auth in portal</td>
+<td>My Applications owns auth</td>
+</tr>
+<tr>
+<td>TH-075</td>
+<td>SSO / OAuth staff login</td>
+<td>Email/password sufficient for MVP</td>
+</tr>
+<tr>
+<td>TH-179</td>
+<td>Notifications microservice</td>
+<td>No DB model; defer</td>
+</tr>
+</tbody></table>
+<p><em>Native mobile apps are not planned; all surfaces are responsive web (see TH-198).</em></p>
+<hr>
+<h2>Document history</h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.0</td>
+<td>19 May 2026</td>
+<td>Initial backlog from PRD v1.0 and as-built codebase</td>
+</tr>
+<tr>
+<td>1.2</td>
+<td>21 May 2026</td>
+<td>Replaced Cursor prompts with plain-language user stories in companion doc</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Related documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="./PRD.md">PRD.md</a></td>
+<td>Product requirements and status summary</td>
+</tr>
+<tr>
+<td><a href="./ATS_Application_State_UI_API_Requirements.md">ATS_Application_State_UI_API_Requirements.md</a></td>
+<td>Pipeline rules and BFF contracts</td>
+</tr>
+<tr>
+<td><a href="./API_Dictionary.md">API_Dictionary.md</a></td>
+<td>HTTP API entry point</td>
+</tr>
+<tr>
+<td><a href="../reports/implementation-alignment-2026.md">implementation-alignment-2026.md</a></td>
+<td>Spec vs code alignment</td>
+</tr>
+<tr>
+<td><a href="./FEATURE_BACKLOG_CURSOR_PROMPTS.md">FEATURE_BACKLOG_CURSOR_PROMPTS.md</a></td>
+<td>User story per TH feature</td>
+</tr>
+<tr>
+<td><a href="../reports/wcag22-audit.md">wcag22-audit.md</a></td>
+<td>Accessibility backlog input</td>
+</tr>
+<tr>
+<td><a href="../reports/pdpa-gdpr-audit.md">pdpa-gdpr-audit.md</a></td>
+<td>Privacy backlog input</td>
+</tr>
+</tbody></table>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

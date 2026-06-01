@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 450" role="img" aria-label="Candidate portal job listing wireframe">
+  <rect width="720" height="450" fill="#f8fafc"/>
+  <rect x="0" y="0" width="720" height="52" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="24" y="18" width="72" height="16" rx="3" fill="#2563eb" opacity="0.35"/>
+  <rect x="120" y="22" width="48" height="8" rx="2" fill="#64748b"/>
+  <rect x="560" y="16" width="56" height="20" rx="6" fill="#f1f5f9"/>
+  <rect x="628" y="16" width="68" height="20" rx="6" fill="#2563eb" opacity="0.25"/>
+  <rect x="24" y="68" width="220" height="18" rx="4" fill="#0f172a" opacity="0.14"/>
+  <rect x="24" y="96" width="672" height="36" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="36" y="108" width="520" height="12" rx="3" fill="#f1f5f9"/>
+  <rect x="580" y="104" width="72" height="20" rx="6" fill="#2563eb" opacity="0.3"/>
+  <rect x="24" y="144" width="72" height="16" rx="4" fill="#f1f5f9"/>
+  <rect x="104" y="144" width="72" height="16" rx="4" fill="#f1f5f9"/>
+  <rect x="184" y="144" width="72" height="16" rx="4" fill="#f1f5f9"/>
+  <rect x="264" y="144" width="88" height="16" rx="4" fill="#f1f5f9"/>
+  <rect x="24" y="172" width="168" height="252" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="36" y="186" width="64" height="8" rx="2" fill="#64748b"/>
+  <rect x="36" y="204" width="120" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="36" y="218" width="120" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="36" y="240" width="64" height="8" rx="2" fill="#64748b"/>
+  <rect x="36" y="258" width="120" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="36" y="280" width="64" height="8" rx="2" fill="#64748b"/>
+  <rect x="36" y="298" width="120" height="6" rx="2" fill="#e2e8f0"/>
+  <rect x="36" y="380" width="72" height="22" rx="4" fill="#2563eb" opacity="0.2"/>
+  <rect x="208" y="172" width="488" height="252" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="220" y="186" width="100" height="8" rx="2" fill="#64748b"/>
+  <rect x="580" y="184" width="72" height="12" rx="3" fill="#f1f5f9"/>
+  <rect x="220" y="206" width="464" height="64" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="232" y="218" width="48" height="6" rx="2" fill="#2563eb" opacity="0.4"/>
+  <rect x="232" y="232" width="160" height="8" rx="2" fill="#0f172a" opacity="0.12"/>
+  <rect x="232" y="246" width="200" height="6" rx="2" fill="#cbd5e1"/>
+  <rect x="560" y="240" width="72" height="18" rx="4" fill="#2563eb" opacity="0.25"/>
+  <rect x="220" y="280" width="464" height="64" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="232" y="296" width="160" height="8" rx="2" fill="#0f172a" opacity="0.12"/>
+  <rect x="232" y="310" width="200" height="6" rx="2" fill="#cbd5e1"/>
+  <rect x="560" y="314" width="72" height="18" rx="4" fill="#2563eb" opacity="0.25"/>
+  <rect x="220" y="354" width="464" height="64" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="232" y="370" width="160" height="8" rx="2" fill="#0f172a" opacity="0.12"/>
+  <rect x="232" y="384" width="200" height="6" rx="2" fill="#cbd5e1"/>
+  <text x="360" y="442" text-anchor="middle" fill="#64748b" font-family="Arial,sans-serif" font-size="11">Candidate portal - job listing</text>
+</svg>

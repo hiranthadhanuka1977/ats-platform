@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Usability test plan — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class=" active">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Usability test plan</span></nav>
+      <article class="prose"><h1>Usability test plan (lightweight)</h1>
+<p><em>Aligned with <a href="../../docs/specification/PRD.md">PRD §5.6</a> and portfolio flows.</em></p>
+<h2>Objective</h2>
+<p>Validate that staff users can <strong>triage</strong>, <strong>scope by week</strong>, <strong>update status</strong> (including reject and interview gate), and <strong>open a full application packet</strong> without confusion—especially around <strong>drag vs click</strong>, <strong>week navigation</strong>, and <strong>terminal states</strong>.</p>
+<h2>Participants</h2>
+<ul>
+<li><strong>n = 3–5</strong> internal or external users with recruiting / ops background  </li>
+<li>Mix: 2 frequent list users, 2 “funnel” users</li>
+</ul>
+<h2>Setup</h2>
+<ul>
+<li>Staging or local <code>apps/backoffice</code> with seed data spanning <strong>multiple weeks</strong>, <strong>multiple statuses</strong>, and at least one application <strong>without</strong> a scheduled interview  </li>
+<li>Think-aloud encouraged; screen + audio recorded with consent</li>
+</ul>
+<h2>Tasks (timed)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Task</th>
+<th>Success criteria</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>“You need to see everyone who applied <strong>last week</strong> in the pipeline.”</td>
+<td>Finds week control, navigates to previous week, identifies cohort</td>
+</tr>
+<tr>
+<td>2</td>
+<td>“Confirm you <strong>cannot</strong> open a week in the future.”</td>
+<td>Next week disabled at current week; user articulates why</td>
+</tr>
+<tr>
+<td>3</td>
+<td>“Move one application from <strong>Submitted</strong> to <strong>Under review</strong>.”</td>
+<td>Completes drag-drop; status reflects (or error understood)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>“Reject an application—what does the system ask for?”</td>
+<td>Reject modal requires reason; card moves to terminal view</td>
+</tr>
+<tr>
+<td>5</td>
+<td>“Try to move someone to <strong>Interview Scheduled</strong> without scheduling—what happens?”</td>
+<td>User sees validation error or is guided to schedule first</td>
+</tr>
+<tr>
+<td>6</td>
+<td>“Schedule an interview, then move the application to <strong>Interview Scheduled</strong>.”</td>
+<td>Interview modal + successful status change</td>
+</tr>
+<tr>
+<td>7</td>
+<td>“Open the <strong>full packet</strong> for one application from the pipeline.”</td>
+<td>Lands on detail; finds CV, cover letter, status history</td>
+</tr>
+<tr>
+<td>8</td>
+<td>“From the <strong>applications table</strong>, open the candidate, then return to <strong>Applications</strong>.”</td>
+<td>Uses back control labelled for applications</td>
+</tr>
+</tbody></table>
+<h2>Post-task questions</h2>
+<ol>
+<li>Where would you expect <strong>job editing</strong> from the packet page? <em>(observe discoverability)</em>  </li>
+<li>Was <strong>UTC week</strong> confusing? Would you want <strong>local timezone</strong>?  </li>
+<li>Did you ever <strong>accidentally</strong> open detail when you meant to drag?  </li>
+<li>Was <strong>status history</strong> useful? Would you trust <strong>undo</strong> in production?  </li>
+<li>How does this compare to tools you use today for <strong>pipeline</strong> work?</li>
+</ol>
+<h2>Metrics to capture</h2>
+<ul>
+<li>Task completion (yes / partial / no)  </li>
+<li>Time on task (optional)  </li>
+<li><strong>Single usability issue</strong> list ranked by severity</li>
+</ul>
+<h2>Reporting template</h2>
+<table>
+<thead>
+<tr>
+<th>Finding</th>
+<th>Severity</th>
+<th>Evidence (quote / timestamp)</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>P0–P3</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2>Reference scenarios</h2>
+<ul>
+<li>Empty week cohort  </li>
+<li>Application with missing CV  </li>
+<li>Rejected application → reopen flow (advanced task, optional)</li>
+</ul>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

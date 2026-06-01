@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Implementation alignment — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class=" active">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Implementation alignment</span></nav>
+      <article class="prose"><h1>Implementation alignment — May 2026</h1>
+<p><strong>Date:</strong> 19 May 2026<br><strong>Last revised:</strong> 21 May 2026 (revision 1.1)<br><strong>Purpose:</strong> Bridge gap between static <code>docs/markup/</code> audits and the live monorepo.</p>
+<h2>Runtime apps (source of truth for behaviour)</h2>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Port</th>
+<th>Primary docs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>apps/candidate-portal</code></td>
+<td>3000</td>
+<td><a href="../specification/api/job-listing.md">job-listing.md</a> (target contract); jobs loaded via <strong>Prisma in Next.js</strong> (<code>src/lib/jobs.ts</code>), not <code>GET /api/v1/jobs</code></td>
+</tr>
+<tr>
+<td><code>apps/my-applications</code></td>
+<td>3002</td>
+<td><a href="../specification/api/my-applications-routes.md">my-applications-routes.md</a></td>
+</tr>
+<tr>
+<td><code>apps/backoffice</code></td>
+<td>3001</td>
+<td><a href="../specification/api/backoffice-applications.md">backoffice-applications.md</a></td>
+</tr>
+<tr>
+<td><code>apps/api</code></td>
+<td>4000</td>
+<td><a href="../specification/api/README.md">api/README.md</a> — auth + candidates live; jobs/applications/interviews <strong>stubs</strong></td>
+</tr>
+</tbody></table>
+<h2>Documented vs implemented highlights</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Spec / markup</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Public job list</td>
+<td><code>GET /api/v1/jobs</code></td>
+<td>Stub on API; <strong>candidate-portal</strong> queries <code>job_postings</code> via Prisma</td>
+</tr>
+<tr>
+<td>Application pipeline</td>
+<td>Static backoffice HTML</td>
+<td><strong>backoffice</strong> <code>/applications</code> Kanban + list; status APIs under <code>/api/backoffice/applications/*</code></td>
+</tr>
+<tr>
+<td>Application statuses</td>
+<td>Older docs listed 7 values</td>
+<td><strong>10</strong> Prisma enum values incl. <code>interview_scheduled</code>, <code>interview_completed</code>, <code>hired</code></td>
+</tr>
+<tr>
+<td>Interviews</td>
+<td>Not in early API dictionary</td>
+<td><code>application_interviews</code> table; <strong>one row per application</strong>; schedule via redesigned modal with <strong>timezone</strong> + notify flag; <strong>cancel interview</strong> on backward pipeline move</td>
+</tr>
+<tr>
+<td>AI relevance</td>
+<td>Not in early markup</td>
+<td>OpenAI scoring + <strong><code>AiRelevanceBiasNotice</code></strong> (human-review guidance)</td>
+</tr>
+<tr>
+<td>Email notifications</td>
+<td>Spec / modals imply delivery</td>
+<td><strong><code>notifyCandidate*</code> flags only</strong> — delivery <strong>TH-009</strong> / <strong>TH-130</strong> / <strong>TH-131</strong></td>
+</tr>
+<tr>
+<td>WCAG / PDPA reports</td>
+<td><strong>Revision 1.1 · 21 May 2026</strong> — <a href="wcag22-audit.md">wcag22-audit.md</a>, <a href="pdpa-gdpr-audit.md">pdpa-gdpr-audit.md</a> cover Next.js apps + latest backlog</td>
+<td></td>
+</tr>
+<tr>
+<td>Feature inventory</td>
+<td>PRD only</td>
+<td><a href="../specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a> — 123 TH codes (88 Done)</td>
+</tr>
+</tbody></table>
+<h2>Compliance artefacts (Stage ④)</h2>
+<table>
+<thead>
+<tr>
+<th>Report</th>
+<th>Revision</th>
+<th>Key open backlog</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="wcag22-audit.md">wcag22-audit.md</a></td>
+<td>1.1</td>
+<td>TH-190, TH-191, TH-192</td>
+</tr>
+<tr>
+<td><a href="pdpa-gdpr-audit.md">pdpa-gdpr-audit.md</a></td>
+<td>1.1</td>
+<td>TH-009, TH-130–131, TH-192, TH-193, TH-145</td>
+</tr>
+</tbody></table>
+<p>Process context: <a href="../process-diagrams/ats-ai-development-process.md">portfolio/process-diagrams/ats-ai-development-process.md</a>.</p>
+<h2>File storage (local)</h2>
+<p>Configured via <code>UPLOAD_ROOT</code> (default <code>./storage</code> at repo root):</p>
+<ul>
+<li><code>storage/cvs/{candidateAccountId}/</code></li>
+<li><code>storage/cover-letters/{candidateAccountId}/</code></li>
+</ul>
+<p>See <a href="../specification/ATS_Local_Environment_Specification.md">ATS_Local_Environment_Specification.md</a>.</p>
+<h2>Recommended follow-ups</h2>
+<ol>
+<li><strong>TH-145</strong> — Add staff auth to <code>PATCH /api/backoffice/candidates/{id}/status</code>.</li>
+<li><strong>TH-009 / TH-130 / TH-131</strong> — Wire email delivery; align modal UX with actual send.</li>
+<li><strong>TH-192 / TH-193</strong> — Legal footer pages; HttpOnly candidate session tokens.</li>
+<li><strong>TH-190 / TH-191</strong> — WCAG remediation on pipeline modals and critical paths.</li>
+<li><strong>TH-056</strong> — Candidate timezone edit UI (DB field exists; used in interview preview).</li>
+<li>Re-audit accessibility and privacy after the above ship.</li>
+</ol>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

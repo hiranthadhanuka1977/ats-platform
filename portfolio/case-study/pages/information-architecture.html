@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Information architecture (full) — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class=" active">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Information architecture (full)</span></nav>
+      <article class="prose"><h1>TalentHub — Information Architecture</h1>
+<p><strong>Product:</strong> TalentHub ATS<br><strong>Date:</strong> May 2026 · As-built<br><strong>Ground truth:</strong> App Router routes and navigation components in <code>apps/candidate-portal</code>, <code>apps/my-applications</code>, and <code>apps/backoffice</code></p>
+<p>This document describes <strong>how the three candidate- and staff-facing web apps are organised</strong>: primary navigation, route trees, secondary controls, and cross-app links. Use it for product planning, onboarding, portfolio case studies, and alignment with <a href="specification/PRD.md">PRD.md</a>.</p>
+<hr>
+<h2>Platform overview</h2>
+<p>TalentHub splits hiring into <strong>three Next.js apps</strong> plus a central auth API. Each app has a distinct audience and navigation model.</p>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Port</th>
+<th>Audience</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Candidate portal</strong></td>
+<td>3000</td>
+<td>Job seekers (anonymous)</td>
+<td>Public job discovery — browse, search, read job details</td>
+</tr>
+<tr>
+<td><strong>My Applications</strong></td>
+<td>3002</td>
+<td>Job seekers (signed in)</td>
+<td>Account, profile, CV, apply, track application status</td>
+</tr>
+<tr>
+<td><strong>Backoffice</strong></td>
+<td>3001</td>
+<td>Recruiters, hiring managers, admins</td>
+<td>Jobs, pipeline, candidates, interviews, administration</td>
+</tr>
+<tr>
+<td><strong>Central API</strong></td>
+<td>4000</td>
+<td>Both audiences (server)</td>
+<td>Registration, login, OTP, password reset — no UI</td>
+</tr>
+</tbody></table>
+<pre><code class="language-mermaid">flowchart LR
+  subgraph CP[&quot;Candidate portal :3000&quot;]
+    CP_HOME[&quot;/  Job listing&quot;]
+    CP_JOB[&quot;/jobs/slug  Job detail&quot;]
+  end
+
+  subgraph MA[&quot;My Applications :3002&quot;]
+    MA_AUTH[&quot;/login · /register&quot;]
+    MA_DASH[&quot;Dashboard shell&quot;]
+    MA_APPLY[&quot;Apply flow&quot;]
+  end
+
+  subgraph BO[&quot;Backoffice :3001&quot;]
+    BO_AUTH[&quot;/login&quot;]
+    BO_DASH[&quot;Staff shell&quot;]
+    BO_PIPE[&quot;Applications pipeline&quot;]
+  end
+
+  CP_HOME --&gt; CP_JOB
+  CP_JOB --&gt;|&quot;Apply · Login&quot;| MA_AUTH
+  CP_HOME --&gt;|&quot;Candidate Login&quot;| MA_AUTH
+  MA_AUTH --&gt; MA_DASH
+  MA_DASH --&gt; MA_APPLY
+  BO_AUTH --&gt; BO_DASH
+  BO_DASH --&gt; BO_PIPE
+</code></pre>
+<h3>Responsibility split</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Candidate portal</th>
+<th>My Applications</th>
+<th>Backoffice</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Browse published jobs</td>
+<td>Yes</td>
+<td>Yes (signed-in search)</td>
+<td>No (staff job list only)</td>
+</tr>
+<tr>
+<td>Job detail</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Preview only (<code>/jobs/[id]/preview</code>)</td>
+</tr>
+<tr>
+<td>Register / login</td>
+<td>Redirect → MA</td>
+<td>Yes</td>
+<td>Staff login only</td>
+</tr>
+<tr>
+<td>Apply to job</td>
+<td>Redirect → MA</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>CV / cover letter</td>
+<td>No</td>
+<td>Yes</td>
+<td>Download on application detail</td>
+</tr>
+<tr>
+<td>Application pipeline</td>
+<td>No</td>
+<td>Status list only</td>
+<td>Full Kanban + table</td>
+</tr>
+<tr>
+<td>Job posting CRUD</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Lookup data (departments, skills, …)</td>
+<td>No</td>
+<td>No</td>
+<td>Administration</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Shell models</h2>
+<p>Each app uses a different <strong>chrome pattern</strong> (header, sidebar, auth gate).</p>
+<h3>Candidate portal — marketing shell</h3>
+<pre><code class="language-text">┌─────────────────────────────────────────────────────────────┐
+│  Skip link → #main-content                                  │
+├─────────────────────────────────────────────────────────────┤
+│  HEADER — Logo (/) · Candidate Login → My Applications      │
+├─────────────────────────────────────────────────────────────┤
+│  MAIN (#main-content)                                       │
+│  · Hero / filters / job cards  OR  job detail sections      │
+├─────────────────────────────────────────────────────────────┤
+│  FOOTER — Privacy · Terms · Accessibility (placeholders)    │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<ul>
+<li><strong>No sidebar.</strong> No session in this app.</li>
+<li>Header/footer mounted per page (not in root layout).</li>
+<li><code>/login</code>, <code>/register</code>, <code>/dashboard</code> are <strong>redirect stubs</strong> → My Applications.</li>
+</ul>
+<h3>My Applications — dashboard shell (signed in)</h3>
+<pre><code class="language-text">┌─────────────────────────────────────────────────────────────┐
+│  Skip link → #main-content                                  │
+├──────────────┬──────────────────────────────────────────────┤
+│  SIDEBAR     │  TOP BAR — product label · user menu         │
+│  (primary)   ├──────────────────────────────────────────────┤
+│              │  PAGE CONTENT (#main-content)                │
+└──────────────┴──────────────────────────────────────────────┘
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Route group</th>
+<th>Routes</th>
+<th>Shell</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Public</td>
+<td><code>/</code>, <code>/login</code></td>
+<td>Minimal — no sidebar</td>
+</tr>
+<tr>
+<td>Public</td>
+<td><code>/register</code></td>
+<td>Site header + footer</td>
+</tr>
+<tr>
+<td><code>(dashboard)/*</code></td>
+<td>All workspace routes</td>
+<td>Sidebar + top bar (<code>MyAppsShell</code>)</td>
+</tr>
+</tbody></table>
+<p>Session is enforced <strong>client-side</strong> in <code>DashboardRouteLayout</code> (Bearer JWT in browser storage). Unauthenticated access redirects to <code>/login</code>.</p>
+<h3>Backoffice — staff dashboard shell</h3>
+<pre><code class="language-text">┌─────────────────────────────────────────────────────────────┐
+│  Skip link → #main-content                                  │
+├──────────────┬──────────────────────────────────────────────┤
+│  SIDEBAR     │  TOP BAR — session · user · logout           │
+│  (primary)   ├──────────────────────────────────────────────┤
+│              │  PAGE CONTENT (#main-content)                │
+│              │  · kicker / H1 · secondary nav · surface     │
+└──────────────┴──────────────────────────────────────────────┘
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Layout group</th>
+<th>Routes</th>
+<th>Sidebar</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>(auth)</code></td>
+<td><code>/login</code></td>
+<td>Hidden — split auth layout</td>
+</tr>
+<tr>
+<td><code>(dashboard)</code></td>
+<td>All staff routes</td>
+<td>Visible — <code>BackOfficeShell</code></td>
+</tr>
+<tr>
+<td><code>(job-preview)</code></td>
+<td><code>/jobs/[id]/preview</code></td>
+<td>Hidden — candidate-facing preview</td>
+</tr>
+</tbody></table>
+<p>Session uses <strong>httpOnly cookies</strong> (<code>bo_access</code>) and server middleware on dashboard routes.</p>
+<hr>
+<h2>1. Candidate portal (<code>apps/candidate-portal</code> · :3000)</h2>
+<p><strong>Source:</strong> <code>SiteHeader.tsx</code>, <code>SiteFooter.tsx</code>, <code>src/app/**/page.tsx</code></p>
+<h3>Primary navigation (header)</h3>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Target</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Logo “TalentHub”</td>
+<td><code>/</code></td>
+<td>In-app</td>
+</tr>
+<tr>
+<td>Candidate Login</td>
+<td><code>{MY_APPLICATIONS_BASE_URL}/login</code></td>
+<td>External link (port 3002)</td>
+</tr>
+</tbody></table>
+<p>No main nav menu (Jobs, About, etc.). Footer links are placeholders (<code>href=&quot;#&quot;</code> — see TH-192).</p>
+<h3>Site map</h3>
+<pre><code class="language-text">Candidate Portal (:3000)
+│
+├── /                              Job listing (home)
+│   └── Query state only: q, department, location, employmentType,
+│       experience, remote, postedWithin, sort, page
+│
+├── /jobs/[slug]                   Published job detail
+│   └── (404) not-found UI         Invalid slug
+│
+├── /login                         → redirect My Applications /login
+├── /register                      → redirect My Applications /register
+└── /dashboard                     → redirect My Applications /dashboard
+</code></pre>
+<p><strong>Substantive pages:</strong> 2 (<code>/</code>, <code>/jobs/[slug]</code>).<br><strong>Redirect stubs:</strong> 3 (legacy/bookmark URLs).</p>
+<h3>In-page navigation</h3>
+<table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Action</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Job card</td>
+<td>View job</td>
+<td><code>/jobs/{slug}</code></td>
+</tr>
+<tr>
+<td>Job detail breadcrumb</td>
+<td>All Jobs</td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td>Job detail</td>
+<td>Apply / Continue</td>
+<td>My Applications login (or apply when signed in elsewhere)</td>
+</tr>
+<tr>
+<td>Pagination</td>
+<td>Prev / next page</td>
+<td><code>/?…&amp;page=N</code> (filters preserved)</td>
+</tr>
+<tr>
+<td>Filter empty state</td>
+<td>Clear filters</td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td>Share</td>
+<td>Copy/share URL</td>
+<td><code>/jobs/{slug}</code></td>
+</tr>
+</tbody></table>
+<h3>Filter state (virtual IA on <code>/</code>)</h3>
+<p>Filters are <strong>URL search params</strong>, not separate routes:</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>q</code></td>
+<td>Keyword search (title, summary)</td>
+</tr>
+<tr>
+<td><code>department</code></td>
+<td>Department filter</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Location filter</td>
+</tr>
+<tr>
+<td><code>employmentType</code></td>
+<td>Employment type</td>
+</tr>
+<tr>
+<td><code>experience</code></td>
+<td>Experience level</td>
+</tr>
+<tr>
+<td><code>remote</code></td>
+<td>Remote roles</td>
+</tr>
+<tr>
+<td><code>postedWithin</code></td>
+<td><code>24h</code> · <code>7d</code> · <code>30d</code></td>
+</tr>
+<tr>
+<td><code>sort</code></td>
+<td><code>recent</code> · <code>az</code></td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>Pagination</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>2. My Applications (<code>apps/my-applications</code> · :3002)</h2>
+<p><strong>Source:</strong> <code>MyAppsSidebar.tsx</code>, <code>DashboardRouteLayout.tsx</code>, <code>SiteHeader.tsx</code></p>
+<h3>Primary navigation (sidebar — signed in)</h3>
+<p>Order matches <code>MyAppsSidebar.tsx</code>:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Label</th>
+<th>href</th>
+<th>Active when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Dashboard</td>
+<td><code>/dashboard</code></td>
+<td>path starts with <code>/dashboard</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>My Applications</td>
+<td><code>/my-applications</code></td>
+<td>path starts with <code>/my-applications</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>My Profile</td>
+<td><code>/my-profile</code></td>
+<td>path starts with <code>/my-profile</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Upload CV</td>
+<td><code>/cv-upload</code></td>
+<td>path starts with <code>/cv-upload</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Cover Letters</td>
+<td><code>/cover-letters</code></td>
+<td>path starts with <code>/cover-letters</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Job search</td>
+<td><code>/job-search</code></td>
+<td>path starts with <code>/job</code> (includes <code>/jobs/...</code>)</td>
+</tr>
+</tbody></table>
+<p><strong>Top bar:</strong> mobile nav toggle · “TalentHub / My Applications” · user menu (Dashboard, Sign out).</p>
+<p><strong>Register page header (logged out):</strong> Log In → <code>/login</code> · Register → <code>/register</code>.</p>
+<h3>Site map</h3>
+<pre><code class="language-text">My Applications (:3002)
+│
+├── /                              → redirect /login
+├── /login                         Sign in (standalone layout)
+├── /register                      Create account (header + footer)
+│
+└── (dashboard)/                   [Sidebar + top bar — auth required]
+    ├── /dashboard                 Onboarding journey · recent applications
+    ├── /my-applications           Submitted applications · status list
+    ├── /my-profile                Profile editor · import prototypes
+    ├── /cv-upload                 CV library · upload · default CV
+    │   └── ?returnTo=…            Return path after upload (e.g. apply)
+    ├── /cover-letters             Cover letter library
+    ├── /job-search                Published jobs (filters · pagination)
+    └── /jobs/[slug]               Job detail · Apply CTA
+        └── /jobs/[slug]/apply     4-step apply wizard
+            Step 1 CV → 2 Cover letter → 3 Questions → 4 Review
+</code></pre>
+<h3>Key user flows</h3>
+<pre><code class="language-mermaid">flowchart TD
+  REG[&quot;/register&quot;] --&gt; LOGIN[&quot;/login&quot;]
+  LOGIN --&gt; DASH[&quot;/dashboard&quot;]
+  DASH --&gt; CV[&quot;/cv-upload&quot;]
+  DASH --&gt; PROF[&quot;/my-profile&quot;]
+  DASH --&gt; CL[&quot;/cover-letters&quot;]
+  DASH --&gt; JS[&quot;/job-search&quot;]
+  JS --&gt; JD[&quot;/jobs/slug&quot;]
+  JD --&gt; APPLY[&quot;/jobs/slug/apply&quot;]
+  CV --&gt;|&quot;returnTo&quot;| APPLY
+  APPLY --&gt; LIST[&quot;/my-applications&quot;]
+  DASH --&gt; LIST
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Flow</th>
+<th>Path</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Onboarding</strong></td>
+<td>Dashboard journey cards</td>
+<td>Links to CV → profile → cover letters → job search</td>
+</tr>
+<tr>
+<td><strong>Apply</strong></td>
+<td><code>/job-search</code> → <code>/jobs/{slug}</code> → <code>/jobs/{slug}/apply</code></td>
+<td>CV required; redirects to <code>/cv-upload?returnTo=…</code> if none</td>
+</tr>
+<tr>
+<td><strong>Track status</strong></td>
+<td><code>/my-applications</code></td>
+<td>Links back to <code>/jobs/{slug}</code></td>
+</tr>
+<tr>
+<td><strong>Session</strong></td>
+<td>15 min idle logout · token refresh</td>
+<td>Client-side guard on <code>(dashboard)</code> routes</td>
+</tr>
+</tbody></table>
+<h3>Secondary / in-page navigation</h3>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Control</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Job search</td>
+<td>Filters, pagination</td>
+<td>URL params (similar to portal)</td>
+</tr>
+<tr>
+<td>Apply wizard</td>
+<td>Step indicator</td>
+<td>Linear 4 steps; back/next within wizard</td>
+</tr>
+<tr>
+<td>CV upload</td>
+<td>Continue with <code>returnTo</code></td>
+<td>Returns to apply flow after upload</td>
+</tr>
+<tr>
+<td>My applications empty</td>
+<td>CTA</td>
+<td><code>/job-search</code></td>
+</tr>
+<tr>
+<td>User menu</td>
+<td>Profile</td>
+<td><code>#</code> placeholder — use sidebar <code>/my-profile</code></td>
+</tr>
+</tbody></table>
+<h3>Planned / gaps</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Saved jobs</td>
+<td>Planned (TH-054)</td>
+<td>Dashboard placeholder; no route yet</td>
+</tr>
+<tr>
+<td>Forgot password UI</td>
+<td>Partial (TH-043)</td>
+<td>API exists; pages TBD</td>
+</tr>
+<tr>
+<td>Withdraw application</td>
+<td>Planned (TH-055)</td>
+<td>UI from candidate side TBD</td>
+</tr>
+<tr>
+<td>Time zone on profile</td>
+<td>Partial (TH-056)</td>
+<td>DB field; edit UI TBD</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Backoffice (<code>apps/backoffice</code> · :3001)</h2>
+<p><strong>Source:</strong> <code>Sidebar.tsx</code>, <code>AdministrationNav.tsx</code>, <code>maintenance-config.ts</code><br><strong>Detailed diagram:</strong> <a href="../information-architecture/backoffice-navigation-map.md">portfolio/information-architecture/backoffice-navigation-map.md</a></p>
+<h3>Primary navigation (sidebar)</h3>
+<p>Order matches <code>Sidebar.tsx</code>:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Label</th>
+<th>href</th>
+<th>Active when</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Dashboard</td>
+<td><code>/</code></td>
+<td>path === <code>/</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Applications</td>
+<td><code>/applications</code></td>
+<td>path starts with <code>/applications</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Interviews</td>
+<td><code>/interviews</code></td>
+<td>path starts with <code>/interviews</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Jobs</td>
+<td><code>/jobs</code></td>
+<td>path starts with <code>/jobs</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Candidates</td>
+<td><code>/candidates</code></td>
+<td>path starts with <code>/candidates</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Reports</td>
+<td><code>/reports</code></td>
+<td>path starts with <code>/reports</code></td>
+<td>Placeholder</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Administration</td>
+<td><code>/administration</code></td>
+<td>path starts with <code>/administration</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Settings</td>
+<td><code>/settings</code></td>
+<td>path starts with <code>/settings</code></td>
+<td>Placeholder</td>
+</tr>
+</tbody></table>
+<h3>Site map</h3>
+<pre><code class="language-text">TalentHub Back Office (:3001)
+│
+├── /login                          [auth] Staff sign-in
+│
+├── /                               Dashboard — KPIs, pipeline health, activity
+│
+├── /applications                   Applications hub
+│   ├── (view) Pipeline             Kanban · default · week scope · terminal tabs
+│   ├── (view) Table                Sortable list · same URL
+│   └── /applications/[id]          Application detail (packet page)
+│       └── Modals: status · reject · reopen · schedule · cancel interview
+│
+├── /interviews                     Interview calendar
+│
+├── /jobs                           Job list (search · filters · pagination)
+│   ├── /jobs/new                   Create job (multi-section form)
+│   │   ├── /jobs/new/review        Pre-publish review
+│   │   └── /jobs/new/success       Post-publish confirmation
+│   └── /jobs/[id]/edit             Edit job
+│
+├── /jobs/[id]/preview              [job-preview layout] Candidate-facing preview
+│
+├── /candidates                     Summary dashboard
+│   ├── /candidates/all             Searchable directory
+│   ├── /candidates/[id]            Profile · CV history · applications
+│   └── /candidates/[id]/edit       Account status edit
+│
+├── /administration                 → redirect /administration/departments
+│   ├── /administration/companies
+│   ├── /administration/departments
+│   ├── /administration/locations
+│   ├── /administration/employment-types
+│   ├── /administration/experience-levels
+│   ├── /administration/skills
+│   ├── /administration/tags
+│   └── /administration/benefits
+│
+├── /reports                        Placeholder (TH-165)
+└── /settings                       Placeholder (TH-166)
+</code></pre>
+<h3>Secondary navigation (in-page)</h3>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Control</th>
+<th>Options / behaviour</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Applications</strong></td>
+<td>View tablist</td>
+<td>Table view · Pipeline (default)</td>
+</tr>
+<tr>
+<td><strong>Applications pipeline</strong></td>
+<td>Week toolbar</td>
+<td>← Prev week · Next week → · This week</td>
+</tr>
+<tr>
+<td><strong>Applications pipeline</strong></td>
+<td>Terminal tabs</td>
+<td>Rejected · Withdrawn</td>
+</tr>
+<tr>
+<td><strong>Applications pipeline</strong></td>
+<td>Fullscreen</td>
+<td>Expands pipeline viewport</td>
+</tr>
+<tr>
+<td><strong>Applications pipeline</strong></td>
+<td>Card menu</td>
+<td>Move to… (keyboard alternative to drag)</td>
+</tr>
+<tr>
+<td><strong>Administration</strong></td>
+<td>Section select</td>
+<td>8 lookup tables (see site map)</td>
+</tr>
+<tr>
+<td><strong>Candidates</strong></td>
+<td>Tabs</td>
+<td>Summary (<code>/candidates</code>) · All Candidates (<code>/candidates/all</code>)</td>
+</tr>
+<tr>
+<td><strong>Jobs list</strong></td>
+<td>Filters / search</td>
+<td>Status, text search, pagination</td>
+</tr>
+</tbody></table>
+<h3>Cross-links (context preservation)</h3>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>Control</th>
+<th>To</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Applications table</td>
+<td>Candidate name</td>
+<td><code>/candidates/[id]</code></td>
+<td><code>?from=applications</code></td>
+</tr>
+<tr>
+<td>Application detail</td>
+<td>Applicant link</td>
+<td><code>/candidates/[id]</code></td>
+<td><code>?from=applications</code></td>
+</tr>
+<tr>
+<td>Application detail</td>
+<td>Edit job</td>
+<td><code>/jobs/[id]/edit</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Candidate detail</td>
+<td>Back</td>
+<td><code>/applications</code></td>
+<td>When arrived from applications</td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>Pipeline health / insight</td>
+<td><code>/applications</code></td>
+<td>Default pipeline view</td>
+</tr>
+<tr>
+<td>Jobs list</td>
+<td>Preview</td>
+<td><code>/jobs/[id]/preview</code></td>
+<td>Separate layout, no sidebar</td>
+</tr>
+<tr>
+<td>Job success</td>
+<td>Actions</td>
+<td><code>/jobs</code> · <code>/jobs/new</code></td>
+<td>Post-publish</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Cross-app navigation map</h2>
+<p>How users move between the three web apps:</p>
+<table>
+<thead>
+<tr>
+<th>User action</th>
+<th>From</th>
+<th>To</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Browse jobs (public)</td>
+<td>—</td>
+<td>Candidate portal <code>/</code></td>
+</tr>
+<tr>
+<td>Read job (public)</td>
+<td>Portal <code>/jobs/{slug}</code></td>
+<td>Same app</td>
+</tr>
+<tr>
+<td>Sign in / register</td>
+<td>Portal header or <code>/login</code> stub</td>
+<td>My Applications</td>
+</tr>
+<tr>
+<td>Apply to job</td>
+<td>Portal job detail</td>
+<td>My Applications <code>/login</code> then apply flow</td>
+</tr>
+<tr>
+<td>Staff sign in</td>
+<td>—</td>
+<td>Backoffice <code>/login</code></td>
+</tr>
+<tr>
+<td>Preview job as candidate</td>
+<td>Backoffice jobs</td>
+<td><code>/jobs/[id]/preview</code> (staff app, preview chrome)</td>
+</tr>
+</tbody></table>
+<p><strong>Environment variable:</strong> <code>NEXT_PUBLIC_MY_APPLICATIONS_BASE_URL</code> (default <code>http://localhost:3002</code>) — used by candidate portal for login and apply links.</p>
+<pre><code class="language-mermaid">flowchart LR
+  CP[&quot;Candidate portal&quot;]
+  MA[&quot;My Applications&quot;]
+  BO[&quot;Backoffice&quot;]
+
+  CP --&gt;|&quot;Login · Apply&quot;| MA
+  MA --&gt;|&quot;Job search reads same DB&quot;| CP
+  BO --&gt;|&quot;Preview&quot;| BO_PREVIEW[&quot;/jobs/id/preview&quot;]
+  BO --&gt;|&quot;Publish&quot;| CP
+</code></pre>
+<p>Both candidate apps read <strong>published jobs</strong> from the shared database. Backoffice <strong>publishes</strong> jobs that appear on portal and My Applications job search.</p>
+<hr>
+<h2>IA principles</h2>
+<ol>
+<li><strong>Separation of audiences</strong> — Public browse (portal), authenticated candidate workspace (My Applications), and staff operations (backoffice) are separate apps with clear entry points.</li>
+<li><strong>Application as staff unit of work</strong> — Backoffice <code>/applications/[id]</code> is the adjudication anchor; candidate and job are linked hops, not parallel hierarchies.</li>
+<li><strong>Throughput vs depth</strong> — Pipeline and table for volume; detail pages for decisions; candidate profile when person-level history matters.</li>
+<li><strong>Honest placeholders</strong> — Reports, Settings, and footer legal links appear in nav or chrome but may surface “coming soon” or <code>#</code> until shipped (TH-165, TH-166, TH-192).</li>
+<li><strong>URL-driven discovery state</strong> — Job filters and search on portal and My Applications use query params so results are shareable and bookmarkable.</li>
+<li><strong>Time-scoped pipeline</strong> — Backoffice pipeline week navigation reduces noise; table view remains all-time.</li>
+<li><strong>Administration as reference data</strong> — Lookup tables grouped under one nav item with in-page section picker, not eight top-level items.</li>
+</ol>
+<hr>
+<h2>Route counts (summary)</h2>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Page routes</th>
+<th>Auth model</th>
+<th>Primary nav items</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Candidate portal</td>
+<td>5 files (2 substantive + 3 redirects)</td>
+<td>None</td>
+<td>1 header CTA</td>
+</tr>
+<tr>
+<td>My Applications</td>
+<td>11 pages</td>
+<td>Client JWT + dashboard layout</td>
+<td>6 sidebar items</td>
+</tr>
+<tr>
+<td>Backoffice</td>
+<td>19 pages</td>
+<td>httpOnly cookie + middleware</td>
+<td>8 sidebar items</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Related documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="specification/PRD.md">PRD.md</a></td>
+<td>Functional requirements and user journeys</td>
+</tr>
+<tr>
+<td><a href="PROJECT_STRUCTURE.md">PROJECT_STRUCTURE.md</a></td>
+<td>Monorepo layout and ports</td>
+</tr>
+<tr>
+<td><a href="specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG.md</a></td>
+<td>Feature codes and open IA-related work</td>
+</tr>
+<tr>
+<td><a href="../information-architecture/README.md">portfolio/information-architecture/</a></td>
+<td>Backoffice navigation map (Mermaid + PNG)</td>
+</tr>
+<tr>
+<td><a href="../wireframes/README.md">portfolio/wireframes/</a></td>
+<td>Lo-fi screen wireframes for all three apps</td>
+</tr>
+<tr>
+<td><a href="specification/ATS_Application_State_UI_API_Requirements.md">ATS_Application_State_UI_API_Requirements.md</a></td>
+<td>Pipeline statuses and transitions</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>Information architecture v1.0 · May 2026 · Derived from as-built Next.js routes and navigation components.</em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Backoffice applications API — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class=" active">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Backoffice applications API</span></nav>
+      <article class="prose"><h1>API — Backoffice applications &amp; pipeline</h1>
+<p><strong>Doc version:</strong> 1.0<br><strong>Date:</strong> 19 May 2026<br><strong>App:</strong> <code>apps/backoffice</code> (origin e.g. <code>http://localhost:3001</code>)<br><strong>Auth:</strong> Staff session via <code>POST /api/auth/login</code> (httpOnly cookies). All routes below call <code>requireStaffSession()</code> unless noted.</p>
+<p>These handlers are <strong>Next.js Route Handlers</strong>, not the central Hono API (<code>/api/v1</code>). Source of truth:</p>
+<ul>
+<li><code>apps/backoffice/src/app/api/backoffice/applications/**</code></li>
+<li><code>apps/backoffice/src/lib/application-status-service.ts</code></li>
+<li><code>@ats-platform/types</code> — <code>APPLICATION_STATUS_TRANSITIONS</code></li>
+<li><code>@ats-platform/validators</code> — <code>applicationStatusPatchSchema</code>, <code>applicationReopenSchema</code>, <code>applicationStatusUndoSchema</code></li>
+</ul>
+<p>Product behaviour (Kanban, modals, drag-and-drop) is specified in <a href="../ATS_Application_State_UI_API_Requirements.md">ATS_Application_State_UI_API_Requirements.md</a>. Data model: <a href="../db-schema.md">db-schema.md</a> §3.8–3.10.</p>
+<hr>
+<h2>Application status values</h2>
+<table>
+<thead>
+<tr>
+<th>API / Prisma value</th>
+<th>Pipeline column</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>submitted</code></td>
+<td>Submitted</td>
+<td>Default on apply</td>
+</tr>
+<tr>
+<td><code>under_review</code></td>
+<td>Under Review</td>
+<td></td>
+</tr>
+<tr>
+<td><code>shortlisted</code></td>
+<td>Shortlisted</td>
+<td></td>
+</tr>
+<tr>
+<td><code>interview_scheduled</code></td>
+<td>Interview Scheduled</td>
+<td>Legacy DB value <code>interview</code> is normalized to this in rules</td>
+</tr>
+<tr>
+<td><code>interview_completed</code></td>
+<td>Interview Completed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>offered</code></td>
+<td>Offered</td>
+<td></td>
+</tr>
+<tr>
+<td><code>hired</code></td>
+<td>Hired</td>
+<td>Terminal for pipeline PATCH</td>
+</tr>
+<tr>
+<td><code>rejected</code></td>
+<td>Rejected (terminal)</td>
+<td>Use reopen flow to leave</td>
+</tr>
+<tr>
+<td><code>withdrawn</code></td>
+<td>Withdrawn (terminal)</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Active pipeline columns</strong> (UI): submitted → under_review → shortlisted → interview_scheduled → interview_completed → offered → hired.<br><strong>Terminal columns</strong> (UI): rejected, withdrawn.</p>
+<p>Transition matrix: <code>@ats-platform/types</code> → <code>APPLICATION_STATUS_TRANSITIONS</code>.</p>
+<hr>
+<h2>Status update</h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Method</strong></td>
+<td><code>PATCH</code></td>
+</tr>
+<tr>
+<td><strong>Path</strong></td>
+<td><code>/api/backoffice/applications/{applicationId}/status</code></td>
+</tr>
+<tr>
+<td><strong>Auth</strong></td>
+<td>Staff session</td>
+</tr>
+</tbody></table>
+<h3>Request body</h3>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;shortlisted&quot;,
+  &quot;reason&quot;: &quot;Strong fintech background&quot;,
+  &quot;note&quot;: &quot;Optional internal note&quot;,
+  &quot;notifyCandidate&quot;: false,
+  &quot;withdrawalSource&quot;: &quot;Candidate request&quot;,
+  &quot;offerAccepted&quot;: true,
+  &quot;expectedUpdatedAt&quot;: &quot;2026-05-19T10:30:00.000Z&quot;
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>When required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>status</code></td>
+<td>Always (snake_case enum)</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td>Required when <code>status</code> is <code>rejected</code></td>
+</tr>
+<tr>
+<td><code>withdrawalSource</code></td>
+<td>Required when <code>status</code> is <code>withdrawn</code></td>
+</tr>
+<tr>
+<td><code>offerAccepted</code></td>
+<td>Must be <code>true</code> when moving from <code>offered</code> → <code>hired</code></td>
+</tr>
+<tr>
+<td><code>expectedUpdatedAt</code></td>
+<td>Optional optimistic concurrency (ISO 8601); mismatch → <code>409 STATUS_CONFLICT</code></td>
+</tr>
+</tbody></table>
+<p>Legacy request value <code>interview</code> is accepted by the validator and stored as <code>interview_scheduled</code>.</p>
+<h3>Success <code>200</code></h3>
+<pre><code class="language-json">{
+  &quot;data&quot;: {
+    &quot;id&quot;: &quot;uuid&quot;,
+    &quot;status&quot;: &quot;shortlisted&quot;,
+    &quot;previousStatus&quot;: &quot;under_review&quot;,
+    &quot;updatedAt&quot;: &quot;2026-05-19T10:30:00.000Z&quot;
+  }
+}
+</code></pre>
+<h3>Error codes (<code>error.code</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>HTTP</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>VALIDATION_ERROR</code></td>
+<td>400</td>
+<td>Invalid id or body</td>
+</tr>
+<tr>
+<td><code>NOT_FOUND</code></td>
+<td>404</td>
+<td>Application missing</td>
+</tr>
+<tr>
+<td><code>INVALID_TARGET_STATUS</code></td>
+<td>400</td>
+<td>Unknown status</td>
+</tr>
+<tr>
+<td><code>INVALID_STATUS_TRANSITION</code></td>
+<td>409</td>
+<td>Not in transition map</td>
+</tr>
+<tr>
+<td><code>USE_REOPEN_ACTION</code></td>
+<td>409</td>
+<td>From <code>rejected</code> or reopen-only target</td>
+</tr>
+<tr>
+<td><code>TERMINAL_STATE</code></td>
+<td>409</td>
+<td>From <code>hired</code> or <code>withdrawn</code></td>
+</tr>
+<tr>
+<td><code>REJECTION_REASON_REQUIRED</code></td>
+<td>400</td>
+<td>Reject without reason</td>
+</tr>
+<tr>
+<td><code>WITHDRAWAL_SOURCE_REQUIRED</code></td>
+<td>400</td>
+<td>Withdraw without source</td>
+</tr>
+<tr>
+<td><code>OFFER_ACCEPTANCE_REQUIRED</code></td>
+<td>400</td>
+<td>Hired without <code>offerAccepted: true</code></td>
+</tr>
+<tr>
+<td><code>INTERVIEW_RECORD_REQUIRED</code></td>
+<td>409</td>
+<td>Target is <code>interview_scheduled</code> (or completed from scheduled) without an <code>application_interviews</code> row</td>
+</tr>
+<tr>
+<td><code>STATUS_CONFLICT</code></td>
+<td>409</td>
+<td><code>expectedUpdatedAt</code> stale</td>
+</tr>
+<tr>
+<td><code>UPDATE_FAILED</code></td>
+<td>500</td>
+<td>Transaction error</td>
+</tr>
+</tbody></table>
+<p>Reject and withdraw are implemented via this endpoint (<code>status: &quot;rejected&quot;</code> / <code>&quot;withdrawn&quot;</code>), not separate POST routes.</p>
+<hr>
+<h2>Undo last status change</h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Method</strong></td>
+<td><code>POST</code></td>
+</tr>
+<tr>
+<td><strong>Path</strong></td>
+<td><code>/api/backoffice/applications/{applicationId}/status/undo</code></td>
+</tr>
+</tbody></table>
+<h3>Request body</h3>
+<pre><code class="language-json">{
+  &quot;previousStatus&quot;: &quot;under_review&quot;,
+  &quot;currentStatus&quot;: &quot;shortlisted&quot;,
+  &quot;expectedUpdatedAt&quot;: &quot;2026-05-19T10:30:00.000Z&quot;
+}
+</code></pre>
+<p>Reverts to <code>previousStatus</code> when the latest status event matches <code>currentStatus</code> and undo is allowed by product rules.</p>
+<h3>Errors</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>HTTP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>UNDO_NOT_AVAILABLE</code></td>
+<td>409</td>
+</tr>
+<tr>
+<td><code>STATUS_CONFLICT</code></td>
+<td>409</td>
+</tr>
+<tr>
+<td><code>NOT_FOUND</code></td>
+<td>404</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Reopen rejected application</h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Method</strong></td>
+<td><code>POST</code></td>
+</tr>
+<tr>
+<td><strong>Path</strong></td>
+<td><code>/api/backoffice/applications/{applicationId}/reopen</code></td>
+</tr>
+</tbody></table>
+<h3>Request body</h3>
+<pre><code class="language-json">{
+  &quot;targetStatus&quot;: &quot;under_review&quot;,
+  &quot;reason&quot;: &quot;Rejected in error after HM review&quot;,
+  &quot;note&quot;: &quot;Optional&quot;,
+  &quot;expectedUpdatedAt&quot;: &quot;2026-05-19T10:30:00.000Z&quot;
+}
+</code></pre>
+<p><code>targetStatus</code> must be <code>under_review</code> or <code>shortlisted</code>. Current status must be <code>rejected</code>.</p>
+<hr>
+<h2>Interviews (one per application)</h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>GET</strong></td>
+<td><code>/api/backoffice/applications/{applicationId}/interviews</code></td>
+</tr>
+<tr>
+<td><strong>POST</strong></td>
+<td>Same path — schedule interview</td>
+</tr>
+</tbody></table>
+<p><strong>Constraint:</strong> <code>application_interviews.application_id</code> is <strong>unique</strong> (at most one interview row per application). Second <code>POST</code> → <code>409 CONFLICT</code>.</p>
+<h3>POST body</h3>
+<pre><code class="language-json">{
+  &quot;startsAt&quot;: &quot;2026-05-25T09:00:00.000Z&quot;,
+  &quot;endsAt&quot;: &quot;2026-05-25T10:00:00.000Z&quot;,
+  &quot;notifyCandidateEmail&quot;: true
+}
+</code></pre>
+<p>On success:</p>
+<ol>
+<li>Creates <code>application_interviews</code> row.</li>
+<li>If application status is not already <code>interview_scheduled</code>, updates status and appends <code>application_status_events</code> (schedule path does not set <code>changeSource</code> to <code>pipeline</code> today).</li>
+</ol>
+<h3>GET success</h3>
+<pre><code class="language-json">{
+  &quot;data&quot;: {
+    &quot;interviews&quot;: [
+      {
+        &quot;id&quot;: &quot;uuid&quot;,
+        &quot;startsAt&quot;: &quot;2026-05-25T09:00:00.000Z&quot;,
+        &quot;endsAt&quot;: &quot;2026-05-25T10:00:00.000Z&quot;,
+        &quot;notifyCandidateEmail&quot;: true,
+        &quot;notificationSentAt&quot;: &quot;2026-05-19T12:00:00.000Z&quot;,
+        &quot;scheduledBy&quot;: &quot;Staff Name&quot;
+      }
+    ]
+  }
+}
+</code></pre>
+<p><strong>Not implemented:</strong> DELETE interview, PATCH reschedule, central <code>/api/v1/interviews</code>.</p>
+<hr>
+<h2>Relevance score</h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Method</strong></td>
+<td><code>GET</code></td>
+</tr>
+<tr>
+<td><strong>Path</strong></td>
+<td><code>/api/backoffice/applications/{applicationId}/relevance-score</code></td>
+</tr>
+<tr>
+<td><strong>Query</strong></td>
+<td><code>refresh=1</code> or <code>refresh=true</code> to bypass cache</td>
+</tr>
+</tbody></table>
+<p>Requires <code>OPENAI_API_KEY</code> in repo root <code>.env</code> or <code>apps/backoffice/.env.local</code>. Without it → <code>503 SERVICE_UNAVAILABLE</code>.</p>
+<p>Persists <code>applications.relevance_score</code>, <code>relevance_breakdown</code>, <code>relevance_scored_at</code>, <code>relevance_input_hash</code> (see db-schema §3.8).</p>
+<hr>
+<h2>Attachments (CV &amp; cover letter)</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>GET</code></td>
+<td><code>/api/backoffice/applications/{id}/attachments/cv</code></td>
+<td>Streams file from <code>storage/cvs/{candidateAccountId}/</code> using <code>resume_url</code> query <code>id</code></td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/backoffice/applications/{id}/attachments/cover-letter</code></td>
+<td>Streams from <code>storage/cover-letters/{candidateAccountId}/</code></td>
+</tr>
+</tbody></table>
+<p>Both require staff session. <code>404</code> if application or file missing.</p>
+<hr>
+<h2>UI integration (read-only)</h2>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Feature</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/applications</code></td>
+<td>Pipeline board (default) / list toggle; fullscreen board</td>
+</tr>
+<tr>
+<td><code>/applications/{id}</code></td>
+<td>Detail, status actions, schedule interview, relevance, attachments</td>
+</tr>
+<tr>
+<td><code>/interviews</code></td>
+<td>Calendar of scheduled interviews (<code>listInterviewsForCalendar</code>)</td>
+</tr>
+</tbody></table>
+<p>List/detail pages expose <code>hasScheduledInterview</code> from <code>application._count.interviews</code> or <code>interviews.length</code> for pipeline guards and the “schedule before Interview Scheduled” modal.</p>
+<hr>
+<h2>Candidate account status (not application status)</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PATCH</code></td>
+<td><code>/api/backoffice/candidates/{id}/status</code></td>
+<td><strong>No staff session guard in current code</strong></td>
+</tr>
+</tbody></table>
+<p>Body: <code>{ &quot;status&quot;: &quot;active&quot; | &quot;pending_verification&quot; | &quot;locked&quot; | &quot;disabled&quot; }</code>. Updates <code>candidate_accounts.status</code>, not <code>applications.status</code>.</p>
+<hr>
+<h2>Central API stubs</h2>
+<p><code>GET /api/v1/applications</code> and <code>GET /api/v1/interviews</code> on <code>apps/api</code> return stub JSON only. Application lifecycle is implemented in the backoffice Next.js app until migrated to Hono.</p>
+<hr>
+<h2>Related</h2>
+<ul>
+<li><a href="README.md">README.md</a> — master index  </li>
+<li><a href="../ATS_Application_State_UI_API_Requirements.md">../ATS_Application_State_UI_API_Requirements.md</a>  </li>
+<li><a href="../db-schema.md">../db-schema.md</a> §3.8–3.10</li>
+</ul>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

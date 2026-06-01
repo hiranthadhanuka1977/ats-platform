@@ -3,7 +3,33 @@
 **Document type:** Secondary netnography (public discourse synthesis)  
 **Date:** 21 May 2026  
 **Scope:** Recruiter/staff and candidate perspectives on commercial ATS products  
+**Product intent:** **Small and medium organizations (SME / SMB)** — teams that need credible hiring workflow without enterprise cost, complexity, or six-week implementations  
 **Related:** [PRD](../../docs/specification/PRD.md) · [03-competitive-and-pattern-notes.md](./03-competitive-and-pattern-notes.md)
+
+---
+
+## 0. Product intent — why SME / SMB
+
+**TalentHub is designed primarily for small and medium organizations** — companies with lean People/TA teams (often one to a few recruiters, hiring managers wearing multiple hats) who must run hiring reliably but cannot justify or absorb a full enterprise ATS stack.
+
+### 0.1 Design goals for this segment
+
+| Goal | What it means in practice | Why netnography matters |
+|------|---------------------------|-------------------------|
+| **Low cost** | Avoid enterprise license bands (~$4K–$25K+), setup fees, and paying for CRM/analytics modules a 30-person company will never adopt | Buyer discourse shows **TCO shock** and **feature bloat** as top regrets after purchase |
+| **Good UX** | Recruiters get to the resume in one or two actions; pipeline state is honest; no “back to Excel” days | Recruiter blogs rank **click load** and **slow UX** as daily pain — acute when there is no dedicated TA ops admin |
+| **Reduced setup time** | Time-to-value in days or weeks, not 6+ week implementations; sensible defaults; minimal admin configuration | Startup/ops discourse prioritises **speed to value**; legacy suites carry migration fear |
+| **Right-sized depth** | Core loop only: apply → triage → interview → hire/reject — not CRM nurture, DEI reporting suites, or integration marketplaces on day one | SMB tools (JazzHR, Breezy) win on simplicity but **outgrow quickly**; enterprise tools win on depth but **overwhelm** |
+
+### 0.2 The SME gap in the market (from discourse)
+
+Public discourse describes a **squeeze**:
+
+- **Enterprise mid-market** (Greenhouse, Lever, Workday): praised for structure, criticised for **cost, setup, and admin overhead** — a poor fit when hiring volume is moderate and the “TA team” is one person.
+- **Budget SMB** (JazzHR, Breezy, Zoho Recruit): praised for **price and simplicity**, criticised for **shallow workflow** — teams hit limits on pipeline integrity, audit, and scheduling honesty.
+- **Growth startup** (Ashby): praised for **modern UX and fast setup**, but pricing and compliance proof still skew toward **Series A–C tech** buyers.
+
+**TalentHub’s design bet:** deliver **mid-market workflow craft** (cohort pipeline, governed status, packet page, in-product scheduling) at **SMB-appropriate scope and complexity** — the surfaces recruiters resent most in netnographic data, without enterprise packaging.
 
 ---
 
@@ -34,13 +60,15 @@ It is **not** primary ethnography (no moderated interviews or embedded observati
 | **Growth / startup** | Ashby, Gem (with ATS), Workable | Series A–C, tech hiring |
 | **SMB / budget** | JazzHR, Breezy, Zoho Recruit | Small teams, limited admin |
 | **Staffing agency** | Bullhorn, JobDiva, Tracker RMS | High-volume, CRM + ATS |
-| **Reference implementation** | **TalentHub** (this repo) | Local-first monorepo; backoffice + candidate apps |
+| **Reference implementation** | **TalentHub** (this repo) | **SME/SMB-first** — local-first monorepo; backoffice + candidate apps |
 
 ---
 
 ## 2. Executive summary
 
-Across public discourse, ATS products are **essential but resented**. Recruiters describe them as slow, click-heavy, and designed without daily recruiter input; candidates describe hiring as **opaque, impersonal, and silent** after apply.
+Across public discourse, ATS products are **essential but resented**. Recruiters describe them as slow, click-heavy, and designed without daily recruiter input; candidates describe hiring as **opaque, impersonal, and silent** after apply. For **small and medium organizations**, the resentment is compounded: they need hiring software that works on day one, but the market pushes them toward either **expensive enterprise tools they cannot afford to mis-buy** or **cheap tools they outgrow within a year**.
+
+**Why SME/SMB is the primary design target:** These teams cannot absorb six-week implementations, dedicated TA ops admins, or $10K+ annual stacks — yet they still suffer the same daily recruiter pains (clicks, Excel fallbacks, dishonest pipeline state) and the same candidate trust failures (black hole, ghosting). TalentHub prioritises **low cost, good UX, and reduced setup time** by scoping to the core hiring loop and investing design depth where discourse shows the highest friction.
 
 **Top recruiter pain themes:** poor UX and load times, weak search/ranking, shallow automation, clunky integrations, reporting gaps, permission/admin friction.
 
@@ -48,7 +76,7 @@ Across public discourse, ATS products are **essential but resented**. Recruiters
 
 **What users expect in 2026:** fast triage surfaces, trustworthy pipeline state, calendar-native scheduling, semantic or AI-assisted matching (with bias awareness), mobile-friendly apply, integrations as table stakes, and auditability—not just keyword filters and bulk reject emails.
 
-**Market split:** Greenhouse wins enterprise structure and compliance; Lever wins CRM + sourcing nurture; Ashby wins modern analytics and startup UX; legacy suites (iCIMS, Bullhorn, Workday) accumulate “clunky” reputation; SMB tools trade depth for simplicity.
+**Market split:** Greenhouse wins enterprise structure and compliance; Lever wins CRM + sourcing nurture; Ashby wins modern analytics and startup UX; legacy suites (iCIMS, Bullhorn, Workday) accumulate “clunky” reputation; SMB tools trade depth for simplicity. **TalentHub targets the underserved middle:** workflow honesty and triage craft without enterprise packaging.
 
 ---
 
@@ -106,8 +134,9 @@ Opaque pricing and mandatory setup fees are themselves a **buyer pain point** in
 | **Candidates (surveys & press)** | Job seekers | Black hole, form length, ghosting |
 | **HR ops / People teams** | Buyers & admins | Migration, permissions, compliance |
 | **Startup founders / ops** | First ATS purchase | Speed to value, cost, integration count |
+| **SME People / HR generalists** | Often first dedicated ATS buyer at 20–200 employees | **Low TCO**, minimal setup, “recruiters actually use it,” no CRM bloat |
 
-**Netnographic insight:** Recruiter discourse is **workflow-intimate** (“clicks to resume,” “Excel again”); candidate discourse is **trust-intimate** (“did anyone read this?”).
+**Netnographic insight:** Recruiter discourse is **workflow-intimate** (“clicks to resume,” “Excel again”); candidate discourse is **trust-intimate** (“did anyone read this?”). **SME buyer discourse is economics-intimate** (“priced out,” “paying for modules we never use,” “still on spreadsheets after go-live”).
 
 ---
 
@@ -166,8 +195,20 @@ Themes ranked by **frequency and emotional intensity** in public discourse.
 | Pain | Discourse signal | Severity |
 |------|------------------|----------|
 | Expensive at scale | Greenhouse “priced out” mentions | Medium |
+| **Enterprise pricing out SME buyers** | Public bands ~$4K–$25K+; opaque quotes and setup fees | **High (SME)** |
+| **Paying for unused modules** | CRM, analytics, nurture bundles never adopted | **High (SME)** |
 | Support quality variance | “Not the best user support” vs “customer service amazing” split | Medium |
 | Slow innovation on legacy stacks | Workday/Bullhorn update skepticism | Medium |
+
+### 5.7 SME-specific pain (synthesised)
+
+| Pain | Discourse signal | Severity |
+|------|------------------|----------|
+| **No TA ops admin** | One recruiter + hiring managers; tool must be self-explanatory | High |
+| **Long implementation** | 6+ weeks delays first hire; buyer guides cite migration fear | High |
+| **Outgrowing budget tools** | JazzHR/Workable “fine until we weren’t” narrative | Medium |
+| **Excel as shadow ATS** | Parallel spreadsheet when product UX fails | High |
+| **Wrong buy is catastrophic** | 43% already unhappy with TA stack; SMEs cannot afford a redo | High |
 
 ---
 
@@ -311,14 +352,26 @@ Use in discovery, usability tests, and roadmap prioritization.
 - [ ] Predictable pricing
 - [ ] Adoption by hiring managers, not just recruiters
 
+### SME / SMB buyers additionally want…
+
+- [ ] **Predictable low TCO** — no surprise setup fees or seat-tier jumps
+- [ ] **Go-live in days or weeks**, not a quarter-long implementation project
+- [ ] **Core hiring loop only** — not paying for CRM nurture or analytics suites on day one
+- [ ] **Usable without a dedicated TA ops role** — recruiters and hiring managers self-serve
+- [ ] **Room to grow** — more workflow integrity than budget tools, without enterprise lock-in
+
 ---
 
 ## 11. Implications for TalentHub (this project)
+
+**Primary audience:** small and medium organizations that need to **support recruitment at low cost**, with **good UX** and **reduced setup time**, while avoiding enterprise bloat.
 
 Mapping netnographic themes to the as-built [PRD](../../docs/specification/PRD.md):
 
 | Market pain / expectation | TalentHub response | Gap vs commercial ATS |
 |---------------------------|-------------------|------------------------|
+| **Enterprise cost / TCO** | **Scoped MVP** — no CRM, marketplace, or tiered analytics | Honest SME positioning; not a price competitor yet |
+| **Long setup / migration fear** | **Local-first monorepo**, single schema, documented env setup | Faster dev/demo setup; production onboarding TBD |
 | Dual table + pipeline | **Done** — applications hub | Aligned with Greenhouse/Lever pattern |
 | Week-scoped cohort | **Done** — UTC week toolbar | Differentiator vs “infinite pipeline” |
 | Application packet page | **Done** — `/applications/[id]` | Aligned |
@@ -328,13 +381,13 @@ Mapping netnographic themes to the as-built [PRD](../../docs/specification/PRD.m
 | Staff document download | **Done** — BFF attachments | Security-aware |
 | AI relevance | **Partial** — optional OpenAI | Matches 2026 “AI optional” reality |
 | Email/status notifications | **Planned** — field exists, not wired | Major candidate pain still open |
-| Semantic search / CRM | **Not built** | Lever/Ashby territory |
+| Semantic search / CRM | **Not built** | Lever/Ashby territory — **intentionally out of SME scope** |
 | Enterprise reporting | **Placeholder** — Reports page | Greenhouse enterprise gap remains |
 | Candidate apply friction | **Partial** — CV upload strong; mobile TBD | Better than long forms; comms weak |
 | Integrations marketplace | **Minimal** — local-first monorepo | Expected gap for production ATS |
-| Compliance / RBAC depth | **Basic** — staff roles, session gate | Enterprise gap |
+| Compliance / RBAC depth | **Basic** — staff roles, session gate | Sufficient for SME; enterprise gap |
 
-**Portfolio positioning:** TalentHub demonstrates **opinionated craft** on the highest-friction recruiter surfaces (triage, pipeline honesty, packet review, navigation)—areas repeatedly criticized in netnographic data—while honestly scoping out enterprise CRM, deep analytics, and notification infrastructure.
+**Portfolio positioning:** TalentHub is an **SME-first ATS** — it demonstrates **opinionated craft** on the highest-friction recruiter surfaces (triage, pipeline honesty, packet review, navigation) where netnographic data shows the most resentment, while **deliberately omitting** enterprise CRM, deep analytics, and integration marketplaces that inflate cost and setup time for small and medium teams.
 
 ---
 
@@ -372,6 +425,7 @@ Mapping netnographic themes to the as-built [PRD](../../docs/specification/PRD.m
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 21 May 2026 | Initial netnographic synthesis |
+| 1.1 | 19 May 2026 | Added §0 SME/SMB product intent; executive summary, buyer pains, and §11 implications aligned to low-cost / good UX / reduced setup positioning |
 
 ---
 

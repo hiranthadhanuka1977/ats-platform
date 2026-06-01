@@ -1,0 +1,35 @@
+%% TalentHub ATS — Feature increment loop (inset diagram)
+%% Render: npx @mermaid-js/mermaid-cli -i ats-feature-increment-loop.mmd -o ats-feature-increment-loop.png -b white -w 2400
+
+flowchart LR
+  classDef prd fill:#F8FAFC,stroke:#64748B,stroke-width:2px,color:#334155
+  classDef human fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#1E1B4B
+  classDef ai fill:#ECFDF5,stroke:#059669,stroke-width:2px,color:#064E3B
+  classDef audit fill:#FFFBEB,stroke:#D97706,stroke-width:2px,color:#78350F
+  classDef ship fill:#F0FDF4,stroke:#16A34A,stroke-width:3px,color:#14532D
+
+  PRD["📋 PRD<br/><small>feature backlog</small>"]:::prd
+  PICK["👤 Pick feature<br/><small>TH- code · priority</small>"]:::human
+  SPEC["📝 Expand spec<br/>Compose prompt"]:::human
+  BUILD["🤖 Implement<br/><small>Cursor · monorepo</small>"]:::ai
+  TEST["▶️ Validate<br/><small>browser · API · rules</small>"]:::audit
+
+  subgraph AUDITS["Continuous updates"]
+    direction TB
+    A1["WCAG 2.2"]:::audit
+    A2["GDPR / PDPA"]:::audit
+    A3["Design system"]:::audit
+    A4["IA docs"]:::audit
+    A5["PRD status"]:::audit
+    A6["Git commit"]:::audit
+  end
+
+  SHIP["✅ Ship increment<br/><small>feature delivered</small>"]:::ship
+  NEXT["Next feature"]:::prd
+
+  PRD --> PICK --> SPEC --> BUILD --> TEST
+  TEST --> AUDITS
+  AUDITS -->|Ready| SHIP
+  AUDITS -->|Not ready| BUILD
+  SHIP --> NEXT
+  NEXT --> PICK

@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Application state spec — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class=" active">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Application state spec</span></nav>
+      <article class="prose"><h1>ATS Application State Management - UI &amp; Backend API Implementation Requirements</h1>
+<h2>1. Purpose</h2>
+<p>This document defines the implementation requirements for managing candidate application states in the ATS backoffice portal using a Trello/Kanban-style board.</p>
+<p>It covers:</p>
+<ul>
+<li>Application states</li>
+<li>Valid and invalid state transitions</li>
+<li>UI drag-and-drop behavior</li>
+<li>Backend API validation</li>
+<li>Required business rules</li>
+<li>Audit logging</li>
+<li>Error handling</li>
+<li>Recommended implementation payloads</li>
+</ul>
+<h3>1.1 Implementation status (May 2026)</h3>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Backoffice Kanban pipeline</td>
+<td><strong>Implemented</strong> — <code>apps/backoffice</code> <code>/applications</code> (default view), list toggle, fullscreen</td>
+</tr>
+<tr>
+<td>Status APIs</td>
+<td><strong>Implemented</strong> on Next.js BFF, not central Hono</td>
+</tr>
+<tr>
+<td>Base path</td>
+<td><strong><code>/api/backoffice/applications/{applicationId}/...</code></strong> (staff session cookies)</td>
+</tr>
+<tr>
+<td>Central API</td>
+<td><code>GET /api/v1/applications</code> remains a <strong>stub</strong> in <code>apps/api</code></td>
+</tr>
+<tr>
+<td>Detailed API contract</td>
+<td><a href="api/backoffice-applications.md">api/backoffice-applications.md</a></td>
+</tr>
+<tr>
+<td>Shared transition rules</td>
+<td><code>@ats-platform/types</code> → <code>APPLICATION_STATUS_TRANSITIONS</code></td>
+</tr>
+<tr>
+<td>Interviews</td>
+<td><strong>One</strong> <code>application_interviews</code> row per application; schedule via <code>POST .../interviews</code></td>
+</tr>
+</tbody></table>
+<p>Section 8 below describes product intent; <strong>§8.0</strong> lists implemented endpoints and payload shapes.</p>
+<hr>
+<h2>2. Application States</h2>
+<p>The application lifecycle shall support the following states:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Submitted</td>
+<td>Candidate has submitted the application successfully.</td>
+</tr>
+<tr>
+<td>Under Review</td>
+<td>Recruiter is reviewing the application.</td>
+</tr>
+<tr>
+<td>Shortlisted</td>
+<td>Candidate has passed initial screening and is selected for further evaluation.</td>
+</tr>
+<tr>
+<td>Interview Scheduled</td>
+<td>An interview has been scheduled for the candidate.</td>
+</tr>
+<tr>
+<td>Interview Completed</td>
+<td>Interview has been completed and feedback can be reviewed.</td>
+</tr>
+<tr>
+<td>Offered</td>
+<td>Candidate has been selected and an offer has been issued.</td>
+</tr>
+<tr>
+<td>Hired</td>
+<td>Candidate has accepted the offer and hiring is completed.</td>
+</tr>
+<tr>
+<td>Rejected</td>
+<td>Candidate is no longer being considered for the vacancy.</td>
+</tr>
+<tr>
+<td>Withdrawn</td>
+<td>Candidate has withdrawn from the application process.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Recommended Active Kanban Board Columns</h2>
+<p>The main active pipeline board should show only active recruitment states:</p>
+<pre><code class="language-text">Submitted
+Under Review
+Shortlisted
+Interview Scheduled
+Interview Completed
+Offered
+Hired
+</code></pre>
+<p>The following states should be available as separate tabs or filtered views:</p>
+<pre><code class="language-text">Rejected
+Withdrawn
+</code></pre>
+<p>This avoids cluttering the active hiring board.</p>
+<hr>
+<h2>4. State Transition Matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Current State</th>
+<th align="right">Submitted</th>
+<th align="right">Under Review</th>
+<th align="right">Shortlisted</th>
+<th align="right">Interview Scheduled</th>
+<th align="right">Interview Completed</th>
+<th align="right">Offered</th>
+<th align="right">Hired</th>
+<th align="right">Rejected</th>
+<th align="right">Withdrawn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Submitted</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+</tr>
+<tr>
+<td>Under Review</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+</tr>
+<tr>
+<td>Shortlisted</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+</tr>
+<tr>
+<td>Interview Scheduled</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+</tr>
+<tr>
+<td>Interview Completed</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+</tr>
+<tr>
+<td>Offered</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+</tr>
+<tr>
+<td>Hired</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+</tr>
+<tr>
+<td>Rejected</td>
+<td align="right">No</td>
+<td align="right">Conditional</td>
+<td align="right">Conditional</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+</tr>
+<tr>
+<td>Withdrawn</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+</tr>
+</tbody></table>
+<p>Conditional = allowed only through a controlled “Reopen Application” action with mandatory reason and sufficient user permission. It should not be allowed by normal drag-and-drop.</p>
+<hr>
+<h2>5. Implementation-Friendly Transition Configuration</h2>
+<p>The following transition map should be used by both UI and backend validation.</p>
+<pre><code class="language-json">{
+  &quot;Submitted&quot;: [&quot;Under Review&quot;, &quot;Shortlisted&quot;, &quot;Rejected&quot;, &quot;Withdrawn&quot;],
+  &quot;Under Review&quot;: [&quot;Shortlisted&quot;, &quot;Interview Scheduled&quot;, &quot;Rejected&quot;, &quot;Withdrawn&quot;],
+  &quot;Shortlisted&quot;: [&quot;Under Review&quot;, &quot;Interview Scheduled&quot;, &quot;Rejected&quot;, &quot;Withdrawn&quot;],
+  &quot;Interview Scheduled&quot;: [&quot;Interview Completed&quot;, &quot;Rejected&quot;, &quot;Withdrawn&quot;],
+  &quot;Interview Completed&quot;: [&quot;Shortlisted&quot;, &quot;Interview Scheduled&quot;, &quot;Offered&quot;, &quot;Rejected&quot;, &quot;Withdrawn&quot;],
+  &quot;Offered&quot;: [&quot;Hired&quot;, &quot;Rejected&quot;, &quot;Withdrawn&quot;],
+  &quot;Hired&quot;: [],
+  &quot;Rejected&quot;: [&quot;Under Review&quot;, &quot;Shortlisted&quot;],
+  &quot;Withdrawn&quot;: []
+}
+</code></pre>
+<p>Backend must treat transitions from <code>Rejected</code> as special controlled actions, not standard status updates.</p>
+<hr>
+<h2>6. Business Rules by State</h2>
+<h3>6.1 Submitted</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>Submitted to Under Review</li>
+<li>Submitted to Shortlisted</li>
+<li>Submitted to Rejected</li>
+<li>Submitted to Withdrawn</li>
+</ul>
+<p>Not allowed:</p>
+<ul>
+<li>Submitted to Interview Scheduled</li>
+<li>Submitted to Interview Completed</li>
+<li>Submitted to Offered</li>
+<li>Submitted to Hired</li>
+</ul>
+<p>Reason: The application must be reviewed or shortlisted before interview and final decision stages.</p>
+<hr>
+<h3>6.2 Under Review</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>Under Review to Shortlisted</li>
+<li>Under Review to Interview Scheduled</li>
+<li>Under Review to Rejected</li>
+<li>Under Review to Withdrawn</li>
+</ul>
+<p>Not allowed:</p>
+<ul>
+<li>Under Review to Offered</li>
+<li>Under Review to Hired</li>
+</ul>
+<p>Reason: Offer or hire decisions should not be made before proper evaluation.</p>
+<hr>
+<h3>6.3 Shortlisted</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>Shortlisted to Under Review</li>
+<li>Shortlisted to Interview Scheduled</li>
+<li>Shortlisted to Rejected</li>
+<li>Shortlisted to Withdrawn</li>
+</ul>
+<p>Not allowed:</p>
+<ul>
+<li>Shortlisted to Offered</li>
+<li>Shortlisted to Hired</li>
+</ul>
+<p>Reason: Shortlisting confirms the candidate is selected for further evaluation, not final selection.</p>
+<hr>
+<h3>6.4 Interview Scheduled</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>Interview Scheduled to Interview Completed</li>
+<li>Interview Scheduled to Rejected</li>
+<li>Interview Scheduled to Withdrawn</li>
+</ul>
+<p>Not allowed:</p>
+<ul>
+<li>Interview Scheduled to Offered</li>
+<li>Interview Scheduled to Hired</li>
+<li>Interview Scheduled to Shortlisted</li>
+</ul>
+<p>Reason: The interview must be completed before offer or hiring decisions.</p>
+<hr>
+<h3>6.5 Interview Completed</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>Interview Completed to Offered</li>
+<li>Interview Completed to Shortlisted</li>
+<li>Interview Completed to Interview Scheduled</li>
+<li>Interview Completed to Rejected</li>
+<li>Interview Completed to Withdrawn</li>
+</ul>
+<p>Reason: The candidate may be offered, rejected, returned to review, or scheduled for another interview round.</p>
+<hr>
+<h3>6.6 Offered</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>Offered to Hired</li>
+<li>Offered to Rejected</li>
+<li>Offered to Withdrawn</li>
+</ul>
+<p>Not allowed:</p>
+<ul>
+<li>Offered to Under Review</li>
+<li>Offered to Shortlisted</li>
+<li>Offered to Interview Scheduled</li>
+<li>Offered to Interview Completed</li>
+</ul>
+<p>Reason: Once an offer is issued, the process should move only to final outcome states.</p>
+<hr>
+<h3>6.7 Hired</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>None by default</li>
+</ul>
+<p>Reason: <code>Hired</code> is a terminal state.</p>
+<p>Special rule: Only an Admin should be able to reverse a hired application using a special correction process. This should not be available through normal drag-and-drop.</p>
+<hr>
+<h3>6.8 Rejected</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>Rejected to Under Review</li>
+<li>Rejected to Shortlisted</li>
+</ul>
+<p>Condition: This must be handled only through a <code>Reopen Application</code> action.</p>
+<p>Rules:</p>
+<ul>
+<li>Not allowed through drag-and-drop</li>
+<li>Mandatory reopen reason required</li>
+<li>User must have permission</li>
+<li>Audit log must be captured</li>
+</ul>
+<hr>
+<h3>6.9 Withdrawn</h3>
+<p>Allowed transitions:</p>
+<ul>
+<li>None by default</li>
+</ul>
+<p>Reason: <code>Withdrawn</code> means the candidate has exited the process.</p>
+<p>Special rule: If the candidate wants to apply again, the system may allow a new application only if business rules permit reapplication.</p>
+<hr>
+<h2>7. UI Implementation Requirements</h2>
+<h3>7.1 Kanban Board Layout</h3>
+<p>The backoffice application management UI should display applications as cards grouped by status.</p>
+<p>Recommended structure:</p>
+<pre><code class="language-text">Submitted | Under Review | Shortlisted | Interview Scheduled | Interview Completed | Offered | Hired
+</code></pre>
+<p>Each column should show:</p>
+<ul>
+<li>Status name</li>
+<li>Number of applications in the status</li>
+<li>Application cards</li>
+<li>Empty state if no applications are available</li>
+</ul>
+<hr>
+<h3>7.2 Application Card Requirements</h3>
+<p>Each card should display concise candidate and application information.</p>
+<p>Recommended card fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Candidate Name</td>
+<td>Full name of applicant</td>
+</tr>
+<tr>
+<td>Candidate Headline</td>
+<td>Current role or profile headline</td>
+</tr>
+<tr>
+<td>Applied Date</td>
+<td>Date application was submitted</td>
+</tr>
+<tr>
+<td>Location</td>
+<td>Candidate location if available</td>
+</tr>
+<tr>
+<td>Experience</td>
+<td>Total years or experience level if available</td>
+</tr>
+<tr>
+<td>CV Indicator</td>
+<td>Shows whether CV is attached</td>
+</tr>
+<tr>
+<td>Cover Letter Indicator</td>
+<td>Shows whether cover letter is attached</td>
+</tr>
+<tr>
+<td>Tags</td>
+<td>Optional recruiter tags</td>
+</tr>
+<tr>
+<td>Last Activity</td>
+<td>Optional recent activity timestamp</td>
+</tr>
+</tbody></table>
+<p>Example card layout:</p>
+<pre><code class="language-text">Dhanuka Silva
+Senior Business Analyst
+
+Colombo | 5+ Years
+Applied: 05 Apr 2026
+
+CV Attached | Cover Letter
+</code></pre>
+<hr>
+<h3>7.3 Drag-and-Drop Rules</h3>
+<p>The UI must:</p>
+<ul>
+<li>Allow drag-and-drop only for valid transitions</li>
+<li>Prevent drop into invalid columns</li>
+<li>Show visual feedback for valid and invalid drop zones</li>
+<li>Restore card to original column if transition fails</li>
+<li>Call backend API before confirming final status update</li>
+<li>Show success or error message after API response</li>
+</ul>
+<p>The UI must not rely only on frontend rules. Backend validation is mandatory.</p>
+<hr>
+<h3>7.4 Invalid Drop Behavior</h3>
+<p>If a user attempts an invalid transition:</p>
+<ul>
+<li>Block the drop</li>
+<li>Return card to original column</li>
+<li>Show a clear error message</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-text">This application cannot be moved from Offered to Shortlisted.
+</code></pre>
+<hr>
+<h3>7.5 Special Handling for Rejected</h3>
+<p>Rejected should preferably be excluded from the main active board.</p>
+<p>When moving an application to Rejected:</p>
+<ul>
+<li>Show confirmation modal</li>
+<li>Require rejection reason</li>
+<li>Optional: allow sending rejection email</li>
+<li>Update status only after confirmation</li>
+</ul>
+<p>Required modal fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Rejection Reason</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Notify Candidate</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Internal Note</td>
+<td>Optional</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>7.6 Special Handling for Withdrawn</h3>
+<p>Withdrawn should preferably be excluded from the main active board.</p>
+<p>If staff marks an application as withdrawn:</p>
+<ul>
+<li>Show confirmation modal</li>
+<li>Capture withdrawal source</li>
+<li>Capture reason where applicable</li>
+</ul>
+<p>Recommended fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Withdrawal Source</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Withdrawal Reason</td>
+<td>Optional / Configurable</td>
+</tr>
+<tr>
+<td>Internal Note</td>
+<td>Optional</td>
+</tr>
+</tbody></table>
+<p>Withdrawal source options:</p>
+<ul>
+<li>Candidate Request</li>
+<li>Recruiter Update</li>
+<li>Duplicate Application</li>
+<li>Other</li>
+</ul>
+<hr>
+<h3>7.7 Special Handling for Hired</h3>
+<p>When moving to Hired:</p>
+<ul>
+<li>System should confirm that offer has been accepted</li>
+<li>Show confirmation modal</li>
+<li>Require confirmation before finalizing</li>
+</ul>
+<p>Recommended validation:</p>
+<pre><code class="language-text">Offered to Hired requires offer acceptance confirmation.
+</code></pre>
+<p>Hired state should be treated as terminal in normal UI behavior.</p>
+<hr>
+<h3>7.8 Reopen Application Action</h3>
+<p>Rejected applications should not be draggable back into active stages.</p>
+<p>Instead, provide a row/card action:</p>
+<pre><code class="language-text">Reopen Application
+</code></pre>
+<p>Allowed reopen targets:</p>
+<ul>
+<li>Under Review</li>
+<li>Shortlisted</li>
+</ul>
+<p>Required fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Target Status</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Reopen Reason</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Internal Note</td>
+<td>Optional</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>7.9 Card Detail Drawer</h3>
+<p>Clicking a card should open a side drawer instead of navigating away.</p>
+<p>The drawer should include:</p>
+<ul>
+<li>Candidate basic details</li>
+<li>Application status</li>
+<li>CV download/view</li>
+<li>Cover letter preview/download</li>
+<li>Application questions and answers</li>
+<li>Status history</li>
+<li>Notes</li>
+<li>Available actions</li>
+</ul>
+<p>Recommended actions:</p>
+<ul>
+<li>Move to next stage</li>
+<li>Reject</li>
+<li>Withdraw</li>
+<li>Schedule interview</li>
+<li>View candidate profile</li>
+</ul>
+<hr>
+<h3>7.10 Filtering and Search</h3>
+<p>The Kanban board should support:</p>
+<ul>
+<li>Candidate search</li>
+<li>Job-specific filter</li>
+<li>Application status filter</li>
+<li>Location filter</li>
+<li>Experience filter</li>
+<li>Skill filter</li>
+<li>Date applied filter</li>
+<li>Recruiter/owner filter if applicable</li>
+</ul>
+<hr>
+<h3>7.11 Board Tabs</h3>
+<p>Recommended tabs:</p>
+<pre><code class="language-text">Active Pipeline
+Rejected
+Withdrawn
+All Applications
+</code></pre>
+<p>This keeps the active pipeline clean while still allowing access to terminal states.</p>
+<hr>
+<h3>7.12 Mobile and Responsive Behavior</h3>
+<p>For small screens:</p>
+<ul>
+<li>Columns should be horizontally scrollable</li>
+<li>Cards should remain readable</li>
+<li>Drag-and-drop may be replaced with status action menu</li>
+<li>Important actions should be accessible without precise dragging</li>
+</ul>
+<p>Recommended mobile fallback:</p>
+<pre><code class="language-text">Open card -&gt; Change Status -&gt; Select allowed target status
+</code></pre>
+<hr>
+<h2>8. Backend API Validation Requirements</h2>
+<h3>8.0 Implemented endpoints (<code>apps/backoffice</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Method</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Update status</td>
+<td><code>PATCH</code></td>
+<td><code>/api/backoffice/applications/{applicationId}/status</code></td>
+</tr>
+<tr>
+<td>Undo</td>
+<td><code>POST</code></td>
+<td><code>/api/backoffice/applications/{applicationId}/status/undo</code></td>
+</tr>
+<tr>
+<td>Reopen (from rejected)</td>
+<td><code>POST</code></td>
+<td><code>/api/backoffice/applications/{applicationId}/reopen</code></td>
+</tr>
+<tr>
+<td>List / schedule interview</td>
+<td><code>GET</code> / <code>POST</code></td>
+<td><code>/api/backoffice/applications/{applicationId}/interviews</code></td>
+</tr>
+</tbody></table>
+<p>Reject and withdraw use the status PATCH with <code>status: &quot;rejected&quot;</code> or <code>&quot;withdrawn&quot;</code> (no separate <code>/reject</code> or <code>/withdraw</code> routes). Full error codes and fields: <a href="api/backoffice-applications.md">api/backoffice-applications.md</a>.</p>
+<hr>
+<h3>8.1 Status Update API</h3>
+<pre><code class="language-http">PATCH /api/backoffice/applications/{applicationId}/status
+</code></pre>
+<p>Purpose: Update application status after validating business rules.</p>
+<hr>
+<h3>8.2 Request Payload</h3>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;shortlisted&quot;,
+  &quot;reason&quot;: &quot;Candidate has relevant fintech experience&quot;,
+  &quot;note&quot;: &quot;Move to shortlist for hiring manager review&quot;,
+  &quot;notifyCandidate&quot;: false,
+  &quot;expectedUpdatedAt&quot;: &quot;2026-05-19T10:30:00.000Z&quot;
+}
+</code></pre>
+<p>Use snake_case status values matching Prisma <code>ApplicationStatus</code>.</p>
+<hr>
+<h3>8.3 Response Payload</h3>
+<h4>Success</h4>
+<pre><code class="language-json">{
+  &quot;data&quot;: {
+    &quot;id&quot;: &quot;uuid&quot;,
+    &quot;status&quot;: &quot;shortlisted&quot;,
+    &quot;previousStatus&quot;: &quot;under_review&quot;,
+    &quot;updatedAt&quot;: &quot;2026-05-19T10:30:00.000Z&quot;
+  }
+}
+</code></pre>
+<h4>Failure</h4>
+<pre><code class="language-json">{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;INVALID_STATUS_TRANSITION&quot;,
+    &quot;message&quot;: &quot;Application cannot be moved from offered to shortlisted.&quot;
+  }
+}
+</code></pre>
+<hr>
+<h3>8.4 Backend Validation Steps</h3>
+<p>Backend must perform the following validations:</p>
+<ol>
+<li>Validate application exists</li>
+<li>Validate user is authenticated</li>
+<li>Validate user has permission to update application</li>
+<li>Retrieve current application status from database</li>
+<li>Validate target status exists</li>
+<li>Validate transition is allowed</li>
+<li>Validate special transition requirements</li>
+<li>Update status in transaction</li>
+<li>Create status history record</li>
+<li>Create audit log</li>
+<li>Trigger notification if applicable</li>
+<li>Return updated status response</li>
+</ol>
+<hr>
+<h3>8.5 Transition Validation Logic</h3>
+<p>Pseudo logic:</p>
+<pre><code class="language-pseudo">currentStatus = application.status
+targetStatus = request.targetStatus
+
+allowedTargets = TRANSITION_MAP[currentStatus]
+
+if targetStatus not in allowedTargets:
+    reject INVALID_STATUS_TRANSITION
+
+if currentStatus == &quot;Rejected&quot;:
+    reject USE_REOPEN_ACTION
+
+if currentStatus == &quot;Hired&quot;:
+    reject TERMINAL_STATE
+
+if currentStatus == &quot;Withdrawn&quot;:
+    reject TERMINAL_STATE
+</code></pre>
+<hr>
+<h3>8.6 Special Validation Rules</h3>
+<table>
+<thead>
+<tr>
+<th>Transition</th>
+<th>Required Validation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Any to Rejected</td>
+<td>Rejection reason required</td>
+</tr>
+<tr>
+<td>Any to Withdrawn</td>
+<td>Withdrawal source required</td>
+</tr>
+<tr>
+<td>Interview Scheduled to Interview Completed</td>
+<td>Interview record must exist</td>
+</tr>
+<tr>
+<td>Interview Completed to Offered</td>
+<td>Interview feedback recommended/required based on configuration</td>
+</tr>
+<tr>
+<td>Offered to Hired</td>
+<td>Offer acceptance must be confirmed</td>
+</tr>
+<tr>
+<td>Rejected to Under Review</td>
+<td>Must use reopen action</td>
+</tr>
+<tr>
+<td>Rejected to Shortlisted</td>
+<td>Must use reopen action</td>
+</tr>
+<tr>
+<td>Hired to Any</td>
+<td>Admin correction only, not normal status update</td>
+</tr>
+<tr>
+<td>Withdrawn to Any</td>
+<td>Not allowed by default</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>8.7 Reopen Application API</h3>
+<p>Recommended endpoint:</p>
+<pre><code class="language-http">POST /api/backoffice/applications/{applicationId}/reopen
+</code></pre>
+<p>Request:</p>
+<pre><code class="language-json">{
+  &quot;targetStatus&quot;: &quot;under_review&quot;,
+  &quot;reason&quot;: &quot;Candidate was rejected by mistake&quot;,
+  &quot;note&quot;: &quot;Reopened after hiring manager review&quot;
+}
+</code></pre>
+<p>Validation:</p>
+<ul>
+<li>Current status must be Rejected</li>
+<li>Target status must be Under Review or Shortlisted</li>
+<li>Reason is mandatory</li>
+<li>User must have permission</li>
+<li>Audit log is mandatory</li>
+</ul>
+<hr>
+<h3>8.8 Reject Application API</h3>
+<p><strong>Implemented</strong> via status PATCH:</p>
+<pre><code class="language-http">PATCH /api/backoffice/applications/{applicationId}/status
+</code></pre>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;rejected&quot;,
+  &quot;reason&quot;: &quot;Does not meet required experience level&quot;,
+  &quot;note&quot;: &quot;Candidate has 1 year experience; role requires 5+&quot;,
+  &quot;notifyCandidate&quot;: true
+}
+</code></pre>
+<hr>
+<h3>8.9 Withdraw Application API</h3>
+<p><strong>Implemented</strong> via status PATCH:</p>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;withdrawn&quot;,
+  &quot;withdrawalSource&quot;: &quot;Candidate request&quot;,
+  &quot;note&quot;: &quot;Updated by recruiter based on email confirmation&quot;
+}
+</code></pre>
+<hr>
+<h2>9. Database Requirements</h2>
+<h3>9.1 Applications Table</h3>
+<p>The <code>applications</code> table should store the current status.</p>
+<p>Recommended fields:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>Application identifier</td>
+</tr>
+<tr>
+<td>candidate_id</td>
+<td>Candidate reference</td>
+</tr>
+<tr>
+<td>job_posting_id</td>
+<td>Job reference</td>
+</tr>
+<tr>
+<td>status</td>
+<td>Current application status</td>
+</tr>
+<tr>
+<td>applied_at</td>
+<td>Submission timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>current_stage_updated_at</td>
+<td>Optional status update timestamp</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>9.2 Application Status History Table</h3>
+<p>A separate table should track every status movement.</p>
+<p>Recommended table:</p>
+<pre><code class="language-text">application_status_history
+</code></pre>
+<p>Recommended fields:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>History record ID</td>
+</tr>
+<tr>
+<td>application_id</td>
+<td>Related application</td>
+</tr>
+<tr>
+<td>from_status</td>
+<td>Previous status</td>
+</tr>
+<tr>
+<td>to_status</td>
+<td>New status</td>
+</tr>
+<tr>
+<td>reason</td>
+<td>Reason for transition</td>
+</tr>
+<tr>
+<td>note</td>
+<td>Optional internal note</td>
+</tr>
+<tr>
+<td>changed_by</td>
+<td>Internal user who changed status</td>
+</tr>
+<tr>
+<td>changed_at</td>
+<td>Timestamp</td>
+</tr>
+<tr>
+<td>change_source</td>
+<td>UI/API/System</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>9.3 Audit Log Table</h3>
+<p>A generic audit log should capture important events.</p>
+<p>Recommended events:</p>
+<ul>
+<li>APPLICATION_STATUS_CHANGED</li>
+<li>APPLICATION_REJECTED</li>
+<li>APPLICATION_WITHDRAWN</li>
+<li>APPLICATION_REOPENED</li>
+<li>APPLICATION_HIRED</li>
+<li>INVALID_TRANSITION_ATTEMPT</li>
+</ul>
+<p>Recommended fields:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>Audit ID</td>
+</tr>
+<tr>
+<td>actor_user_id</td>
+<td>Backoffice user</td>
+</tr>
+<tr>
+<td>entity_type</td>
+<td>Example: application</td>
+</tr>
+<tr>
+<td>entity_id</td>
+<td>Application ID</td>
+</tr>
+<tr>
+<td>action</td>
+<td>Audit action</td>
+</tr>
+<tr>
+<td>old_value</td>
+<td>Previous status/data</td>
+</tr>
+<tr>
+<td>new_value</td>
+<td>New status/data</td>
+</tr>
+<tr>
+<td>metadata</td>
+<td>JSON details</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>Timestamp</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>10. Permissions and Role Rules</h2>
+<p>Recommended permission model:</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th align="right">Admin</th>
+<th align="right">Recruiter</th>
+<th align="right">Hiring Manager</th>
+<th align="right">Viewer</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>View Board</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+</tr>
+<tr>
+<td>Move Active States</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+</tr>
+<tr>
+<td>Reject Application</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+</tr>
+<tr>
+<td>Withdraw Application</td>
+<td align="right">Yes</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">No</td>
+</tr>
+<tr>
+<td>Reopen Rejected Application</td>
+<td align="right">Yes</td>
+<td align="right">Conditional</td>
+<td align="right">No</td>
+<td align="right">No</td>
+</tr>
+<tr>
+<td>Mark as Hired</td>
+<td align="right">Yes</td>
+<td align="right">Conditional</td>
+<td align="right">No</td>
+<td align="right">No</td>
+</tr>
+<tr>
+<td>Admin Correction</td>
+<td align="right">Yes</td>
+<td align="right">No</td>
+<td align="right">No</td>
+<td align="right">No</td>
+</tr>
+</tbody></table>
+<p>Conditional = allowed only if organization policy permits.</p>
+<hr>
+<h2>11. Notification Requirements</h2>
+<p>Notifications should be configurable.</p>
+<p>Recommended triggers:</p>
+<table>
+<thead>
+<tr>
+<th>Transition</th>
+<th>Candidate Notification</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Submitted to Under Review</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Shortlisted to Interview Scheduled</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Interview Scheduled to Interview Completed</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Interview Completed to Offered</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Any to Rejected</td>
+<td>Optional / Configurable</td>
+</tr>
+<tr>
+<td>Offered to Hired</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Any to Withdrawn</td>
+<td>Optional</td>
+</tr>
+</tbody></table>
+<p>Notifications must not be sent automatically for every status change unless configured.</p>
+<hr>
+<h2>12. Error Codes</h2>
+<p>Recommended backend error codes:</p>
+<table>
+<thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>APPLICATION_NOT_FOUND</td>
+<td>Application does not exist</td>
+</tr>
+<tr>
+<td>UNAUTHORIZED</td>
+<td>User is not authenticated</td>
+</tr>
+<tr>
+<td>FORBIDDEN</td>
+<td>User does not have permission</td>
+</tr>
+<tr>
+<td>INVALID_TARGET_STATUS</td>
+<td>Target status is not valid</td>
+</tr>
+<tr>
+<td>INVALID_STATUS_TRANSITION</td>
+<td>Transition is not allowed</td>
+</tr>
+<tr>
+<td>TERMINAL_STATE</td>
+<td>Current state is terminal</td>
+</tr>
+<tr>
+<td>REASON_REQUIRED</td>
+<td>Required reason is missing</td>
+</tr>
+<tr>
+<td>INTERVIEW_RECORD_REQUIRED</td>
+<td>Interview record is required</td>
+</tr>
+<tr>
+<td>OFFER_ACCEPTANCE_REQUIRED</td>
+<td>Offer acceptance confirmation required</td>
+</tr>
+<tr>
+<td>USE_REOPEN_ACTION</td>
+<td>Rejected application must be reopened via special action</td>
+</tr>
+<tr>
+<td>CONFLICT_STATUS_UPDATED</td>
+<td>Application was updated by another user</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>13. Concurrency Handling</h2>
+<p>To prevent conflicting updates:</p>
+<ul>
+<li>Backend should check current status before update</li>
+<li>API may accept <code>expectedCurrentStatus</code></li>
+<li>If current status changed after UI loaded, reject update with conflict response</li>
+</ul>
+<p>Example request:</p>
+<pre><code class="language-json">{
+  &quot;expectedCurrentStatus&quot;: &quot;Under Review&quot;,
+  &quot;targetStatus&quot;: &quot;Shortlisted&quot;,
+  &quot;reason&quot;: &quot;Initial screening completed&quot;
+}
+</code></pre>
+<p>Example error:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;errorCode&quot;: &quot;CONFLICT_STATUS_UPDATED&quot;,
+  &quot;message&quot;: &quot;Application status has changed. Please refresh the board.&quot;
+}
+</code></pre>
+<hr>
+<h2>14. Recommended API Response After Board Move</h2>
+<p>After successful move, API should return enough data for UI refresh:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;application&quot;: {
+    &quot;id&quot;: &quot;app_123&quot;,
+    &quot;status&quot;: &quot;Shortlisted&quot;,
+    &quot;updatedAt&quot;: &quot;2026-05-19T10:30:00Z&quot;,
+    &quot;candidateName&quot;: &quot;Dhanuka Silva&quot;,
+    &quot;jobPostingId&quot;: &quot;job_456&quot;
+  },
+  &quot;history&quot;: {
+    &quot;fromStatus&quot;: &quot;Under Review&quot;,
+    &quot;toStatus&quot;: &quot;Shortlisted&quot;,
+    &quot;changedBy&quot;: &quot;recruiter_001&quot;,
+    &quot;changedAt&quot;: &quot;2026-05-19T10:30:00Z&quot;
+  }
+}
+</code></pre>
+<hr>
+<h2>15. Recommended UI Feedback Messages</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Valid move success</td>
+<td>Application moved successfully.</td>
+</tr>
+<tr>
+<td>Invalid transition</td>
+<td>This application cannot be moved to the selected status.</td>
+</tr>
+<tr>
+<td>Missing rejection reason</td>
+<td>Please enter a rejection reason before rejecting this application.</td>
+</tr>
+<tr>
+<td>Missing interview record</td>
+<td>Please schedule an interview before marking it as completed.</td>
+</tr>
+<tr>
+<td>Hired terminal state</td>
+<td>Hired applications cannot be moved using drag-and-drop.</td>
+</tr>
+<tr>
+<td>Conflict</td>
+<td>This application was updated by another user. Please refresh and try again.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>16. Final Implementation Checklist</h2>
+<h3>UI</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Kanban board created with active statuses</li>
+<li><input disabled="" type="checkbox"> Rejected and Withdrawn separated from main pipeline</li>
+<li><input disabled="" type="checkbox"> Drag-and-drop enabled only for valid transitions</li>
+<li><input disabled="" type="checkbox"> Invalid drop zones visually blocked</li>
+<li><input disabled="" type="checkbox"> Status update API called on drop</li>
+<li><input disabled="" type="checkbox"> Card reverts if API fails</li>
+<li><input disabled="" type="checkbox"> Confirmation modal for Rejected</li>
+<li><input disabled="" type="checkbox"> Confirmation modal for Withdrawn</li>
+<li><input disabled="" type="checkbox"> Confirmation modal for Hired</li>
+<li><input disabled="" type="checkbox"> Side drawer/card detail implemented</li>
+<li><input disabled="" type="checkbox"> Search and filters implemented</li>
+<li><input disabled="" type="checkbox"> Mobile fallback available</li>
+</ul>
+<h3>Backend</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Status transition map implemented centrally</li>
+<li><input disabled="" type="checkbox"> API validates transition server-side</li>
+<li><input disabled="" type="checkbox"> Permissions enforced</li>
+<li><input disabled="" type="checkbox"> Special rules enforced</li>
+<li><input disabled="" type="checkbox"> Status update transaction implemented</li>
+<li><input disabled="" type="checkbox"> Status history table updated</li>
+<li><input disabled="" type="checkbox"> Audit log created</li>
+<li><input disabled="" type="checkbox"> Notification trigger handled</li>
+<li><input disabled="" type="checkbox"> Error codes standardized</li>
+<li><input disabled="" type="checkbox"> Concurrency check implemented</li>
+</ul>
+<hr>
+<h2>17. Final Recommendation</h2>
+<p>The ATS should use the Kanban board for active application management while enforcing all state transition rules in the backend API. The frontend should improve usability by preventing invalid drag-and-drop actions, but the backend must remain the source of truth for application status validation.</p>
+<p>This ensures:</p>
+<ul>
+<li>Better recruiter experience</li>
+<li>Clean hiring workflow</li>
+<li>Strong data integrity</li>
+<li>Proper auditability</li>
+<li>Reduced risk of invalid application states</li>
+</ul>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

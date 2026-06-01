@@ -1,9 +1,12 @@
 # WCAG 2.2 Accessibility Audit — ATS Platform (Next.js)
 
 **Audit date:** 19 May 2026  
+**Last revised:** 21 May 2026 (revision 1.1)  
 **Audited by:** AI-assisted code review  
 **Conformance target:** WCAG 2.2 Level AA  
 **Method:** Source review of running apps (HTML/TSX, CSS, client behaviour). Assistive-technology and automated tool runs (axe, Lighthouse, NVDA/VoiceOver) are still recommended before production sign-off.
+
+**Ground truth:** [PRD §8.1](../specification/PRD.md#81-accessibility) · [FEATURE_BACKLOG](../specification/FEATURE_BACKLOG.md) (TH-190–TH-192) · [Process stage ④](../portfolio/process-diagrams/ats-ai-development-process.md#4-validation--updates--compare-to-intent)
 
 ---
 
@@ -13,9 +16,9 @@
 |-----|---------|------|---------------------------|
 | Candidate portal | `apps/candidate-portal` | 3000 | Job listing, job detail, header/footer |
 | My Applications | `apps/my-applications` | 3002 | Login, register/OTP, dashboard, CV/screenshot import, apply flow |
-| Backoffice | `apps/backoffice` | 3001 | Login, applications pipeline (Kanban), status modals, schedule interview, jobs form, interviews calendar |
+| Backoffice | `apps/backoffice` | 3001 | Login, applications pipeline (Kanban), status modals (reject, withdraw, hire, reopen, **cancel interview**, missing interview), **schedule interview** (redesigned), **AI relevance / bias notice**, jobs form, interviews calendar, application detail |
 
-**Out of scope for this pass:** `apps/api` (JSON only), static prototypes under `docs/markup/` (see [Appendix A](#appendix-a-static-markup-prototypes)).
+**Out of scope for this pass:** `apps/api` (JSON only), static prototypes under `docs/markup/` (see [Appendix A](#appendix-a-static-markup-prototypes)), portfolio wireframes (`portfolio/wireframes/png/` — design reference only).
 
 ---
 
@@ -23,14 +26,18 @@
 
 | Result | Count (unique issues) |
 |--------|----------------------|
-| **Pass** | 32 |
-| **Fail** | 18 |
-| **Partial / warning** | 14 |
+| **Pass** | 34 |
+| **Fail** | 17 |
+| **Partial / warning** | 15 |
 | **Not applicable** | 4 |
 
 **Strengths across apps:** `lang="en"` on `<html>`, skip links to `#main-content`, semantic landmarks (`header`, `nav`, `main`, `footer`), decorative SVGs with `aria-hidden`, filter drawer Escape handling on candidate portal, job posting form with `aria-invalid` / `aria-describedby`, pipeline **“Move to”** menu as keyboard alternative to drag-and-drop, `aria-live` on results count and pipeline week label.
 
-**Highest-impact gaps:** placeholder footer legal links (`href="#"`), inconsistent link `:focus-visible` on some surfaces, pipeline status modals without focus trap/Escape, small pipeline card menu trigger, form errors not programmatically associated in auth and pipeline modals, backoffice Google Fonts CDN (also a privacy issue).
+**Improvements since audit v1.0 (May 2026):** Redesigned **Schedule interview** modal (`bo-schedule-modal`) with `aria-labelledby`, Escape, initial focus, duration chip group (`aria-pressed`), and candidate time preview (`role="status"`, `aria-live="polite"`). **AI bias awareness** UI (`AiRelevanceBiasNotice.tsx`) with keyboard-focusable trigger, `aria-expanded`, and flyover content for human-review guidance on relevance scores (TH-129).
+
+**Highest-impact gaps (unchanged):** placeholder footer legal links (`href="#"`), inconsistent link `:focus-visible` on some surfaces, **pipeline status modals** (`ModalShell`) without focus trap/Escape, small pipeline card menu trigger, form errors not programmatically associated in auth and pipeline modals, backoffice Google Fonts CDN (also a privacy issue — see [pdpa-gdpr-audit.md](pdpa-gdpr-audit.md)).
+
+**Backlog tracking:** [TH-190](../specification/FEATURE_BACKLOG.md#12-non-functional--compliance) (WCAG remediation) · [TH-191](../specification/FEATURE_BACKLOG.md#12-non-functional--compliance) (modal focus trap) · [TH-192](../specification/FEATURE_BACKLOG.md#12-non-functional--compliance) (legal footer pages).
 
 ---
 
@@ -131,15 +138,16 @@
 |-----------|--------|----------|
 | 2.5.7 Dragging movements | **PARTIAL** | HTML5 DnD on pipeline (`ApplicationsPipelineBoard.tsx`, `PipelineApplicationCard.tsx`). **Alternative:** “Move to” submenu with `menuitem` buttons — satisfies intent if discoverable |
 | 2.1.1 Keyboard | **PARTIAL** | Card `role="button"` + Enter/Space on card; menu trigger very small (`backoffice.css` ~padding `0.15rem 0.35rem`) — **FAIL** 2.5.8 |
-| 2.1.2 No keyboard trap | **PARTIAL** | `ScheduleInterviewModal`: Escape + initial focus (`ScheduleInterviewModal.tsx`). `ModalShell` in `PipelineStatusModals.tsx`: **no Escape, no focus trap, no initial focus** |
+| 2.1.2 No keyboard trap | **PARTIAL** | `ScheduleInterviewModal`: Escape + initial focus + `tabIndex={-1}` on dialog (`ScheduleInterviewModal.tsx`). **No roving focus trap** (Tab can leave dialog). `ModalShell` in `PipelineStatusModals.tsx` (reject, withdraw, hire, reopen, **cancel interview**, missing interview): **no Escape, no focus trap, no initial focus** |
 | 2.4.3 Focus order | **PASS** | Logical DOM order on list/detail pages |
 
 **Modal comparison**
 
 | Modal | `role="dialog"` | Escape | Focus trap | Field errors linked |
 |-------|-----------------|--------|------------|---------------------|
-| Schedule interview | Yes | Yes | Initial focus on open | Partial (`role="alert"` only) |
+| Schedule interview | Yes | Yes | Initial focus only | Partial (`role="alert"` on submit error) |
 | Reject / withdraw / hired / reopen | Yes | **No** | **No** | **No** (`PipelineStatusModals.tsx`) |
+| Cancel scheduled interview | Yes | **No** | **No** | N/A (checkbox only) |
 | Missing interview prompt | Yes | **No** | **No** | N/A |
 
 ### 3.3 Forms — jobs vs pipeline
@@ -154,8 +162,21 @@
 
 | Criterion | Result | Evidence |
 |-----------|--------|----------|
-| 4.1.3 Status messages | **PARTIAL** | Pipeline week label `aria-live="polite"` (`ApplicationsPipelineBoard.tsx`); board filter/status changes not globally announced |
-| Relevance score ring | **PARTIAL** | `role="img"` + `aria-label`; breakdown tooltip may be hover-only — keyboard access limited (`RelevanceScoreRing.tsx`) |
+| 4.1.3 Status messages | **PARTIAL** | Pipeline week label `aria-live="polite"` (`ApplicationsPipelineBoard.tsx`); schedule modal candidate preview `aria-live="polite"`; board filter/status changes not globally announced |
+| Relevance score ring | **PARTIAL** | `role="img"` + `aria-label` including AI disclaimer; breakdown tooltip keyboard-accessible via bias trigger (`RelevanceScoreRing.tsx`, `AiRelevanceBiasNotice.tsx`) |
+| AI bias notice | **PARTIAL** | `role="note"` on pipeline banner; detail flyover via button with `aria-expanded`, focus/blur handlers — **PASS** keyboard access to guidance; flyover uses `role="tooltip"` (extended content may need `role="dialog"` for full AA on long copy) |
+
+### 3.6 Schedule interview modal (redesigned — May 2026)
+
+| Criterion | Result | Evidence |
+|-----------|--------|----------|
+| 1.3.1 Labels | **PASS** | Visible labels for date, time, duration, timezone; duration as `role="group"` + `aria-label` |
+| 2.1.1 Keyboard | **PASS** | Duration chips as buttons with `aria-pressed`; native date/time/select controls |
+| 4.1.3 Preview | **PASS** | Candidate local time preview in `role="status"` region with `aria-live="polite"` |
+| 2.1.2 Focus trap | **PARTIAL** | Escape + focus on open; no Tab cycle containment |
+| 3.3.1 Errors | **PARTIAL** | Submit validation message; not always `aria-describedby` on fields |
+
+**Data note:** `schedulingTimeZone` (IANA) and optional `CandidateProfile.timeZone` power preview copy — no candidate timezone edit UI yet (TH-056).
 
 ### 3.5 Fonts
 
@@ -169,10 +190,10 @@
 
 | WCAG principle | Pass | Fail | Partial | N/A |
 |----------------|------|------|---------|-----|
-| 1. Perceivable | 11 | 2 | 6 | 0 |
-| 2. Operable | 10 | 4 | 5 | 1 |
+| 1. Perceivable | 12 | 2 | 6 | 0 |
+| 2. Operable | 11 | 4 | 5 | 1 |
 | 3. Understandable | 6 | 3 | 2 | 1 |
-| 4. Robust | 5 | 2 | 4 | 0 |
+| 4. Robust | 5 | 2 | 5 | 0 |
 | **WCAG 2.2 new (2.4.11, 2.5.7, 2.5.8)** | 1 | 1 | 2 | 0 |
 
 ---
@@ -181,12 +202,12 @@
 
 ### Critical (block AA sign-off)
 
-| # | Issue | Apps | Criterion | Effort |
-|---|-------|------|-----------|--------|
-| 1 | Functional privacy/terms/accessibility pages (replace `href="#"`) | candidate-portal, my-applications | 2.4.4 | Medium |
-| 2 | Focus trap + Escape on all `ModalShell` dialogs | backoffice | 2.1.2, 2.4.3 | Medium |
-| 3 | `aria-invalid` + `aria-describedby` on auth/apply/pipeline forms | my-applications, backoffice | 3.3.1, 4.1.2 | Medium |
-| 4 | Enlarge pipeline card menu trigger to ≥44×44px | backoffice | 2.5.8 | Low |
+| # | Issue | Apps | Criterion | Backlog | Effort |
+|---|-------|------|-----------|---------|--------|
+| 1 | Functional privacy/terms/accessibility pages (replace `href="#"`) | candidate-portal, my-applications | 2.4.4 | **TH-192** | Medium |
+| 2 | Focus trap + Escape on all `ModalShell` dialogs (incl. cancel interview) | backoffice | 2.1.2, 2.4.3 | **TH-191** | Medium |
+| 3 | `aria-invalid` + `aria-describedby` on auth/apply/pipeline forms | my-applications, backoffice | 3.3.1, 4.1.2 | **TH-190** | Medium |
+| 4 | Enlarge pipeline card menu trigger to ≥44×44px | backoffice | 2.5.8 | **TH-190** | Low |
 
 ### High
 
@@ -200,12 +221,12 @@
 
 ### Medium
 
-| # | Issue | Apps | Criterion | Effort |
-|---|-------|------|-----------|--------|
-| 10 | Announce pipeline drag/status outcomes via live region | backoffice | 4.1.3 | Medium |
-| 11 | Keyboard-accessible relevance breakdown | backoffice | 2.1.1 | Low |
-| 12 | Verify input border contrast (1.4.11) | candidate-portal | 1.4.11 | Low |
-| 13 | Focus trap on CV processing overlay | my-applications | 2.1.2 | Low |
+| # | Issue | Apps | Criterion | Backlog | Effort |
+|---|-------|------|-----------|---------|--------|
+| 10 | Announce pipeline drag/status outcomes via live region | backoffice | 4.1.3 | **TH-190** | Medium |
+| 11 | Full focus trap on Schedule interview modal (Tab cycle) | backoffice | 2.1.2 | **TH-191** | Low |
+| 12 | Verify input border contrast (1.4.11) | candidate-portal | 1.4.11 | **TH-190** | Low |
+| 13 | Focus trap on CV processing overlay | my-applications | 2.1.2 | **TH-190** | Low |
 
 ---
 
@@ -215,14 +236,34 @@
 - Candidate portal **list semantics** and **live results count** (improvement over static markup audit).
 - **Job posting form** in backoffice is a strong reference for accessible forms in this codebase.
 - Pipeline provides a **non-drag** status path (“Move to” menu) aligned with WCAG 2.2 **2.5.7**.
+- **Schedule interview** modal: duration chips, timezone select, live candidate preview — stronger form UX than prior modal.
+- **AI bias awareness** (`AiRelevanceBiasNotice`) — keyboard-reachable human-review guidance on AI relevance scores (product + partial a11y win).
 - Candidate portal and my-applications use **`next/font`** (no third-party font IP leak on page load).
+
+---
+
+## Process alignment
+
+This audit is the **Stage ④ validation** artefact in the [AI-assisted development process](../portfolio/process-diagrams/ats-ai-development-process.md). Re-run after each major UI increment or before portfolio / production sign-off.
+
+---
+
+## Related documentation
+
+| Document | Purpose |
+|----------|---------|
+| [FEATURE_BACKLOG.md](../specification/FEATURE_BACKLOG.md) | TH-190–TH-192 remediation tracking |
+| [pdpa-gdpr-audit.md](pdpa-gdpr-audit.md) | Privacy (footer links, fonts, consent) |
+| [PRD §8.1](../specification/PRD.md#81-accessibility) | Product accessibility target |
+| [portfolio/wireframes/](../portfolio/wireframes/README.md) | Lo-fi screens for test scripts |
+| [implementation-alignment-2026.md](implementation-alignment-2026.md) | Spec vs code |
 
 ---
 
 ## Recommended verification (not done in this audit)
 
 1. **axe DevTools** or **Lighthouse** on `/`, `/jobs/{slug}`, `/login`, `/register`, `/dashboard`, `/applications`, `/applications/{id}`.
-2. **Keyboard-only** walkthrough: pipeline drag alternative, all modals, schedule interview.
+2. **Keyboard-only** walkthrough: pipeline drag alternative, all modals (incl. cancel interview), schedule interview, AI bias flyover.
 3. **Screen readers:** NVDA (Windows), VoiceOver (macOS/iOS) on reject modal and apply form errors.
 4. **200% zoom** on pipeline board and mobile filter drawer.
 
@@ -234,4 +275,6 @@
 
 ---
 
-*Next review: after modal focus-trap work and legal pages are linked, or before public launch.*
+*Revision 1.1 · 21 May 2026 — aligned with PRD, FEATURE_BACKLOG (TH-190–192), schedule interview redesign, AI bias notice, cancel-interview modal.*
+
+*Next review: after TH-191 modal focus-trap work and TH-192 legal pages, or before public launch.*

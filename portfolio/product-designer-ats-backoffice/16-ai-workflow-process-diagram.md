@@ -1,5 +1,11 @@
 # AI-assisted design & development — process flow
 
+**Full 5-stage process (Discovery → Ship):** [portfolio/process-diagrams/ats-ai-development-process.md](../process-diagrams/ats-ai-development-process.md)
+
+![AI-assisted ATS development process — 5 stages](../process-diagrams/ats-ai-development-process.png)
+
+**Feature increment loop (inset):** [PNG](../process-diagrams/ats-feature-increment-loop.png)
+
 ## PNG downloads
 
 Pre-rendered files are in **`diagrams/`**:

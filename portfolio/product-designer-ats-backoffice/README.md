@@ -4,9 +4,17 @@ This folder contains **evidence-oriented artefacts** from problem framing throug
 
 **Product ground truth:** [PRD — TalentHub ATS Platform](../../docs/specification/PRD.md) (as-built, May 2026).
 
+**Screen wireframes:** ASCII lo-fi frames for backoffice, candidate portal, and My Applications → [`../wireframes/`](../wireframes/README.md).
+
+**Information architecture:** Backoffice navigation map → [`../information-architecture/`](../information-architecture/README.md).
+
+**Process diagrams:** AI-assisted development workflow → [`../process-diagrams/`](../process-diagrams/README.md).
+
+**Full platform case study (5-stage lifecycle):** [`../case-study-ai-assisted-ats.md`](../case-study-ai-assisted-ats.md).
+
 ## How to use with Notion
 
-1. Open **`NOTION_CASE_STUDY.md`** — this is the **primary case study** written for copy-paste into Notion.
+1. Open **`case-study-ai-assisted-ats.md`** (parent folder) for the **full 5-stage AI-assisted ATS case study**, or **`NOTION_CASE_STUDY.md`** for the backoffice-focused narrative.
 2. In Notion: **New page → Import → Markdown**, or paste sections manually (Notion converts `#` headings into blocks).
 3. Add your **screenshots** and **Figma links** where placeholders appear (`[Screenshot: …]`).
 4. Use the appendix files for **depth** (flows, spec, usability) or export them as sub-pages.
@@ -21,6 +29,7 @@ This folder contains **evidence-oriented artefacts** from problem framing throug
 | `03-competitive-and-pattern-notes.md` | Pattern library / competitive scan template |
 | `17-netnographic-ats-research.md` | **Netnographic ATS research** — pain points, expectations, competitor synthesis (full) |
 | `18-market-research-summary.md` | **Case study insert** — condensed market research summary for Notion/portfolio |
+| `19-netnographic-deck-slides.md` | **Slide-ready content** — netnography + SME positioning for Slides/Keynote |
 | `04-information-architecture.md` | IA, navigation map, platform context |
 | `05-task-flows.md` | Step-by-step flows |
 | `06-wireframes-and-states.md` | Lo-fi / state descriptions for Figma |

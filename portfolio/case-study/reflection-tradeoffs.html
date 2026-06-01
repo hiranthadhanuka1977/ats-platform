@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reflection &amp; Tradeoffs — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>Reflection &amp; tradeoffs</h1>
+        <p>Design decisions I would defend, honest tradeoffs, shipped capabilities, collaboration notes, and the roadmap from here.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#defend">Design critique</a></li>
+            <li><a href="#tradeoffs">Tradeoffs</a></li>
+            <li><a href="#shipped">Shipped since drafts</a></li>
+            <li><a href="#collaboration">Collaboration</a></li>
+            <li><a href="#roadmap">Roadmap</a></li>
+            <li><a href="#growth">Personal growth</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>PRD §10–§11 aligned</span>
+            <span>May 2026 · As-built</span>
+            <span>Applications hub focus</span>
+          </div>
+
+          <p class="reflect-intro">Updated against product requirements and implementation. Related: <a href="product-requirements.html">Product requirements</a> · <a href="wcag-audit.html">WCAG audit</a> · <a href="index.html#reflection">Homepage reflection</a>.</p>
+
+          <!-- Defend -->
+          <section class="ia-section" id="defend">
+            <h2>What I would defend in a design critique</h2>
+            <ol class="reflect-defend-list">
+              <li class="reflect-defend-item">
+                <strong>Week-scoped pipeline</strong>
+                <p>Answers a real ops rhythm (“this week’s applications”) without a complex filter builder for MVP.</p>
+              </li>
+              <li class="reflect-defend-item">
+                <strong>Application detail page</strong>
+                <p>Correct <em>anchor object</em> for adjudication; candidate profile remains the anchor for person-centric history.</p>
+              </li>
+              <li class="reflect-defend-item">
+                <strong>Disabling future weeks</strong>
+                <p>Better UX than showing an empty future pipeline — avoids “is the system broken?” moments.</p>
+              </li>
+              <li class="reflect-defend-item">
+                <strong><code>from=applications</code></strong>
+                <p>Minimal, auditable navigation hint — better than overloading browser history for a multi-app system.</p>
+              </li>
+              <li class="reflect-defend-item">
+                <strong>Validated status transitions</strong>
+                <p>Audit events trade flexibility for trust — appropriate for hiring compliance.</p>
+              </li>
+              <li class="reflect-defend-item">
+                <strong>Interview gate before status</strong>
+                <p>Keeps pipeline honest; schedule action lives on the packet page to reduce context switching.</p>
+              </li>
+            </ol>
+          </section>
+
+          <!-- Tradeoffs -->
+          <section class="ia-section" id="tradeoffs">
+            <h2>Tradeoffs</h2>
+            <p>Honest portfolio framing — what we accepted and how it could evolve.</p>
+            <div class="ia-table-wrap">
+              <table class="ia-table reflect-tradeoff-table">
+                <thead>
+                  <tr>
+                    <th>Tradeoff</th>
+                    <th>Why we accepted it</th>
+                    <th>Future mitigation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>UTC weeks</strong> vs local</td>
+                    <td>Consistent with timestamps and simpler cross-timezone engineering</td>
+                    <td>Timezone selector or org locale</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Drag + click</strong> same surface</td>
+                    <td>Familiar kanban pattern</td>
+                    <td>Separate drag handle vs click target; user testing</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Salary in GBP</strong> in UI copy</td>
+                    <td>Placeholder locale for demo</td>
+                    <td>Configurable currency / locale</td>
+                  </tr>
+                  <tr>
+                    <td><strong>500-row cap</strong></td>
+                    <td>Performance guardrail</td>
+                    <td>Pagination + filters</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Staff download endpoints</strong></td>
+                    <td>Security / session model</td>
+                    <td>Centralised files service with audit log</td>
+                  </tr>
+                  <tr>
+                    <td><strong>BFF in Next.js</strong> vs central API</td>
+                    <td>Faster iteration; auth API separate</td>
+                    <td>Extract to Hono when integrations need it (PRD §10)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>AI relevance optional</strong></td>
+                    <td>Depends on OpenAI key</td>
+                    <td>Graceful degradation already in UI</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Candidate JWT in localStorage</strong></td>
+                    <td>Current my-applications pattern</td>
+                    <td>HttpOnly cookies (audit recommendation)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Shipped -->
+          <section class="ia-section" id="shipped">
+            <h2>Shipped since early portfolio drafts</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead>
+                  <tr><th>Capability</th><th>PRD ref</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Status audit history on application detail</td><td><code>BO-42</code></td></tr>
+                  <tr><td>Undo and reopen flows</td><td><code>BO-36</code>, <code>BO-37</code></td></tr>
+                  <tr><td>Interview schedule + calendar</td><td><code>BO-40</code>, <code>BO-60</code></td></tr>
+                  <tr><td>Dashboard with pipeline health</td><td><code>BO-10</code>–<code>BO-14</code></td></tr>
+                  <tr><td>Full jobs CRUD + preview</td><td><code>BO-20</code>–<code>BO-25</code></td></tr>
+                  <tr><td>Administration lookup CRUD</td><td><code>BO-70</code>–<code>BO-73</code></td></tr>
+                  <tr><td>HTML design system + layout templates</td><td>PRD §8.5</td></tr>
+                  <tr><td>Formal PRD document</td><td><a href="product-requirements.html">PRD v1.0</a></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Collaboration -->
+          <section class="ia-section" id="collaboration">
+            <h2>Collaboration notes</h2>
+            <p>For “how you work” interviews — process, not just pixels.</p>
+            <ul class="research-checklist">
+              <li>Wrote <strong>acceptance-style</strong> criteria before visual polish so engineers could implement incrementally.</li>
+              <li>Paired on <strong>edge cases</strong>: hydration-safe dates, enum normalization, optimistic UI rollback, interview validation.</li>
+              <li>Used <strong>shared types</strong> package for status language and transition map — reduces design drift.</li>
+              <li>Maintained <strong>implementation-aligned</strong> docs (PRD, API dictionary, design system) alongside portfolio artefacts.</li>
+            </ul>
+          </section>
+
+          <!-- Roadmap -->
+          <section class="ia-section" id="roadmap">
+            <h2>What I’d do next</h2>
+            <p>Roadmap from PRD gaps and open audit items.</p>
+            <ol class="reflect-roadmap">
+              <li><strong>Inline PDF preview</strong> in application detail (reduce tab thrash).</li>
+              <li><strong>Saved views</strong>: “My open reqs”, “This hiring manager’s roles”.</li>
+              <li><strong>Email notifications</strong> when <code>notifyCandidate</code> is set (field exists; delivery TBD).</li>
+              <li><strong>Accessibility pass</strong> on horizontal pipeline scroll and modal focus traps — see <a href="wcag-audit.html">WCAG audit</a>.</li>
+              <li><strong>Breadcrumb</strong> component across backoffice (job edit → back to application).</li>
+              <li><strong>Reports and Settings</strong> — replace placeholders with real surfaces.</li>
+              <li><strong>Candidate bookmarks</strong> — end-to-end flow (schema exists).</li>
+              <li><strong>Password reset UI</strong> for my-applications (API exists).</li>
+            </ol>
+          </section>
+
+          <!-- Growth -->
+          <section class="ia-section" id="growth">
+            <h2>Personal growth</h2>
+            <div class="reflect-growth">
+              <p><em>What I learned about the recruiting domain — how pipeline honesty, cohort triage, and packet completeness shape trust for lean TA teams without dedicated ops admin.</em></p>
+              <p><em>What I learned about designing for internal power users across a multi-app platform — navigation hints, shared status language, and docs that stay aligned with code matter as much as the kanban layout.</em></p>
+            </div>
+            <p class="ia-note">Placeholder copy — replace with your own two sentences for portfolio submission.</p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">Reflection &amp; tradeoffs · May 2026</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="index.html#reflection">Homepage summary</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

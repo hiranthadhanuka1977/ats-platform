@@ -1,9 +1,12 @@
 # PDPA (Sri Lanka) & GDPR (EU) Privacy Audit — ATS Platform (Next.js)
 
 **Audit date:** 19 May 2026  
+**Last revised:** 21 May 2026 (revision 1.1)  
 **Audited by:** AI-assisted code review  
 **Regulations:** Sri Lanka Personal Data Protection Act No. 9 of 2022 (PDPA); EU GDPR 2016/679  
 **Method:** Front-end UX, API routes, auth/storage patterns, and third-party integrations in running apps. Organizational policies, DPAs, and infrastructure reviews are out of scope but required for full compliance.
+
+**Ground truth:** [PRD §8.2](../specification/PRD.md#82-privacy-and-data-protection) · [FEATURE_BACKLOG](../specification/FEATURE_BACKLOG.md) (TH-009, TH-130–131, TH-192–193) · [Process stage ④](../portfolio/process-diagrams/ats-ai-development-process.md#4-validation--updates--compare-to-intent)
 
 ---
 
@@ -13,7 +16,7 @@
 |-----|------|---------------|----------------|
 | `apps/candidate-portal` | 3000 | Visitors, applicants (browse) | Job search (URL/query), no account on this app |
 | `apps/my-applications` | 3002 | Candidates | Registration, login, profile, CV/screenshot import, job applications |
-| `apps/backoffice` | 3001 | Staff | Candidate/application data, status changes, interviews, AI relevance scoring |
+| `apps/backoffice` | 3001 | Staff | Candidate/application data, status changes, interviews (schedule/cancel, timezone), AI relevance scoring, **AI bias awareness UI** |
 | `apps/api` | 4000 | Candidates (auth) | Register, OTP, password reset, email delivery |
 
 **Storage (repo):** `storage/cvs/{candidateAccountId}/`, `storage/cover-letters/{candidateAccountId}/` (see [ATS_Local_Environment_Specification.md](../specification/ATS_Local_Environment_Specification.md)).
@@ -28,12 +31,14 @@
 |----------|-------|
 | **Critical** | 6 |
 | **High** | 7 |
-| **Medium** | 5 |
-| **Informational** | 4 |
+| **Medium** | 6 |
+| **Informational** | 5 |
 
 **Improved vs static markup (April 2026):** Candidate portal and my-applications load fonts via **`next/font`** (no Google Fonts CDN on those apps). Registration includes a **terms checkbox**. CV upload enforces type/size limits server-side.
 
-**Still blocking compliance readiness:** No working **privacy policy** or **cookie consent**; **OpenAI** and **email** processing without in-product privacy notice; **candidate JWT in browser storage**; **backoffice** still loads **Google Fonts from CDN**; staff login sets tokens in **non-HttpOnly** `document.cookie` despite HttpOnly-capable API route.
+**Improved vs audit v1.0 (May 2026):** Redesigned **schedule interview** modal stores `schedulingTimeZone` and optional `notifyCandidateEmail` flag; **cancel scheduled interview** flow on pipeline backward moves with optional notify flag; **`AiRelevanceBiasNotice`** surfaces human-review guidance on AI relevance scores (partial **GDPR Art. 22** transparency in UX — not a substitute for privacy policy or legal basis).
+
+**Still blocking compliance readiness:** No working **privacy policy** or **cookie consent**; **OpenAI** and **email** processing without in-product privacy notice; **email delivery not wired** (`notifyCandidate*` / OTP flags only — **TH-009**, **TH-130**, **TH-131**); **candidate JWT in browser storage** (**TH-193**); **backoffice** still loads **Google Fonts from CDN**; staff login sets tokens in **non-HttpOnly** `document.cookie` despite HttpOnly-capable API route; footer legal links still **`href="#"`** (**TH-192**).
 
 ---
 
@@ -46,7 +51,7 @@
 | Identity & contact | Email, name, phone | Register, profile, apply | Not disclosed |
 | Credentials | Password hash (server) | Register | N/A |
 | Employment | CV, experience, education, motivation | Apply, CV import, screenshot import | Not disclosed |
-| Preferences | Salary, notice, relocation, work auth | Apply form | Not disclosed |
+| Preferences | Salary, notice, relocation, work auth, **time zone** (DB) | Apply form, profile (partial) | Not disclosed |
 | Behavioural | Search/filter (portal URL), dashboard usage | Portal, dashboard | Not disclosed |
 | Auth tokens | JWT access/refresh | Login → `localStorage` / `sessionStorage` | Not disclosed |
 
@@ -56,15 +61,15 @@
 |----------|----------|-------|
 | Candidate PII in recruitment | Name, email on pipeline cards | Backoffice applications |
 | Application decisions | Status, rejection reason, notes | Status PATCH, modals |
-| Interview | Start/end, notify email flag | Schedule interview API |
-| AI scoring | Relevance score, breakdown | `GET .../relevance-score`, OpenAI |
+| Interview | Start/end, **scheduling time zone**, duration, notify email flag, cancel on status rollback | `ScheduleInterviewModal`, `application_interviews`, pipeline cancel modal |
+| AI scoring | Relevance score, breakdown; **bias / human-review notice in UI** | `GET .../relevance-score`, OpenAI, `AiRelevanceBiasNotice.tsx` |
 
 ### Subprocessors & third parties (technical)
 
 | Processor | Purpose | Apps | Disclosed in UI? |
 |-----------|---------|------|------------------|
-| **OpenAI** | CV parse, LinkedIn text, screenshot extract, application relevance | my-applications, backoffice | Mentioned in dev copy only (`CvImportPrototype.tsx`); **not** in privacy policy |
-| **Email (SMTP/API)** | OTP, password reset, interview/reject notifications | `apps/api`, backoffice modals | **No** |
+| **OpenAI** | CV parse, LinkedIn text, screenshot extract, application relevance | my-applications, backoffice | Prototype help text + **bias notice in backoffice**; **not** in privacy policy |
+| **Email (SMTP/API)** | OTP, password reset, interview/reject notifications | `apps/api`, backoffice modals | **No** — UI flags (`notifyCandidateEmail`, `notifyCandidate`) **queue only**; delivery **TH-009** |
 | **Google Fonts CDN** | Web fonts | backoffice `globals.css` | **No** (IP transfer on load) |
 | **PostgreSQL** | Primary datastore | All server routes | Infrastructure (not UI) |
 
@@ -89,7 +94,7 @@ Same pattern in `apps/my-applications/src/components/SiteFooter.tsx`. Register r
 
 **Risk:** Processing without accessible privacy information before collection (register, apply, CV upload).
 
-**Remediation:** Publish `/privacy` and `/terms` routes (or external URLs); link from footer, registration checkbox, and apply flow; include Art. 13 / PDPA S.8 content (controller, purposes, legal basis, retention, rights, transfers, subprocessors).
+**Remediation:** Publish `/privacy` and `/terms` routes (or external URLs) — **TH-192**; link from footer, registration checkbox, and apply flow; include Art. 13 / PDPA S.8 content (controller, purposes, legal basis, retention, rights, transfers, subprocessors).
 
 ---
 
@@ -133,9 +138,9 @@ Each backoffice page load can send visitor IP to Google (US) without notice or c
 - `apps/my-applications/src/app/api/my-applications/text/extract/route.ts`
 - `packages/db` / backoffice `ensureApplicationRelevanceScore` — relevance scoring
 
-UI mentions OpenAI in prototype help text only; no privacy policy, no opt-in before sending CV/screenshot content.
+UI mentions OpenAI in prototype help text only; backoffice shows **`AiRelevanceBiasNotice`** (“Advisory AI score only. Human review required…”) — **product transparency only**, not Art. 13/22 legal disclosure. No privacy policy, no opt-in before sending CV/screenshot content.
 
-**Remediation:** Name OpenAI as processor in privacy policy; lawful basis (consent or legitimate interest with LIA); explicit checkbox before AI-assisted import/scoring where required; data minimization (send only necessary fields); DPA with OpenAI.
+**Remediation:** Name OpenAI as processor in privacy policy; lawful basis (consent or legitimate interest with LIA); explicit checkbox before AI-assisted import/scoring where required; extend Art. 22 notice in privacy policy (logic, significance, human intervention); data minimization (send only necessary fields); DPA with OpenAI.
 
 ---
 
@@ -148,7 +153,7 @@ UI mentions OpenAI in prototype help text only; no privacy policy, no opt-in bef
 
 **Risk:** Any XSS can exfiltrate tokens; not equivalent to HttpOnly, Secure, SameSite cookies.
 
-**Remediation:** Issue session via HttpOnly cookies from Next.js BFF or API; shorten access token TTL; CSP and XSS hardening; document in privacy notice.
+**Remediation:** Issue session via HttpOnly cookies from Next.js BFF or API (**TH-193**); shorten access token TTL; CSP and XSS hardening; document in privacy notice.
 
 ---
 
@@ -233,11 +238,13 @@ Recruitment processing should document basis (typically **consent** or **legitim
 
 ---
 
-### H7. Email notifications without transparency
+### H7. Email notifications without transparency or delivery
 
-Reject/schedule modals offer “notify candidate” (`PipelineStatusModals.tsx`, `ScheduleInterviewModal.tsx`). OTP and password email via `apps/api`. No privacy notice describing email content, provider, or opt-out.
+Reject/schedule/**cancel-interview** modals offer “notify candidate” (`PipelineStatusModals.tsx`, `ScheduleInterviewModal.tsx`, `PipelineCancelScheduledInterviewModal`). OTP and password email via `apps/api`. No privacy notice describing email content, provider, or opt-out.
 
-**Remediation:** Disclose email processor; allow preference where appropriate.
+**Implementation gap:** `notifyCandidate` / `notifyCandidateEmail` persist flags and may set `emailNotificationQueued` in API responses, but **no SMTP/API delivery is wired** (**TH-009**, **TH-130**, **TH-131**). Candidates may believe they were notified when they were not — transparency and fairness risk even before live email.
+
+**Remediation:** Implement email service (**TH-009**); disclose email processor in privacy policy; log delivery status; allow preference where appropriate; do not show “notification sent” UX until delivery is confirmed.
 
 ---
 
@@ -257,11 +264,17 @@ CV upload: MIME and size checks (`cv/upload/route.ts`). Good practice; still nee
 
 ### M4. Candidate account status PATCH without staff auth guard
 
-`PATCH /api/backoffice/candidates/{id}/status` — documented in API spec; no `requireStaffSession` in route. **Security/privacy risk** if exposed.
+`PATCH /api/backoffice/candidates/{id}/status` — documented in API spec; no `requireStaffSession` in route. **Security/privacy risk** if exposed. Tracked as **TH-145**.
 
 ### M5. Search and dashboard behaviour
 
 Logged-in job search and profile edits are personal data when linked to account — disclose in privacy policy (purpose: account management / application).
+
+### M6. Interview timezone and candidate time zone without collection notice
+
+Schedule interview stores **`schedulingTimeZone`** on `ApplicationInterview`; preview uses candidate profile **`timeZone`** when set. Profile time zone exists in DB (**TH-056** — no candidate edit UI yet). Processing location-related metadata without stating purpose or accuracy limits in privacy notice.
+
+**Remediation:** Disclose timezone use (scheduling, display); let candidates view/edit time zone on profile; document in privacy policy.
 
 ---
 
@@ -273,6 +286,7 @@ Logged-in job search and profile edits are personal data when linked to account 
 | I2 | No breach notification contact in UI |
 | I3 | Backoffice has no footer legal links (staff-facing; internal policy may suffice) |
 | I4 | `localStorage` used for jobs view preference in backoffice — low risk; classify in cookie policy |
+| I5 | **AI bias notice** (`AiRelevanceBiasNotice`) — good UX for human-in-the-loop; map to Art. 22 in privacy policy when scoring goes live at scale |
 
 ---
 
@@ -289,6 +303,7 @@ Logged-in job search and profile edits are personal data when linked to account 
 | Cross-border transfers | Art. 44–49 | S.25–27 | **Partial fail** (backoffice fonts; OpenAI) |
 | Consent at collection | Art. 6–7 | S.6 | **Partial** (terms checkbox only) |
 | Processor transparency | Art. 13(1)(e), 28 | S.8(1)(d) | **Fail** (OpenAI, email) |
+| Automated decision-making (Art. 22) | Art. 22 | — | **Partial UX** (bias notice); **no legal notice** |
 | Security | Art. 32 | S.18 | **Partial** (candidate tokens in storage; staff cookie issue) |
 | Data minimization | Art. 5(1)(c) | S.5(1)(c) | **Reasonable** in forms |
 | Self-hosted fonts (portal) | — | — | **Pass** (candidate-portal, my-applications) |
@@ -297,37 +312,56 @@ Logged-in job search and profile edits are personal data when linked to account 
 
 ## Recommended next steps (priority)
 
-1. **Privacy policy + terms** — real pages and footer/register/apply links (C1, H1, H2).
-2. **Cookie consent** — block non-essential until accepted (C2).
-3. **Backoffice fonts** — `next/font`, remove Google `@import` (C3).
-4. **OpenAI & email** — privacy policy + consent/checkbox before CV/screenshot/relevance processing (C4).
-5. **Candidate auth** — HttpOnly session cookies; remove JWT from `localStorage` (C5).
-6. **Staff auth** — use HttpOnly login route only (H6).
-7. **Apply flow notice** — just-in-time disclosure + retention (C6, H3).
-8. **Retention & deletion** — policy + technical job to purge old applications/CV files.
-9. **DPAs** — OpenAI, email provider, hosting.
-10. **Secure candidate status API** — add staff auth on `PATCH .../candidates/{id}/status` (M4).
+| Priority | Action | Backlog |
+|----------|--------|---------|
+| 1 | **Privacy policy + terms** — real pages and footer/register/apply links (C1, H1, H2) | **TH-192** |
+| 2 | **Cookie consent** — block non-essential until accepted (C2) | — |
+| 3 | **Backoffice fonts** — `next/font`, remove Google `@import` (C3) | — |
+| 4 | **OpenAI & email** — privacy policy + consent/checkbox before CV/screenshot/relevance processing (C4) | — |
+| 5 | **Email delivery** — wire OTP, status, interview notifications; align UX with actual send (H7) | **TH-009**, **TH-130**, **TH-131** |
+| 6 | **Candidate auth** — HttpOnly session cookies; remove JWT from `localStorage` (C5) | **TH-193** |
+| 7 | **Staff auth** — use HttpOnly login route only (H6) | — |
+| 8 | **Apply flow notice** — just-in-time disclosure + retention (C6, H3) | — |
+| 9 | **Retention & deletion** — policy + technical job to purge old applications/CV files | — |
+| 10 | **DPAs** — OpenAI, email provider, hosting | — |
+| 11 | **Secure candidate status API** — add staff auth on `PATCH .../candidates/{id}/status` (M4) | **TH-145** |
+| 12 | **Timezone disclosure** — profile edit + privacy notice (M6) | **TH-056** |
+
+---
+
+## Process alignment
+
+This audit is the **Stage ④ validation** artefact alongside [wcag22-audit.md](wcag22-audit.md) in the [AI-assisted development process](../portfolio/process-diagrams/ats-ai-development-process.md). Re-run after **TH-009** (email), **TH-192** (legal pages), **TH-193** (HttpOnly tokens), or major AI/scheduling changes.
 
 ---
 
 ## Appendix A: Static markup vs implementation
 
-| Topic | Static markup (Apr 2026) | Next.js (May 2026) |
-|-------|--------------------------|---------------------|
+| Topic | Static markup (Apr 2026) | Next.js (May 2026, rev 1.1) |
+|-------|--------------------------|-------------------------------|
 | Google Fonts CDN | **Fail** (`tokens.css` @import) | **Pass** on portal & my-applications (`next/font`); **Fail** on backoffice |
-| Privacy link | `href="#"` | Still `href="#"` in `SiteFooter` |
+| Privacy link | `href="#"` | Still `href="#"` in `SiteFooter` (**TH-192**) |
 | Cookie banner | None | None |
 | Registration consent | N/A in static job pages | Terms checkbox (unlinked) |
 | CV / AI | N/A | OpenAI integrations — new compliance surface |
+| AI transparency | N/A | **Partial** — `AiRelevanceBiasNotice` in backoffice |
+| Interview data | N/A | Timezone + notify flags; cancel interview on pipeline rollback |
+| Email to candidates | N/A | UI flags only — **no delivery** (**TH-009**) |
 
 ---
 
 ## Appendix B: Related documentation
 
-- [implementation-alignment-2026.md](implementation-alignment-2026.md) — which app implements which API  
-- [api/backoffice-applications.md](../specification/api/backoffice-applications.md) — staff processing of application data  
-- [wcag22-audit.md](wcag22-audit.md) — accessibility (privacy information must be perceivable)
+| Document | Purpose |
+|----------|---------|
+| [FEATURE_BACKLOG.md](../specification/FEATURE_BACKLOG.md) | TH-009, TH-130–131, TH-192–193 remediation |
+| [implementation-alignment-2026.md](implementation-alignment-2026.md) | Which app implements which API |
+| [wcag22-audit.md](wcag22-audit.md) | Accessibility (legal links, fonts, modals) |
+| [api/backoffice-applications.md](../specification/api/backoffice-applications.md) | Staff processing of application data |
+| [portfolio/process-diagrams/](../portfolio/process-diagrams/ats-ai-development-process.md) | Stage ④ compliance validation |
 
 ---
 
-*This audit reflects code and UX as of 19 May 2026. Legal review by qualified counsel is required before claiming GDPR/PDPA compliance.*
+*Revision 1.1 · 21 May 2026 — aligned with PRD, FEATURE_BACKLOG, schedule/cancel interview flows, AI bias notice, email flag gaps.*
+
+*This audit reflects code and UX as of 21 May 2026. Legal review by qualified counsel is required before claiming GDPR/PDPA compliance.*

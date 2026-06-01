@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Backoffice navigation map — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class=" active">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class="">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Backoffice navigation map</span></nav>
+      <article class="prose"><h1>Backoffice — Information architecture &amp; navigation map</h1>
+<p><strong>App:</strong> <code>apps/backoffice</code> · port <strong>3001</strong><br><strong>Date:</strong> May 2026 · As-built<br><strong>Source:</strong> <code>Sidebar.tsx</code>, App Router routes, <a href="../../docs/specification/PRD.md">PRD §5.3–§5.9</a></p>
+<p>This document maps <strong>primary navigation</strong>, <strong>secondary navigation</strong>, and <strong>cross-app links</strong> for the TalentHub staff portal.</p>
+<hr>
+<h2>Shell model</h2>
+<pre><code class="language-text">┌─────────────────────────────────────────────────────────────┐
+│  Skip link → #main-content                                  │
+├──────────────┬──────────────────────────────────────────────┤
+│  SIDEBAR     │  TOP BAR (session / user / logout)           │
+│  (primary)   ├──────────────────────────────────────────────┤
+│              │  PAGE CONTENT (#main-content)                │
+│              │  · page title / kicker                       │
+│              │  · secondary nav (tabs, admin section)       │
+│              │  · main surface                              │
+└──────────────┴──────────────────────────────────────────────┘
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Layout group</th>
+<th>Routes</th>
+<th>Sidebar</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>(auth)</code></td>
+<td><code>/login</code></td>
+<td>Hidden — split auth layout</td>
+</tr>
+<tr>
+<td><code>(dashboard)</code></td>
+<td>All staff app pages below</td>
+<td>Visible — <code>BackOfficeShell</code></td>
+</tr>
+<tr>
+<td><code>(job-preview)</code></td>
+<td><code>/jobs/[id]/preview</code></td>
+<td>Hidden — candidate-facing preview chrome</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Primary navigation (sidebar)</h2>
+<p>Order matches <code>Sidebar.tsx</code> (implementation).</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Label</th>
+<th>href</th>
+<th>Active when</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Dashboard</td>
+<td><code>/</code></td>
+<td>path === <code>/</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Applications</td>
+<td><code>/applications</code></td>
+<td>path starts with <code>/applications</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Interviews</td>
+<td><code>/interviews</code></td>
+<td>path starts with <code>/interviews</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Jobs</td>
+<td><code>/jobs</code></td>
+<td>path starts with <code>/jobs</code> (excl. preview layout*)</td>
+<td>Done</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Candidates</td>
+<td><code>/candidates</code></td>
+<td>path starts with <code>/candidates</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Reports</td>
+<td><code>/reports</code></td>
+<td>path starts with <code>/reports</code></td>
+<td>Placeholder</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Administration</td>
+<td><code>/administration</code></td>
+<td>path starts with <code>/administration</code></td>
+<td>Done</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Settings</td>
+<td><code>/settings</code></td>
+<td>path starts with <code>/settings</code></td>
+<td>Placeholder</td>
+</tr>
+</tbody></table>
+<p>* Job preview uses <code>(job-preview)</code> layout without dashboard sidebar.</p>
+<hr>
+<h2>Site map (full tree)</h2>
+<pre><code class="language-text">TalentHub Back Office (:3001)
+│
+├── /login                          [auth] Staff sign-in
+│
+├── /                               Dashboard — KPIs, pipeline health, activity, insights
+│
+├── /applications                   Applications hub
+│   ├── (default) Pipeline view     Kanban · week scope · terminal tabs
+│   ├── (tab) Table view            Sortable list · same URL
+│   └── /applications/[id]          Application detail (packet page)
+│       └── (modal) Schedule interview
+│       └── (modal) Status / reject / reopen / cancel interview
+│
+├── /interviews                     Interview calendar
+│
+├── /jobs                           Job list (search · filters · pagination)
+│   ├── /jobs/new                   Create job (multi-section form)
+│   │   ├── /jobs/new/review        Pre-publish review
+│   │   └── /jobs/new/success       Post-publish confirmation
+│   └── /jobs/[id]/edit             Edit published/draft job
+│
+├── /jobs/[id]/preview              [job-preview layout] Candidate-facing preview
+│
+├── /candidates                     Summary dashboard
+│   ├── /candidates/all             Searchable directory table
+│   ├── /candidates/[id]            Profile · CV history · applications
+│   └── /candidates/[id]/edit       Account status edit
+│
+├── /administration                 → redirects to /administration/departments
+│   ├── /administration/companies
+│   ├── /administration/departments
+│   ├── /administration/locations
+│   ├── /administration/employment-types
+│   ├── /administration/experience-levels
+│   ├── /administration/skills
+│   ├── /administration/tags
+│   └── /administration/benefits
+│
+├── /reports                        Placeholder — analytics TBD
+└── /settings                       Placeholder — workspace config TBD
+</code></pre>
+<hr>
+<h2>Secondary navigation (in-page)</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Control</th>
+<th>Options / targets</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Applications</strong></td>
+<td>View tablist</td>
+<td>Table view · Pipeline (default)</td>
+</tr>
+<tr>
+<td><strong>Applications pipeline</strong></td>
+<td>Week toolbar</td>
+<td>← Prev week · Next week → · This week</td>
+</tr>
+<tr>
+<td><strong>Applications pipeline</strong></td>
+<td>Terminal tabs</td>
+<td>Rejected · Withdrawn</td>
+</tr>
+<tr>
+<td><strong>Applications pipeline</strong></td>
+<td>Fullscreen</td>
+<td>Expands pipeline viewport</td>
+</tr>
+<tr>
+<td><strong>Applications pipeline</strong></td>
+<td>Card menu</td>
+<td>Move to… (keyboard alternative to drag)</td>
+</tr>
+<tr>
+<td><strong>Administration</strong></td>
+<td>Section <code>&lt;select&gt;</code></td>
+<td>Companies, Departments, Locations, Employment types, Experience levels, Skills, Tags, Benefits</td>
+</tr>
+<tr>
+<td><strong>Jobs list</strong></td>
+<td>Filters / search</td>
+<td>Status, text search, pagination</td>
+</tr>
+<tr>
+<td><strong>Candidates</strong></td>
+<td>Summary → All</td>
+<td><code>/candidates</code> ↔ <code>/candidates/all</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Navigation diagram (Mermaid)</h2>
+<p>See <a href="./backoffice-navigation-map.mmd">backoffice-navigation-map.mmd</a> · exported PNG: <a href="./backoffice-navigation-map.png">backoffice-navigation-map.png</a>.</p>
+<p><img src="./backoffice-navigation-map.png" alt="Backoffice navigation map"></p>
+<hr>
+<h2>Cross-link map (context preservation)</h2>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>Control</th>
+<th>To</th>
+<th>Query / note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Applications table</td>
+<td>Candidate name</td>
+<td><code>/candidates/[id]</code></td>
+<td><code>?from=applications</code></td>
+</tr>
+<tr>
+<td>Applications table</td>
+<td>Job / row</td>
+<td><code>/applications/[id]</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Pipeline card</td>
+<td>Card click</td>
+<td><code>/applications/[id]</code></td>
+<td>Drag guard prevents mis-click</td>
+</tr>
+<tr>
+<td>Application detail</td>
+<td>Applicant link</td>
+<td><code>/candidates/[id]</code></td>
+<td><code>?from=applications</code></td>
+</tr>
+<tr>
+<td>Application detail</td>
+<td>Edit job</td>
+<td><code>/jobs/[id]/edit</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Application detail</td>
+<td>Schedule interview</td>
+<td>Modal → saves → calendar</td>
+<td><code>/interviews</code></td>
+</tr>
+<tr>
+<td>Candidate detail</td>
+<td>Back (when from apps)</td>
+<td><code>/applications</code></td>
+<td>When <code>from=applications</code></td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>Recent activity</td>
+<td>Application / job detail</td>
+<td>Contextual deep link</td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>Pipeline health CTA</td>
+<td><code>/applications</code></td>
+<td>Pipeline default</td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>Curator insight</td>
+<td><code>/applications</code></td>
+<td>Stalled interviews</td>
+</tr>
+<tr>
+<td>Jobs list</td>
+<td>Preview</td>
+<td><code>/jobs/[id]/preview</code></td>
+<td>New tab / separate layout</td>
+</tr>
+<tr>
+<td>Job success</td>
+<td>View listing / create another</td>
+<td><code>/jobs</code> · <code>/jobs/new</code></td>
+<td>Post-publish</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>IA principles (backoffice)</h2>
+<ol>
+<li><strong>Application as unit of work</strong> — <code>/applications/[id]</code> is the adjudication anchor; candidate and job are linked hops.</li>
+<li><strong>Throughput vs depth</strong> — <code>/applications</code> (breadth) → detail (depth); <code>/candidates/[id]</code> when person history matters.</li>
+<li><strong>Time cohort</strong> — Pipeline week scope reduces noise; not duplicated in table (all-time list).</li>
+<li><strong>Honest placeholders</strong> — Reports and Settings appear in nav but surface “coming soon” until TH-165/166.</li>
+<li><strong>Administration as reference data</strong> — Secondary section picker, not top-level clutter for each lookup table.</li>
+</ol>
+<hr>
+<h2>Related artefacts</h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="../product-designer-ats-backoffice/14-screen-and-route-inventory.md">14-screen-and-route-inventory.md</a></td>
+<td>Route file inventory</td>
+</tr>
+<tr>
+<td><a href="../product-designer-ats-backoffice/04-information-architecture.md">04-information-architecture.md</a></td>
+<td>Platform-wide IA (all apps)</td>
+</tr>
+<tr>
+<td><a href="../wireframes/README.md">wireframes/</a></td>
+<td>Lo-fi screen wireframes</td>
+</tr>
+<tr>
+<td><a href="../../docs/specification/PRD.md">PRD §5.3–§5.9</a></td>
+<td>Functional requirements</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>IA map v1.0 · May 2026</em></p>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

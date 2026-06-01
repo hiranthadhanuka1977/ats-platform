@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wireframes & states — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="site-layout">
+    <nav class="site-nav" aria-label="Case study">
+    <div class="nav-brand">
+      <a href="index.html" class="nav-logo"><span class="logo-mark">T</span> TalentHub</a>
+      <span class="nav-sub">Case Study</span>
+    </div>
+    <ul class="nav-sections">
+      <li><a href="index.html#overview" class="">Overview</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#process">Process</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#impact">Impact</a></li>
+      <li><a href="wireframes.html">Wireframes</a></li>
+    </ul><div class="nav-group"><h3>Research</h3><ul><li><a href="pages/netnographic-research.html" class="">Netnographic research</a></li><li><a href="pages/market-research-summary.html" class="">Market research summary</a></li><li><a href="pages/research-deck-slides.html" class="">Research deck slides</a></li><li><a href="pages/problem-framing.html" class="">Problem framing & role</a></li></ul></div><div class="nav-group"><h3>Design</h3><ul><li><a href="pages/user-stories.html" class="">User stories & JTBD</a></li><li><a href="pages/platform-ia-notes.html" class="">Platform IA notes</a></li><li><a href="pages/backoffice-ia.html" class="">Backoffice navigation map</a></li><li><a href="pages/information-architecture.html" class="">Information architecture (full)</a></li><li><a href="pages/task-flows.html" class="">Task flows</a></li><li><a href="pages/wireframes-states.html" class=" active">Wireframes & states</a></li><li><a href="pages/interaction-spec.html" class="">Interaction spec</a></li><li><a href="pages/content-model.html" class="">Content model</a></li><li><a href="pages/wireframes-index.html" class="">Wireframe index</a></li></ul></div><div class="nav-group"><h3>Validation</h3><ul><li><a href="pages/usability-test-plan.html" class="">Usability test plan</a></li></ul></div><div class="nav-group"><h3>Outcomes</h3><ul><li><a href="pages/reflection.html" class="">Reflection & tradeoffs</a></li></ul></div><div class="nav-group"><h3>Process</h3><ul><li><a href="pages/ai-workflow.html" class="">Human vs AI workflow</a></li><li><a href="pages/process-diagram-sources.html" class="">Process diagram sources</a></li><li><a href="pages/process-5-stage.html" class="">5-stage development process</a></li></ul></div><div class="nav-group"><h3>Specifications</h3><ul><li><a href="pages/prd.html" class="">Product requirements (PRD)</a></li><li><a href="pages/feature-backlog.html" class="">Feature backlog</a></li><li><a href="pages/user-stories-backlog.html" class="">User stories (TH codes)</a></li><li><a href="pages/application-state-spec.html" class="">Application state spec</a></li><li><a href="pages/backoffice-applications-api.html" class="">Backoffice applications API</a></li></ul></div><div class="nav-group"><h3>Compliance</h3><ul><li><a href="pages/wcag-audit.html" class="">WCAG 2.2 audit</a></li><li><a href="pages/pdpa-gdpr-audit.html" class="">GDPR / PDPA audit</a></li><li><a href="pages/implementation-alignment.html" class="">Implementation alignment</a></li></ul></div><div class="nav-group"><h3>External</h3><ul>
+    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+  </ul></div></nav>
+    <main class="site-main" id="main-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Overview</a> <span aria-hidden="true">/</span> <span>Wireframes & states</span></nav>
+      <article class="prose"><h1>Wireframes and key states (for Figma)</h1>
+<p>Use these as <strong>Figma frame titles</strong> or <strong>annotation specs</strong>. Replace dimensions with your grid system.</p>
+<p><strong>ASCII wireframes (portfolio):</strong> See <a href="../wireframes/README.md"><code>../wireframes/</code></a> for six implemented screens with desktop/mobile layouts — dashboard, pipeline, application detail, job listing, job detail, candidate dashboard.</p>
+<p><strong>Status vocabulary:</strong> ten application statuses per <a href="../../docs/specification/PRD.md">PRD §6</a>. <strong>Terminal:</strong> Rejected, Withdrawn (separate from active Kanban columns).</p>
+<hr>
+<h2>Screen: Applications — Table</h2>
+<p><strong>Layout</strong></p>
+<ul>
+<li>Page title + short subtitle  </li>
+<li><strong>Tablist:</strong> “Table view” | “Pipeline”  </li>
+<li><strong>Card:</strong> “Application listing”  </li>
+<li><strong>Table:</strong> Candidate (rowspan) | Email (rowspan) | Job | Status | Applied | Updated</li>
+</ul>
+<p><strong>States</strong></p>
+<ol>
+<li><strong>Empty:</strong> “No applications submitted yet.”  </li>
+<li><strong>Populated:</strong> multiple rows; one candidate with <strong>two jobs</strong> shows rowspan + “N applications” hint  </li>
+<li><strong>Error banner</strong> (optional): status patch failed (if surfaced globally on this page)</li>
+</ol>
+<p><strong>Links</strong></p>
+<ul>
+<li>Candidate name → <code>/candidates/[id]?from=applications</code>  </li>
+<li>Job title → <code>/applications/[id]</code></li>
+</ul>
+<hr>
+<h2>Screen: Applications — Pipeline</h2>
+<p><strong>Layout</strong></p>
+<ul>
+<li>Same tabs  </li>
+<li><strong>Card:</strong> “Applications pipeline”  </li>
+<li><strong>Toolbar row:</strong> [ ← Previous week ] [ Next week → ] [ This week ] (conditional) + <strong>Week: {label}</strong> right-aligned  </li>
+<li><strong>Horizontal scroll:</strong> status columns (min-width cards)</li>
+</ul>
+<p><strong>States</strong></p>
+<ol>
+<li><strong>Current week, offset 0:</strong> Next week <strong>disabled</strong> + tooltip “Future weeks are not available”  </li>
+<li><strong>Past week:</strong> “This week” visible; Next week <strong>enabled</strong> until offset reaches 0  </li>
+<li><strong>Empty cohort:</strong> muted message above columns; columns still accept <strong>drop</strong>  </li>
+<li><strong>Dragging:</strong> dragged card reduced opacity  </li>
+<li><strong>Updating:</strong> card non-draggable, cursor “progress”</li>
+</ol>
+<p><strong>Card</strong></p>
+<ul>
+<li>Title = job title  </li>
+<li>Sub = candidate name  </li>
+<li>Meta = Applied {datetime}</li>
+</ul>
+<hr>
+<h2>Screen: Application detail</h2>
+<p><strong>Layout</strong></p>
+<ul>
+<li>Back link: “← Back to applications”  </li>
+<li>Header: Job title + subtitle “Application for {name} · {status}”  </li>
+<li><strong>Grid of cards:</strong>  <ul>
+<li>Job and timeline  </li>
+<li>Submission details (+ motivation block if present)  </li>
+<li>Documents (CV submitted, default CV, cover letter)  </li>
+<li><strong>Status history</strong> (audit timeline)  </li>
+<li><strong>Schedule interview</strong> (action + modal)  </li>
+<li>Applicant (link to candidate)  </li>
+<li><em>(Conditional)</em> Cover letter text — full width if content exists  </li>
+<li>Profile overview  </li>
+<li>Account insights  </li>
+<li>Experience list  </li>
+<li>Education list</li>
+</ul>
+</li>
+</ul>
+<p><strong>States</strong></p>
+<ol>
+<li>No submitted CV → em dash in row  </li>
+<li>No default CV → em dash  </li>
+<li>File cover letter → download link with filename hint  </li>
+<li>Text cover letter → body in “Cover letter text” section; hide section if nothing to show  </li>
+<li>Legacy free-text cover letter in DB → show in same text section</li>
+</ol>
+<hr>
+<h2>Micro-interaction notes (for motion / prototype)</h2>
+<ul>
+<li><strong>Drag end → click suppression:</strong> ~200ms guard to prevent accidental navigation after drag.  </li>
+<li><strong>Week change:</strong> polite <code>aria-live</code> on week label (accessibility).</li>
+</ul>
+<hr>
+<h2>Figma checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Cover frame + project thumbnail  </li>
+<li><input disabled="" type="checkbox"> Flow arrows: 3 primary flows (A–C from <code>05-task-flows.md</code>)  </li>
+<li><input disabled="" type="checkbox"> Component styles aligned to existing tokens (<code>bo-card</code>, <code>bo-admin-table</code>, etc.) if matching implementation</li>
+</ul>
+</article>
+    </main>
+  </div>
+  <script src="../site.js"></script>
+</body>
+</html>

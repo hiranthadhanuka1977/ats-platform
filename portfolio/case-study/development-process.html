@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Development Process — TalentHub Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a href="index.html" class="wordmark">TalentHub <span class="wordmark-sub">Case Study</span></a>
+      <nav class="header-nav" aria-label="Page sections">
+        <a href="index.html#context">Context</a>
+        <a href="index.html#research">Research</a>
+        <a href="index.html#approach">Approach</a>
+        <a href="index.html#solution">Solution</a>
+        <a href="index.html#impact">Impact</a>
+        <a href="appendix.html">Artifacts</a>
+      </nav>
+      <button type="button" class="menu-btn" aria-label="Open menu" aria-expanded="false">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <a href="appendix.html" class="back-link">← Back to artifacts</a>
+        <h1>AI-assisted development process</h1>
+        <p>End-to-end discovery-to-ship lifecycle for TalentHub — human-led product judgment with AI-accelerated specification, implementation, and audit passes.</p>
+      </div>
+    </div>
+
+    <div class="container ia-doc">
+      <div class="ia-doc-layout">
+        <nav class="ia-toc" aria-label="On this page">
+          <h2>On this page</h2>
+          <ol>
+            <li><a href="#overview">Five-stage overview</a></li>
+            <li><a href="#ownership">Human vs AI</a></li>
+            <li><a href="#diagram">End-to-end diagram</a></li>
+            <li><a href="#increment">Feature increment loop</a></li>
+            <li><a href="#stages">Stage detail</a></li>
+            <li><a href="#define">Define workstreams</a></li>
+            <li><a href="#validation">Validation hub</a></li>
+            <li><a href="#related">Related artefacts</a></li>
+          </ol>
+        </nav>
+
+        <article>
+          <div class="ia-meta">
+            <span>TalentHub · ats-platform</span>
+            <span>Process v1.0 · May 2026</span>
+            <span>npm monorepo</span>
+          </div>
+
+          <p class="proc-intro">This documents how an ATS was designed and built with <strong>AI-assisted implementation</strong> and <strong>human-led product judgment</strong>. After Ship, the cycle returns to Stage 3 for the next PRD feature until release scope is complete.</p>
+
+          <!-- Five-stage overview -->
+          <section class="ia-section" id="overview">
+            <h2>Five-stage overview</h2>
+
+            <div class="proc-pipeline" aria-label="Five-stage development process from discovery to ship">
+              <div class="proc-stage proc-stage-1">
+                <span class="proc-stage-num">1</span>
+                <strong>Discovery</strong>
+                <span class="proc-mode proc-mode-human">Human-led</span>
+                <span class="proc-stage-out">Problem framing · market evidence</span>
+              </div>
+              <div class="proc-connector" aria-hidden="true"></div>
+              <div class="proc-stage proc-stage-2">
+                <span class="proc-stage-num">2</span>
+                <strong>Define</strong>
+                <span class="proc-mode proc-mode-hybrid">Human + AI</span>
+                <span class="proc-stage-out">PRD · specs · design system · IA</span>
+              </div>
+              <div class="proc-connector" aria-hidden="true"></div>
+              <div class="proc-stage proc-stage-3">
+                <span class="proc-stage-num">3</span>
+                <strong>Implement</strong>
+                <span class="proc-mode proc-mode-ai">AI-assisted</span>
+                <span class="proc-stage-out">Working increment in repo</span>
+              </div>
+              <div class="proc-connector" aria-hidden="true"></div>
+              <div class="proc-stage proc-stage-4">
+                <span class="proc-stage-num">4</span>
+                <strong>Validate</strong>
+                <span class="proc-mode proc-mode-hybrid">Human + AI audit</span>
+                <span class="proc-stage-out">Audits · docs · PRD status · Git</span>
+              </div>
+              <div class="proc-connector" aria-hidden="true"></div>
+              <div class="proc-stage proc-stage-5">
+                <span class="proc-stage-num">5</span>
+                <strong>Ship</strong>
+                <span class="proc-mode proc-mode-ship">Milestone</span>
+                <span class="proc-stage-out">Feature delivered</span>
+              </div>
+            </div>
+
+            <div class="proc-loops">
+              <div class="proc-loop proc-loop-fail">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 4v12m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
+                <span><strong>Validation fail</strong> → return to Implement (Stage 3)</span>
+              </div>
+              <div class="proc-loop proc-loop-next">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 12h16M14 6l6 6-6 6"/></svg>
+                <span><strong>After Ship</strong> → pick next PRD feature → Stage 3 increment loop</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Human vs AI -->
+          <section class="ia-section" id="ownership">
+            <h2>Human vs AI ownership</h2>
+            <p>Product judgment, domain rules, and QA remain explicitly human-owned. AI accelerates specification drafting, codegen, and audit passes.</p>
+
+            <div class="proc-ownership-chart">
+              <div class="proc-ownership-row">
+                <span class="proc-ownership-label">1 · Discovery</span>
+                <div class="proc-ownership-bar" role="img" aria-label="Discovery: 95% human, 5% AI">
+                  <span class="proc-bar-human" style="width:95%"></span>
+                  <span class="proc-bar-ai" style="width:5%"></span>
+                </div>
+                <span class="proc-ownership-pct">95% human</span>
+              </div>
+              <div class="proc-ownership-row">
+                <span class="proc-ownership-label">2 · Define</span>
+                <div class="proc-ownership-bar" role="img" aria-label="Define: 55% human, 45% AI">
+                  <span class="proc-bar-human" style="width:55%"></span>
+                  <span class="proc-bar-ai" style="width:45%"></span>
+                </div>
+                <span class="proc-ownership-pct">55 / 45</span>
+              </div>
+              <div class="proc-ownership-row">
+                <span class="proc-ownership-label">3 · Implement</span>
+                <div class="proc-ownership-bar" role="img" aria-label="Implement: 25% human, 75% AI">
+                  <span class="proc-bar-human" style="width:25%"></span>
+                  <span class="proc-bar-ai" style="width:75%"></span>
+                </div>
+                <span class="proc-ownership-pct">25 / 75</span>
+              </div>
+              <div class="proc-ownership-row">
+                <span class="proc-ownership-label">4 · Validate</span>
+                <div class="proc-ownership-bar" role="img" aria-label="Validate: 50% human, 50% AI">
+                  <span class="proc-bar-human" style="width:50%"></span>
+                  <span class="proc-bar-ai" style="width:50%"></span>
+                </div>
+                <span class="proc-ownership-pct">50 / 50</span>
+              </div>
+              <div class="proc-ownership-row">
+                <span class="proc-ownership-label">5 · Ship</span>
+                <div class="proc-ownership-bar" role="img" aria-label="Ship: 90% human, 10% AI">
+                  <span class="proc-bar-human" style="width:90%"></span>
+                  <span class="proc-bar-ai" style="width:10%"></span>
+                </div>
+                <span class="proc-ownership-pct">90% human</span>
+              </div>
+              <div class="proc-ownership-legend">
+                <span><i class="proc-legend-swatch proc-legend-human"></i> Human-led</span>
+                <span><i class="proc-legend-swatch proc-legend-ai"></i> AI-assisted</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- End-to-end diagram -->
+          <section class="ia-section" id="diagram">
+            <h2>End-to-end process diagram</h2>
+            <figure class="ia-diagram">
+              <img src="assets/process/ats-ai-development-process.png" alt="Flowchart: Discovery, Define, Implement, Validate, Ship with feedback loops" loading="lazy" />
+              <figcaption>Figure 1 — Full process from new initiative through discovery, definition, incremental implementation, validation, and ship. Living docs from Define feed back into Validate.</figcaption>
+            </figure>
+            <blockquote class="proc-caption">
+              Discovery and definition are human-led and evidence-backed. Implementation is incremental: each PRD feature is expanded into a specification and Cursor prompt before AI-assisted coding. Validation compares the running product to intent before an increment ships.
+            </blockquote>
+          </section>
+
+          <!-- Increment loop -->
+          <section class="ia-section" id="increment">
+            <h2>Feature increment loop</h2>
+            <p>Stages 3–5 repeat for every TH-coded backlog item until milestone scope is met.</p>
+
+            <div class="proc-increment-wrap">
+              <figure class="proc-increment-fig">
+                <img src="assets/process/ats-feature-increment-loop.png" alt="PRD to pick feature to spec to implement to validate to ship increment loop" loading="lazy" />
+              </figure>
+
+              <div class="proc-increment-flow" aria-label="Feature increment steps">
+                <div class="proc-inc-step">
+                  <span class="proc-inc-icon proc-inc-prd">📋</span>
+                  <strong>PRD backlog</strong>
+                  <span>TH- codes · priority</span>
+                </div>
+                <div class="proc-inc-arrow" aria-hidden="true">→</div>
+                <div class="proc-inc-step">
+                  <span class="proc-inc-icon proc-inc-human">👤</span>
+                  <strong>Pick &amp; expand</strong>
+                  <span>Spec · Cursor prompt</span>
+                </div>
+                <div class="proc-inc-arrow" aria-hidden="true">→</div>
+                <div class="proc-inc-step">
+                  <span class="proc-inc-icon proc-inc-ai">⚡</span>
+                  <strong>Implement</strong>
+                  <span>UI · API · DB</span>
+                </div>
+                <div class="proc-inc-arrow" aria-hidden="true">→</div>
+                <div class="proc-inc-step">
+                  <span class="proc-inc-icon proc-inc-validate">✓</span>
+                  <strong>Validate</strong>
+                  <span>Browser · rules · audits</span>
+                </div>
+                <div class="proc-inc-arrow" aria-hidden="true">→</div>
+                <div class="proc-inc-step proc-inc-ship">
+                  <span class="proc-inc-icon">✅</span>
+                  <strong>Ship</strong>
+                  <span>Next feature</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="proc-code-flow">
+              <span class="proc-code-label">Implementation chain</span>
+              <code>PRD → Pick a feature → Expand specification / compose Cursor prompt → Implement</code>
+            </div>
+          </section>
+
+          <!-- Stage detail -->
+          <section class="ia-section" id="stages">
+            <h2>Stage detail</h2>
+
+            <div class="proc-stage-cards">
+              <article class="proc-stage-card">
+                <header>
+                  <span class="proc-card-num">1</span>
+                  <div>
+                    <h3>Discovery</h3>
+                    <p class="proc-card-sub">Problem framing and use-case identification</p>
+                  </div>
+                </header>
+                <ul>
+                  <li><strong>Competitor analysis</strong> — patterns from Greenhouse, Lever, Ashby, SMB tools; what to adopt vs avoid</li>
+                  <li><strong>Netnographic research</strong> — public discourse on recruiter and candidate pain</li>
+                </ul>
+                <footer><strong>Outcome:</strong> Evidence-backed problem statement; SME-first positioning (low cost, good UX, fast setup).</footer>
+              </article>
+
+              <article class="proc-stage-card">
+                <header>
+                  <span class="proc-card-num">2</span>
+                  <div>
+                    <h3>Define scope &amp; specification</h3>
+                    <p class="proc-card-sub">Establish the contract before code</p>
+                  </div>
+                </header>
+                <p>PRD drafts, stack decisions, interaction spec, WCAG 2.2 AA intent, architecture, privacy criteria, design system, and IA — see workstreams table below.</p>
+                <footer><strong>Outcome:</strong> Shared source of truth that AI sessions must follow.</footer>
+              </article>
+
+              <article class="proc-stage-card">
+                <header>
+                  <span class="proc-card-num">3</span>
+                  <div>
+                    <h3>Implementation</h3>
+                    <p class="proc-card-sub">Always incremental against the PRD</p>
+                  </div>
+                </header>
+                <ul>
+                  <li>Features tracked with <strong>TH-</strong> codes in <a href="../../docs/specification/FEATURE_BACKLOG.md">FEATURE_BACKLOG</a></li>
+                  <li>Prompts pre-written per feature in <a href="../../docs/specification/FEATURE_BACKLOG_CURSOR_PROMPTS.md">FEATURE_BACKLOG_CURSOR_PROMPTS</a></li>
+                  <li>AI generates React, API routes, validators, migrations — <strong>human edits</strong> for business rules and cohesion</li>
+                </ul>
+              </article>
+
+              <article class="proc-stage-card">
+                <header>
+                  <span class="proc-card-num">4</span>
+                  <div>
+                    <h3>Validation &amp; updates</h3>
+                    <p class="proc-card-sub">Compare running product to intent</p>
+                  </div>
+                </header>
+                <ul>
+                  <li><a href="wcag-audit.html">WCAG 2.2</a> audit and remediation (rev 1.1)</li>
+                  <li><a href="gdpr-pdpa-audit.html">GDPR &amp; PDPA</a> audit and remediation</li>
+                  <li>Design system catalog updates when new components ship</li>
+                  <li><a href="information-architecture.html">Information architecture</a> aligned with routes</li>
+                  <li>PRD marked Done / Partial / Planned · Git commits as implementation truth</li>
+                </ul>
+                <footer>If validation fails → return to <strong>Stage 3</strong>.</footer>
+              </article>
+
+              <article class="proc-stage-card proc-stage-card-ship">
+                <header>
+                  <span class="proc-card-num">5</span>
+                  <div>
+                    <h3>Ship</h3>
+                    <p class="proc-card-sub">Increment complete</p>
+                  </div>
+                </header>
+                <p>Feature delivered: behaviour matches spec, docs updated, code merged. Pick next PRD feature and re-enter the increment loop until milestone or release scope is met.</p>
+              </article>
+            </div>
+          </section>
+
+          <!-- Define workstreams -->
+          <section class="ia-section" id="define">
+            <h2>Define — workstreams</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Workstream</th><th>Approach</th><th>Artefacts</th></tr></thead>
+                <tbody>
+                  <tr><td>PRD</td><td><span class="proc-tag proc-tag-hybrid">AI draft + manual review</span></td><td><a href="../../docs/specification/PRD.md">PRD.md</a></td></tr>
+                  <tr><td>Dev stack</td><td><span class="proc-tag proc-tag-hybrid">AI-assisted research</span></td><td>npm monorepo, Next.js, Hono, Prisma, PostgreSQL</td></tr>
+                  <tr><td>Usability &amp; interaction spec</td><td><span class="proc-tag proc-tag-human">Human-led</span></td><td>Task flows, interaction handoff, state requirements</td></tr>
+                  <tr><td>Accessibility spec</td><td><span class="proc-tag proc-tag-human">Human-led target</span></td><td>WCAG 2.2 AA intent</td></tr>
+                  <tr><td>Architecture</td><td><span class="proc-tag proc-tag-human">Human decision</span></td><td>Monorepo, BFF pattern, shared packages</td></tr>
+                  <tr><td>Data protection</td><td><span class="proc-tag proc-tag-human">Human-led spec</span></td><td>GDPR / PDPA audit criteria</td></tr>
+                  <tr><td>Design system &amp; markup</td><td><span class="proc-tag proc-tag-hybrid">AI-assisted codegen</span></td><td><a href="../../docs/design-system/index.html">Design system</a>, static markup libraries</td></tr>
+                  <tr><td>Prototype &amp; navigation</td><td><span class="proc-tag proc-tag-human">Human-led IA</span></td><td><a href="information-architecture.html">Information architecture</a></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Validation hub -->
+          <section class="ia-section" id="validation">
+            <h2>Validation hub</h2>
+            <p>Stage ④ compares the running product against intent across six parallel tracks.</p>
+
+            <div class="proc-validate-hub">
+              <div class="proc-validate-center">
+                <strong>Compare to intent</strong>
+                <span>Stage ④</span>
+              </div>
+              <div class="proc-validate-spokes">
+                <a class="proc-validate-spoke" href="wcag-audit.html">
+                  <span class="proc-spoke-icon">♿</span>
+                  <strong>WCAG 2.2</strong>
+                  <span>Accessibility audit</span>
+                </a>
+                <a class="proc-validate-spoke" href="gdpr-pdpa-audit.html">
+                  <span class="proc-spoke-icon">🔒</span>
+                  <strong>GDPR / PDPA</strong>
+                  <span>Privacy audit</span>
+                </a>
+                <a class="proc-validate-spoke" href="../../docs/design-system/index.html">
+                  <span class="proc-spoke-icon">🎨</span>
+                  <strong>Design system</strong>
+                  <span>Component catalog</span>
+                </a>
+                <a class="proc-validate-spoke" href="information-architecture.html">
+                  <span class="proc-spoke-icon">🗺</span>
+                  <strong>IA docs</strong>
+                  <span>Route alignment</span>
+                </a>
+                <a class="proc-validate-spoke" href="../../docs/specification/PRD.md">
+                  <span class="proc-spoke-icon">📋</span>
+                  <strong>PRD status</strong>
+                  <span>Done · Partial · Planned</span>
+                </a>
+                <span class="proc-validate-spoke proc-validate-spoke-static">
+                  <span class="proc-spoke-icon">⎇</span>
+                  <strong>Git</strong>
+                  <span>Implementation truth</span>
+                </span>
+              </div>
+              <div class="proc-validate-branches" aria-hidden="true">
+                <svg viewBox="0 0 600 320" preserveAspectRatio="xMidYMid meet">
+                  <line x1="300" y1="160" x2="300" y2="50" stroke="#cbd5e1" stroke-width="1.5"/>
+                  <line x1="300" y1="160" x2="120" y2="90" stroke="#cbd5e1" stroke-width="1.5"/>
+                  <line x1="300" y1="160" x2="480" y2="90" stroke="#cbd5e1" stroke-width="1.5"/>
+                  <line x1="300" y1="160" x2="80" y2="220" stroke="#cbd5e1" stroke-width="1.5"/>
+                  <line x1="300" y1="160" x2="520" y2="220" stroke="#cbd5e1" stroke-width="1.5"/>
+                  <line x1="300" y1="160" x2="300" y2="270" stroke="#cbd5e1" stroke-width="1.5"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="proc-validate-outcomes">
+              <div class="proc-outcome proc-outcome-pass">
+                <strong>Pass</strong>
+                <span>→ Stage 5 Ship</span>
+              </div>
+              <div class="proc-outcome proc-outcome-fail">
+                <strong>Fail / gaps</strong>
+                <span>→ Stage 3 Implement</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Related -->
+          <section class="ia-section" id="related">
+            <h2>Related portfolio artefacts</h2>
+            <div class="ia-table-wrap">
+              <table class="ia-table">
+                <thead><tr><th>Document</th><th>Role</th></tr></thead>
+                <tbody>
+                  <tr><td><a href="../product-designer-ats-backoffice/15-ai-workflow-design-and-development.md">15-ai-workflow-design-and-development.md</a></td><td>Narrative writeup</td></tr>
+                  <tr><td><a href="../product-designer-ats-backoffice/16-ai-workflow-process-diagram.md">16-ai-workflow-process-diagram.md</a></td><td>Earlier diagram set</td></tr>
+                  <tr><td><a href="netnographic-research.html">Netnographic research</a></td><td>Stage 1 discovery input</td></tr>
+                  <tr><td><a href="../process-diagrams/ats-ai-development-process.md">Process markdown source</a></td><td>Canonical process doc</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="audit-footer-note">Process diagram v1.0 · May 2026 · Diagram sources: <code>portfolio/process-diagrams/*.mmd</code></p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="wordmark">TalentHub</p>
+        <p class="footer-note">Development process v1.0 · May 2026</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Case study home</a>
+        <a href="appendix.html">All artifacts</a>
+        <a href="wcag-audit.html">WCAG audit</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>
