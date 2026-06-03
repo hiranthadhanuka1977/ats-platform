@@ -1,5 +1,5 @@
 /**
- * Generates portfolio/case-study/db-schema.html from schema.prisma + db-schema.md content.
+ * Generates portfolio/case-study/db-schema.html from schema.prisma.
  * Run: node portfolio/case-study/scripts/generate-db-schema-html.mjs
  */
 import fs from "fs";

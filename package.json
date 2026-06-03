@@ -14,6 +14,7 @@
     "dev:backoffice": "npm run dev -w @ats-platform/backoffice",
     "dev:api": "npm run dev -w @ats-platform/api",
     "dev:all": "concurrently -n candidate,myapps,backoffice,api -c auto \"npm run dev:candidate\" \"npm run dev:my-applications\" \"npm run dev:backoffice\" \"npm run dev:api\"",
+    "dev:case-study": "npm run serve --prefix portfolio/case-study",
     "build": "npm run build --workspaces --if-present",
     "db:create": "npm run db:create -w @ats-platform/db",
     "db:migrate": "npm run migrate -w @ats-platform/db",

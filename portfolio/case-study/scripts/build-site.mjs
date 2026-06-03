@@ -96,7 +96,7 @@ function buildNav(currentPage = "index") {
   }
 
   nav += `<div class="nav-group"><h3>External</h3><ul>
-    <li><a href="../../docs/design-system/index.html" target="_blank" rel="noopener">Design system catalog ↗</a></li>
+    <li><a href="https://ats-design-system.vercel.app/" target="_blank" rel="noopener">Design system catalog ↗</a></li>
   </ul></div></nav>`;
 
   return nav;
@@ -138,7 +138,7 @@ const HREF_TO_PAGE = {
   "../docs/reports/implementation-alignment-2026.md": "pages/implementation-alignment.html",
   "../docs/specification/ATS_Application_State_UI_API_Requirements.md": "pages/application-state-spec.html",
   "../docs/specification/api/backoffice-applications.md": "pages/backoffice-applications-api.html",
-  "../docs/design-system/index.html": "../../docs/design-system/index.html",
+  "../docs/design-system/index.html": "https://ats-design-system.vercel.app/",
   "product-designer-ats-backoffice/17-netnographic-ats-research.md": "pages/netnographic-research.html",
   "product-designer-ats-backoffice/18-market-research-summary.md": "pages/market-research-summary.html",
   "product-designer-ats-backoffice/19-netnographic-deck-slides.md": "pages/research-deck-slides.html",
